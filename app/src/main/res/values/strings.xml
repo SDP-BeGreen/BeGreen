@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">BeGreen</string>
+    <string name="greetingValue">Greetings %1$s</string>
+</resources>
