@@ -4,6 +4,9 @@ container:
   memory: 16G
   kvm: true
 
+env:
+  CC_TEST_REPORTER_ID: ENCRYPTED[8c3e2e705ee0045edaef1a3ff386aff8f18eacf01f7cf91b2c8fee8f31ca8be6496a84e2061f2cbd569f1167b5d30c45]
+
 check_android_task:
   name: Run Android tests
   install_emulator_script:
@@ -30,10 +33,18 @@ check_android_task:
     adb shell settings put global window_animation_scale 0.0
     adb shell settings put global transition_animation_scale 0.0
     adb shell settings put global animator_duration_scale 0.0
+  prepare_codeclimate_script: |
+    curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+    chmod +x ./cc-test-reporter
+    ./cc-test-reporter before-build
   screen_record_background_script:
     for n in $(seq 1 20); do adb exec-out screenrecord --time-limit=180 --output-format=h264 - > $n.h264; done
   check_script:
     ./gradlew check connectedCheck
+  report_codeclimate_script: |
+    export JACOCO_SOURCE_PATH=app/src/main/java/
+    ./cc-test-reporter format-coverage ./app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml --input-type jacoco
+    ./cc-test-reporter upload-coverage
   always:
     wait_for_screenrecord_script: |
       pkill -2 -x adb
