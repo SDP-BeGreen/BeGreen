@@ -29,5 +29,3 @@ buildCache {
         push = isMasterBranch
     }
 }
-
-apply from: new File(settingsDir, 'gradle/buildCacheSettings.gradle')
