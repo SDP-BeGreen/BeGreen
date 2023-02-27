@@ -24,10 +24,7 @@ class MainActivityTest {
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
 
-    /*@get:Rule
-    val intentsTestRule = IntentsTestRule(MainActivity::class.java)
-*/
-    /*@Before
+    @Before
     fun setUp() {
         Intents.init()
     }
@@ -35,7 +32,7 @@ class MainActivityTest {
     @After
     fun cleanUp() {
         Intents.release()
-    }*/
+    }
 
     @Test
     fun nameWrittenCorrectly() {
@@ -46,7 +43,6 @@ class MainActivityTest {
 
     @Test
     fun intentCorrectlyFiredWhenButtonPressed() {
-        Intents.init()
 
         // Type the name
         onView(withId(R.id.mainName))
@@ -58,17 +54,16 @@ class MainActivityTest {
             .perform(click())
 
         // Assert correctness of values
-        intended(allOf(
-            hasExtraWithKey("name"),
-            hasExtra("name", "David"),
-            hasComponent(GreetingActivity::class.java.name)))
+        intended(
+            allOf(
+                hasExtraWithKey("name"),
+                hasExtra("name", "David"),
+                hasComponent(GreetingActivity::class.java.name)))
 
-        Intents.release()
     }
 
     @Test
     fun intentCorrectlyFiredWhenQueryButtonPressed() {
-        Intents.init()
 
         // Perform the click on the button
         onView(withId(R.id.buttonDB))
@@ -77,7 +72,6 @@ class MainActivityTest {
         // Assert correctness of values
         intended(hasComponent(DatabaseActivity::class.java.name))
 
-        Intents.release()
     }
 
 }
