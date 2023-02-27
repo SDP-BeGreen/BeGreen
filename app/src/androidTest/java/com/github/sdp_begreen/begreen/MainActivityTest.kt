@@ -50,4 +50,18 @@ class MainActivityTest {
         Intents.release()
     }
 
+    @Test
+    fun intentCorrectlyFiredWhenQueryButtonPressed() {
+        Intents.init()
+
+        // Perform the click on the button
+        onView(withId(R.id.buttonDB))
+            .perform(click())
+
+        // Assert correctness of values
+        intended(allOf(hasComponent(DatabaseActivity::class.java.name)))
+
+        Intents.release()
+    }
+
 }

@@ -18,5 +18,12 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("name", textVal.text.toString())
             startActivity(intent)
         }
+
+        val btnDB: Button = findViewById(R.id.buttonDB)
+        btnDB.setOnClickListener {
+            val intent = Intent(this, DatabaseActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 }
