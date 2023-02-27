@@ -11,6 +11,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.platform.app.InstrumentationRegistry
 import org.hamcrest.Matchers.allOf
 import org.junit.After
 import org.junit.Before
@@ -52,6 +53,9 @@ class MainActivityTest {
         // Perform the click on the button
         onView(withId(R.id.mainButton))
             .perform(click())
+
+        // Wait for UI thread to idle
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
 
         // Assert correctness of values
         intended(
