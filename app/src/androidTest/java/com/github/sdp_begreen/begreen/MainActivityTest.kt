@@ -11,6 +11,8 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import org.hamcrest.Matchers.allOf
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,6 +23,16 @@ class MainActivityTest {
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
 
+    @Before
+    fun setUp() {
+        Intents.init()
+    }
+
+    @After
+    fun cleanUp() {
+        Intents.release()
+    }
+
     @Test
     fun nameWrittenCorrectly() {
         onView(withId(R.id.mainName))
@@ -30,7 +42,7 @@ class MainActivityTest {
 
     @Test
     fun intentCorrectlyFiredWhenButtonPressed() {
-        Intents.init()
+        //Intents.init()
 
         // Type the name
         onView(withId(R.id.mainName))
@@ -47,12 +59,12 @@ class MainActivityTest {
             hasExtra("name", "David"),
             hasComponent(GreetingActivity::class.java.name)))
 
-        Intents.release()
+        //Intents.release()
     }
 
     @Test
     fun intentCorrectlyFiredWhenQueryButtonPressed() {
-        Intents.init()
+        //Intents.init()
 
         // Perform the click on the button
         onView(withId(R.id.buttonDB))
@@ -61,7 +73,7 @@ class MainActivityTest {
         // Assert correctness of values
         intended(allOf(hasComponent(DatabaseActivity::class.java.name)))
 
-        Intents.release()
+        //Intents.release()
     }
 
 }
