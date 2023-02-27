@@ -6,6 +6,7 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.*
+import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -23,7 +24,10 @@ class MainActivityTest {
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
 
-    @Before
+    @get:Rule
+    val intentsTestRule = IntentsTestRule(MainActivity::class.java)
+
+    /*@Before
     fun setUp() {
         Intents.init()
     }
@@ -31,7 +35,7 @@ class MainActivityTest {
     @After
     fun cleanUp() {
         Intents.release()
-    }
+    }*/
 
     @Test
     fun nameWrittenCorrectly() {
