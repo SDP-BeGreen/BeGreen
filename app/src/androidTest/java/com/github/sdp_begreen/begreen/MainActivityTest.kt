@@ -55,7 +55,7 @@ class MainActivityTest {
 
         // Assert correctness of values
         intended(allOf(
-            hasExtraWithKey("name"),
+            /*hasExtraWithKey("name"),*/
             hasExtra("name", "David"),
             hasComponent(GreetingActivity::class.java.name)))
 
