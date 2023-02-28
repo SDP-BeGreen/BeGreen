@@ -1,12 +1,9 @@
 package com.github.sdp_begreen.begreen
 
 import androidx.room.Room
-import androidx.test.core.app.ActivityScenario
-import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-//import androidx.test.platform.app.InstrumentationRegistry
 import com.github.sdp_begreen.begreen.room.Person
 import com.github.sdp_begreen.begreen.room.PersonDao
 import com.github.sdp_begreen.begreen.room.PersonDatabase
