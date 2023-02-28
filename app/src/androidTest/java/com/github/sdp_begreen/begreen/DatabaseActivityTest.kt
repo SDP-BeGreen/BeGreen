@@ -3,14 +3,11 @@ package com.github.sdp_begreen.begreen
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.*
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import org.hamcrest.Matchers.allOf
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -72,7 +69,7 @@ class DatabaseActivityTest {
 
     @Test
     fun setCorrectlyUpdatesDatabase() {
-        // Set value "email@example.com" to key 123
+        // Set value "email@example.com" for key 123
         onView(withId(R.id.phoneDB))
             .perform(typeText("123"))
         onView(withId(R.id.emailDB))

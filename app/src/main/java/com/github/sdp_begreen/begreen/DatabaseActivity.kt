@@ -1,17 +1,10 @@
 package com.github.sdp_begreen.begreen
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import com.github.sdp_begreen.begreen.Database.Companion.db
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import java.util.concurrent.CompletableFuture
 
 class DatabaseActivity : AppCompatActivity() {
 

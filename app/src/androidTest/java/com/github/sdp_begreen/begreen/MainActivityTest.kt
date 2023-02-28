@@ -6,7 +6,6 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.*
-import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -22,6 +21,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class MainActivityTest {
+
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
 
@@ -62,8 +62,9 @@ class MainActivityTest {
             allOf(
                 hasExtraWithKey("name"),
                 hasExtra("name", "David"),
-                hasComponent(GreetingActivity::class.java.name)))
-
+                hasComponent(GreetingActivity::class.java.name)
+            )
+        )
     }
 
     @Test
@@ -77,5 +78,4 @@ class MainActivityTest {
         intended(hasComponent(DatabaseActivity::class.java.name))
 
     }
-
 }
