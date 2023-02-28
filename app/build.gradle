@@ -24,6 +24,14 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        // The following argument makes the Android Test Orchestrator run its
+        // "pm clear" command after each test invocation. This command ensures
+        // that the app's state is completely cleared between tests.
+        testInstrumentationRunnerArguments clearPackageData: 'true'
+    }
+
+    testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
 
     buildTypes {
@@ -60,15 +68,18 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
     implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'androidx.test:monitor:1.6.1'
+    implementation 'androidx.test.ext:junit-ktx:1.1.5'
 
 
     //-----------------Room---------------------------------
     def room_version = "2.5.0"
+    //noinspection GradleDependency
     implementation "androidx.activity:activity-ktx:$rootProject.activityVersion"
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
     // To use Kotlin annotation processing tool (kapt)
-    //kapt "androidx.room:room-compiler:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
     // To use Kotlin Symbol Processing (KSP)
     //ksp "androidx.room:room-compiler:$room_version"
     // optional - RxJava2 support for Room
@@ -84,6 +95,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$rootProject.appCompatVersion"
     // Lifecycle components
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.lifecycleVersion"
+    //noinspection GradleDependency
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$rootProject.lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-common-java8:$rootProject.lifecycleVersion"
     // UI
@@ -98,6 +110,7 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.5.2'
     androidTestImplementation 'androidx.test:rules:1.5.0'
     androidTestImplementation 'androidx.test.espresso:espresso-intents:3.5.1'
+    androidTestUtil 'androidx.test:orchestrator:1.4.2'
 }
 
 tasks.withType(Test) {
