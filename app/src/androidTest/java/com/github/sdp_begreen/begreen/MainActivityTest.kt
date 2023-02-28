@@ -65,7 +65,7 @@ class MainActivityTest {
                 hasComponent(GreetingActivity::class.java.name)))
 
     }
-/*
+
     @Test
     fun intentCorrectlyFiredWhenQueryButtonPressed() {
 
@@ -76,6 +76,6 @@ class MainActivityTest {
         // Assert correctness of values
         intended(hasComponent(DatabaseActivity::class.java.name))
 
-    }*/
+    }
 
 }
