@@ -27,7 +27,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 /**
  * An activity that displays a Google map with a marker (pin) to indicate a particular location.
  */
-// [START maps_marker_on_map_ready]
 class MapsMarkerActivity : AppCompatActivity(), OnMapReadyCallback {
 
     // [START_EXCLUDE]
@@ -46,16 +45,15 @@ class MapsMarkerActivity : AppCompatActivity(), OnMapReadyCallback {
 
     // [START maps_marker_on_map_ready_add_marker]
     override fun onMapReady(googleMap: GoogleMap) {
-      val sydney = LatLng(-33.852, 151.211)
+      val satellite = LatLng(46.520544, 6.567825)
       googleMap.addMarker(
         MarkerOptions()
-          .position(sydney)
-          .title("Marker in Sydney")
+          .position(satellite)
+          .title("Satellite")
       )
       // [START_EXCLUDE silent]
-      googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+      googleMap.moveCamera(CameraUpdateFactory.newLatLng(satellite))
       // [END_EXCLUDE]
     }
     // [END maps_marker_on_map_ready_add_marker]
 }
-// [END maps_marker_on_map_ready]
