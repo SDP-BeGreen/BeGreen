@@ -5,10 +5,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import androidx.room.Room
+import androidx.test.platform.app.InstrumentationRegistry
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var db: AncientActivityDB
+    private lateinit var activityDao: BoredActivityDao
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -31,7 +35,12 @@ class MainActivity : AppCompatActivity() {
         //instance of boredApi
         val boredApi = retrofit.create(BoredApi::class.java)
 
-
+        //Cache LDB
+        db = Room.databaseBuilder<AncientActivityDB>(
+            InstrumentationRegistry.getInstrumentation().targetContext.applicationContext,
+            AncientActivityDB::class.java, "database-name"
+        ).build()
+        activityDao = db.ActivityDao()
 
 
 
@@ -44,9 +53,10 @@ class MainActivity : AppCompatActivity() {
                     override fun onResponse(call: Call<BoredActivity>, response: Response<BoredActivity>
                     ) {
                         if(response.isSuccessful){
+                            response.body()?.let { it1 -> activityDao.insertAll(it1) }
                             textResponse.text = response.body()?.activity
                         }else{
-                            textResponse.text = response.errorBody().toString()
+                            textResponse.text = "Cached: " + activityDao.loadById(1)
                         }
 
                     }
