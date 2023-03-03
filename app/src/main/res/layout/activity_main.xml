@@ -13,21 +13,33 @@
         android:layout_marginStart="100dp"
         android:layout_marginTop="172dp"
         android:ems="10"
-        android:hint="Your name"
+        android:hint="@string/your_name"
         android:inputType="textPersonName|text"
         android:textAlignment="center"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:autofillHints="username" />
 
     <Button
         android:id="@+id/mainButton"
-        android:layout_width="211dp"
-        android:layout_height="73dp"
-        android:layout_marginTop="240dp"
-        android:text="Button"
+        android:layout_width="104dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="108dp"
+        android:text="@string/button"
         app:layout_constraintEnd_toEndOf="@+id/mainName"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.456"
         app:layout_constraintStart_toStartOf="@+id/mainName"
         app:layout_constraintTop_toBottomOf="@+id/mainName" />
+
+    <Button
+        android:id="@+id/mainQuery"
+        android:layout_width="99dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/query"
+        app:layout_constraintEnd_toEndOf="@+id/mainButton"
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintStart_toStartOf="@+id/mainButton"
+        app:layout_constraintTop_toBottomOf="@+id/mainButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
