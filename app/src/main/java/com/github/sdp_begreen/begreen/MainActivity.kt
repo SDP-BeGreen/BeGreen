@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val btnDB: Button = findViewById(R.id.buttonDB)
+        val btnDB: Button = findViewById(R.id.mainQuery)
         btnDB.setOnClickListener {
             val intent = Intent(this, DatabaseActivity::class.java)
             startActivity(intent)

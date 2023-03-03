@@ -23,7 +23,7 @@ class DatabaseActivityTest {
     /*
     Implementation of a local database
      */
-    class LocalDataBase : Database() {
+    class MockDataBase : Database() {
         private val map: HashMap<String, String> = HashMap()
         override fun get(key: String): CompletableFuture<String> {
             return CompletableFuture.completedFuture(map[key])
@@ -37,19 +37,19 @@ class DatabaseActivityTest {
     @Before
     fun before() {
         // Change the used database to the local database
-        Database.db = LocalDataBase()
+        Database.db = MockDataBase()
     }
 
     @Test
     fun emailWrittenCorrectly() {
-        onView(withId(R.id.emailDB))
+        onView(withId(R.id.databaseEmail))
             .perform(typeText("email@example.com"))
             .check(matches(withText("email@example.com")))
     }
 
     @Test
     fun phoneNumberWrittenCorrectly() {
-        onView(withId(R.id.phoneDB))
+        onView(withId(R.id.databasePhoneNumber))
             .perform(typeText("1112223344"))
             .check(matches(withText("1112223344")))
     }
@@ -57,30 +57,30 @@ class DatabaseActivityTest {
     @Test
     fun getWithInexistantKeyReturnsNothing() {
         // Type phone number
-        onView(withId(R.id.phoneDB))
+        onView(withId(R.id.databasePhoneNumber))
             .perform(typeText("1"))
         // Press get button
-        onView(withId(R.id.getButton))
+        onView(withId(R.id.databaseGet))
             .perform(click())
         // Check that no email is linked to that phone number
-        onView(withId(R.id.emailDB))
+        onView(withId(R.id.databaseEmail))
             .check(matches(withText("")))
     }
 
     @Test
     fun setCorrectlyUpdatesDatabase() {
         // Set value "email@example.com" for key 123
-        onView(withId(R.id.phoneDB))
+        onView(withId(R.id.databasePhoneNumber))
             .perform(typeText("123"))
-        onView(withId(R.id.emailDB))
+        onView(withId(R.id.databaseEmail))
             .perform(typeText("email@example.com"))
-        onView(withId(R.id.setButton))
+        onView(withId(R.id.databaseSet))
             .perform(click())
 
         // Check that value return by "get" for key 123 is "email@example.com"
-        onView(withId(R.id.getButton))
+        onView(withId(R.id.databaseGet))
             .perform(click())
-        onView(withId(R.id.emailDB))
+        onView(withId(R.id.databaseEmail))
             .check(matches(withText("email@example.com")))
     }
 }

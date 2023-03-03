@@ -7,38 +7,40 @@
     tools:context=".DatabaseActivity">
 
     <Button
-        android:id="@+id/getButton"
+        android:id="@+id/databaseGet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
         android:layout_marginBottom="342dp"
-        android:text="Get"
+        android:text="@string/get"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/setButton"
+        android:id="@+id/databaseSet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="60dp"
         android:layout_marginBottom="342dp"
-        android:text="Set"
+        android:text="@string/set"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <EditText
-        android:id="@+id/emailDB"
+        android:id="@+id/databaseEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="97dp"
         android:layout_marginBottom="40dp"
         android:ems="10"
         android:inputType="textEmailAddress"
-        app:layout_constraintBottom_toTopOf="@+id/phoneDB"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/databasePhoneNumber"
+        app:layout_constraintStart_toStartOf="parent"
+        android:autofillHints="emailAddress"
+        tools:ignore="LabelFor" />
 
     <EditText
-        android:id="@+id/phoneDB"
+        android:id="@+id/databasePhoneNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="102dp"
@@ -46,5 +48,7 @@
         android:ems="10"
         android:inputType="phone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:autofillHints="phoneNumber"
+        tools:ignore="LabelFor" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -71,7 +71,7 @@ class MainActivityTest {
     fun intentCorrectlyFiredWhenQueryButtonPressed() {
 
         // Perform the click on the button
-        onView(withId(R.id.buttonDB))
+        onView(withId(R.id.mainQuery))
             .perform(click())
 
         // Assert correctness of values

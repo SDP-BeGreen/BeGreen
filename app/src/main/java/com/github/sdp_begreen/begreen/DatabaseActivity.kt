@@ -11,17 +11,17 @@ class DatabaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_database)
-        val emailText = findViewById<EditText>(R.id.emailDB)
-        val phoneText = findViewById<EditText>(R.id.phoneDB)
+        val emailText = findViewById<EditText>(R.id.databaseEmail)
+        val phoneText = findViewById<EditText>(R.id.databasePhoneNumber)
 
         // Set function
-        val setBtn: Button = findViewById(R.id.setButton)
+        val setBtn: Button = findViewById(R.id.databaseSet)
         setBtn.setOnClickListener {
             db[phoneText.text.toString()] = emailText.text.toString()
         }
 
         // Get function
-        val getBtn: Button = findViewById(R.id.getButton)
+        val getBtn: Button = findViewById(R.id.databaseGet)
         getBtn.setOnClickListener {
             db[phoneText.text.toString()].thenAccept {
                 emailText.setText(it)
