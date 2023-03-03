@@ -18,5 +18,11 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("name", textVal.text.toString())
             startActivity(intent)
         }
+
+        val fragmentBtn: Button = findViewById(R.id.fragmentTest)
+        fragmentBtn.setOnClickListener {
+            val intent = Intent(this, FragmentActivity::class.java)
+            startActivity(intent)
+        }
     }
 }

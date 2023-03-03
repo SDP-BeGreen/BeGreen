@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">BeGreen</string>
     <string name="greetingValue">Greetings %1$s</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="top_app_bar">BeGreen</string>
 </resources>

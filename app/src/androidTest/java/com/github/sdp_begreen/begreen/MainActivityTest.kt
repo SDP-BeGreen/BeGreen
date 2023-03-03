@@ -50,4 +50,16 @@ class MainActivityTest {
         Intents.release()
     }
 
+    @Test
+    fun intentCorrectlyFireFragmentButtonPressed() {
+        Intents.init()
+
+        onView(withId(R.id.fragmentTest))
+            .perform(click())
+
+        intended(hasComponent(FragmentActivity::class.java.name))
+
+        Intents.release()
+    }
+
 }

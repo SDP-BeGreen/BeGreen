@@ -23,11 +23,21 @@
         android:id="@+id/mainButton"
         android:layout_width="211dp"
         android:layout_height="73dp"
-        android:layout_marginTop="240dp"
+        android:layout_marginTop="80dp"
         android:text="Button"
         app:layout_constraintEnd_toEndOf="@+id/mainName"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.444"
         app:layout_constraintStart_toStartOf="@+id/mainName"
         app:layout_constraintTop_toBottomOf="@+id/mainName" />
+
+    <Button
+        android:id="@+id/fragmentTest"
+        android:layout_width="212dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="104dp"
+        android:layout_marginTop="30dp"
+        android:text="Fragment Test"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
