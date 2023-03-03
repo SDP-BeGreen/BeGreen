@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,5 +20,11 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("name", textVal.text.toString())
             startActivity(intent)
         }
+        //baseUrl of the API and the addConverterFactory will convert the response
+        //to a BoredActivity Object
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://www.boredapi.com/api/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
     }
 }
