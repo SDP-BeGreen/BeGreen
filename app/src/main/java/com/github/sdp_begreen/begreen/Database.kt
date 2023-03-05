@@ -1,5 +1,6 @@
 package com.github.sdp_begreen.begreen
 
+import android.graphics.Bitmap
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -23,4 +24,18 @@ abstract class Database {
      * Create a new tuple ([key], [value]) if [key] was not present and update the value otherwise
      */
     abstract operator fun set(key: String, value: String)
+
+    /**
+     * Store the given [image] under the ID [userId]
+     * and returns the imageId set for that image in the database
+     * Returns null if the image can't be stored
+     */
+    abstract fun addImage(image: Bitmap, userId: Int): String?
+
+    /**
+     * Retrieves the image associated with the given [userId] and [imageId]
+     * from the database
+     */
+    abstract fun getImage(imageId: String, userId: Int): CompletableFuture<Bitmap>
+
 }

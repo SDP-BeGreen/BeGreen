@@ -11,20 +11,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="342dp"
         android:text="@string/get"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/databaseStorePicture" />
 
     <Button
         android:id="@+id/databaseSet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="60dp"
         android:layout_marginBottom="342dp"
         android:text="@string/set"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/databaseLoadPicture" />
 
     <EditText
         android:id="@+id/databaseEmail"
@@ -45,10 +49,46 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="102dp"
         android:layout_marginBottom="184dp"
+        android:autofillHints="phoneNumber"
         android:ems="10"
         android:inputType="phone"
+        android:minHeight="48dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:autofillHints="phoneNumber"
         tools:ignore="LabelFor" />
+
+    <Button
+        android:id="@+id/databaseStorePicture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="244dp"
+        android:layout_marginBottom="20dp"
+        android:text="@string/store"
+        app:layout_constraintBottom_toTopOf="@+id/databaseGet"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/databaseLoadPicture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="239dp"
+        android:layout_marginEnd="67dp"
+        android:layout_marginBottom="20dp"
+        android:text="@string/load"
+        app:layout_constraintBottom_toTopOf="@+id/databaseSet"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="78dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="148dp"
+        android:layout_marginTop="66dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/common_google_signin_btn_icon_light_normal"
+        android:contentDescription="@string/picture" />
 </androidx.constraintlayout.widget.ConstraintLayout>

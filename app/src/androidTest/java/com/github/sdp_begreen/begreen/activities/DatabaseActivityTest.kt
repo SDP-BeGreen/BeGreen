@@ -1,5 +1,6 @@
 package com.github.sdp_begreen.begreen.activities
 
+import android.graphics.Bitmap
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -23,7 +24,7 @@ class DatabaseActivityTest {
     val activityRule = ActivityScenarioRule(DatabaseActivity::class.java)
 
     /*
-    Implementation of a local database
+    Implementation of a mock database, only used for testing
      */
     class MockDataBase : Database() {
         private val map: HashMap<String, String> = HashMap()
@@ -33,6 +34,14 @@ class DatabaseActivityTest {
 
         override fun set(key: String, value: String) {
             map[key] = value
+        }
+
+        override fun addImage(image: Bitmap, userId: Int): String? {
+            return null
+        }
+
+        override fun getImage(imageId: String, userId: Int): CompletableFuture<Bitmap> {
+            return CompletableFuture.completedFuture(null)
         }
     }
 
