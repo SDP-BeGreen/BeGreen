@@ -10,11 +10,9 @@
         android:id="@+id/databaseGet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="342dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="15dp"
         android:text="@string/get"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/databaseStorePicture" />
 
@@ -22,11 +20,9 @@
         android:id="@+id/databaseSet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="60dp"
-        android:layout_marginBottom="342dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/set"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/databaseLoadPicture" />
 
@@ -34,21 +30,22 @@
         android:id="@+id/databaseEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="97dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginBottom="32dp"
+        android:autofillHints="emailAddress"
         android:ems="10"
         android:inputType="textEmailAddress"
+        android:minHeight="48dp"
         app:layout_constraintBottom_toTopOf="@+id/databasePhoneNumber"
         app:layout_constraintStart_toStartOf="parent"
-        android:autofillHints="emailAddress"
         tools:ignore="LabelFor" />
 
     <EditText
         android:id="@+id/databasePhoneNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="102dp"
-        android:layout_marginBottom="184dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginBottom="48dp"
         android:autofillHints="phoneNumber"
         android:ems="10"
         android:inputType="phone"
@@ -61,23 +58,19 @@
         android:id="@+id/databaseStorePicture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="244dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/store"
-        app:layout_constraintBottom_toTopOf="@+id/databaseGet"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <Button
         android:id="@+id/databaseLoadPicture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="239dp"
-        android:layout_marginEnd="67dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="94dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/load"
-        app:layout_constraintBottom_toTopOf="@+id/databaseSet"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -85,10 +78,10 @@
         android:id="@+id/imageView"
         android:layout_width="78dp"
         android:layout_height="70dp"
-        android:layout_marginStart="148dp"
-        android:layout_marginTop="66dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@string/picture"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/common_google_signin_btn_icon_light_normal"
-        android:contentDescription="@string/picture" />
+        app:srcCompat="@drawable/common_google_signin_btn_icon_light_normal" />
 </androidx.constraintlayout.widget.ConstraintLayout>
