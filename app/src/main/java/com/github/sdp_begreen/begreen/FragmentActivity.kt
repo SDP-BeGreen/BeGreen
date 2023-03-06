@@ -1,12 +1,10 @@
 package com.github.sdp_begreen.begreen
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.add
-import androidx.fragment.app.replace
 import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import com.github.sdp_begreen.begreen.fragments.FavoriteFragment
 import com.github.sdp_begreen.begreen.fragments.HomeFragment
 import com.github.sdp_begreen.begreen.fragments.MailFragment
@@ -21,7 +19,8 @@ class FragmentActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
                 setReorderingAllowed(true)
-                add<HomeFragment>(R.id.fragmentContainerView)
+                add(R.id.fragmentContainerView, HomeFragment.newInstance("Param 1", "Param 2"))
+                //add<HomeFragment>(R.id.fragmentContainerView)
                 //add( R.id.fragmentContainerView, HomeFragment.newInstance("123", "345"))
             }
         }
@@ -37,9 +36,6 @@ class FragmentActivity : AppCompatActivity() {
         navigationView.setNavigationItemSelectedListener { menuItem ->
             menuItem.isChecked = true
             drawerLayout.close()
-            Log.v("menuitem is home", (menuItem.itemId == R.id.item_home).toString())
-            Log.v("menuitem is favorit", (menuItem.itemId == R.id.item_favorite).toString())
-            Log.v("menuitem is mail", (menuItem.itemId == R.id.item_mail).toString())
             when (menuItem.itemId) {
                 R.id.item_home -> {
                     supportFragmentManager.commit {

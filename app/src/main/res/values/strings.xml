@@ -4,4 +4,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="top_app_bar">BeGreen</string>
+    <string name="home_fragment_text">Home Placeholder%1$s%2$s</string>
+    <string name="mail_fragment_text">Mail Placeholder%1$s%2$s</string>
+    <string name="favorite_fragment_text">Favorite Placeholder%1$s%2$s</string>
 </resources>

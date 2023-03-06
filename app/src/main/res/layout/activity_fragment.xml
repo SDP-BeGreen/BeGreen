@@ -42,6 +42,7 @@
                 android:layout_height="?attr/actionBarSize"
                 app:title="@string/top_app_bar"
                 app:navigationIcon="@drawable/ic_menu"
+                app:navigationContentDescription="Open menu"
                 style="@style/Widget.MaterialComponents.Toolbar.PrimarySurface"
                 android:background="@android:color/transparent"
                 android:elevation="0dp"/>

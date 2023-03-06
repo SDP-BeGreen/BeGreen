@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.github.sdp_begreen.begreen.R
 
 // TODO: Rename parameter arguments, choose names that match
@@ -35,7 +36,12 @@ class MailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_mail, container, false)
+        val view: View? = inflater.inflate(R.layout.fragment_mail, container, false)
+        val tView: TextView? = view?.findViewById(R.id.mailFragment)
+
+        tView?.text = getString(R.string.mail_fragment_text, param1?.let { " $it" }.orEmpty(), param2?.let {" $it"}.orEmpty())
+
+        return view
     }
 
     companion object {

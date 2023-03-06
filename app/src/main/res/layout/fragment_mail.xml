@@ -13,7 +13,7 @@
         android:layout_height="84dp"
         android:layout_marginStart="136dp"
         android:layout_marginTop="268dp"
-        android:text="Mail Placeholder"
+        android:text="@string/mail_fragment_text"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
