@@ -10,7 +10,10 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.platform.app.InstrumentationRegistry
 import org.hamcrest.Matchers.allOf
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -18,8 +21,19 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class MainActivityTest {
+
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
+
+    @Before
+    fun setUp() {
+        Intents.init()
+    }
+
+    @After
+    fun cleanUp() {
+        Intents.release()
+    }
 
     @Test
     fun nameWrittenCorrectly() {
@@ -30,7 +44,6 @@ class MainActivityTest {
 
     @Test
     fun intentCorrectlyFiredWhenButtonPressed() {
-        Intents.init()
 
         // Type the name
         onView(withId(R.id.mainName))
@@ -41,25 +54,37 @@ class MainActivityTest {
         onView(withId(R.id.mainButton))
             .perform(click())
 
-        // Assert correctness of values
-        intended(allOf(
-            hasExtraWithKey("name"),
-            hasExtra("name", "David"),
-            hasComponent(GreetingActivity::class.java.name)))
+        // Wait for UI thread to idle
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
 
-        Intents.release()
+        // Assert correctness of values
+        intended(
+            allOf(
+                hasExtraWithKey("name"),
+                hasExtra("name", "David"),
+                hasComponent(GreetingActivity::class.java.name)
+            )
+        )
     }
 
     @Test
     fun intentCorrectlyFireFragmentButtonPressed() {
-        Intents.init()
 
         onView(withId(R.id.fragmentTest))
             .perform(click())
 
         intended(hasComponent(FragmentActivity::class.java.name))
-
-        Intents.release()
     }
 
+    @Test
+    fun intentCorrectlyFiredWhenQueryButtonPressed() {
+
+        // Perform the click on the button
+        onView(withId(R.id.mainQuery))
+            .perform(click())
+
+        // Assert correctness of values
+        intended(hasComponent(DatabaseActivity::class.java.name))
+
+    }
 }

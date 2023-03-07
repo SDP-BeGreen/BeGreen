@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "761636298592",
+    "firebase_url": "https://sdp-firebase-bootcamp-abe7c-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "sdp-firebase-bootcamp-abe7c",
+    "storage_bucket": "sdp-firebase-bootcamp-abe7c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:761636298592:android:47db2fe6d9f95b65c0c805",
+        "android_client_info": {
+          "package_name": "com.github.sdp_begreen.begreen"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "761636298592-0h1thef98bbaib6cou2sscia11huro82.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCa28_0NoPKKjelSSJ6N-ALwvgjvROIbI4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "761636298592-0h1thef98bbaib6cou2sscia11huro82.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

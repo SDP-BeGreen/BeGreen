@@ -1,10 +1,14 @@
 <resources>
     <string name="app_name">BeGreen</string>
     <string name="greetingValue">Greetings %1$s</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="top_app_bar">BeGreen</string>
     <string name="home_fragment_text">Home Placeholder%1$s%2$s</string>
     <string name="mail_fragment_text">Mail Placeholder%1$s%2$s</string>
     <string name="favorite_fragment_text">Favorite Placeholder%1$s%2$s</string>
+    <string name="get">Get</string>
+    <string name="set">Set</string>
+    <string name="query">Query</string>
+    <string name="button">Button</string>
+    <string name="your_name">Your name</string>
 </resources>
