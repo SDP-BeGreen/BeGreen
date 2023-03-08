@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">BeGreen</string>
     <string name="greetingValue">Greetings %1$s</string>
+
+    <!-- Web Client ID for using Google Authentificator -->
+    <string name="web_client_id">538583969532-p7grqspe2ihk3flg4ee7l2763o2fml4q.apps.googleusercontent.com</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="google_icon">Google Icon</string>
+    <string name="welcome">Welcome</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="logout">Logout</string>
+
 </resources>

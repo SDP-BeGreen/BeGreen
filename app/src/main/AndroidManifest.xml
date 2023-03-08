@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BeGreen"
         tools:targetApi="31">
+        <activity
+            android:name=".HomeActivity"
+            android:exported="false" />
         <activity
             android:name=".GreetingActivity"
             android:exported="false">
@@ -31,6 +36,11 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
+            <!-- ... -->
+            <meta-data
+                android:name="com.google.android.gms.identity.intents.API_KEY"
+                android:value="538583969532-fjsgkg7ucsrc53ihggu89ses916tp7ln.apps.googleusercontent.com" />
+            <!-- ... -->
         </activity>
     </application>
 
