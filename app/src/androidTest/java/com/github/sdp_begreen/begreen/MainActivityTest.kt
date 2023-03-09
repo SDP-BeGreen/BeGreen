@@ -68,6 +68,15 @@ class MainActivityTest {
     }
 
     @Test
+    fun intentCorrectlyFireFragmentButtonPressed() {
+
+        onView(withId(R.id.fragmentTest))
+            .perform(click())
+
+        intended(hasComponent(FragmentActivity::class.java.name))
+    }
+
+    @Test
     fun intentCorrectlyFiredWhenQueryButtonPressed() {
 
         // Perform the click on the button

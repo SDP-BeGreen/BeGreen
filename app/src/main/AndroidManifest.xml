@@ -16,6 +16,13 @@
             android:name=".DatabaseActivity"
             android:exported="false" />
         <activity
+            android:name=".FragmentActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".GreetingActivity"
             android:exported="false">
             <meta-data

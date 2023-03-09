@@ -19,11 +19,15 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val fragmentBtn: Button = findViewById(R.id.fragmentTest)
+        fragmentBtn.setOnClickListener {
+            val intent = Intent(this, FragmentActivity::class.java)
+            startActivity(intent)
+        }
         val btnDB: Button = findViewById(R.id.mainQuery)
         btnDB.setOnClickListener {
             val intent = Intent(this, DatabaseActivity::class.java)
             startActivity(intent)
         }
-
     }
 }

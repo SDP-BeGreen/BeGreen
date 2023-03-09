@@ -12,13 +12,13 @@
         android:layout_height="67dp"
         android:layout_marginStart="100dp"
         android:layout_marginTop="172dp"
+        android:autofillHints="username"
         android:ems="10"
         android:hint="@string/your_name"
         android:inputType="textPersonName|text"
         android:textAlignment="center"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:autofillHints="username" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/mainButton"
@@ -32,14 +32,24 @@
         app:layout_constraintTop_toBottomOf="@+id/mainName" />
 
     <Button
+        android:id="@+id/fragmentTest"
+        android:layout_width="212dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="104dp"
+        android:layout_marginTop="30dp"
+        android:text="Fragment Test"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainButton" />
+
+    <Button
         android:id="@+id/mainQuery"
         android:layout_width="99dp"
         android:layout_height="50dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="52dp"
         android:text="@string/query"
         app:layout_constraintEnd_toEndOf="@+id/mainButton"
         app:layout_constraintHorizontal_bias="0.6"
         app:layout_constraintStart_toStartOf="@+id/mainButton"
-        app:layout_constraintTop_toBottomOf="@+id/mainButton" />
+        app:layout_constraintTop_toBottomOf="@+id/fragmentTest" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
