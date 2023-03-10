@@ -8,6 +8,7 @@ import androidx.fragment.app.replace
 import com.github.sdp_begreen.begreen.fragments.FavoriteFragment
 import com.github.sdp_begreen.begreen.fragments.HomeFragment
 import com.github.sdp_begreen.begreen.fragments.MailFragment
+import com.github.sdp_begreen.begreen.fragments.UserFragment
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
 
@@ -18,8 +19,8 @@ class FragmentActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
-                setReorderingAllowed(true)
-                add(R.id.fragmentContainerView, HomeFragment.newInstance("Param 1", "Param 2"))
+                setReorderingAllowed(false)
+                add(R.id.fragmentContainerView, UserFragment.newInstance(1, listOf(User(1, "Alice", 33), User(2, "BoB",45),User(3, "Charlie", 33),User(4, "Dimitri", 0), User(5, "Elen", -4), User(6, "Fabrice", 876)), true))
                 //add<HomeFragment>(R.id.fragmentContainerView)
                 //add( R.id.fragmentContainerView, HomeFragment.newInstance("123", "345"))
             }
