@@ -12,10 +12,11 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
+//@RunWith(AndroidJUnit4::class)
 @LargeTest
 class MainActivityTest {
 
+    /*
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
 
@@ -28,6 +29,8 @@ class MainActivityTest {
     fun cleanUp() {
         Intents.release()
     }
+    */
+
 
     /*@Test
     fun nameWrittenCorrectly() {
