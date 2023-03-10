@@ -1,55 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainDrawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    >
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/mainName"
-        android:layout_width="220dp"
-        android:layout_height="67dp"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="172dp"
-        android:autofillHints="username"
-        android:ems="10"
-        android:hint="@string/your_name"
-        android:inputType="textPersonName|text"
-        android:textAlignment="center"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/mainButton"
-        android:layout_width="104dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="108dp"
-        android:text="@string/button"
-        app:layout_constraintEnd_toEndOf="@+id/mainName"
-        app:layout_constraintHorizontal_bias="0.456"
-        app:layout_constraintStart_toStartOf="@+id/mainName"
-        app:layout_constraintTop_toBottomOf="@+id/mainName" />
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/mainFragmentContainer"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@+id/mainNavigationView"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout="@layout/fragment_map" />
 
-    <Button
-        android:id="@+id/fragmentTest"
-        android:layout_width="212dp"
-        android:layout_height="64dp"
-        android:layout_marginStart="104dp"
-        android:layout_marginTop="30dp"
-        android:text="Fragment Test"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mainButton" />
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/mainNavigationView"
+                style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/mainFragmentContainer"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:menu="@menu/main_navigation_bottom"
+                app:labelVisibilityMode="unlabeled"/>
 
-    <Button
-        android:id="@+id/mainQuery"
-        android:layout_width="99dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="52dp"
-        android:text="@string/query"
-        app:layout_constraintEnd_toEndOf="@+id/mainButton"
-        app:layout_constraintHorizontal_bias="0.6"
-        app:layout_constraintStart_toStartOf="@+id/mainButton"
-        app:layout_constraintTop_toBottomOf="@+id/fragmentTest" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/mainDrawerNavigationView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        app:headerLayout="@layout/header_main_navigation_drawer"
+        app:menu="@menu/menu_main_navigation_drawer"/>
+
+</androidx.drawerlayout.widget.DrawerLayout>

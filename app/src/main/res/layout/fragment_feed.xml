@@ -4,17 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.GreetingActivity">
+    tools:context=".fragments.FeedFragment" >
+
 
     <TextView
-        android:id="@+id/grettingText"
-        android:layout_width="215dp"
-        android:layout_height="77dp"
-        android:text="@string/greetingValue"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.54"
+        android:id="@+id/feedFragmentTextView"
+        android:layout_width="149dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="136dp"
+        android:layout_marginTop="268dp"
+        android:text="@string/feed_fragment_text"
+        android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

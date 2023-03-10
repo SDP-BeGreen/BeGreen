@@ -1,4 +1,4 @@
-package com.github.sdp_begreen.begreen
+package com.github.sdp_begreen.begreen.activities
 
 import android.content.Intent
 import androidx.test.core.app.ActivityScenario
@@ -9,6 +9,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import com.github.sdp_begreen.begreen.R
 import org.junit.Test
 import org.junit.runner.RunWith
 

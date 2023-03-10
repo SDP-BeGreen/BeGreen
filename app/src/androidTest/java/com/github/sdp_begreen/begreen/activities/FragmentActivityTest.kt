@@ -1,8 +1,7 @@
-package com.github.sdp_begreen.begreen
+package com.github.sdp_begreen.begreen.activities
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.DrawerActions
 import androidx.test.espresso.contrib.DrawerMatchers.isClosed
@@ -11,6 +10,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import com.github.sdp_begreen.begreen.R
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -41,7 +41,7 @@ class FragmentActivityTest {
         onView(withId(R.id.drawerLayout)).check(matches(isOpen()))
     }
 
-    @Test
+    /*@Test
     fun clickOnFavoriteMenuDisplayFavoriteFragment() {
         onView(withId(R.id.drawerLayout)).perform(DrawerActions.open())
 
@@ -75,6 +75,6 @@ class FragmentActivityTest {
             .perform(click())
 
         onView(withId(R.id.mailFragment)).check(matches(isDisplayed()))
-    }
+    }*/
 
 }

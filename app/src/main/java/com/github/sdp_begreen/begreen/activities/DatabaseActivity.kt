@@ -1,10 +1,11 @@
-package com.github.sdp_begreen.begreen
+package com.github.sdp_begreen.begreen.activities
 
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.github.sdp_begreen.begreen.Database.Companion.db
+import com.github.sdp_begreen.begreen.R
 
 class DatabaseActivity : AppCompatActivity() {
 

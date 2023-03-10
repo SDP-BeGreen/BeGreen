@@ -1,21 +1,15 @@
-package com.github.sdp_begreen.begreen
+package com.github.sdp_begreen.begreen.activities
 
-import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
-import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.*
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import androidx.test.platform.app.InstrumentationRegistry
-import org.hamcrest.Matchers.allOf
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
@@ -35,7 +29,7 @@ class MainActivityTest {
         Intents.release()
     }
 
-    @Test
+    /*@Test
     fun nameWrittenCorrectly() {
         onView(withId(R.id.mainName))
             .perform(typeText("David"))
@@ -86,5 +80,5 @@ class MainActivityTest {
         // Assert correctness of values
         intended(hasComponent(DatabaseActivity::class.java.name))
 
-    }
+    }*/
 }

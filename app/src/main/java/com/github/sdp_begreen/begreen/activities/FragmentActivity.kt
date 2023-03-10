@@ -1,13 +1,14 @@
-package com.github.sdp_begreen.begreen
+package com.github.sdp_begreen.begreen.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
-import com.github.sdp_begreen.begreen.fragments.FavoriteFragment
-import com.github.sdp_begreen.begreen.fragments.HomeFragment
-import com.github.sdp_begreen.begreen.fragments.MailFragment
+import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.fragments.FeedFragment
+import com.github.sdp_begreen.begreen.fragments.MapFragment
+import com.github.sdp_begreen.begreen.fragments.CameraFragment
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
 
@@ -19,7 +20,7 @@ class FragmentActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
                 setReorderingAllowed(true)
-                add(R.id.fragmentContainerView, HomeFragment.newInstance("Param 1", "Param 2"))
+                add(R.id.fragmentContainerView, MapFragment.newInstance("Param 1", "Param 2"))
                 //add<HomeFragment>(R.id.fragmentContainerView)
                 //add( R.id.fragmentContainerView, HomeFragment.newInstance("123", "345"))
             }
@@ -33,31 +34,31 @@ class FragmentActivity : AppCompatActivity() {
             drawerLayout.open()
         }
 
-        navigationView.setNavigationItemSelectedListener { menuItem ->
+        /*navigationView.setNavigationItemSelectedListener { menuItem ->
             menuItem.isChecked = true
             drawerLayout.close()
             when (menuItem.itemId) {
                 R.id.item_home -> {
                     supportFragmentManager.commit {
                         setReorderingAllowed(true)
-                        replace<HomeFragment>(R.id.fragmentContainerView)
+                        replace<MapFragment>(R.id.fragmentContainerView)
                     }
                 }
                 R.id.item_mail -> {
                     supportFragmentManager.commit {
                         setReorderingAllowed(true)
-                        replace<MailFragment>(R.id.fragmentContainerView)
+                        replace<CameraFragment>(R.id.fragmentContainerView)
                     }
                 }
                 R.id.item_favorite -> {
                     supportFragmentManager.commit {
                         setReorderingAllowed(true)
-                        replace<FavoriteFragment>(R.id.fragmentContainerView)
+                        replace<FeedFragment>(R.id.fragmentContainerView)
                     }
                 }
             }
             true
-        }
+        }*/
 
 
     }

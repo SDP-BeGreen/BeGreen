@@ -4,16 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.FavoriteFragment" >
+    tools:context=".fragments.ProfileFragment" >
 
 
     <TextView
-        android:id="@+id/favoriteFragment"
+        android:id="@+id/profileFragmentTextView"
         android:layout_width="149dp"
-        android:layout_height="84dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="136dp"
         android:layout_marginTop="268dp"
-        android:text="@string/favorite_fragment_text"
+        android:text="@string/profile_fragment_text"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
