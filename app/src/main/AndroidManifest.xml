@@ -16,20 +16,6 @@
             android:name=".activities.DatabaseActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.FragmentActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".activities.GreetingActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".activities.MainActivity"
             android:exported="true">
             <intent-filter>

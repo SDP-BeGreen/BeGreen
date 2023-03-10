@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group
-        android:id="@+id/main_nav_draw_grp1"
+        android:id="@+id/mainNavDrawGrp1"
         android:checkableBehavior="single">
         <item
-            android:id="@+id/main_nav_draw_profile"
+            android:id="@+id/mainNavDrawProfile"
             android:title="@string/profile"/>
         <item
-            android:id="@+id/main_nav_draw_followers"
+            android:id="@+id/mainNavDrawFollowers"
             android:title="@string/followers"/>
     </group>
     <group
-        android:id="@+id/main_nav_draw_grp2"
+        android:id="@+id/mainNavDrawGrp2"
         android:checkableBehavior="single">
         <item
-            android:id="@+id/main_nav_draw_settings"
+            android:id="@+id/mainNavDrawSettings"
             android:icon="@drawable/ic_baseline_settings"
             android:title="@string/settings"/>
 

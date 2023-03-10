@@ -1,15 +1,14 @@
 <resources>
     <string name="app_name">BeGreen</string>
-    <string name="greetingValue">Greetings %1$s</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="top_app_bar">BeGreen</string>
     <string name="feed_fragment_text">Place where we can display a feed for this user%1$s%2$s</string>
     <string name="map_fragment_text">Fragment where we can display the map%1$s%2$s</string>
     <string name="camera_fragment_text">Fragment where we can display the camera%1$s%2$s</string>
     <string name="advice_fragment_text">Fragment where we can display ecological advice to the user%1$s%2$s</string>
-    <string name="profile_fragment_text">Fragment where we can display the user profile</string>
-    <string name="settings_fragment_text">Fragment where we can display settings for the user</string>
-    <string name="followers_fragment_text">Fragment where we can display the user\'s followers</string>
+    <string name="profile_fragment_text">Fragment where we can display the user profile%1$s%2$s</string>
+    <string name="settings_fragment_text">Fragment where we can display settings for the user%1$s%2$s</string>
+    <string name="followers_fragment_text">Fragment where we can display the user\'s followers%1$s%2$s</string>
     <string name="get">Get</string>
     <string name="set">Set</string>
     <string name="query">Query</string>

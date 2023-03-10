@@ -1,10 +1,11 @@
 package com.github.sdp_begreen.begreen.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.fragment.app.Fragment
 import com.github.sdp_begreen.begreen.R
 
 // TODO: Rename parameter arguments, choose names that match
@@ -35,7 +36,16 @@ class FollowersFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_followers, container, false)
+        val view: View? = inflater.inflate(R.layout.fragment_followers, container, false)
+        val tView: TextView? = view?.findViewById(R.id.followersFragmentTextView)
+
+        tView?.text = getString(
+            R.string.followers_fragment_text,
+            param1?.let { " $it" }.orEmpty(),
+            param2?.let { ", $it" }.orEmpty()
+        )
+
+        return view
     }
 
     companion object {

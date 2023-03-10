@@ -13,7 +13,7 @@
         android:title="@string/menuProfile">
     </item>
     <item
-        android:id="@+id/bottomMenuPhoto"
+        android:id="@+id/bottomMenuCamera"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_photo_camera"
         android:title="@string/menuProfile">
