@@ -46,7 +46,7 @@ class UserFragmentTest {
         fragment = UserFragment.newInstance(2, listOf(User(0,"John", 10), User(1,"Jane", 8)), true)
     }
     @Test
-    fun onCreateView_withValidView_returnsView() {
+    fun onCreateViewWithValidViewWeturnsView() {
         // Set up the inflater and container to create a valid view.
         val inflater = LayoutInflater.from(ApplicationProvider.getApplicationContext())
         val container = FrameLayout(ApplicationProvider.getApplicationContext())
@@ -56,7 +56,7 @@ class UserFragmentTest {
     }
 
     @Test
-    fun onCreateView_withUnsortedList_showsUnsortedList() {
+    fun onCreateViewWithUnsortedListShowsUnsortedList() {
         // Set up the inflater and container to create a valid view.
         val inflater = LayoutInflater.from(ApplicationProvider.getApplicationContext())
         val container = FrameLayout(ApplicationProvider.getApplicationContext())
@@ -66,7 +66,7 @@ class UserFragmentTest {
         assertEquals(listOf(User(0,"John", 10), User(1,"Jane", 8)), adapter.users)
     }
     @Test
-    fun onCreateView_withSortedList_showsSortedList() {
+    fun onCreateViewWithSortedListShowsSortedList() {
         // Set up the inflater and container to create a valid view.
         val inflater = LayoutInflater.from(ApplicationProvider.getApplicationContext())
         val container = FrameLayout(ApplicationProvider.getApplicationContext())
@@ -76,7 +76,7 @@ class UserFragmentTest {
         assertEquals(listOf(User(0,"John", 10), User(1,"Jane", 8)), adapter.users)
     }
     @Test
-    fun testRecyclerViewAdapter() {
+    fun testRecyclerViewAdapterOnOneColumn() {
         // Set up fragment arguments
         val args = Bundle().apply {
             putInt(UserFragment.ARG_COLUMN_COUNT, 1)
