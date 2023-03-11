@@ -1,4 +1,4 @@
-package com.example.mapwithmarker
+package com.github.sdp_begreen.begreen
 
 import android.content.Intent
 import android.graphics.Bitmap
@@ -11,10 +11,11 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.graphics.drawable.toBitmap
+import com.github.sdp_begreen.begreen.R
 
 class ShareImage : AppCompatActivity() {
 
-    private lateinit var imageView : ImageView;
+    lateinit var imageView : ImageView;
     private lateinit var title : EditText;
     private lateinit var shareBtn : Button;
 
@@ -36,7 +37,7 @@ class ShareImage : AppCompatActivity() {
         }
     }
 
-    private fun getPost() : Post {
+    fun getPost() : Post {
 
         val title : String = title.text.toString()
         val image : Bitmap = imageView.drawable.toBitmap()

@@ -1,4 +1,4 @@
-package com.example.mapwithmarker
+package com.github.sdp_begreen.begreen
 
 import android.graphics.Bitmap
 

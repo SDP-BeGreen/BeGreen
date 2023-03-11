@@ -1,4 +1,4 @@
-package com.example.mapwithmarker
+package com.github.sdp_begreen.begreen
 
 import android.Manifest
 import android.Manifest.permission.CAMERA
@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.ImageView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.github.sdp_begreen.begreen.R
 
 class AddNewImage : AppCompatActivity() {
 
