@@ -15,7 +15,7 @@ import com.github.sdp_begreen.begreen.User
 /**
  * A fragment representing a list of Items.
  */
-class UserFragment () : Fragment() {
+class UserFragment : Fragment() {
 
     // The number of columns to display in the RecyclerView grid.
     private var columnCount = 1
@@ -44,18 +44,18 @@ class UserFragment () : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                var UserList: List<User>?
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    UserList = arguments?.getParcelableArrayList(ARG_USER_LIST, User::class.java)
+                var userList: List<User>?
+                userList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    arguments?.getParcelableArrayList(ARG_USER_LIST, User::class.java)
                 }else {
-                    UserList = arguments?.getParcelableArrayList(ARG_USER_LIST)
+                    arguments?.getParcelableArrayList(ARG_USER_LIST)
                 }
                 if(arguments?.getBoolean(ARG_IS_LIST_SORTED_BY_SCORE) == true){
-                    UserList = UserList?.sortedByDescending { it.score }
+                    userList = userList?.sortedByDescending { it.score }
                 }
                 // Set the adapter of the RecyclerView to a new instance of UserViewAdapter,
                 // passing the list of users from the Fragment arguments as a parameter.
-                    adapter = UserViewAdapter(UserList)
+                    adapter = UserViewAdapter(userList)
 
             }
         }

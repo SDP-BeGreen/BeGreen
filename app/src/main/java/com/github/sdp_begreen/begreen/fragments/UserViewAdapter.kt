@@ -13,7 +13,7 @@ import com.github.sdp_begreen.begreen.databinding.FragmentUserBinding
  * TODO: Replace the implementation with code for your data type.
  */
 class UserViewAdapter(
-    private val users: List<User>?
+     val users: List<User>?
 ) : RecyclerView.Adapter<UserViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
