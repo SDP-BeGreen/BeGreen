@@ -13,26 +13,38 @@ import java.io.ByteArrayOutputStream
 import java.util.concurrent.CompletableFuture
 
 /**
- * Database implementation using Firebase
+ * Database implementation using Firebase's realtime database
  */
-class FirebaseDB : Database() {
+class FirebaseDB() {
 
-    private val TAG = "FirebaseImageUpload"
+    /**
+     * Singleton value to access the database
+     */
+    companion object {
+        var db: FirebaseDB = FirebaseDB()
+    }
 
-    private val firebaseDB: DatabaseReference = Firebase.database.reference
+    /**
+     * Overwritten during tests! (to perform tests locally)
+     */
+    var databaseReference: DatabaseReference = Firebase.database.reference
 
     /**
      * Return the value associated with the given [key]
+     * If an error occurs (by ex: because the key does not exist,
+     * or because the value associated with the key is not a value), returns CompletableFuture<null>
      */
-    override fun get(key: String): CompletableFuture<String> {
+    operator fun get(key: String): CompletableFuture<String> {
 
         val future = CompletableFuture<String>()
 
-        firebaseDB.child(key).get().addOnSuccessListener {
-            if (it.value == null) future.completeExceptionally(NoSuchFieldException())
+        databaseReference.child(key).get().addOnSuccessListener {
+            // Check if the value has the expected format
+            if (it.value == null || it.value !is String) future.complete(null)
             else future.complete(it.value as String)
+
         }.addOnFailureListener {
-            future.completeExceptionally(it)
+            future.complete(null)
         }
 
         return future
@@ -41,8 +53,8 @@ class FirebaseDB : Database() {
     /**
      * Create a new tuple ([key], [value]) if [key] was not present and update the value otherwise
      */
-    override fun set(key: String, value: String) {
-        firebaseDB.child(key).setValue(value)
+    operator fun set(key: String, value: String) {
+        databaseReference.child(key).setValue(value)
     }
 
     /**
@@ -50,43 +62,39 @@ class FirebaseDB : Database() {
      * and returns the imageId set for that image in the database
      * Returns null if the image can't be stored
      */
-    override fun addImage(image: Bitmap, userId: Int): String? {
+    fun addImage(image: Bitmap, userId: Int): String? {
 
-        val picturesNode = firebaseDB.child("pictures").child("userId")
+        val picturesNode = databaseReference.child("pictures").child("userId")
             .child(userId.toString())
 
+        // Compress the Bitmap
         val stream = ByteArrayOutputStream()
         image.compress(Bitmap.CompressFormat.PNG, 100, stream)
         // Convert the stream to a list of Integers
-        val intList = stream.toByteArray().map{ it.toInt()}
+        val intList = stream.toByteArray().map { it.toInt() }
 
         // Create a unique ID for the image
+
         val uniqueID = picturesNode.push().key
 
         // Upload the image to the database
         if (uniqueID != null) {
             val imageMap = HashMap<String, Any>()
             imageMap["imageBytes"] = intList
-            // Logs messages in case of success or failure
             picturesNode.child(uniqueID).setValue(imageMap)
-                .addOnSuccessListener {
-                    Log.d(TAG, "Image uploaded successfully")
-                }
-                .addOnFailureListener {
-                    Log.e(TAG, "Error uploading image", it)
-                }
         }
         return uniqueID
     }
 
     /**
      * Retrieves the image associated with the given [userId] and [imageId]
-     * from the database
+     * from the database. Completes exceptionally in case of an error of the DB
+     * Returns CompletableFuture<IllegalArgumentException> if no image is found
      */
-    override fun getImage(imageId: String, userId: Int): CompletableFuture<Bitmap> {
+    fun getImage(imageId: String, userId: Int): CompletableFuture<Bitmap> {
 
         // Points to the node where the image SHOULD be
-        val imageNode = firebaseDB.child("pictures").child("userId")
+        val imageNode = databaseReference.child("pictures").child("userId")
             .child(userId.toString()).child(imageId)
 
         val future = CompletableFuture<Bitmap>()
@@ -95,13 +103,16 @@ class FirebaseDB : Database() {
         imageNode.addListenerForSingleValueEvent(object : ValueEventListener {
             // Retrieves the image from the database, and map it back to a Bitmap
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val imageMap = dataSnapshot.value as HashMap<*, *>
-                val intList = imageMap["imageBytes"] as List<*>
-
-                val byteArray = intList.map { (it as Long).toByte() }.toByteArray()
-                val bitmapImage = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-
-                future.complete(bitmapImage)
+                val imageMap = dataSnapshot.value
+                // Checks that the node indeed contains an image, and convert it back to a Bitmap
+                if (imageMap != null && imageMap is HashMap<*,*> && imageMap["imageBytes"] != null) {
+                    val intList = imageMap["imageBytes"] as List<*>
+                    val byteArray = intList.map { (it as Long).toByte() }.toByteArray()
+                    val bitmapImage = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+                    future.complete(bitmapImage)
+                } else {
+                    future.completeExceptionally(java.lang.IllegalArgumentException())
+                }
             }
 
             override fun onCancelled(databaseError: DatabaseError) {

@@ -62,7 +62,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/store"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/databasePicture" />
 
     <Button
         android:id="@+id/databaseLoadPicture"
@@ -75,7 +75,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/databasePicture"
         android:layout_width="78dp"
         android:layout_height="70dp"
         android:layout_marginStart="16dp"

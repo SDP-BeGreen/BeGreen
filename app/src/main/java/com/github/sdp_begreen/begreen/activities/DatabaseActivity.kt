@@ -6,9 +6,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import com.github.sdp_begreen.begreen.Database.Companion.db
+import com.github.sdp_begreen.begreen.FirebaseDB.Companion.db
 import com.github.sdp_begreen.begreen.R
 
+/**
+ * This file will be deleted when Firebase realtime database gets merged in the project
+ */
 class DatabaseActivity : AppCompatActivity() {
 
     private var imageId: String? = null
@@ -29,7 +32,7 @@ class DatabaseActivity : AppCompatActivity() {
         val getBtn: Button = findViewById(R.id.databaseGet)
         getBtn.setOnClickListener {
             db[phoneText.text.toString()].thenAccept {
-                emailText.setText(it)
+                if (it != null) emailText.setText(it)
             }
         }
 
@@ -46,11 +49,10 @@ class DatabaseActivity : AppCompatActivity() {
 
         val getPictureBtn: Button = findViewById(R.id.databaseLoadPicture)
         getPictureBtn.setOnClickListener {
-
             if (imageId != null) {
 
                 db.getImage(imageId!!, 3).thenAccept {
-                    val image: ImageView = findViewById(R.id.imageView)
+                    val image: ImageView = findViewById(R.id.databasePicture)
                     image.setImageBitmap(it)
                 }
             }
