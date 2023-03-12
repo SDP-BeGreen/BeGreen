@@ -4,16 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.HomeFragment" >
+    tools:context=".fragments.CameraFragment"
+    android:id="@+id/cameraFragment">
 
 
     <TextView
-        android:id="@+id/homeTextView"
+        android:id="@+id/cameraFragmentTextView"
         android:layout_width="149dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="136dp"
         android:layout_marginTop="268dp"
-        android:text="@string/home_fragment_text"
+        android:text="@string/camera_fragment_text"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

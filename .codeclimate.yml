@@ -2,3 +2,13 @@ exclude_patterns:
   - "**/test/"
   - "**/androidTest/"
   - "**test"
+
+checks:
+  similar-code:
+    enabled: true
+    config:
+      threshold: 100
+    identical-code:
+      enabled: true
+      config:
+        threshold: 70
