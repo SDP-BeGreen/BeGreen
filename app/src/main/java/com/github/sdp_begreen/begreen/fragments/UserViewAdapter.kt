@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
@@ -20,7 +21,7 @@ import com.github.sdp_begreen.begreen.databinding.FragmentUserBinding
 class UserViewAdapter(
      val users: List<User>?, val parentFragmentManager: androidx.fragment.app.FragmentManager?
 ) : RecyclerView.Adapter<UserViewAdapter.ViewHolder>() {
-
+    var rootList: List<LinearLayout>? = listOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
             FragmentUserBinding.inflate(
@@ -28,15 +29,7 @@ class UserViewAdapter(
                 parent,
                 false
             ).apply {
-                root.setOnClickListener {
-                    parentFragmentManager?.commit {
-                        setReorderingAllowed(true)
-                        replace<ProfileDetailsFragment>(R.id.fragmentContainerView,"", Bundle().apply {
-                            putParcelable(ARG_USER, users?.get(userNb+1))
-                        })
-                        addToBackStack(null)
-                    }
-                }
+                rootList = rootList?.plus(root)
             }
         )
 
@@ -46,6 +39,15 @@ class UserViewAdapter(
         val user : User = users?.get(position) ?: return
         holder.idView.text = user.score.toString()
         holder.contentView.text = user.name
+        rootList?.get(position)?.setOnClickListener {
+            parentFragmentManager?.commit {
+                setReorderingAllowed(true)
+                replace<ProfileDetailsFragment>(R.id.fragmentContainerView,"", Bundle().apply {
+                    putParcelable(ARG_USER, user)
+                })
+                addToBackStack(null)
+            }
+        }
 
     }
 
@@ -54,9 +56,5 @@ class UserViewAdapter(
     inner class ViewHolder(binding: FragmentUserBinding) : RecyclerView.ViewHolder(binding.root) {
         val idView: TextView = binding.itemNumber
         val contentView: TextView = binding.content
-    }
-
-    companion object {
-        private var userNb = 0
     }
 }
