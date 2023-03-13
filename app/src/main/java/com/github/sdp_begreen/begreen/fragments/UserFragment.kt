@@ -56,7 +56,6 @@ class UserFragment : Fragment() {
                 // Set the adapter of the RecyclerView to a new instance of UserViewAdapter,
                 // passing the list of users from the Fragment arguments as a parameter.
                     adapter = UserViewAdapter(userList)
-
             }
         }
         return view

@@ -1,15 +1,21 @@
 package com.github.sdp_begreen.begreen.fragments
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.RatingBar
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.User
-import com.google.android.material.appbar.MaterialToolbar
+import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -33,6 +39,29 @@ class ProfileDetailsFragment : Fragment() {
             }
         }
         val name: TextView = view?.findViewById(R.id.profile_name) as TextView
+        val rating: RatingBar = view?.findViewById(R.id.profile_rating) as RatingBar
+        val profileImgView: ImageView = view?.findViewById(R.id.profile_image) as ImageView
+        val profileDescription: TextView = view?.findViewById(R.id.profile_description) as TextView
+        val profilePhone: TextView = view?.findViewById(R.id.profile_phone) as TextView
+        val profileEmail: TextView = view?.findViewById(R.id.profile_email) as TextView
+        val userTextLevel: TextView = view?.findViewById(R.id.level) as TextView
+        val userProgressBar: ProgressBar = view?.findViewById(R.id.user_progress) as ProgressBar
+        val followButton: Button = view?.findViewById(R.id.follow_button) as Button
+        name.text = user?.name
+        rating.rating = user?.score?.toFloat() ?: 0.0f
+        profileImgView.setImageBitmap(user?.img?.getPhotoFromDataBase())
+        profileDescription.text = user?.description
+        profilePhone.text = user?.phone
+        profileEmail.text = user?.email
+        userTextLevel.text = user?.name + " level's"
+        userProgressBar.progress = user?.progression ?: 0
+
+        followButton.setOnClickListener {
+            lifecycleScope.launch {
+                //TODO : add currentUser
+                user?.addFollower(User.currentUser)
+            }
+        }
     }
 
     override fun onCreateView(
