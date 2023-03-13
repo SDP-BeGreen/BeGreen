@@ -1,6 +1,5 @@
 package com.github.sdp_begreen.begreen.fragments
 
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment

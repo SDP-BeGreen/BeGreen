@@ -76,9 +76,7 @@ data class User (val id: Int, val name: String, val score: Int) : Parcelable, Co
 
     companion object CREATOR : Parcelable.Creator<User> {
         var currentUser: User = User(0, "Default", 0)
-        fun setCurrentUser(user: User) {
-            currentUser = user
-        }
+
         override fun createFromParcel(parcel: Parcel): User {
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 User(parcel)
