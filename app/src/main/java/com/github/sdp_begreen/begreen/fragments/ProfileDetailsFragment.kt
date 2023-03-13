@@ -66,10 +66,19 @@ class ProfileDetailsFragment : Fragment() {
         userProgressBar.progress = user?.progression ?: 0
 
         followButton.setOnClickListener {
-            lifecycleScope.launch {
-                //TODO : add currentUser
-                user?.addFollower(User.currentUser)
+            if(followButton.text == "Follow") {
+                followButton.text = "Unfollow"
+                lifecycleScope.launch {
+                    //TODO : add currentUser
+                    user?.addFollower(User.currentUser)
+                }
+            }else{
+                followButton.text = "Follow"
+                lifecycleScope.launch {
+                    //user?.removeFollower(User.currentUser)
+                }
             }
+
         }
         return view
     }

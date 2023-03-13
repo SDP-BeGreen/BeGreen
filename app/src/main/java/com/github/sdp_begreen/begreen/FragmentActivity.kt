@@ -11,16 +11,17 @@ import com.github.sdp_begreen.begreen.fragments.MailFragment
 import com.github.sdp_begreen.begreen.fragments.UserFragment
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
+import java.util.*
 
 class FragmentActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fragment)
-
+        val photo: Photo = Photo("1", ParcelableDate(Date()), User(1, "Alice", 33, ), "Gros vilain pas beau")
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
                 setReorderingAllowed(false)
-                add(R.id.fragmentContainerView, UserFragment.newInstance(1, listOf(User(1, "Alice", 33), User(2, "BoB",45),User(3, "Charlie", 33),User(4, "Dimitri", 0), User(5, "Elen", -4), User(6, "Fabrice", 876)), true))
+                add(R.id.fragmentContainerView, UserFragment.newInstance(1, listOf(User(1, "Alice", 33, 1, photo, "Description poutou poutou", "cc@gmail.com", "08920939459802", 67, null, null), User(2, "BoB",45),User(3, "Charlie", 33),User(4, "Dimitri", 0), User(5, "Elen", -4), User(6, "Fabrice", 876)), true))
                 //add<HomeFragment>(R.id.fragmentContainerView)
                 //add( R.id.fragmentContainerView, HomeFragment.newInstance("123", "345"))
             }
