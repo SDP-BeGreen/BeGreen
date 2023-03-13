@@ -1,6 +1,7 @@
 package com.github.sdp_begreen.begreen
 
 import android.widget.LinearLayout
+import androidx.fragment.app.FragmentManager
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.sdp_begreen.begreen.fragments.UserViewAdapter
 import org.hamcrest.CoreMatchers.equalTo
@@ -8,8 +9,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 
 class UserViewAdapterTest {
-
-    private var userViewAdapter = UserViewAdapter(listOf(User(1, "Test", 0), User(2, "Test2", 1)))
+    private var userViewAdapter = UserViewAdapter(listOf(User(1, "Test", 0), User(2, "Test2", 1)), null)
     private val appContext = InstrumentationRegistry.getInstrumentation().targetContext
     @Test
     fun userViewAdapterGetItemCountWorksOnTrivialList() {
@@ -18,13 +18,13 @@ class UserViewAdapterTest {
 
     @Test
     fun userViewAdapterGetItemCountWorksOnEmptyList() {
-        userViewAdapter = UserViewAdapter(listOf())
+        userViewAdapter = UserViewAdapter(listOf(), userViewAdapter.parentFragmentManager)
         assertThat(userViewAdapter.getItemCount(), equalTo(0))
     }
 
     @Test
     fun userViewAdapterGetItemCountWorksOnNullList() {
-        userViewAdapter = UserViewAdapter(null)
+        userViewAdapter = UserViewAdapter(null, userViewAdapter.parentFragmentManager)
         assertThat(userViewAdapter.getItemCount(), equalTo(0))
     }
 

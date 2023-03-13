@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_USER = "USER"
+const val ARG_USER = "USER"
 
 /**
  * A simple [Fragment] subclass.
@@ -26,7 +26,7 @@ private const val ARG_USER = "USER"
  * create an instance of this fragment.
  */
 class ProfileDetailsFragment : Fragment() {
-    private var user: User? = null
+    var user: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +37,16 @@ class ProfileDetailsFragment : Fragment() {
                 it.getParcelable(ARG_USER)
             }
         }
+
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+
+        val viewN = inflater.inflate(R.layout.fragment_profile_details, container, false)
         val name: TextView = view?.findViewById(R.id.profile_name) as TextView
         val rating: RatingBar = view?.findViewById(R.id.profile_rating) as RatingBar
         val profileImgView: ImageView = view?.findViewById(R.id.profile_image) as ImageView
@@ -61,14 +71,7 @@ class ProfileDetailsFragment : Fragment() {
                 user?.addFollower(User.currentUser)
             }
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile_details, container, false)
+        return viewN
     }
 
     companion object {

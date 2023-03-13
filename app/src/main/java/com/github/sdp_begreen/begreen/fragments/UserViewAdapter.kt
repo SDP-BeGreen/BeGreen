@@ -1,5 +1,6 @@
 package com.github.sdp_begreen.begreen.fragments
 
+import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -16,7 +17,7 @@ import com.github.sdp_begreen.begreen.databinding.FragmentUserBinding
  * TODO: Replace the implementation with code for your data type.
  */
 class UserViewAdapter(
-     val users: List<User>?
+     val users: List<User>?, val parentFragmentManager: androidx.fragment.app.FragmentManager?
 ) : RecyclerView.Adapter<UserViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -25,7 +26,21 @@ class UserViewAdapter(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            )
+            ).apply {
+                root.setOnClickListener {
+                    parentFragmentManager?.commit {
+                        val fragmet = ProfileDetailsFragment().apply {
+                            arguments = Bundle().apply {
+                                putParcelable(ARG_USER, users?.get(0))
+                            }
+                        }
+                        add(R.id.fragment_profile_details, fragmet)
+                        //setReorderingAllowed(true)
+                        //replace<UserFragment>(R.id.fragment_profile_details)
+                        //addToBackStack(null)
+                    }
+                }
+            }
         )
 
     }

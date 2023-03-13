@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.User
 
@@ -35,7 +36,6 @@ class UserFragment : Fragment() {
     ): View? {
         // Inflate the Fragment layout.
         val view = inflater.inflate(R.layout.fragment_user_list, container, false)
-
         // Set the adapter of the RecyclerView to a new instance of UserViewAdapter.
         if (view is RecyclerView) {
             with(view) {
@@ -55,7 +55,7 @@ class UserFragment : Fragment() {
                 }
                 // Set the adapter of the RecyclerView to a new instance of UserViewAdapter,
                 // passing the list of users from the Fragment arguments as a parameter.
-                    adapter = UserViewAdapter(userList)
+                    adapter = UserViewAdapter(userList, parentFragmentManager)
             }
         }
         return view
