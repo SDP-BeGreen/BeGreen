@@ -36,19 +36,19 @@ data class User (val id: Int, val name: String, val score: Int) : Parcelable, Co
     //    parcel.readInt()
     //)
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+
     constructor(parcel: Parcel) :this(
         parcel.readInt(),
         parcel.readString().toString(),
         parcel.readInt(),
         parcel.readInt(),
-        parcel.readParcelable(Photo::class.java.classLoader, Photo::class.java),
+        parcel.readParcelable(Photo::class.java.classLoader),
         parcel.readString().toString(),
         parcel.readString().toString(),
         parcel.readString().toString(),
         parcel.readInt(),
-        parcel.readArrayList(User::class.java.classLoader, User::class.java) as List<User>,
-        parcel.readArrayList(User::class.java.classLoader, User::class.java) as List<User>
+        parcel.readArrayList(User::class.java.classLoader) as List<User>,
+        parcel.readArrayList(User::class.java.classLoader) as List<User>
     )
 
     suspend fun addFollower(follower: User) {
@@ -82,11 +82,7 @@ data class User (val id: Int, val name: String, val score: Int) : Parcelable, Co
         var currentUser: User = User(0, "Default", 0)
 
         override fun createFromParcel(parcel: Parcel): User {
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                User(parcel)
-            } else {
-                TODO("VERSION.SDK_INT < TIRAMISU")
-            }
+            return User(parcel)
         }
 
         override fun newArray(size: Int): Array<User?> {

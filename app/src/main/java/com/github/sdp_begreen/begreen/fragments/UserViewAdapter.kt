@@ -4,6 +4,9 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
+import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.User
 import com.github.sdp_begreen.begreen.databinding.FragmentUserBinding
 
@@ -17,7 +20,6 @@ class UserViewAdapter(
 ) : RecyclerView.Adapter<UserViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-
         return ViewHolder(
             FragmentUserBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -32,6 +34,7 @@ class UserViewAdapter(
         val user : User = users?.get(position) ?: return
         holder.idView.text = user.score.toString()
         holder.contentView.text = user.name
+
     }
 
     override fun getItemCount(): Int = users?.size ?: 0
