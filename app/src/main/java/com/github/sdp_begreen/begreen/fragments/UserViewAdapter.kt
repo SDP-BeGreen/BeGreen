@@ -1,5 +1,6 @@
 package com.github.sdp_begreen.begreen.fragments
 
+import android.nfc.tech.NfcB
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
@@ -29,15 +30,11 @@ class UserViewAdapter(
             ).apply {
                 root.setOnClickListener {
                     parentFragmentManager?.commit {
-                        val fragmet = ProfileDetailsFragment().apply {
-                            arguments = Bundle().apply {
-                                putParcelable(ARG_USER, users?.get(0))
-                            }
-                        }
-                        add(R.id.fragment_profile_details, fragmet)
-                        //setReorderingAllowed(true)
-                        //replace<UserFragment>(R.id.fragment_profile_details)
-                        //addToBackStack(null)
+                        setReorderingAllowed(true)
+                        replace<ProfileDetailsFragment>(R.id.fragmentContainerView,"", Bundle().apply {
+                            putParcelable(ARG_USER, users?.get(userNb+1))
+                        })
+                        addToBackStack(null)
                     }
                 }
             }
@@ -57,5 +54,9 @@ class UserViewAdapter(
     inner class ViewHolder(binding: FragmentUserBinding) : RecyclerView.ViewHolder(binding.root) {
         val idView: TextView = binding.itemNumber
         val contentView: TextView = binding.content
+    }
+
+    companion object {
+        private var userNb = 0
     }
 }

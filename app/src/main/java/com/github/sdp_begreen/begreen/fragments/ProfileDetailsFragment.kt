@@ -46,7 +46,7 @@ class ProfileDetailsFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
 
-        val viewN = inflater.inflate(R.layout.fragment_profile_details, container, false)
+        val view = inflater.inflate(R.layout.fragment_profile_details, container, false)
         val name: TextView = view?.findViewById(R.id.profile_name) as TextView
         val rating: RatingBar = view?.findViewById(R.id.profile_rating) as RatingBar
         val profileImgView: ImageView = view?.findViewById(R.id.profile_image) as ImageView
@@ -71,7 +71,7 @@ class ProfileDetailsFragment : Fragment() {
                 user?.addFollower(User.currentUser)
             }
         }
-        return viewN
+        return view
     }
 
     companion object {
