@@ -32,7 +32,7 @@ class UserTest {
         user.writeToParcel(parcel, 0)
         parcel.setDataPosition(0)
         val result = User(parcel)
-        Assert.assertEquals(user, result)
+        assertThat(user, equalTo(result))
     }
 
     @Test
@@ -46,7 +46,7 @@ class UserTest {
         user.writeToParcel(parcel, 0)
         parcel.setDataPosition(0)
         val result = User.CREATOR.createFromParcel(parcel)
-        Assert.assertEquals(user, result)
+        assertThat(user, equalTo(result))
     }
 
     @Test

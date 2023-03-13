@@ -16,15 +16,19 @@ data class User (val id: Int, val name: String, val score: Int) : Parcelable, Co
     var followers: List<User> = listOf()
     var following: List<User> = listOf()
 
-    constructor(id: Int, name: String, score: Int, rating: Int, img: Photo, description: String, phone: String, email: String, progression: Int, followers: List<User>, following: List<User>) : this(id, name, score) {
+    constructor(id: Int, name: String, score: Int, rating: Int, img: Photo?, description: String, phone: String, email: String, progression: Int, followers: List<User>?, following: List<User>?) : this(id, name, score) {
         this.rating = rating
         this.img = img
         this.description = description
         this.phone = phone
         this.email = email
         this.progression = progression
-        this.followers = followers
-        this.following = following
+        if (followers != null) {
+            this.followers = followers
+        }
+        if (following != null) {
+            this.following = following
+        }
     }
     //constructor(parcel: Parcel) : this(
     //    parcel.readInt(),
@@ -38,13 +42,13 @@ data class User (val id: Int, val name: String, val score: Int) : Parcelable, Co
         parcel.readString().toString(),
         parcel.readInt(),
         parcel.readInt(),
-        parcel.readParcelable(Photo::class.java.classLoader, Photo::class.java) as Photo,
+        parcel.readParcelable(Photo::class.java.classLoader, Photo::class.java),
         parcel.readString().toString(),
         parcel.readString().toString(),
         parcel.readString().toString(),
         parcel.readInt(),
-        parcel.readParcelableArray(User::class.java.classLoader, User::class.java) as List<User>,
-        parcel.readParcelableArray(User::class.java.classLoader, User::class.java) as List<User>
+        parcel.readArrayList(User::class.java.classLoader, User::class.java) as List<User>,
+        parcel.readArrayList(User::class.java.classLoader, User::class.java) as List<User>
     )
 
     suspend fun addFollower(follower: User) {
