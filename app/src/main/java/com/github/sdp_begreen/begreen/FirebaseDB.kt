@@ -9,6 +9,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
 import java.util.concurrent.CompletableFuture
 
@@ -21,7 +22,7 @@ class FirebaseDB() {
      * Singleton value to access the database
      */
     companion object {
-        var db: FirebaseDB = FirebaseDB()
+        val db: FirebaseDB = FirebaseDB()
     }
 
     /**
@@ -32,9 +33,9 @@ class FirebaseDB() {
     /**
      * Return the value associated with the given [key]
      * If an error occurs (by ex: because the key does not exist,
-     * or because the value associated with the key is not a value), returns CompletableFuture<null>
+     * or because the value associated with the key is not a value), returns null
      */
-    operator fun get(key: String): CompletableFuture<String> {
+    /*operator fun get(key: String): CompletableFuture<String> {
 
         val future = CompletableFuture<String>()
 
@@ -48,6 +49,14 @@ class FirebaseDB() {
         }
 
         return future
+    }*/
+    suspend fun get(key: String): String? {
+        return try {
+            val data = databaseReference.child(key).get().await()
+            data.value?.let { it as? String }
+        } catch (e: Error) {
+            null
+        }
     }
 
     /**
@@ -88,10 +97,9 @@ class FirebaseDB() {
 
     /**
      * Retrieves the image associated with the given [userId] and [imageId]
-     * from the database. Completes exceptionally in case of an error of the DB
-     * Returns CompletableFuture<IllegalArgumentException> if no image is found
+     * from the database. Returns null in case of an error of the DB, or if no image is found
      */
-    fun getImage(imageId: String, userId: Int): CompletableFuture<Bitmap> {
+    /*fun getImage(imageId: String, userId: Int): CompletableFuture<Bitmap> {
 
         // Points to the node where the image SHOULD be
         val imageNode = databaseReference.child("pictures").child("userId")
@@ -121,5 +129,25 @@ class FirebaseDB() {
         })
 
         return future
+    }*/
+    suspend fun getImage(imageId: String, userId: Int): Bitmap? {
+
+        return try {
+
+            // Points to the node where the image SHOULD be
+            val imageNode = databaseReference.child("pictures").child("userId")
+                .child(userId.toString()).child(imageId)
+
+            // Get the HashMap that contains the image
+            val imageMap = imageNode.get().await().value
+            // Map the HashMap back to a List of Ints  and return null if this fails
+            val intList =
+                imageMap?.let { it as? HashMap<*, *> }?.get("imageBytes") as? List<*> ?: return null
+            // Map the list of ints back to a Bitmap and returns it
+            val byteArray = intList.map { (it as Long).toByte() }.toByteArray()
+            return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+        } catch (e: Error) {
+            null
+        }
     }
 }

@@ -6,8 +6,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.FirebaseDB.Companion.db
 import com.github.sdp_begreen.begreen.R
+import kotlinx.coroutines.*
 
 /**
  * This file will be deleted when Firebase realtime database gets merged in the project
@@ -31,8 +33,11 @@ class DatabaseActivity : AppCompatActivity() {
         // Get function
         val getBtn: Button = findViewById(R.id.databaseGet)
         getBtn.setOnClickListener {
-            db[phoneText.text.toString()].thenAccept {
+            /*db[phoneText.text.toString()].thenAccept {
                 if (it != null) emailText.setText(it)
+            }*/
+            lifecycleScope.launch {
+                db.get(phoneText.text.toString())?.also { emailText.setText(it) }
             }
         }
 
@@ -49,11 +54,19 @@ class DatabaseActivity : AppCompatActivity() {
 
         val getPictureBtn: Button = findViewById(R.id.databaseLoadPicture)
         getPictureBtn.setOnClickListener {
-            if (imageId != null) {
 
-                db.getImage(imageId!!, 3).thenAccept {
+            /*imageId?.also {
+
+                db.getImage(it, 3).thenAccept {bitmap ->
                     val image: ImageView = findViewById(R.id.databasePicture)
-                    image.setImageBitmap(it)
+                    image.setImageBitmap(bitmap)
+                }
+            }*/
+            lifecycleScope.launch {
+                imageId?.also {
+                    db.getImage(it, 3).also{bitmap ->
+                        findViewById<ImageView>(R.id.databasePicture).setImageBitmap(bitmap)
+                    }
                 }
             }
         }
