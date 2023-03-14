@@ -21,7 +21,7 @@ class FragmentActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
                 setReorderingAllowed(false)
-                add(R.id.fragmentContainerView, UserFragment.newInstance(1, listOf(User(1, "Alice", 33, 1, photo, "Description poutou poutou", "cc@gmail.com", "08920939459802", 67, null, null), User(2, "BoB",45),User(3, "Charlie", 33),User(4, "Dimitri", 0), User(5, "Elen", -4), User(6, "Fabrice", 876)), true))
+                add(R.id.fragmentContainerView, UserFragment.newInstance(1, listOf(User(1, "Alice", 33, 1, photo, "Description poutou poutou", "cc@gmail.com", "08920939459802", 67, null, null), User(2, "BoB",45),User(3, "Charlie", 33),User(4, "Dimitri", 0), User(5, "Elen", -4), User(6, "Fabrice", 876),User(2, "BoB",45),User(3, "Charlie", 33),User(4, "Dimitri", 0), User(5, "Elen", -4), User(6, "Fabrice", 876),User(2, "BoB",45),User(3, "Charlie", 33),User(4, "Dimitri", 0), User(5, "Elen", -4), User(6, "Fabrice", 876)), true))
                 //add<HomeFragment>(R.id.fragmentContainerView)
                 //add( R.id.fragmentContainerView, HomeFragment.newInstance("123", "345"))
             }

@@ -48,14 +48,14 @@ class ProfileDetailsFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_profile_details, container, false)
         val name: TextView = view?.findViewById(R.id.profile_name) as TextView
-        val rating: RatingBar = view?.findViewById(R.id.profile_rating) as RatingBar
-        val profileImgView: ImageView = view?.findViewById(R.id.profile_image) as ImageView
-        val profileDescription: TextView = view?.findViewById(R.id.profile_description) as TextView
-        val profilePhone: TextView = view?.findViewById(R.id.profile_phone) as TextView
-        val profileEmail: TextView = view?.findViewById(R.id.profile_email) as TextView
-        val userTextLevel: TextView = view?.findViewById(R.id.level) as TextView
-        val userProgressBar: ProgressBar = view?.findViewById(R.id.user_progress) as ProgressBar
-        val followButton: Button = view?.findViewById(R.id.follow_button) as Button
+        val rating: RatingBar = view.findViewById(R.id.profile_rating) as RatingBar
+        val profileImgView: ImageView = view.findViewById(R.id.profile_image) as ImageView
+        val profileDescription: TextView = view.findViewById(R.id.profile_description) as TextView
+        val profilePhone: TextView = view.findViewById(R.id.profile_phone) as TextView
+        val profileEmail: TextView = view.findViewById(R.id.profile_email) as TextView
+        val userTextLevel: TextView = view.findViewById(R.id.level) as TextView
+        val userProgressBar: ProgressBar = view.findViewById(R.id.user_progress) as ProgressBar
+        val followButton: Button = view.findViewById(R.id.follow_button) as Button
         name.text = user?.name
         rating.rating = user?.score?.toFloat() ?: 0.0f
         profileImgView.setImageBitmap(user?.img?.getPhotoFromDataBase())

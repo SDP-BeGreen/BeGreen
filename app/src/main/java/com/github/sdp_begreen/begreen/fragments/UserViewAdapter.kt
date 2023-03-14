@@ -4,6 +4,7 @@ import android.nfc.tech.NfcB
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -21,16 +22,13 @@ import com.github.sdp_begreen.begreen.databinding.FragmentUserBinding
 class UserViewAdapter(
      val users: List<User>?, val parentFragmentManager: androidx.fragment.app.FragmentManager?
 ) : RecyclerView.Adapter<UserViewAdapter.ViewHolder>() {
-    var rootList: List<LinearLayout>? = listOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
             FragmentUserBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            ).apply {
-                rootList = rootList?.plus(root)
-            }
+            )
         )
 
     }
@@ -39,22 +37,24 @@ class UserViewAdapter(
         val user : User = users?.get(position) ?: return
         holder.idView.text = user.score.toString()
         holder.contentView.text = user.name
-        rootList?.get(position)?.setOnClickListener {
-            parentFragmentManager?.commit {
-                setReorderingAllowed(true)
-                replace<ProfileDetailsFragment>(R.id.fragmentContainerView,"", Bundle().apply {
-                    putParcelable(ARG_USER, user)
-                })
-                addToBackStack(null)
-            }
-        }
-
+        holder.setListener(holder.itemView, position, user)
     }
 
     override fun getItemCount(): Int = users?.size ?: 0
-
     inner class ViewHolder(binding: FragmentUserBinding) : RecyclerView.ViewHolder(binding.root) {
         val idView: TextView = binding.itemNumber
         val contentView: TextView = binding.content
+
+        fun setListener(view: View, position: Int, user: User) {
+            view.setOnClickListener {
+                parentFragmentManager?.commit {
+                    setReorderingAllowed(true)
+                    replace<ProfileDetailsFragment>(R.id.fragmentContainerView,"", Bundle().apply {
+                        putParcelable(ARG_USER, user)
+                    })
+                    addToBackStack(null)
+                }
+            }
+        }
     }
 }

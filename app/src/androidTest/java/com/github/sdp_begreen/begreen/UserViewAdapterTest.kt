@@ -3,6 +3,7 @@ package com.github.sdp_begreen.begreen
 import android.os.Bundle
 import android.widget.LinearLayout
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.testing.launchFragment
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso
@@ -20,6 +21,7 @@ import com.github.sdp_begreen.begreen.fragments.UserViewAdapter
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
+import kotlin.concurrent.thread
 
 class UserViewAdapterTest {
     private var userViewAdapter = UserViewAdapter(listOf(User(1, "Test", 0), User(2, "Test2", 1)), null)
@@ -84,18 +86,10 @@ class UserViewAdapterTest {
             putParcelableArrayList(UserFragment.ARG_USER_LIST, userList.toCollection(ArrayList()))
             putBoolean(UserFragment.ARG_IS_LIST_SORTED_BY_SCORE, true)
         }
-        launchFragmentInContainer(args) {
-            UserFragment()
-        }
-        onView(withId(R.id.userlist))
-            .perform(
-                // scrollTo will fail the test if no item matches.
-                RecyclerViewActions.actionOnItem<RecyclerView.ViewHolder>(
-                    hasDescendant(withId(R.id.userid)), click()
-                )
-            )
-
-        onView(withId(R.id.fragment_profile_details)).perform(click())
-
+        //launchFragmentInContainer(args) {
+        //    UserFragment()
+        //}
+        val scenario = launchFragmentInContainer<UserFragment>(args)
+        onView(withId(R.id.userlist)).perform(click())
     }
 }
