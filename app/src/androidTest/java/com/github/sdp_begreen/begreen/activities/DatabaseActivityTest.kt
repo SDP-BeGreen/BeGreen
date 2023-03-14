@@ -25,14 +25,7 @@ class DatabaseActivityTest {
 
     @Before
     fun init() {
-        Firebase.database.goOffline()
-        FirebaseDB.db.databaseReference = FirebaseDB.db.databaseReference.child("test")
-    }
-
-    @After
-    fun cleanUp() {
-        FirebaseDB.db.databaseReference = Firebase.database.reference
-        Firebase.database.goOnline()
+        Firebase.database.useEmulator("10.0.2.2",9000)
     }
 
     @get:Rule

@@ -1,6 +1,7 @@
 package com.github.sdp_begreen.begreen.activities
 
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -9,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.FirebaseDB.Companion.db
 import com.github.sdp_begreen.begreen.R
-import kotlinx.coroutines.*
+import kotlinx.coroutines.launch
 
 /**
  * This file will be deleted when Firebase realtime database gets merged in the project
@@ -64,7 +65,7 @@ class DatabaseActivity : AppCompatActivity() {
             }*/
             lifecycleScope.launch {
                 imageId?.also {
-                    db.getImage(it, 3).also{bitmap ->
+                    db.getImage(it, 3).also { bitmap ->
                         findViewById<ImageView>(R.id.databasePicture).setImageBitmap(bitmap)
                     }
                 }

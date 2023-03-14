@@ -28,9 +28,6 @@ android {
             testCoverageEnabled true
         }
     }
-    packagingOptions {
-        exclude 'META-INF/versions/9/previous-compilation-data.bin'
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -63,10 +60,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-database-ktx'
     implementation 'com.google.firebase:firebase-auth-ktx:21.1.0'
-
-    //coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.0-Beta")
-
 }
 
 tasks.withType(Test) {
