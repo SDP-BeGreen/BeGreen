@@ -1,14 +1,22 @@
 package com.github.sdp_begreen.begreen
+import android.app.Activity
 import android.os.Bundle
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewParent
+import android.widget.Button
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.Espresso
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.contrib.DrawerActions
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -26,7 +34,6 @@ import org.junit.runner.RunWith
 class UserFragmentTest {
     @get:Rule
     val activityRule = ActivityScenarioRule(FragmentActivity::class.java)
-
 
     private lateinit var fragment: UserFragment
     private lateinit var userList: List<User>
@@ -46,34 +53,60 @@ class UserFragmentTest {
         fragment = UserFragment.newInstance(2, listOf(User(0,"John", 10), User(1,"Jane", 8)), true)
     }
     @Test
-    fun onCreateViewWithValidViewWeturnsView() {
-        // Set up the inflater and container to create a valid view.
-        val inflater = LayoutInflater.from(ApplicationProvider.getApplicationContext())
-        val container = FrameLayout(ApplicationProvider.getApplicationContext())
-        val view = fragment.onCreateView(inflater, container, null)
-        assertNotNull(view)
-        assertTrue(view is RecyclerView)
+    fun onCreateViewWithValidViewReturnsView() {
+        val args = Bundle().apply {
+            putInt(UserFragment.ARG_COLUMN_COUNT, 1)
+            putParcelableArrayList(UserFragment.ARG_USER_LIST, userList.toCollection(ArrayList()))
+        }
+
+        // Launch fragment with arguments
+        val scenario = FragmentScenario.launchInContainer(UserFragment::class.java, args)
+        // Wait for the fragment to be created
+        scenario.onFragment { fragment ->
+            val recyclerView = fragment.view
+            assertNotNull(recyclerView)
+            assertTrue(recyclerView is RecyclerView)
+        }
     }
 
     @Test
     fun onCreateViewWithUnsortedListShowsUnsortedList() {
         // Set up the inflater and container to create a valid view.
-        val inflater = LayoutInflater.from(ApplicationProvider.getApplicationContext())
-        val container = FrameLayout(ApplicationProvider.getApplicationContext())
-        val view = fragment.onCreateView(inflater, container, null)
-        // Check that the adapter shows the unsorted list of users.
-        val adapter = (view as RecyclerView).adapter as UserViewAdapter
-        assertEquals(listOf(User(0,"John", 10), User(1,"Jane", 8)), adapter.users)
+        val args = Bundle().apply {
+            putInt(UserFragment.ARG_COLUMN_COUNT, 1)
+            putParcelableArrayList(UserFragment.ARG_USER_LIST, userList.toCollection(ArrayList()))
+        }
+
+        // Launch fragment with arguments
+        val scenario = FragmentScenario.launchInContainer(UserFragment::class.java, args)
+
+        // Wait for the fragment to be created
+        scenario.onFragment { fragment ->
+            val view = fragment.view
+            // Check that the adapter shows the unsorted list of users.
+            val adapter = (view as RecyclerView).adapter as UserViewAdapter
+            assertEquals(userList, adapter.users)
+        }
     }
     @Test
     fun onCreateViewWithSortedListShowsSortedList() {
         // Set up the inflater and container to create a valid view.
-        val inflater = LayoutInflater.from(ApplicationProvider.getApplicationContext())
-        val container = FrameLayout(ApplicationProvider.getApplicationContext())
-        val view = fragment.onCreateView(inflater, container, null)
-        // Check that the adapter shows the sorted list of users.
-        val adapter = (view as RecyclerView).adapter as UserViewAdapter
-        assertEquals(listOf(User(0,"John", 10), User(1,"Jane", 8)), adapter.users)
+        val args = Bundle().apply {
+            putInt(UserFragment.ARG_COLUMN_COUNT, 1)
+            putParcelableArrayList(UserFragment.ARG_USER_LIST, userList.toCollection(ArrayList()))
+            putBoolean(UserFragment.ARG_IS_LIST_SORTED_BY_SCORE, true)
+        }
+
+        // Launch fragment with arguments
+        val scenario = FragmentScenario.launchInContainer(UserFragment::class.java, args)
+
+        // Wait for the fragment to be created
+        scenario.onFragment { fragment ->
+            val view = fragment.view
+            // Check that the adapter shows the sorted list of users.
+            val adapter = (view as RecyclerView).adapter as UserViewAdapter
+            assertEquals(userList.sortedDescending(), adapter.users)
+        }
     }
     @Test
     fun testRecyclerViewAdapterOnOneColumn() {
