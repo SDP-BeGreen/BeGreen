@@ -87,6 +87,11 @@ class DatabaseActivityTest {
         onView(withId(R.id.databaseSet))
             .perform(click())
 
+        // Clear the e-mail
+        onView(withId(R.id.databaseEmail))
+            .perform(clearText())
+            .perform(closeSoftKeyboard())
+
         // Check that value return by "get" for key 123 is "email@example.com"
         onView(withId(R.id.databaseGet))
             .perform(click())
