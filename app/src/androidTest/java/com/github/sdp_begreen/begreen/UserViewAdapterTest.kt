@@ -10,11 +10,13 @@ import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.platform.app.InstrumentationRegistry
+import com.github.sdp_begreen.begreen.databinding.FragmentUserBinding
 import com.github.sdp_begreen.begreen.fragments.HomeFragment
 import com.github.sdp_begreen.begreen.fragments.UserFragment
 import com.github.sdp_begreen.begreen.fragments.UserViewAdapter
@@ -89,7 +91,34 @@ class UserViewAdapterTest {
         //launchFragmentInContainer(args) {
         //    UserFragment()
         //}
-        val scenario = launchFragmentInContainer<UserFragment>(args)
-        onView(withId(R.id.userlist)).perform(click())
+        launchFragmentInContainer<UserFragment>(args)
+        onView(withId(R.id.userlist))
+            .check(matches(isDisplayed()))
+        onView(withId(R.id.userlist))
+            .perform(RecyclerViewActions.actionOnItemAtPosition<UserViewAdapter.ViewHolder>(0, click()))
+
+
+        //scenario.onFragment { fragment ->
+            //fragment.context.apply {
+            //    fragment.view?.let { FragmentUserBinding.bind(it.findViewById(R.id.userid)) }
+            //        ?.let { val vh = userViewAdapter.ViewHolder(it)
+            //            vh.itemView.performClick()
+            //        }
+            //}
+            //fragment.context.apply{
+            //    Thread.sleep(1000)
+            //}
+
+            //fragment.context.apply {
+            //    fragment.view?.apply {
+            //        performContextClick(1f,1f)
+            //        performContextClick()
+            //        performClick()
+            //        performLongClick()
+            //        Thread.sleep(1000)
+            //    }
+            //}
+        //}
+
     }
 }
