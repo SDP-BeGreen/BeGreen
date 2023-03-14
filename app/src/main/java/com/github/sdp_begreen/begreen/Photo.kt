@@ -8,6 +8,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.test.platform.app.InstrumentationRegistry
 
 
 data class Photo(val key: String?, val takenOn: ParcelableDate?, val takenBy: User?, val category: String?) : Parcelable {
@@ -21,7 +22,7 @@ data class Photo(val key: String?, val takenOn: ParcelableDate?, val takenBy: Us
 
     fun getPhotoFromDataBase() : Bitmap? {
         //TODO : get the photo from the database and maybe cache?
-        return Bitmap.createBitmap( 100, 100, Bitmap.Config.ARGB_8888)
+        return getBitmapFromVectorDrawable(InstrumentationRegistry.getInstrumentation().targetContext, R.drawable.ic_launcher_background)
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

@@ -5,14 +5,18 @@ import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert
 import org.junit.Test
+import java.util.*
 
 //Need to be in Android Test to use Parcel
 class UserTest {
     var  user: User = User(1, "Test", 0)
+    val photo: Photo = Photo("1", ParcelableDate(Date()), User(1, "Alice", 33, ), "Gros vilain pas beau")
+    var user1: User = User(1, "Alice", 33, 1, photo, "Description poutou poutou", "cc@gmail.com", "08920939459802", 67, listOf(user), listOf(user))
 
     @Test
     fun userToStringWorks() {
         assertThat(user.toString(), equalTo("Test"))
+        assertThat(user1.toString(), equalTo("Alice"))
     }
 
     @Test
