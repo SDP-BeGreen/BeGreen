@@ -1,12 +1,11 @@
 package com.github.sdp_begreen.begreen.fragments
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import com.github.sdp_begreen.begreen.R
 
 // TODO: Rename parameter arguments, choose names that match
@@ -16,10 +15,10 @@ private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
+ * Use the [AdviceFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class HomeFragment : Fragment() {
+class AdviceFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -37,10 +36,14 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view: View? = inflater.inflate(R.layout.fragment_home, container, false)
-        val tView: TextView? = view?.findViewById(R.id.homeTextView)
+        val view: View? = inflater.inflate(R.layout.fragment_advice, container, false)
+        val tView: TextView? = view?.findViewById(R.id.adviceFragmentTextView)
 
-        tView?.text = getString(R.string.home_fragment_text, param1?.let { " $it" }.orEmpty(), param2?.let {" $it"}.orEmpty())
+        tView?.text = getString(
+            R.string.advice_fragment_text,
+            param1?.let { " $it" }.orEmpty(),
+            param2?.let { ", $it" }.orEmpty()
+        )
 
         return view
     }
@@ -52,12 +55,12 @@ class HomeFragment : Fragment() {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment Home.
+         * @return A new instance of fragment AdviceFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            HomeFragment().apply {
+            AdviceFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)

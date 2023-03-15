@@ -1,15 +1,28 @@
 <resources>
     <string name="app_name">BeGreen</string>
-    <string name="greetingValue">Greetings %1$s</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="top_app_bar">BeGreen</string>
-    <string name="home_fragment_text">Home Placeholder%1$s%2$s</string>
-    <string name="mail_fragment_text">Mail Placeholder%1$s%2$s</string>
-    <string name="favorite_fragment_text">Favorite Placeholder%1$s%2$s</string>
+    <string name="feed_fragment_text">Place where we can display a feed for this user%1$s%2$s</string>
+    <string name="map_fragment_text">Fragment where we can display the map%1$s%2$s</string>
+    <string name="camera_fragment_text">Fragment where we can display the camera%1$s%2$s</string>
+    <string name="advice_fragment_text">Fragment where we can display ecological advice to the user%1$s%2$s</string>
+    <string name="profile_fragment_text">Fragment where we can display the user profile%1$s%2$s</string>
+    <string name="settings_fragment_text">Fragment where we can display settings for the user%1$s%2$s</string>
+    <string name="followers_fragment_text">Fragment where we can display the user\'s followers%1$s%2$s</string>
     <string name="get">Get</string>
     <string name="set">Set</string>
     <string name="query">Query</string>
     <string name="button">Button</string>
     <string name="your_name">Your name</string>
+<<<<<<< HEAD
     <string name="title_activity_maps">MapsActivity</string>
+=======
+    <string name="menuProfile">Profile</string>
+    <string name="settings">Settings</string>
+    <string name="profile">Profile</string>
+    <string name="followers">Followers</string>
+    <string name="store">store</string>
+    <string name="load">load</string>
+    <string name="picture">Picture</string>
+>>>>>>> master
 </resources>

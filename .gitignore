@@ -145,3 +145,9 @@ fabric.properties
 /build
 /captures
 .cxx
+
+**/.firebaserc
+
+### Firebase Patch ###
+.runtimeconfig.json
+.firebase/

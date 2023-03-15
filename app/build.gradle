@@ -60,15 +60,20 @@ dependencies {
     implementation "androidx.fragment:fragment-ktx:1.5.5"
     debugImplementation("androidx.fragment:fragment-testing:1.5.5")
 
-    // Real time DB (check the following link to add any other dependency:
+    // Real time DB + google authentificator (check the following link to add any other dependency:
     // https://firebase.google.com/docs/android/setup#available-libraries
     implementation platform('com.google.firebase:firebase-bom:31.2.3')
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-database-ktx'
+<<<<<<< HEAD
 
     // Googlemaps dependencies
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'com.google.firebase:firebase-auth-ktx:21.1.0'
+=======
+    implementation 'com.google.firebase:firebase-auth-ktx:21.1.0'
+>>>>>>> master
 }
 
 tasks.withType(Test) {

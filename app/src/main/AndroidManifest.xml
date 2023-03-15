@@ -46,24 +46,10 @@
         </activity>
 
         <activity
-            android:name=".DatabaseActivity"
+            android:name=".activities.DatabaseActivity"
             android:exported="false" />
         <activity
-            android:name=".FragmentActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".GreetingActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:exported="true">
             <meta-data
                 android:name="android.app.lib_name"
