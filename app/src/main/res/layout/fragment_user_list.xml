@@ -11,6 +11,6 @@
     app:layoutManager="LinearLayoutManager"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
-    tools:context=".FragmentActivity"
+    tools:context=".activities.MainActivity"
     tools:listitem="@layout/fragment_user"
     />

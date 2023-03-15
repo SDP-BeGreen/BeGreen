@@ -49,7 +49,7 @@ class UserViewAdapter(
             view.setOnClickListener {
                 parentFragmentManager?.commit {
                     setReorderingAllowed(true)
-                    replace<ProfileDetailsFragment>(R.id.fragmentContainerView,"", Bundle().apply {
+                    replace<ProfileDetailsFragment>(R.id.mainFragmentContainer,"", Bundle().apply {
                         putParcelable(ARG_USER, user)
                     })
                     addToBackStack(null)

@@ -1,29 +1,13 @@
-package com.github.sdp_begreen.begreen
+package com.github.sdp_begreen.begreen.fragments
 
 import android.os.Bundle
 import android.widget.LinearLayout
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.testing.launchFragment
 import androidx.fragment.app.testing.launchFragmentInContainer
-import androidx.recyclerview.widget.RecyclerView
-import androidx.test.espresso.Espresso
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.assertion.ViewAssertions
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.contrib.RecyclerViewActions
-import androidx.test.espresso.matcher.RootMatchers
-import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.platform.app.InstrumentationRegistry
-import com.github.sdp_begreen.begreen.databinding.FragmentUserBinding
-import com.github.sdp_begreen.begreen.fragments.HomeFragment
-import com.github.sdp_begreen.begreen.fragments.UserFragment
-import com.github.sdp_begreen.begreen.fragments.UserViewAdapter
+import com.github.sdp_begreen.begreen.User
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
-import kotlin.concurrent.thread
 
 class UserViewAdapterTest {
     private var userViewAdapter = UserViewAdapter(listOf(User(1, "Test", 0), User(2, "Test2", 1)), null)

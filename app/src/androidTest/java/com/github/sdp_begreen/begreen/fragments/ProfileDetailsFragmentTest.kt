@@ -1,4 +1,4 @@
-package com.github.sdp_begreen.begreen
+package com.github.sdp_begreen.begreen.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.testing.launchFragmentInContainer
@@ -9,10 +9,8 @@ import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import com.github.sdp_begreen.begreen.fragments.ARG_USER
-import com.github.sdp_begreen.begreen.fragments.HomeFragment
-import com.github.sdp_begreen.begreen.fragments.ProfileDetailsFragment
-import com.github.sdp_begreen.begreen.fragments.UserFragment
+import com.github.sdp_begreen.begreen.*
+import com.github.sdp_begreen.begreen.activities.MainActivity
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -20,7 +18,7 @@ import java.util.*
 
 class ProfileDetailsFragmentTest {
     @get:Rule
-    val activityRule = ActivityScenarioRule(FragmentActivity::class.java)
+    val activityRule = ActivityScenarioRule(MainActivity::class.java)
 
     @Before
     fun setup() {

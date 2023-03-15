@@ -1,27 +1,18 @@
-package com.github.sdp_begreen.begreen
-import android.app.Activity
+package com.github.sdp_begreen.begreen.fragments
 import android.os.Bundle
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewParent
-import android.widget.Button
-import android.widget.FrameLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.espresso.Espresso
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.contrib.DrawerActions
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import com.github.sdp_begreen.begreen.fragments.UserFragment
-import com.github.sdp_begreen.begreen.fragments.UserViewAdapter
+import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.User
+import com.github.sdp_begreen.begreen.activities.MainActivity
 import junit.framework.TestCase.*
 import org.hamcrest.CoreMatchers
 import org.junit.Before
@@ -33,7 +24,7 @@ import org.junit.runner.RunWith
 @LargeTest
 class UserFragmentTest {
     @get:Rule
-    val activityRule = ActivityScenarioRule(FragmentActivity::class.java)
+    val activityRule = ActivityScenarioRule(MainActivity::class.java)
 
     private lateinit var fragment: UserFragment
     private lateinit var userList: List<User>

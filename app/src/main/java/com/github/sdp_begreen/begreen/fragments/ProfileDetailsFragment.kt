@@ -16,7 +16,7 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.User
 import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
+
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 const val ARG_USER = "USER"
 
