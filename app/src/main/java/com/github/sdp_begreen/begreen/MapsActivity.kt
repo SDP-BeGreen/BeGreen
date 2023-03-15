@@ -10,13 +10,11 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.Marker
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -25,11 +23,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        // Get the localisation of the user
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
     }
 
@@ -43,36 +43,38 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
      * installed Google Play services and returned to the app.
      */
     override fun onMapReady(googleMap: GoogleMap) {
+
         map = googleMap
-
         map.uiSettings.isZoomControlsEnabled = true
-        map.setOnMarkerClickListener(this)
 
-        setUpMap()
+        displayUserLocation()
     }
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
 
-    fun setUpMap() {
+    /**
+     * Displays the user current location. Asks for permissions if needed.
+     */
+    fun displayUserLocation() {
 
+        // Checks if the user gave the ACCESS_FINE_LOCATION permission.
         if (ActivityCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE
-            )
 
+            ActivityCompat.requestPermissions(this,
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
             return
         }
 
-        // 1
+        // Fetch and display the user's current location
         map.isMyLocationEnabled = true
-
-        // 2
         fusedLocationClient.lastLocation.addOnSuccessListener(this) { location ->
+
             // Got last known location. In some rare situations this can be null.
-            // 3
             if (location != null) {
                 lastLocation = location
                 val currentLatLng = LatLng(location.latitude, location.longitude)
@@ -81,15 +83,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         }
     }
 
+    /*
+    Uncomment theses functions in the future when we will display makers and click on them.
+    The class must implement GoogleMap.OnMarkerClickListener
+    And add in the method onMapReady the following : map.setOnMarkerClickListener(this)
 
     override fun onMarkerClick(p0: Marker): Boolean {
         return false
     }
 
     private fun placeMarkerOnMap(location: LatLng) {
-        // 1
+
         val markerOptions = MarkerOptions().position(location)
-        // 2
         map.addMarker(markerOptions)
     }
+    */
 }
