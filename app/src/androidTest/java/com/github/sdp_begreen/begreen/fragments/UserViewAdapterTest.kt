@@ -1,15 +1,25 @@
 package com.github.sdp_begreen.begreen.fragments
 
-import android.os.Bundle
 import android.widget.LinearLayout
-import androidx.fragment.app.testing.launchFragmentInContainer
+import androidx.fragment.app.commit
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.contrib.RecyclerViewActions
+import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.sdp_begreen.begreen.User
+import com.github.sdp_begreen.begreen.activities.MainActivity
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Rule
 import org.junit.Test
+import com.github.sdp_begreen.begreen.R
 
 class UserViewAdapterTest {
+    @get:Rule
+    val activityRule = ActivityScenarioRule(MainActivity::class.java)
     private var userViewAdapter = UserViewAdapter(listOf(User(1, "Test", 0), User(2, "Test2", 1)), null)
     private val appContext = InstrumentationRegistry.getInstrumentation().targetContext
     private val userList = listOf(
@@ -67,42 +77,16 @@ class UserViewAdapterTest {
     //}
     @Test
     fun userViewAdapterSetListenerWorks() {
-        val args = Bundle().apply {
-            putInt(UserFragment.ARG_COLUMN_COUNT, 1)
-            putParcelableArrayList(UserFragment.ARG_USER_LIST, userList.toCollection(ArrayList()))
-            putBoolean(UserFragment.ARG_IS_LIST_SORTED_BY_SCORE, true)
+        activityRule.scenario.onActivity {
+            it.supportFragmentManager.commit {
+                replace(R.id.mainFragmentContainer, UserFragment.newInstance(1, userList, true))
+            }
         }
-        //launchFragmentInContainer(args) {
-        //    UserFragment()
-        //}
-        launchFragmentInContainer<UserFragment>(args)
-        //onView(withId(R.id.userlist))
-        //    .check(matches(isDisplayed()))
-        //onView(withId(R.id.userlist))
-        //    .perform(RecyclerViewActions.actionOnItemAtPosition<UserViewAdapter.ViewHolder>(0, click()))
 
+        onView(withId(R.id.userlist)).check(matches(isDisplayed()))
 
-        //scenario.onFragment { fragment ->
-            //fragment.context.apply {
-            //    fragment.view?.let { FragmentUserBinding.bind(it.findViewById(R.id.userid)) }
-            //        ?.let { val vh = userViewAdapter.ViewHolder(it)
-            //            vh.itemView.performClick()
-            //        }
-            //}
-            //fragment.context.apply{
-            //    Thread.sleep(1000)
-            //}
+        onView(withId(R.id.userlist)).perform(RecyclerViewActions.actionOnItemAtPosition<UserViewAdapter.ViewHolder>(0, click()))
 
-            //fragment.context.apply {
-            //    fragment.view?.apply {
-            //        performContextClick(1f,1f)
-            //        performContextClick()
-            //        performClick()
-            //        performLongClick()
-            //        Thread.sleep(1000)
-            //    }
-            //}
-        //}
-
+        onView(withId(R.id.profile_name)).check(matches(withText("Bob")))
     }
 }
