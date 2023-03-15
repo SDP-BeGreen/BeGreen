@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/bottomMenuFeed"
+        android:enabled="true"
+        android:icon="@drawable/ic_outline_feed"
+        android:title="@string/menuProfile">
+    </item>
+    <item
+        android:id="@+id/bottomMenuMap"
+        android:enabled="true"
+        android:icon="@drawable/ic_outline_map"
+        android:title="@string/menuProfile">
+    </item>
+    <item
+        android:id="@+id/bottomMenuCamera"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_photo_camera"
+        android:title="@string/menuProfile">
+    </item>
+    <item
+        android:id="@+id/bottomMenuAdvice"
+        android:enabled="true"
+        android:icon="@drawable/ic_outline_lightbulb"
+        android:title="@string/menuProfile">
+    </item>
+    <item
+        android:id="@+id/bottomMenuUser"
+        android:enabled="true"
+        android:icon="@drawable/ic_outline_person"
+        android:title="@string/menuProfile">
+    </item>
+</menu>

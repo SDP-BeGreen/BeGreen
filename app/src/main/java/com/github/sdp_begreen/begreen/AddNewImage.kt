@@ -35,17 +35,6 @@ class AddNewImage : AppCompatActivity() {
         }
     }
 
-    // Uncomment this if we want to open the camera right after the user has accepted the permissions
-    /*
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-
-        if (requestCode == 100 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }*/
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         // When we receive the photo from the camera, we start a new activity to share the photo
