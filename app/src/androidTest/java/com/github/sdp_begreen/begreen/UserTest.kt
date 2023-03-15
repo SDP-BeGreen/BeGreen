@@ -2,6 +2,7 @@ package com.github.sdp_begreen.begreen
 
 import android.os.Parcel
 import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert
 import org.junit.Test
@@ -13,6 +14,10 @@ class UserTest {
     val photo: Photo = Photo("1", ParcelableDate(Date()), User(1, "Alice", 33, ), "Gros vilain pas beau")
     var user1: User = User(1, "Alice", 33, 1, photo, "Description poutou poutou", "cc@gmail.com", "08920939459802", 67, listOf(user), listOf(user))
 
+    @Test
+    fun userConstructorWorks() {
+        assertThat(User(0,"default", 12), notNullValue())
+    }
     @Test
     fun userToStringWorks() {
         assertThat(user.toString(), equalTo("Test"))

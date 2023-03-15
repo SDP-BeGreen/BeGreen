@@ -1,5 +1,6 @@
 package com.github.sdp_begreen.begreen
 
+import android.graphics.Bitmap
 import android.os.Parcel
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.notNullValue
@@ -16,7 +17,7 @@ class PhotoTest {
     @Test
     fun photoGetFromDatabaseWorks() {
         val photo = Photo(Parcel.obtain())
-        assertThat(photo.getPhotoFromDataBase(), notNullValue())
+        assertThat(photo.getPhotoFromDataBase()!!::class.java, equalTo(Bitmap::class.java))
     }
 
     @Test
@@ -24,7 +25,9 @@ class PhotoTest {
         val photo = Photo(Parcel.obtain())
         val parcel = Parcel.obtain()
         photo.writeToParcel(parcel, 0)
-        assertThat(parcel, notNullValue())
+        parcel.setDataPosition(0)
+        val result = Photo(parcel)
+        assertThat(photo, equalTo(result))
     }
 
     @Test
