@@ -69,11 +69,6 @@ dependencies {
     // Googlemaps dependencies
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.android.gms:play-services-location:21.0.1'
-
-    //Unit tests dependencies
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-    testImplementation 'org.hamcrest:hamcrest:2.2'
 }
 
 tasks.withType(Test) {
