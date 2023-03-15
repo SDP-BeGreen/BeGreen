@@ -22,7 +22,7 @@ data class Photo(val key: String?, val takenOn: ParcelableDate?, val takenBy: Us
 
     fun getPhotoFromDataBase() : Bitmap? {
         //TODO : get the photo from the database and maybe cache?
-        return getBitmapFromVectorDrawable(InstrumentationRegistry.getInstrumentation().targetContext, R.drawable.ic_launcher_background)
+        return Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -36,20 +36,7 @@ data class Photo(val key: String?, val takenOn: ParcelableDate?, val takenBy: Us
         return 0
     }
 
-    private fun getBitmapFromVectorDrawable(context: Context?, drawableId: Int): Bitmap? {
-        var drawable = context?.let { ContextCompat.getDrawable(it, drawableId) }
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            drawable = DrawableCompat.wrap(drawable!!).mutate()
-        }
-        val bitmap = Bitmap.createBitmap(
-            drawable!!.intrinsicWidth,
-            drawable.intrinsicHeight, Bitmap.Config.ARGB_8888
-        )
-        val canvas = Canvas(bitmap)
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight())
-        drawable.draw(canvas)
-        return bitmap
-    }
+
 
     companion object CREATOR : Parcelable.Creator<Photo> {
         override fun createFromParcel(parcel: Parcel): Photo {

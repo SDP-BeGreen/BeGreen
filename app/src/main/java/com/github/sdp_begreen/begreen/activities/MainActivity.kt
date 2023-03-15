@@ -8,10 +8,15 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
+import com.github.sdp_begreen.begreen.ParcelableDate
+import com.github.sdp_begreen.begreen.Photo
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.User
 import com.github.sdp_begreen.begreen.fragments.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -129,6 +134,40 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.mainNavDrawFollowers -> {
                 replaceFragInMainContainer(FollowersFragment())
+            }
+            R.id.mainNavDrawUserList -> {
+                replaceFragInMainContainer(UserFragment().apply {
+                    arguments = Bundle().apply {
+                        //----------------------FOR DEMO PURPOSES ONLY----------------------
+                        val photo = Photo("erfs", ParcelableDate(Date()),User(0, "Lui",0), "Profile")
+                        val desc = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed suscipit consectetur ante quis euismod. Morbi tincidunt orci sit amet libero elementum dictum. Quisque blandit ornare vehicula. Pellentesque eget auctor quam. Sed consequat bibendum risus, vitae scelerisque sapien pharetra a. Nullam pulvinar ultrices molestie."
+                        val userList: List<User> = listOf(
+                            User(1, "Alice", 1, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                            User(2, "Bob", 43, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                            User(3, "Charlie", 330, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                            User(4, "Dylan", 13, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                            User(5, "Evan", 2, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                            User(6, "Frederic", 5432, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                            User(7, "Gaelle", 35, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                            User(8, "Hellen", 3, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                            User(9, "Irene", 33, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                            User(10, "Julianne", 23, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                            User(1, "Kennan", 36, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                            User(1, "Léa", 14, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                            User(1, "Manon", 845, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                            User(1, "Ninon", 376, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                            User(1, "Orianne", 16, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                            User(1, "Pedro", 96, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                            User(1, "Sullivan", 4, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                            User(1, "Valentin", 6, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                            User(1, "Frank", 8, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                        )
+                        //----------------------FOR DEMO PURPOSES ONLY----------------------
+                        putInt(UserFragment.ARG_COLUMN_COUNT, 1)
+                        putParcelableArrayList(UserFragment.ARG_USER_LIST, userList.toCollection(ArrayList()))
+                        putBoolean(UserFragment.ARG_IS_LIST_SORTED_BY_SCORE, true)
+                    }
+                })
             }
             R.id.mainNavDrawSettings -> {
                 replaceFragInMainContainer(SettingsFragment())
