@@ -129,6 +129,17 @@ class MainActivityTest {
     }
 
     @Test
+    fun pressDrawerMenuUsersDisplayFollowersFragment() {
+        onView(withId(R.id.mainDrawerLayout)).perform(DrawerActions.open(GravityCompat.END))
+
+        onView(withId(R.id.mainNavDrawUserList))
+            .perform(scrollTo())
+            .check(matches(isDisplayed()))
+            .perform(click())
+    }
+
+
+    @Test
     fun pressDrawerMenuSettingsDisplaySettingsFragment() {
         onView(withId(R.id.mainDrawerLayout)).perform(DrawerActions.open(GravityCompat.END))
 
