@@ -83,6 +83,11 @@ class UserTest {
         assertThat(user.followers, equalTo(listOf<User>()))
         assertThat(user.following, equalTo(listOf<User>()))
     }
+    @Test
+    fun userGetCurrentUserReturnsCorrectValues() {
+        User.currentUser = user
+        assertThat(User.currentUser, equalTo(user))
+    }
 
     @Test
     fun userSettersWorksCorrectly(){
