@@ -24,7 +24,7 @@
         android:textSize="20dp" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/llGoogle"
+        android:id="@+id/signInGoogleLayout"
         android:layout_width="300dp"
         android:layout_height="45dp"
         android:layout_gravity="center"

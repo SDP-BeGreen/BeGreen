@@ -1,5 +1,6 @@
 package com.github.sdp_begreen.begreen.activities
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -22,8 +23,8 @@ import com.google.firebase.auth.GoogleAuthProvider
 class SignInActivity : AppCompatActivity() {
 
     // Late initialization of the LinearLayoutCompat and FirebaseAuth variables
-    lateinit var llGoogle: LinearLayoutCompat
-    lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var signInGoogleLayout: LinearLayoutCompat
+    private lateinit var firebaseAuth: FirebaseAuth
 
     // Using ActivityResultContracts to register a launcher for starting the Google sign-in activity
     private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
@@ -33,6 +34,7 @@ class SignInActivity : AppCompatActivity() {
                 // I will add a progress bar that appear when google sign in is uploading (new functionality)
                 val account = task.getResult(ApiException::class.java)!!
                 firebaseAuthWithGoogle(account)
+
 
             } catch (e: ApiException) {
                 // Handling the ApiException based on its status code
@@ -49,16 +51,17 @@ class SignInActivity : AppCompatActivity() {
     }
 
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
 
-        llGoogle =findViewById(R.id.llGoogle)
+        signInGoogleLayout =findViewById(R.id.signInGoogleLayout)
 
         firebaseAuth = FirebaseAuth.getInstance()
 
         // When the google sign in image is clicked, the google sign in page appears
-        llGoogle.setOnClickListener {
+        signInGoogleLayout.setOnClickListener {
             // Logging out of any existing Google account and starting the Google sign-in activity
             // We can comment that if we want to connect directly with the current account
             GoogleAuth.googleLogOut(this, logoutCallback = {})

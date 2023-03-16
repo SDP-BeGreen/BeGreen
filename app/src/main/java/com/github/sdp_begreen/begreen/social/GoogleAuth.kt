@@ -1,5 +1,6 @@
 package com.github.sdp_begreen.begreen.social
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import com.github.sdp_begreen.begreen.R
@@ -14,6 +15,7 @@ object GoogleAuth {
     // GoogleSignInClient object that can be used to initiate the Google sign-in process in an Android app
     // This variable will hold the configured GoogleSignInClient object.
     // Source : https://developers.google.com/android/reference/com/google/android/gms/auth/api/signin/GoogleSignInClient
+    @SuppressLint("StaticFieldLeak")
     lateinit var mGoogleSignInClient: GoogleSignInClient
 
     fun googleClient(context: Context) {
