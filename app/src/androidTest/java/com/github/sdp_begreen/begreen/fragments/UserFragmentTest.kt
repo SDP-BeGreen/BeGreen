@@ -112,7 +112,7 @@ class UserFragmentTest {
 
         // Wait for the fragment to be created
         scenario.onFragment { fragment ->
-            val recyclerView = fragment.view?.findViewById<RecyclerView>(R.id.userlist)
+            val recyclerView = fragment.view?.findViewById<RecyclerView>(R.id.user_fragment_user_list)
 
             // Verify that the RecyclerView is not null
             assertThat(recyclerView, CoreMatchers.notNullValue())
@@ -138,7 +138,7 @@ class UserFragmentTest {
 
         // Wait for the fragment to be created
         scenario.onFragment { fragment ->
-            val recyclerView = fragment.view?.findViewById<RecyclerView>(R.id.userlist)
+            val recyclerView = fragment.view?.findViewById<RecyclerView>(R.id.user_fragment_user_list)
 
             // Verify that the RecyclerView is not null
             assertThat(recyclerView, CoreMatchers.notNullValue())
@@ -162,7 +162,7 @@ class UserFragmentTest {
 
         // Wait for the fragment to be created
         scenario.onFragment { fragment ->
-            val recyclerView = fragment.view?.findViewById<RecyclerView>(R.id.userlist)
+            val recyclerView = fragment.view?.findViewById<RecyclerView>(R.id.user_fragment_user_list)
 
             // Verify that the RecyclerView is not null
             assertThat(recyclerView, CoreMatchers.notNullValue())

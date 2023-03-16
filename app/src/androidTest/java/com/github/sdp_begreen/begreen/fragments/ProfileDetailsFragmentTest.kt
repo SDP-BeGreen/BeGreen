@@ -40,15 +40,15 @@ class ProfileDetailsFragmentTest {
 
     @Test
     fun testProfileDetailsFragmentFollowButton(){
-        onView(withId(R.id.follow_button)).perform(click())
-        onView(withId(R.id.follow_button)).check(ViewAssertions.matches(ViewMatchers.withText("Unfollow")))
+        onView(withId(R.id.fragment_profile_details_follow_button)).perform(click())
+        onView(withId(R.id.fragment_profile_details_follow_button)).check(ViewAssertions.matches(ViewMatchers.withText("Unfollow")))
     }
 
     @Test
     fun testProfileDetailsFragmentFollowButton2(){
-        onView(withId(R.id.follow_button)).perform(click())
-        onView(withId(R.id.follow_button)).perform(click())
-        onView(withId(R.id.follow_button)).check(ViewAssertions.matches(ViewMatchers.withText("Follow")))
+        onView(withId(R.id.fragment_profile_details_follow_button)).perform(click())
+        onView(withId(R.id.fragment_profile_details_follow_button)).perform(click())
+        onView(withId(R.id.fragment_profile_details_follow_button)).check(ViewAssertions.matches(ViewMatchers.withText("Follow")))
     }
 
     @Test

@@ -83,10 +83,10 @@ class UserViewAdapterTest {
             }
         }
 
-        onView(withId(R.id.userlist)).check(matches(isDisplayed()))
+        onView(withId(R.id.user_fragment_user_list)).check(matches(isDisplayed()))
 
-        onView(withId(R.id.userlist)).perform(RecyclerViewActions.actionOnItemAtPosition<UserViewAdapter.ViewHolder>(0, click()))
+        onView(withId(R.id.user_fragment_user_list)).perform(RecyclerViewActions.actionOnItemAtPosition<UserViewAdapter.ViewHolder>(0, click()))
 
-        onView(withId(R.id.profile_name)).check(matches(withText("Bob")))
+        onView(withId(R.id.fragment_profile_details_profile_name)).check(matches(withText("Bob")))
     }
 }

@@ -42,16 +42,14 @@ class UserViewAdapter(
 
     override fun getItemCount(): Int = users?.size ?: 0
     inner class ViewHolder(binding: FragmentUserBinding) : RecyclerView.ViewHolder(binding.root) {
-        val idView: TextView = binding.itemNumber
-        val contentView: TextView = binding.content
+        val idView: TextView = binding.userFragmentUserNumber
+        val contentView: TextView = binding.userFragmentContent
 
         fun setListener(view: View, position: Int, user: User) {
             view.setOnClickListener {
                 parentFragmentManager?.commit {
                     setReorderingAllowed(true)
-                    replace<ProfileDetailsFragment>(R.id.mainFragmentContainer,"", Bundle().apply {
-                        putParcelable(ARG_USER, user)
-                    })
+                    replace(R.id.mainFragmentContainer,ProfileDetailsFragment.newInstance(user))
                     addToBackStack(null)
                 }
             }
