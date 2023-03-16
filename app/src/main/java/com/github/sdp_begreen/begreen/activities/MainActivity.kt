@@ -8,10 +8,10 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
-import com.github.sdp_begreen.begreen.ParcelableDate
-import com.github.sdp_begreen.begreen.Photo
+import com.github.sdp_begreen.begreen.models.ParcelableDate
+import com.github.sdp_begreen.begreen.models.Photo
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.User
+import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.fragments.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView

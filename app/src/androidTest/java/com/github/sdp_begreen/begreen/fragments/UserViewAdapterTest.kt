@@ -9,7 +9,7 @@ import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
-import com.github.sdp_begreen.begreen.User
+import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.activities.MainActivity
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -66,15 +66,10 @@ class UserViewAdapterTest {
     fun userViewAdapterOnBindViewHolderWorksOnTrivialList() {
         val vH = userViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
         userViewAdapter.onBindViewHolder(vH, 0)
-        assertThat(vH.idView.text, equalTo("0"))
-        assertThat(vH.contentView.text, equalTo("Test"))
+        assertThat(vH.userScore.text, equalTo("0"))
+        assertThat(vH.userName.text, equalTo("Test"))
     }
 
-    //@Test
-    //fun userViewAdapterToStringWorks() {
-    //    val vH = userViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
-    //    assertThat((vH.toString()).substring(19), equalTo("position=-1 id=-1, oldPos=-1, pLpos:-1 unbound no parent} ''"))
-    //}
     @Test
     fun userViewAdapterSetListenerWorks() {
         activityRule.scenario.onActivity {
@@ -83,9 +78,9 @@ class UserViewAdapterTest {
             }
         }
 
-        onView(withId(R.id.user_fragment_user_list)).check(matches(isDisplayed()))
+        onView(withId(R.id.user_fragment)).check(matches(isDisplayed()))
 
-        onView(withId(R.id.user_fragment_user_list)).perform(RecyclerViewActions.actionOnItemAtPosition<UserViewAdapter.ViewHolder>(0, click()))
+        onView(withId(R.id.user_fragment)).perform(RecyclerViewActions.actionOnItemAtPosition<UserViewAdapter.ViewHolder>(0, click()))
 
         onView(withId(R.id.fragment_profile_details_profile_name)).check(matches(withText("Bob")))
     }

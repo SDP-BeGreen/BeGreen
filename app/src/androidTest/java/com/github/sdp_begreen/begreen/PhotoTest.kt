@@ -2,6 +2,9 @@ package com.github.sdp_begreen.begreen
 
 import android.graphics.Bitmap
 import android.os.Parcel
+import com.github.sdp_begreen.begreen.models.ParcelableDate
+import com.github.sdp_begreen.begreen.models.Photo
+import com.github.sdp_begreen.begreen.models.User
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.MatcherAssert.assertThat

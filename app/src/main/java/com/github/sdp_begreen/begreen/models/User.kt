@@ -1,9 +1,7 @@
-package com.github.sdp_begreen.begreen
+package com.github.sdp_begreen.begreen.models
 
-import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
-import androidx.annotation.RequiresApi
 
 //Need to be Parcelable to be passed as an argument to a fragment
 data class User (val id: Int, val name: String, val score: Int) : Parcelable, Comparable<User> {

@@ -1,14 +1,8 @@
-package com.github.sdp_begreen.begreen
+package com.github.sdp_begreen.begreen.models
 
-import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
-import androidx.test.platform.app.InstrumentationRegistry
 
 
 data class Photo(val key: String?, val takenOn: ParcelableDate?, val takenBy: User?, val category: String?) : Parcelable {

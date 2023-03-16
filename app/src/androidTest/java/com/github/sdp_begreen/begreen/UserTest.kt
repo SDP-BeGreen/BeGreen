@@ -1,10 +1,12 @@
 package com.github.sdp_begreen.begreen
 
 import android.os.Parcel
-import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.CoreMatchers.notNullValue
+import com.github.sdp_begreen.begreen.models.ParcelableDate
+import com.github.sdp_begreen.begreen.models.Photo
+import com.github.sdp_begreen.begreen.models.User
+import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Assert
+import org.hamcrest.Matchers.hasProperty
 import org.junit.Before
 import org.junit.Test
 import java.util.*
@@ -89,13 +91,15 @@ class UserTest {
         user.rating = 1
         user.img = photo
         user.progression = 1
-        assertThat(user.description, equalTo("test"))
-        assertThat(user.phone, equalTo("test"))
-        assertThat(user.email, equalTo("test"))
-        assertThat(user.followers, equalTo(listOf(user)))
-        assertThat(user.following, equalTo(listOf(user)))
-        assertThat(user.rating, equalTo(1))
-        assertThat(user.img, equalTo(photo))
-        assertThat(user.progression, equalTo(1))
+        assertThat(user, allOf(
+                hasProperty("rating", equalTo(1)),
+                hasProperty("followers", equalTo(listOf(user))),
+                hasProperty("following", equalTo(listOf(user))),
+                hasProperty("description", equalTo("test")),
+                hasProperty("phone", equalTo("test")),
+                hasProperty("email", equalTo("test")),
+                hasProperty("img", equalTo(photo)),
+                hasProperty("progression", equalTo(1))))
+
     }
 }

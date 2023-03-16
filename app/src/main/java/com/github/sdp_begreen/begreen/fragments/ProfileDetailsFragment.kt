@@ -13,12 +13,12 @@ import android.widget.RatingBar
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.User
+import com.github.sdp_begreen.begreen.models.Actions
+import com.github.sdp_begreen.begreen.models.User
 import kotlinx.coroutines.launch
 
 
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-const val ARG_USER = "USER"
+
 
 /**
  * A simple [Fragment] subclass.
@@ -47,27 +47,28 @@ class ProfileDetailsFragment : Fragment() {
         // Inflate the layout for this fragment
 
         val view = inflater.inflate(R.layout.fragment_profile_details, container, false)
-        val name: TextView = view?.findViewById(R.id.fragment_profile_details_profile_name) as TextView
-        val rating: RatingBar = view.findViewById(R.id.fragment_profile_details_profile_rating) as RatingBar
-        val profileImgView: ImageView = view.findViewById(R.id.fragment_profile_details_profile_image) as ImageView
-        val profileDescription: TextView = view.findViewById(R.id.fragment_profile_details_profile_description) as TextView
-        val profilePhone: TextView = view.findViewById(R.id.fragment_profile_details_profile_phone) as TextView
-        val profileEmail: TextView = view.findViewById(R.id.fragment_profile_details_profile_email) as TextView
-        val userTextLevel: TextView = view.findViewById(R.id.fragment_profile_details_level) as TextView
-        val userProgressBar: ProgressBar = view.findViewById(R.id.fragment_profile_details_user_progress) as ProgressBar
-        val followButton: Button = view.findViewById(R.id.fragment_profile_details_follow_button) as Button
+        val name = view.findViewById(R.id.fragment_profile_details_profile_name) as TextView
+        val rating = view.findViewById(R.id.fragment_profile_details_profile_rating) as RatingBar
+        val profileImgView = view.findViewById(R.id.fragment_profile_details_profile_image) as ImageView
+        val profileDescription = view.findViewById(R.id.fragment_profile_details_profile_description) as TextView
+        val profilePhone = view.findViewById(R.id.fragment_profile_details_profile_phone) as TextView
+        val profileEmail = view.findViewById(R.id.fragment_profile_details_profile_email) as TextView
+        val userTextLevel= view.findViewById(R.id.fragment_profile_details_level) as TextView
+        val userProgressBar = view.findViewById(R.id.fragment_profile_details_user_progress) as ProgressBar
+        val followButton = view.findViewById(R.id.fragment_profile_details_follow_button) as Button
+
         name.text = user?.name
         rating.rating = user?.score?.toFloat() ?: 0.0f
         profileImgView.setImageBitmap(user?.img?.getPhotoFromDataBase())
         profileDescription.text = user?.description
         profilePhone.text = user?.phone
         profileEmail.text = user?.email
-        userTextLevel.text = user?.name + " level's"
+        userTextLevel.text = user?.name + "'s level"
         userProgressBar.progress = user?.progression ?: 0
 
         followButton.setOnClickListener {
-            if(followButton.text == "Follow") {
-                followButton.text = "Unfollow"
+            if(followButton.text == Actions.FOLLOW.text) {
+                followButton.text = Actions.UNFOLLOW.text
                 lifecycleScope.launch {
                     //TODO : add currentUser
                     user?.addFollower(User.currentUser)
@@ -91,6 +92,8 @@ class ProfileDetailsFragment : Fragment() {
          * @param user user to show details.
          * @return A new instance of fragment ProfileDetailsFragment.
          */
+        // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+        private const val ARG_USER = "USER"
         @JvmStatic
         fun newInstance(user: User) =
             ProfileDetailsFragment().apply {

@@ -1,6 +1,7 @@
 package com.github.sdp_begreen.begreen
 
 import android.os.Parcel
+import com.github.sdp_begreen.begreen.models.ParcelableDate
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test

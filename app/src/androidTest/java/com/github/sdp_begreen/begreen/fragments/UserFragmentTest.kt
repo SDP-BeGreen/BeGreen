@@ -11,7 +11,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.User
+import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.activities.MainActivity
 import junit.framework.TestCase.*
 import org.hamcrest.CoreMatchers
@@ -37,12 +37,10 @@ class UserFragmentTest {
             User(1,"Bob", 20),
             User(2,"Charlie", 15)
         )
-    }
-    @Before
-    fun setUp() {
         // Create a new instance of the fragment with test arguments.
         fragment = UserFragment.newInstance(2, listOf(User(0,"John", 10), User(1,"Jane", 8)), true)
     }
+
     @Test
     fun onCreateViewWithValidViewReturnsView() {
         val args = Bundle().apply {
@@ -112,7 +110,7 @@ class UserFragmentTest {
 
         // Wait for the fragment to be created
         scenario.onFragment { fragment ->
-            val recyclerView = fragment.view?.findViewById<RecyclerView>(R.id.user_fragment_user_list)
+            val recyclerView = fragment.view?.findViewById<RecyclerView>(R.id.user_fragment)
 
             // Verify that the RecyclerView is not null
             assertThat(recyclerView, CoreMatchers.notNullValue())
@@ -138,7 +136,7 @@ class UserFragmentTest {
 
         // Wait for the fragment to be created
         scenario.onFragment { fragment ->
-            val recyclerView = fragment.view?.findViewById<RecyclerView>(R.id.user_fragment_user_list)
+            val recyclerView = fragment.view?.findViewById<RecyclerView>(R.id.user_fragment)
 
             // Verify that the RecyclerView is not null
             assertThat(recyclerView, CoreMatchers.notNullValue())
@@ -162,7 +160,7 @@ class UserFragmentTest {
 
         // Wait for the fragment to be created
         scenario.onFragment { fragment ->
-            val recyclerView = fragment.view?.findViewById<RecyclerView>(R.id.user_fragment_user_list)
+            val recyclerView = fragment.view?.findViewById<RecyclerView>(R.id.user_fragment)
 
             // Verify that the RecyclerView is not null
             assertThat(recyclerView, CoreMatchers.notNullValue())

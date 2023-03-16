@@ -11,6 +11,9 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.github.sdp_begreen.begreen.*
 import com.github.sdp_begreen.begreen.activities.MainActivity
+import com.github.sdp_begreen.begreen.models.ParcelableDate
+import com.github.sdp_begreen.begreen.models.Photo
+import com.github.sdp_begreen.begreen.models.User
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -22,14 +25,11 @@ class ProfileDetailsFragmentTest {
 
     @Before
     fun setup() {
-        val bundle = Bundle()
-        bundle.putParcelable(ARG_USER, User(1,"Alice", 1))
-
 
         // Still need to pass the bundle, doesn't work in test to only call the factory from companion object
         // https://github.com/android/android-test/issues/442
-        launchFragmentInContainer(bundle) {
-            ProfileDetailsFragment()
+        launchFragmentInContainer {
+            ProfileDetailsFragment.newInstance(user = User(1,"Alice", 1))
         }
     }
     @Test
@@ -60,13 +60,11 @@ class ProfileDetailsFragmentTest {
     fun testProfileDetailsWithCompleteUserFragmentIsCorrectlyDisplayed() {
         val bundle = Bundle()
         val photo: Photo = Photo("1", ParcelableDate(Date()), User(1, "Alice", 33, ), "Gros vilain pas beau")
-        bundle.putParcelable(ARG_USER, User(1, "Alice", 33, 1, photo, "Description poutou poutou", "cc@gmail.com", "08920939459802", 67, null, null))
-
 
         // Still need to pass the bundle, doesn't work in test to only call the factory from companion object
         // https://github.com/android/android-test/issues/442
-        launchFragmentInContainer(bundle) {
-            ProfileDetailsFragment()
+        launchFragmentInContainer {
+            ProfileDetailsFragment.newInstance(User(1, "Alice", 33, 1, photo, "Description poutou poutou", "cc@gmail.com", "08920939459802", 67, null, null))
         }
         Espresso.onView(ViewMatchers.withId(R.id.fragment_profile_details)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
