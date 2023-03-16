@@ -23,12 +23,8 @@ data class User (val id: Int, val name: String, val score: Int) : Parcelable, Co
         this.phone = phone
         this.email = email
         this.progression = progression
-        if (followers != null) {
-            this.followers = followers
-        }
-        if (following != null) {
-            this.following = following
-        }
+        this.followers = followers ?: listOf()
+        this.following = followers ?: listOf()
     }
     //constructor(parcel: Parcel) : this(
     //    parcel.readInt(),
