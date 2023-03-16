@@ -20,7 +20,7 @@ import org.junit.runner.RunWith
 @LargeTest
 
 class SignInActivityTest {
-/*    @get:Rule
+    @get:Rule
     val activityRule = ActivityScenarioRule(SignInActivity::class.java)
 
 
@@ -40,7 +40,7 @@ class SignInActivityTest {
 
         assertNotNull("Target Activity is not launched", targetActivity)
 
-    }*/
+    }
 
 
 }
