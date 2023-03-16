@@ -1,4 +1,4 @@
-package com.github.sdp_begreen.begreen
+package com.github.sdp_begreen.begreen.models
 
 import android.os.Parcel
 import com.github.sdp_begreen.begreen.models.ParcelableDate
@@ -9,7 +9,7 @@ import java.util.*
 
 class ParcelableDateTest {
     @Test
-    fun parcelableDateWriteToParcelWorks() {
+    fun parcelableDateWriteToParcelCorrectly() {
         val date = ParcelableDate(Date())
         val parcel = Parcel.obtain()
         date.writeToParcel(parcel, 0)
@@ -19,20 +19,19 @@ class ParcelableDateTest {
     }
 
     @Test
-    fun parcelableDateDescribeContentsWorks() {
+    fun parcelableDateDescribeContentsEqualsZero() {
         val date = ParcelableDate(Date())
         assertThat(date.describeContents(), equalTo(0))
     }
 
     @Test
-    fun parcelableDateNewArrayWorks() {
-        val date = ParcelableDate(Date())
+    fun parcelableDateNewArrayHasCorrectSize() {
         val array = ParcelableDate.CREATOR.newArray(1)
         assertThat(array.size, equalTo(1))
     }
 
     @Test
-    fun parelableDateConstructorWorks() {
+    fun parelableDateConstructorWriteCorrectDate() {
         val date = Date()
         val parcel = Parcel.obtain()
         parcel.writeLong(date.time)
@@ -42,7 +41,7 @@ class ParcelableDateTest {
     }
 
     @Test
-    fun parcelableDateCreatorWorks() {
+    fun parcelableDateCreatorWriteCorrectDate() {
         val date = Date()
         val parcel = Parcel.obtain()
         parcel.writeLong(date.time)
@@ -52,7 +51,7 @@ class ParcelableDateTest {
     }
 
     @Test
-    fun parcelableDateSetDateWorks() {
+    fun parcelableDateSetDateCorrectly() {
         val date = ParcelableDate(Date())
         val newDate = Date()
         date.date = newDate

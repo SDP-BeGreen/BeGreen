@@ -1,10 +1,7 @@
-package com.github.sdp_begreen.begreen
+package com.github.sdp_begreen.begreen.models
 
 import android.graphics.Bitmap
 import android.os.Parcel
-import com.github.sdp_begreen.begreen.models.ParcelableDate
-import com.github.sdp_begreen.begreen.models.Photo
-import com.github.sdp_begreen.begreen.models.User
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.MatcherAssert.assertThat
@@ -13,13 +10,13 @@ import java.util.*
 
 class PhotoTest {
     @Test
-    fun photoParcelConstructorWorks() {
+    fun photoParcelConstructorNotNull() {
         val photo = Photo(Parcel.obtain())
         assertThat(photo, notNullValue())
     }
 
     @Test
-    fun photoGetFromDatabaseWorks() {
+    fun photoGetFromDatabaseGetBitmap() {
         val photo = Photo(Parcel.obtain())
         assertThat(photo.getPhotoFromDataBase()!!::class.java, equalTo(Bitmap::class.java))
     }
@@ -35,14 +32,14 @@ class PhotoTest {
     }
 
     @Test
-    fun photoDescribeContentsWorks() {
+    fun photoDescribeContentsReturnZero() {
         val photo = Photo(Parcel.obtain())
         assertThat(photo.describeContents(), equalTo(0))
     }
 
     @Test
-    fun photoCreatorWorks() {
-        val photo = Photo(Parcel.obtain())
+    fun photoCreatorIsNotNull() {
+        Photo(Parcel.obtain())
         assertThat(Photo.CREATOR, notNullValue())
     }
 
@@ -57,8 +54,8 @@ class PhotoTest {
     }
 
     @Test
-    fun photoNewArrayWorks(){
-        val photo = Photo(Parcel.obtain())
+    fun photoNewArrayIsNotNull(){
+        Photo(Parcel.obtain())
         val result = Photo.CREATOR.newArray(1)
         assertThat(result, notNullValue())
     }

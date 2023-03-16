@@ -29,6 +29,10 @@ class UserFragmentTest {
     private lateinit var fragment: UserFragment
     private lateinit var userList: List<User>
 
+    val ARG_COLUMN_COUNT = "column-count"
+    val ARG_IS_LIST_SORTED_BY_SCORE = "is-list-sorted-by-score"
+    val ARG_USER_LIST = "user-list"
+
     @Before
     fun setup() {
         // Initialize test data
@@ -44,8 +48,8 @@ class UserFragmentTest {
     @Test
     fun onCreateViewWithValidViewReturnsView() {
         val args = Bundle().apply {
-            putInt(UserFragment.ARG_COLUMN_COUNT, 1)
-            putParcelableArrayList(UserFragment.ARG_USER_LIST, userList.toCollection(ArrayList()))
+            putInt(ARG_COLUMN_COUNT, 1)
+            putParcelableArrayList(ARG_USER_LIST, userList.toCollection(ArrayList()))
         }
 
         // Launch fragment with arguments
@@ -62,8 +66,8 @@ class UserFragmentTest {
     fun onCreateViewWithUnsortedListShowsUnsortedList() {
         // Set up the inflater and container to create a valid view.
         val args = Bundle().apply {
-            putInt(UserFragment.ARG_COLUMN_COUNT, 1)
-            putParcelableArrayList(UserFragment.ARG_USER_LIST, userList.toCollection(ArrayList()))
+            putInt(ARG_COLUMN_COUNT, 1)
+            putParcelableArrayList(ARG_USER_LIST, userList.toCollection(ArrayList()))
         }
 
         // Launch fragment with arguments
@@ -81,9 +85,9 @@ class UserFragmentTest {
     fun onCreateViewWithSortedListShowsSortedList() {
         // Set up the inflater and container to create a valid view.
         val args = Bundle().apply {
-            putInt(UserFragment.ARG_COLUMN_COUNT, 1)
-            putParcelableArrayList(UserFragment.ARG_USER_LIST, userList.toCollection(ArrayList()))
-            putBoolean(UserFragment.ARG_IS_LIST_SORTED_BY_SCORE, true)
+            putInt(ARG_COLUMN_COUNT, 1)
+            putParcelableArrayList(ARG_USER_LIST, userList.toCollection(ArrayList()))
+            putBoolean(ARG_IS_LIST_SORTED_BY_SCORE, true)
         }
 
         // Launch fragment with arguments
@@ -101,8 +105,8 @@ class UserFragmentTest {
     fun testRecyclerViewAdapterOnOneColumn() {
         // Set up fragment arguments
         val args = Bundle().apply {
-            putInt(UserFragment.ARG_COLUMN_COUNT, 1)
-            putParcelableArrayList(UserFragment.ARG_USER_LIST, userList.toCollection(ArrayList()))
+            putInt(ARG_COLUMN_COUNT, 1)
+            putParcelableArrayList(ARG_USER_LIST, userList.toCollection(ArrayList()))
         }
 
         // Launch fragment with arguments
@@ -127,8 +131,8 @@ class UserFragmentTest {
     fun testRecyclerViewAdapterOnTwoColumns() {
         // Set up fragment arguments
         val args = Bundle().apply {
-            putInt(UserFragment.ARG_COLUMN_COUNT, 2)
-            putParcelableArrayList(UserFragment.ARG_USER_LIST, userList.toCollection(ArrayList()))
+            putInt(ARG_COLUMN_COUNT, 2)
+            putParcelableArrayList(ARG_USER_LIST, userList.toCollection(ArrayList()))
         }
 
         // Launch fragment with arguments
@@ -150,9 +154,9 @@ class UserFragmentTest {
     fun testSortByScore() {
         // Set up fragment arguments
         val args = Bundle().apply {
-            putInt(UserFragment.ARG_COLUMN_COUNT, 1)
-            putBoolean(UserFragment.ARG_IS_LIST_SORTED_BY_SCORE, true)
-            putParcelableArrayList(UserFragment.ARG_USER_LIST, userList.toCollection(ArrayList()))
+            putInt(ARG_COLUMN_COUNT, 1)
+            putBoolean(ARG_IS_LIST_SORTED_BY_SCORE, true)
+            putParcelableArrayList(ARG_USER_LIST, userList.toCollection(ArrayList()))
         }
 
         // Launch fragment with arguments

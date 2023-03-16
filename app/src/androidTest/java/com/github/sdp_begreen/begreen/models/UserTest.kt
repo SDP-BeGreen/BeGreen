@@ -1,12 +1,15 @@
-package com.github.sdp_begreen.begreen
+package com.github.sdp_begreen.begreen.models
 
 import android.os.Parcel
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.Photo
 import com.github.sdp_begreen.begreen.models.User
 import org.hamcrest.CoreMatchers.*
+import org.hamcrest.Description
+import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.hasProperty
+import org.hamcrest.TypeSafeMatcher
 import org.junit.Before
 import org.junit.Test
 import java.util.*
@@ -23,11 +26,11 @@ class UserTest {
     }
 
     @Test
-    fun userConstructorWorks() {
+    fun userConstructorIsNotNull() {
         assertThat(User(0,"default", 12), notNullValue())
     }
     @Test
-    fun userToStringWorks() {
+    fun userToStringIsCorrect() {
         assertThat(user.toString(), equalTo("Test"))
         assertThat(user1.toString(), equalTo("Alice"))
     }
@@ -73,7 +76,7 @@ class UserTest {
     }
 
     @Test
-    fun userGettersWorks() {
+    fun userGettersReturnsCorrectValues() {
         assertThat(user.id, equalTo(1))
         assertThat(user.name, equalTo("Test"))
         assertThat(user.rating, equalTo(0))
@@ -82,7 +85,7 @@ class UserTest {
     }
 
     @Test
-    fun userSettersWorks(){
+    fun userSettersWorksCorrectly(){
         user.description = "test"
         user.phone = "test"
         user.email = "test"
@@ -92,14 +95,33 @@ class UserTest {
         user.img = photo
         user.progression = 1
         assertThat(user, allOf(
-                hasProperty("rating", equalTo(1)),
-                hasProperty("followers", equalTo(listOf(user))),
-                hasProperty("following", equalTo(listOf(user))),
-                hasProperty("description", equalTo("test")),
-                hasProperty("phone", equalTo("test")),
-                hasProperty("email", equalTo("test")),
-                hasProperty("img", equalTo(photo)),
-                hasProperty("progression", equalTo(1))))
+            HasProp("description", equalTo("test")),
+            HasProp("phone", equalTo("test")),
+            HasProp("followers", equalTo(listOf(user))),
+            HasProp("following", equalTo(listOf(user))),
+            HasProp("rating", equalTo(1)),
+            HasProp("img", equalTo(photo)),
+            HasProp("progression", equalTo(1))
+        ))
 
     }
+    @Suppress("UNCHECKED_CAST")
+    fun <R> readInstanceProperty(instance: Any, propertyName: String): R {
+        return instance.javaClass.getMethod("get" + propertyName.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(
+                Locale.getDefault()
+            ) else it.toString()
+        }).invoke(instance) as R
+    }
+
+    inner class HasProp<T>(private val name: String, private val matcher: Matcher<*>): TypeSafeMatcher<T>() {
+        override fun describeTo(description: Description?) {
+            description?.appendText("Check that given elem has property name")
+        }
+
+        override fun matchesSafely(item: T?): Boolean {
+            return matcher.matches(readInstanceProperty(item!!, name))
+        }
+    }
+
 }

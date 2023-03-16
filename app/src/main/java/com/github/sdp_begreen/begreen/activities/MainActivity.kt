@@ -135,6 +135,8 @@ class MainActivity : AppCompatActivity() {
             R.id.mainNavDrawFollowers -> {
                 replaceFragInMainContainer(FollowersFragment())
             }
+            //------------------------FOR DEMO PURPOSES ONLY------------------------
+            //TODO Remove this when demo will be over
             R.id.mainNavDrawUserList -> {
                val photo = Photo("erfs", ParcelableDate(Date()),User(0, "Lui",0), "Profile")
                 val desc = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed suscipit consectetur ante quis euismod. Morbi tincidunt orci sit amet libero elementum dictum. Quisque blandit ornare vehicula. Pellentesque eget auctor quam. Sed consequat bibendum risus, vitae scelerisque sapien pharetra a. Nullam pulvinar ultrices molestie."
@@ -161,6 +163,7 @@ class MainActivity : AppCompatActivity() {
                 )
                 replaceFragInMainContainer(UserFragment.newInstance(1, userList.toCollection(ArrayList()), true)) 
             }
+            //----------------------------------------------------------------------
             R.id.mainNavDrawSettings -> {
                 replaceFragInMainContainer(SettingsFragment())
             }
