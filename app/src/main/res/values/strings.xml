@@ -23,4 +23,9 @@
     <string name="picture">Picture</string>
     <string name="users">Users</string>
     <string name="follow">Follow</string>
+    <string name="name">PlaceholderName</string>
+    <string name="user_level">PlaceholderUserLevel</string>
+    <string name="profile_description">User has not a description yet...</string>
+    <string name="image_activity_recent">This is one of the recentest photo from the user</string>
+    <string name="profile_user_image">This is an image for the profile of the user</string>
 </resources>

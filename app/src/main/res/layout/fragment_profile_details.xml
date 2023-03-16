@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@tools:sample/avatars"
-        android:contentDescription="TODO" />
+        android:contentDescription="@string/profile_user_image" />
 
     <Button
         android:id="@+id/fragment_profile_details_follow_button"
@@ -36,7 +36,7 @@
         android:id="@+id/fragment_profile_details_profile_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Name"
+        android:text="@string/name"
         app:layout_constraintBottom_toTopOf="@+id/fragment_profile_details_profile_rating"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.412"
@@ -68,14 +68,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
-            android:contentDescription="TODO" />
+            android:contentDescription="@string/image_activity_recent" />
     </HorizontalScrollView>
 
     <TextView
         android:id="@+id/fragment_profile_details_profile_description"
         android:layout_width="385dp"
         android:layout_height="87dp"
-        android:text="Ma description de moi-même"
+        android:text="@string/profile_description"
         app:layout_constraintBottom_toTopOf="@+id/fragment_profile_details_level"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -89,7 +89,6 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="62dp"
         android:ems="10"
-        android:inputType="textEmailAddress"
         app:layout_constraintBottom_toTopOf="@+id/fragment_profile_details_user_progress"
         app:layout_constraintEnd_toStartOf="@+id/fragment_profile_details_profile_phone"
         app:layout_constraintStart_toStartOf="parent"
@@ -102,7 +101,6 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="62dp"
         android:ems="10"
-        android:inputType="phone"
         app:layout_constraintBottom_toTopOf="@+id/fragment_profile_details_user_progress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fragment_profile_details_profile_description" />
@@ -121,7 +119,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="6dp"
-        android:text="[user] level"
+        android:text="@string/user_level"
         app:layout_constraintBottom_toTopOf="@+id/fragment_profile_details_user_progress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
