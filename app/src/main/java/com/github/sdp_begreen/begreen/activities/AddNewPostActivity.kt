@@ -44,7 +44,7 @@ class AddNewPostActivity : AppCompatActivity() {
             val image = data.extras?.get("data") as Bitmap
 
             // Send the image to the share activity
-            val intent = Intent(this, ShareImage::class.java)
+            val intent = Intent(this, SharePostActivity::class.java)
             intent.putExtra("image", image)
             startActivity(intent)
         }
