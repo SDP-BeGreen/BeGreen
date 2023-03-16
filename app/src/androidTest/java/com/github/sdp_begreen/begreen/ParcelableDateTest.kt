@@ -50,4 +50,11 @@ class ParcelableDateTest {
         assertThat(date.time, equalTo(createdFromParcel.date?.time))
     }
 
+    @Test
+    fun parcelableDateSetDateWorks() {
+        val date = ParcelableDate(Date())
+        val newDate = Date()
+        date.date = newDate
+        assertThat(date.date?.time, equalTo(newDate.time))
+    }
 }
