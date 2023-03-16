@@ -1,17 +1,13 @@
 package com.github.sdp_begreen.begreen
 
-import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.MediaStore
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.core.graphics.drawable.toBitmap
-import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.entities.Post
 
 class ShareImage : AppCompatActivity() {
 
@@ -32,9 +28,9 @@ class ShareImage : AppCompatActivity() {
         imageView.setImageBitmap(bitmap)
 
         // Configure the share action
-        shareBtn.setOnClickListener {
+        /*shareBtn.setOnClickListener {
             sharePost()
-        }
+        }*/
     }
 
     fun getPost() : Post {
@@ -50,10 +46,10 @@ class ShareImage : AppCompatActivity() {
     /**
      * Share the post to the database
      */
-    fun sharePost() {
+    /*fun sharePost() {
 
         val post = getPost()
 
         //TODO
-    }
+    }*/
 }

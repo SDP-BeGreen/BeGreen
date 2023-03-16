@@ -1,4 +1,4 @@
-package com.github.sdp_begreen.begreen
+package com.github.sdp_begreen.begreen.entities
 
 import android.graphics.Bitmap
 

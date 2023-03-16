@@ -66,6 +66,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-database-ktx'
     implementation 'com.google.firebase:firebase-auth-ktx:21.1.0'
+
+    // Mockito library for testing
+    debugImplementation 'org.mockito:mockito-core:5.2.0'
+    debugImplementation 'org.mockito:mockito-inline:5.2.0'
+    debugImplementation 'org.mockito.kotlin:mockito-kotlin:4.1.0'
 }
 
 tasks.withType(Test) {
