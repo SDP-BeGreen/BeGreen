@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
@@ -11,6 +12,7 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.social.GoogleAuth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
@@ -33,7 +35,14 @@ class SignInActivity : AppCompatActivity() {
                 firebaseAuthWithGoogle(account)
 
             } catch (e: ApiException) {
-                println("Error signing in with Google")
+                // Handling the ApiException based on its status code
+                val message = when (e.statusCode) {
+                    GoogleSignInStatusCodes.SIGN_IN_CANCELLED -> "Google sign-in cancelled"
+                    GoogleSignInStatusCodes.SIGN_IN_FAILED -> "Google sign-in failed"
+                    else -> "Error signing in with Google: ${e.message}"
+                }
+                // Displaying a toast message to the user with the error message
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             }
 
         }
