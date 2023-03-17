@@ -2,8 +2,8 @@ package com.github.sdp_begreen.begreen.models
 
 import android.graphics.Bitmap
 import android.os.Parcel
-import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.CoreMatchers.notNullValue
+import com.github.sdp_begreen.begreen.matchers.ContainsPropertyMatcher.Companion.hasProp
+import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import java.util.*
@@ -65,9 +65,10 @@ class PhotoTest {
         val date = ParcelableDate(Date())
         val user = User(1,"test",0)
         val photo = Photo("key", date, user, "cat")
-        assertThat(photo.key, equalTo("key"))
-        assertThat(photo.takenOn, equalTo(date))
-        assertThat(photo.takenBy, equalTo(user))
-        assertThat(photo.category, equalTo("cat"))
+        assertThat(photo, allOf(
+            hasProp("key", equalTo("key")),
+            hasProp("takenOn", equalTo(date)),
+            hasProp("takenBy", equalTo(user)),
+            hasProp("category", equalTo("cat"))))
     }
 }

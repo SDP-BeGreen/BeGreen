@@ -9,6 +9,7 @@
     <string name="profile_fragment_text">Fragment where we can display the user profile%1$s%2$s</string>
     <string name="settings_fragment_text">Fragment where we can display settings for the user%1$s%2$s</string>
     <string name="followers_fragment_text">Fragment where we can display the user\'s followers%1$s%2$s</string>
+    <string name="user_details_level_text">%1$s\'s level</string>
     <string name="get">Get</string>
     <string name="set">Set</string>
     <string name="query">Query</string>

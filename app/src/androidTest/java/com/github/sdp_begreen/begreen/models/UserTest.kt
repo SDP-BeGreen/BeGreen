@@ -1,6 +1,7 @@
 package com.github.sdp_begreen.begreen.models
 
 import android.os.Parcel
+import com.github.sdp_begreen.begreen.matchers.ContainsPropertyMatcher.Companion.hasProp
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.Photo
 import com.github.sdp_begreen.begreen.models.User
@@ -16,9 +17,22 @@ import java.util.*
 
 //Need to be in Android Test to use Parcel
 class UserTest {
-    var  user: User = User(1, "Test", 0)
-    val photo: Photo = Photo("1", ParcelableDate(Date()), User(1, "Alice", 33, ), "Gros vilain pas beau")
-    var user1: User = User(1, "Alice", 33, 1, photo, "Description poutou poutou", "cc@gmail.com", "08920939459802", 67, listOf(user), listOf(user))
+    var user: User = User(1, "Test", 0)
+    val photo: Photo =
+        Photo("1", ParcelableDate(Date()), User(1, "Alice", 33,), "Gros vilain pas beau")
+    var user1: User = User(
+        1,
+        "Alice",
+        33,
+        1,
+        photo,
+        "Description poutou poutou",
+        "cc@gmail.com",
+        "08920939459802",
+        67,
+        listOf(user),
+        listOf(user)
+    )
 
     @Before
     fun setup() {
@@ -27,8 +41,9 @@ class UserTest {
 
     @Test
     fun userConstructorIsNotNull() {
-        assertThat(User(0,"default", 12), notNullValue())
+        assertThat(User(0, "default", 12), notNullValue())
     }
+
     @Test
     fun userToStringIsCorrect() {
         assertThat(user.toString(), equalTo("Test"))
@@ -83,6 +98,7 @@ class UserTest {
         assertThat(user.followers, equalTo(listOf<User>()))
         assertThat(user.following, equalTo(listOf<User>()))
     }
+
     @Test
     fun userGetCurrentUserReturnsCorrectValues() {
         User.currentUser = user
@@ -90,7 +106,7 @@ class UserTest {
     }
 
     @Test
-    fun userSettersWorksCorrectly(){
+    fun userSettersWorksCorrectly() {
         user.description = "test"
         user.phone = "test"
         user.email = "test"
@@ -99,34 +115,17 @@ class UserTest {
         user.rating = 1
         user.img = photo
         user.progression = 1
-        assertThat(user, allOf(
-            HasProp("description", equalTo("test")),
-            HasProp("phone", equalTo("test")),
-            HasProp("followers", equalTo(listOf(user))),
-            HasProp("following", equalTo(listOf(user))),
-            HasProp("rating", equalTo(1)),
-            HasProp("img", equalTo(photo)),
-            HasProp("progression", equalTo(1))
-        ))
+        assertThat(
+            user, allOf(
+                hasProp("description", equalTo("test")),
+                hasProp("phone", equalTo("test")),
+                hasProp("followers", equalTo(listOf(user))),
+                hasProp("following", equalTo(listOf(user))),
+                hasProp("rating", equalTo(1)),
+                hasProp("img", equalTo(photo)),
+                hasProp("progression", equalTo(1))
+            )
+        )
 
     }
-    @Suppress("UNCHECKED_CAST")
-    fun <R> readInstanceProperty(instance: Any, propertyName: String): R {
-        return instance.javaClass.getMethod("get" + propertyName.replaceFirstChar {
-            if (it.isLowerCase()) it.titlecase(
-                Locale.getDefault()
-            ) else it.toString()
-        }).invoke(instance) as R
-    }
-
-    inner class HasProp<T>(private val name: String, private val matcher: Matcher<*>): TypeSafeMatcher<T>() {
-        override fun describeTo(description: Description?) {
-            description?.appendText("Check that given elem has property name")
-        }
-
-        override fun matchesSafely(item: T?): Boolean {
-            return matcher.matches(readInstanceProperty(item!!, name))
-        }
-    }
-
 }

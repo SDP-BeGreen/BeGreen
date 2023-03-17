@@ -1,5 +1,6 @@
 package com.github.sdp_begreen.begreen.fragments
 
+import android.app.Notification.Action
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -63,7 +64,9 @@ class ProfileDetailsFragment : Fragment() {
         profileDescription.text = user?.description
         profilePhone.text = user?.phone
         profileEmail.text = user?.email
-        userTextLevel.text = user?.name + "'s level"
+        userTextLevel.text = getString(
+            R.string.user_details_level_text, user?.name ?: "Default User",
+        )
         userProgressBar.progress = user?.progression ?: 0
 
         followButton.setOnClickListener {
@@ -74,7 +77,7 @@ class ProfileDetailsFragment : Fragment() {
                     user?.addFollower(User.currentUser)
                 }
             }else{
-                followButton.text = "Follow"
+                followButton.text = Actions.FOLLOW.text
                 lifecycleScope.launch {
                     //user?.removeFollower(User.currentUser)
                 }
