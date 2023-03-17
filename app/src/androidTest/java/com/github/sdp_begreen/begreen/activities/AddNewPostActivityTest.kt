@@ -1,6 +1,7 @@
 package com.github.sdp_begreen.begreen.activities
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -18,6 +19,7 @@ import androidx.test.espresso.intent.matcher.IntentMatchers.*
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
 import org.hamcrest.Matchers.*
 import org.junit.After
@@ -45,7 +47,10 @@ class AddNewPostActivityTest {
     }
 
     @Test
-    fun testAddNewImageBtn() {
+    fun testAddNewImageBtnShowsCameraIfAccepted() {
+
+        GrantPermissionRule.grant(Manifest.permission.CAMERA)
+
         // Click the add new image button
         onView(withId(R.id.addNewPostBtn)).perform(click())
 
