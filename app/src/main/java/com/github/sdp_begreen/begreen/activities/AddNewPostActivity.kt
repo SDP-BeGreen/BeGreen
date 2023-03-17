@@ -1,6 +1,5 @@
 package com.github.sdp_begreen.begreen.activities
 
-import android.Manifest
 import android.Manifest.permission.CAMERA
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -9,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.Button
-import android.widget.ImageView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.github.sdp_begreen.begreen.R
@@ -28,7 +26,7 @@ class AddNewPostActivity : AppCompatActivity() {
         }
 
         // If the user clicks on the share button it will ask him to take a picture
-        addNewImageBtn = findViewById(R.id.addNewImageBtn);
+        addNewImageBtn = findViewById(R.id.addNewPostBtn);
         addNewImageBtn.setOnClickListener {
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)

@@ -6,13 +6,11 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import androidx.core.graphics.drawable.toBitmap
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.entities.Post
 
 class SharePostActivity : AppCompatActivity() {
 
-    lateinit var imageView : ImageView;
+    private lateinit var imageView : ImageView;
     private lateinit var title : EditText;
     private lateinit var shareBtn : Button;
 
@@ -20,13 +18,18 @@ class SharePostActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_share_post)
 
-        imageView = findViewById(R.id.imageView);
-        title = findViewById(R.id.editTextTextPersonName);
+        imageView = findViewById(R.id.postImageView);
+        title = findViewById(R.id.postTitleEditText);
         shareBtn = findViewById(R.id.shareBtn)
 
         // Display the picture that has been taken (given as a parameter from the caller activity)
-        val bitmap : Bitmap = intent.getParcelableExtra<Bitmap>("image") as Bitmap
-        imageView.setImageBitmap(bitmap)
+        val bitmap : Bitmap? = intent.getParcelableExtra<Bitmap>("image")  as Bitmap?
+
+        if (intent.hasExtra("image") && bitmap != null) {
+            imageView.setImageBitmap(bitmap)
+        } else {
+            throw IllegalArgumentException("Intent does not contain Bitmap extra")
+        }
 
         // Configure the share action
         /*shareBtn.setOnClickListener {
@@ -34,7 +37,11 @@ class SharePostActivity : AppCompatActivity() {
         }*/
     }
 
-    fun getPost() : Post {
+    /*
+
+    // TODO this method will be called by sharePost() method
+
+    private fun getPost() : Post {
 
         val title : String = title.text.toString()
         val image : Bitmap = imageView.drawable.toBitmap()
@@ -43,6 +50,7 @@ class SharePostActivity : AppCompatActivity() {
 
         return post
     }
+     */
 
     /**
      * Share the post to the database

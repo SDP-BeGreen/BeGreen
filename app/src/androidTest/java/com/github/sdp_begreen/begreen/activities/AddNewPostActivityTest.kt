@@ -1,16 +1,12 @@
 package com.github.sdp_begreen.begreen.activities
 
 import android.Manifest
-import android.app.Activity
-import android.app.Instrumentation
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.provider.MediaStore
-import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Lifecycle
 import androidx.test.InstrumentationRegistry.getTargetContext
 import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso.onView
@@ -18,23 +14,13 @@ import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
-import androidx.test.espresso.intent.Intents.intending
-import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.intent.matcher.IntentMatchers.*
-import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.filters.LargeTest
-import androidx.test.internal.platform.content.PermissionGranter
-import androidx.test.rule.ActivityTestRule
-import androidx.test.rule.GrantPermissionRule.grant
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.entities.Post
 import org.hamcrest.Matchers.*
 import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -61,7 +47,7 @@ class AddNewPostActivityTest {
     @Test
     fun testAddNewImageBtn() {
         // Click the add new image button
-        onView(withId(R.id.addNewImageBtn)).perform(click())
+        onView(withId(R.id.addNewPostBtn)).perform(click())
 
         // Check if the camera app is opened
         intended(hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
