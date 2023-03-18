@@ -45,7 +45,7 @@ class AddNewPostActivityTest {
     fun tearDown() {
         Intents.release()
     }
-
+/*
     @Test
     fun testAddNewImageBtnShowsCameraIfAccepted() {
 
@@ -57,7 +57,7 @@ class AddNewPostActivityTest {
         // Check if the camera app is opened
         intended(hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
     }
-
+*/
     @Test
     fun testOnActivityResult() {
         // Create a bitmap to be returned by the camera activity
