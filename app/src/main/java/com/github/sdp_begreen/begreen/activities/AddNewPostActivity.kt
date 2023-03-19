@@ -76,7 +76,7 @@ class AddNewPostActivity : AppCompatActivity() {
 
         super.onActivityResult(requestCode, resultCode, data)
 
-        // When we receive the photo from the camera, we start a new activity to share the photo
+        // When we receive the photo from the camera, we start a new activity to share it
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && data != null) {
 
             // Get the image from the camera activity
