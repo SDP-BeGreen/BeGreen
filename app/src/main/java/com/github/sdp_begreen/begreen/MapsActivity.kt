@@ -16,6 +16,10 @@ import com.google.android.gms.location.LocationServices
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+    }
+
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var lastLocation: Location
@@ -50,10 +54,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         displayUserLocation()
     }
 
-    companion object {
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
-    }
-
     /**
      * Displays the user current location. Asks for permissions if needed.
      */
@@ -84,9 +84,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     /*
-    Uncomment theses functions in the future when we will display makers and click on them.
-    The class must implement GoogleMap.OnMarkerClickListener
-    And add in the method onMapReady the following : map.setOnMarkerClickListener(this)
+
+    // TODO :
+        - Uncomment theses methods in the future when we will display makers and click on them.
+        - Then the class must implement GoogleMap.OnMarkerClickListener
+        - Then add in the method onMapReady the following : map.setOnMarkerClickListener(this)
 
     override fun onMarkerClick(p0: Marker): Boolean {
         return false
