@@ -12,9 +12,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.github.sdp_begreen.begreen.R
 
+
 class AddNewPostActivity : AppCompatActivity() {
 
-    private lateinit var addNewImageBtn : Button;
+    private lateinit var addNewPostBtn : Button
 
     companion object {
         const val PERMISSION_CAMERA_REQUEST_CODE = 100
@@ -26,17 +27,17 @@ class AddNewPostActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_new_post)
 
-        setupAddNewImageBtn()
+        setupAddNewPostBtn()
     }
 
     /**
      * Helper function to setup the behavior of the "Add new post" button
      */
-    private fun setupAddNewImageBtn() {
+    private fun setupAddNewPostBtn() {
 
         // If the user clicks on the "Add new post" button it will ask him to take a picture
-        addNewImageBtn = findViewById(R.id.addNewPostBtn);
-        addNewImageBtn.setOnClickListener {
+        addNewPostBtn = findViewById(R.id.addNewPostBtn)
+        addNewPostBtn.setOnClickListener {
             startCameraIntent()
         }
     }
@@ -73,16 +74,19 @@ class AddNewPostActivity : AppCompatActivity() {
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
+        super.onActivityResult(requestCode, resultCode, data)
+
         // When we receive the photo from the camera, we start a new activity to share the photo
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && data != null) {
 
-            // Get the image from the camera acivity
-            val image = data.extras?.get("data") as Bitmap
+            // Get the image from the camera activity
+            val image = data.extras?.get("data") as? Bitmap
 
-            // Start the SharePost activity with the taken image
-            startSharePostActivity(image)
+            if (image != null) {
+
+                // Start the SharePost activity with the taken image
+                startSharePostActivity(image)
+            }
         }
-
-        super.onActivityResult(requestCode, resultCode, data)
     }
 }
