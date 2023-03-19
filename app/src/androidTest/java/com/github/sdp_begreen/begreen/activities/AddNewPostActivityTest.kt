@@ -16,9 +16,11 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.*
+import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
 import org.hamcrest.Matchers.*
@@ -31,6 +33,7 @@ import org.mockito.Mockito.*
 
 
 @RunWith(AndroidJUnit4::class)
+@LargeTest
 class AddNewPostActivityTest {
 
     @get:Rule
@@ -45,7 +48,7 @@ class AddNewPostActivityTest {
     fun tearDown() {
         Intents.release()
     }
-/*
+
     @Test
     fun testAddNewImageBtnShowsCameraIfAccepted() {
 
@@ -57,7 +60,7 @@ class AddNewPostActivityTest {
         // Check if the camera app is opened
         intended(hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
     }
-*/
+
     @Test
     fun testOnActivityResult() {
         // Create a bitmap to be returned by the camera activity
@@ -76,7 +79,7 @@ class AddNewPostActivityTest {
         intended(
             allOf(
                 hasComponent(SharePostActivity::class.java.name),
-                hasExtra("image", bitmap)
+                hasExtra(AddNewPostActivity.EXTRA_IMAGE_BITMAP, bitmap)
             )
         )
     }

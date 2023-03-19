@@ -23,9 +23,9 @@ class SharePostActivity : AppCompatActivity() {
         shareBtn = findViewById(R.id.shareBtn)
 
         // Display the picture that has been taken (given as a parameter from the caller activity)
-        val bitmap : Bitmap? = intent.getParcelableExtra<Bitmap>("image")  as Bitmap?
+        val bitmap : Bitmap? = intent.getParcelableExtra<Bitmap>(AddNewPostActivity.EXTRA_IMAGE_BITMAP)  as Bitmap?
 
-        if (intent.hasExtra("image") && bitmap != null) {
+        if (intent.hasExtra(AddNewPostActivity.EXTRA_IMAGE_BITMAP) && bitmap != null) {
             imageView.setImageBitmap(bitmap)
         } else {
             throw IllegalArgumentException("Intent does not contain Bitmap extra")

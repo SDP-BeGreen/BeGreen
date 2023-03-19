@@ -16,21 +16,59 @@ class AddNewPostActivity : AppCompatActivity() {
 
     private lateinit var addNewImageBtn : Button;
 
+    companion object {
+        const val PERMISSION_CAMERA_REQUEST_CODE = 100
+        const val REQUEST_IMAGE_CAPTURE = 1
+        const val EXTRA_IMAGE_BITMAP = "image_bitmap"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_new_post)
 
-        // Request for camera runtime permission
-        if (ContextCompat.checkSelfPermission(this, CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(CAMERA), 100)
-        }
+        setupAddNewImageBtn()
+    }
 
-        // If the user clicks on the share button it will ask him to take a picture
+    /**
+     * Helper function to setup the behavior of the "Add new post" button
+     */
+    private fun setupAddNewImageBtn() {
+
+        // If the user clicks on the "Add new post" button it will ask him to take a picture
         addNewImageBtn = findViewById(R.id.addNewPostBtn);
         addNewImageBtn.setOnClickListener {
+            startCameraIntent()
+        }
+    }
+
+
+    /**
+     * Helper function to start the camera intent, and ask for permission if needed.
+     */
+    private fun startCameraIntent() {
+
+        // If the camera permission is not granted, ask for it. Otherwise start the camera intent.
+        if (ContextCompat.checkSelfPermission(this, CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(CAMERA), PERMISSION_CAMERA_REQUEST_CODE)
+
+        } else {
+
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
         }
+    }
+
+    /**
+     * Helper function to start the SharePost activity
+     *
+     * @param image The photo to share
+     */
+    private fun startSharePostActivity(image: Bitmap) {
+
+        // Send the image to the share activity
+        val intent = Intent(this, SharePostActivity::class.java)
+        intent.putExtra(EXTRA_IMAGE_BITMAP, image)
+        startActivity(intent)
     }
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -41,16 +79,10 @@ class AddNewPostActivity : AppCompatActivity() {
             // Get the image from the camera acivity
             val image = data.extras?.get("data") as Bitmap
 
-            // Send the image to the share activity
-            val intent = Intent(this, SharePostActivity::class.java)
-            intent.putExtra("image", image)
-            startActivity(intent)
+            // Start the SharePost activity with the taken image
+            startSharePostActivity(image)
         }
 
         super.onActivityResult(requestCode, resultCode, data)
-    }
-
-    companion object {
-        const val REQUEST_IMAGE_CAPTURE = 1
     }
 }
