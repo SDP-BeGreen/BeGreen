@@ -23,8 +23,6 @@ import org.hamcrest.Matchers.*
 import org.junit.*
 import org.junit.Assert.assertTrue
 import org.junit.runner.RunWith
-import org.mockito.Mockito.*
-
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
