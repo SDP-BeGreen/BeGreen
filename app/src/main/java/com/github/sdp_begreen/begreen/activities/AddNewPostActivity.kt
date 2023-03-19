@@ -44,7 +44,7 @@ class AddNewPostActivity : AppCompatActivity() {
 
 
     /**
-     * Helper function to start the camera intent, and ask for permission if needed.
+     * Helper function to start the camera intent, or ask for permission if not granted.
      */
     private fun startCameraIntent() {
 

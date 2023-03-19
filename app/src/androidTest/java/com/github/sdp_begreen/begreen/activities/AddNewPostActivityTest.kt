@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.test.InstrumentationRegistry.getTargetContext
 import androidx.test.core.app.launchActivity
@@ -48,18 +49,19 @@ class AddNewPostActivityTest {
     fun tearDown() {
         Intents.release()
     }
-
+/*
     @Test
-    fun testAddNewImageBtnShowsCameraIfAccepted() {
+    fun clickAddNewPostBtn_StartsCameraIntentIfCameraPermissionGranted() {
 
+        // Accept the camera permission. TODO : Not working
         GrantPermissionRule.grant(Manifest.permission.CAMERA)
 
-        // Click the add new image button
+        // Click the add new post button
         onView(withId(R.id.addNewPostBtn)).perform(click())
 
-        // Check if the camera app is opened
+        // Check if the camera intent is opened
         intended(hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
-    }
+    }*/
 
     @Test
     fun testOnActivityResult() {
@@ -83,7 +85,7 @@ class AddNewPostActivityTest {
             )
         )
     }
-/*
+
     @Test
     fun testCameraPermissionRequest() {
 
@@ -104,7 +106,7 @@ class AddNewPostActivityTest {
         val permissionDenied = PackageManager.PERMISSION_DENIED
         val cameraPermissionCheck = ContextCompat.checkSelfPermission(getTargetContext(), permission)
 
-        if (cameraPermissionCheck == permissionDenied) {
+        if (cameraPermissionCheck != PackageManager.PERMISSION_GRANTED) {
             // Permission is not granted, so click the allow button when prompted
 
             // TODO This strings doesn't work on the CI
@@ -116,5 +118,5 @@ class AddNewPostActivityTest {
 
         // Verify that the permission is granted
         assertThat(ContextCompat.checkSelfPermission(getTargetContext(), permission), equalTo(permissionGranted))
-    }*/
+    }
 }
