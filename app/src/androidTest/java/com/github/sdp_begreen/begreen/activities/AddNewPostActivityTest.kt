@@ -7,6 +7,7 @@ import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.intent.Intents
