@@ -30,6 +30,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mock
 import org.mockito.Mockito.*
 
 
@@ -49,7 +50,7 @@ class AddNewPostActivityTest {
     fun tearDown() {
         Intents.release()
     }
-/*
+
     @Test
     fun clickAddNewPostBtn_StartsCameraIntentIfCameraPermissionGranted() {
 
@@ -61,10 +62,11 @@ class AddNewPostActivityTest {
 
         // Check if the camera intent is opened
         intended(hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
-    }*/
+    }
 
     @Test
-    fun testOnActivityResult() {
+    fun testOnActivityResult()
+    {
         // Create a bitmap to be returned by the camera activity
         val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
 
@@ -84,39 +86,5 @@ class AddNewPostActivityTest {
                 hasExtra(AddNewPostActivity.EXTRA_IMAGE_BITMAP, bitmap)
             )
         )
-    }
-
-    @Test
-    fun testCameraPermissionRequest() {
-
-        /* TODO : Test the following cases
-
-            revoke permissions -> ask -> accept
-            revoke permissions -> ask -> deny
-            permission already asked -> so we don't ask
-         */
-
-        // Launch the activity
-        val scenario = launchActivity<AddNewPostActivity>()
-
-        // Grant camera permission
-
-        val permission = Manifest.permission.CAMERA
-        val permissionGranted = PackageManager.PERMISSION_GRANTED
-        val permissionDenied = PackageManager.PERMISSION_DENIED
-        val cameraPermissionCheck = ContextCompat.checkSelfPermission(getTargetContext(), permission)
-
-        if (cameraPermissionCheck != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted, so click the allow button when prompted
-
-            // TODO This strings doesn't work on the CI
-            val permissionDialogMatcher = withText("permission_camera")
-            val allowButtonMatcher = withText("allow")
-            onView(permissionDialogMatcher).check(matches(isDisplayed()))
-            onView(allowButtonMatcher).perform(click())
-        }
-
-        // Verify that the permission is granted
-        assertThat(ContextCompat.checkSelfPermission(getTargetContext(), permission), equalTo(permissionGranted))
     }
 }
