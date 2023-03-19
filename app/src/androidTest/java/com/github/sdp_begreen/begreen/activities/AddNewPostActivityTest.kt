@@ -40,7 +40,6 @@ class AddNewPostActivityTest {
         this.putExtra("data", image)
     }
 
-
     @Before
     fun setUp() {
         Intents.init()
@@ -50,9 +49,6 @@ class AddNewPostActivityTest {
     fun tearDown() {
         Intents.release()
     }
-
-
-    // TODO : Working locaaly but not on the CI. also handle the deny case
 
     @Test
     fun clickAddNewPostBtn_StartsCameraIntentIfCameraPermissionGranted() {
