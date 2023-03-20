@@ -54,6 +54,8 @@ class AddNewPostActivity : AppCompatActivity() {
 
         } else {
 
+            // Start the camera intent. Actually, it handles the permission checks by its own so the previous
+            // verification is not mandatory. But keep it if android decides to change the behavior of the camera permission.
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
         }

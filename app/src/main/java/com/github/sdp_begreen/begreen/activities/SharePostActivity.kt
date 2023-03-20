@@ -105,8 +105,8 @@ class SharePostActivity : AppCompatActivity() {
 
         /*val intent = Intent(applicationContext, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)*/
+        startActivity(intent)
 
-        // Snackbar.make(sharePostBtn, POST_SHARED_MESSAGE, Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(sharePostBtn, POST_SHARED_MESSAGE, Snackbar.LENGTH_SHORT).show()*/
     }
 }
