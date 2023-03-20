@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.social.GoogleAuth.mGoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 
 object GoogleAuth {
@@ -29,13 +31,8 @@ object GoogleAuth {
         // Create a GoogleSignInClient object to interact with the Google Sign-In API
         mGoogleSignInClient = GoogleSignIn.getClient(context, gso)
     }
-
-
-    fun googleSignIn() : Intent {
-        val signInIntent: Intent = mGoogleSignInClient.signInIntent
-        return signInIntent
-    }
-
+    
+    fun googleSignIn() = mGoogleSignInClient.signInIntent
 
     fun googleLogOut(context: Context, logoutCallback: (Context) -> Unit) {
         googleClient(context)
