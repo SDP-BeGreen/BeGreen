@@ -3,6 +3,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -57,9 +58,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     /**
      * Displays the user current location. Asks for permissions if needed.
      */
-    fun displayUserLocation() {
+    private fun displayUserLocation() {
 
-        // Checks if the user gave the ACCESS_FINE_LOCATION permission.
+        // Checks if the user gave the ACCESS_FINE_LOCATION permission. If not ask for it.
         if (ActivityCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
@@ -67,37 +68,34 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
                 LOCATION_PERMISSION_REQUEST_CODE
             )
-            return
         }
 
-        // Fetch and display the user's current location
-        map.isMyLocationEnabled = true
-        fusedLocationClient.lastLocation.addOnSuccessListener(this) { location ->
+        // If the permissions are granted, display the map.
+        // Don't put this in an else-closure of the previous if-condition because
+        // we want to display the map after the user has granted the permissions
+        if (ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-            // Got last known location. In some rare situations this can be null.
-            if (location != null) {
-                lastLocation = location
-                val currentLatLng = LatLng(location.latitude, location.longitude)
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+            // Fetch and display the user's current location
+            map.isMyLocationEnabled = true
+            fusedLocationClient.lastLocation.addOnSuccessListener(this) { location ->
+                displayBlueDotLocation(location)
             }
         }
     }
 
-    /*
+    private fun displayBlueDotLocation(location: Location?) {
 
-    // TODO :
-        - Uncomment theses methods in the future when we will display makers and click on them.
-        - Then the class must implement GoogleMap.OnMarkerClickListener
-        - Then add in the method onMapReady the following : map.setOnMarkerClickListener(this)
+        // Got last known location. In some rare situations this can be null.
+        if (location != null) {
 
-    override fun onMarkerClick(p0: Marker): Boolean {
-        return false
+            lastLocation = location
+            val currentLatLng = LatLng(location.latitude, location.longitude)
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+
+        } else {
+
+            //Toast.makeText(this, "Sorry, an error occured. Unable to show the user location", Toast.LENGTH_SHORT).show()
+        }
     }
-
-    private fun placeMarkerOnMap(location: LatLng) {
-
-        val markerOptions = MarkerOptions().position(location)
-        map.addMarker(markerOptions)
-    }
-    */
 }
