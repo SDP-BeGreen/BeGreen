@@ -19,9 +19,6 @@ class SharePostActivity : AppCompatActivity() {
     private lateinit var postTitleEditText : EditText;
     private lateinit var sharePostBtn : Button;
 
-    companion object {
-        const val POST_SHARED_MESSAGE = "Your post is shared !"
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,9 +37,8 @@ class SharePostActivity : AppCompatActivity() {
         sharePostBtn = findViewById(R.id.sharePostBtn)
         postImageView = findViewById(R.id.postImageView);
 
-        // Display the post image
-        val image = getPostImage()
-        displayPostImage(image)
+        // Display the post image.
+        displayPostImage()
 
         // Setup the share button action
         sharePostBtn.setOnClickListener {
@@ -55,14 +51,17 @@ class SharePostActivity : AppCompatActivity() {
      */
     private fun getPostImage() : Bitmap {
 
-        // The case where extras == null is handled in the if statement below where image == null
-        val image : Bitmap? = intent.extras?.get(AddNewPostActivity.EXTRA_IMAGE_BITMAP) as Bitmap?
+        if (intent.hasExtra(AddNewPostActivity.EXTRA_IMAGE_BITMAP)) {
 
-        if (!intent.hasExtra(AddNewPostActivity.EXTRA_IMAGE_BITMAP) || image == null) {
-            throw IllegalArgumentException()
+            val image = intent.extras!!.get(AddNewPostActivity.EXTRA_IMAGE_BITMAP) as? Bitmap
+
+            if (image != null) {
+
+                return image
+            }
         }
 
-        return image
+        throw java.lang.IllegalArgumentException()
     }
 
     /**
@@ -75,7 +74,21 @@ class SharePostActivity : AppCompatActivity() {
     /**
      * Helper function to display the post image
      */
-    private fun displayPostImage(image : Bitmap) {
+    private fun displayPostImage() {
+
+        var image : Bitmap
+
+        // Exception thrown while launching the activity cannot be caught by UI tests.
+        // So we prevent them during activity launching
+        try {
+            image = getPostImage()
+        } catch (e : IllegalArgumentException) {
+
+            // If there is no image as extra, display a fake image. Anyway the share button will
+            // prevent the user from sharing the image.
+            image = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+        }
+
         postImageView.setImageBitmap(image)
     }
 
@@ -103,10 +116,6 @@ class SharePostActivity : AppCompatActivity() {
 
         finish()
 
-        /*val intent = Intent(applicationContext, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
-
-        Snackbar.make(sharePostBtn, POST_SHARED_MESSAGE, Snackbar.LENGTH_SHORT).show()*/
+        //Snackbar.make(sharePostBtn, POST_SHARED_MESSAGE, Snackbar.LENGTH_SHORT).show()
     }
 }

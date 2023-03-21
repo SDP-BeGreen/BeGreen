@@ -7,7 +7,6 @@ import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.intent.Intents
@@ -22,7 +21,9 @@ import com.github.sdp_begreen.begreen.R
 import org.hamcrest.Matchers.*
 import org.junit.*
 import org.junit.Assert.assertTrue
+import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
+
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
