@@ -29,8 +29,6 @@ class DatabaseActivityTest {
                 Firebase.storage.useEmulator("10.0.2.2", 9199)
                 Firebase.auth.useEmulator("10.0.2.2", 9099)
             } catch (_:java.lang.IllegalStateException){}
-
-            Firebase.database.reference.child("123").setValue("abc")
         }
     }
 

@@ -34,56 +34,6 @@ object FirebaseDB {
     // We might want to provide a new constructor that takes code to execute on connections/disconnections
     // (to show the user when he gets connected/disconnected by example)
     init {
-
-        // Enables disk persistence (the phone now caches data)
-        //Firebase.database.setPersistenceEnabled(true)
-        // If we want to keep some data synced, we can use the following instruction:
-        /*
-        val scoresRef = Firebase.database.getReference("scores")
-        scoresRef.keepSynced(true)
-         */
-        // And unsync it with the following:
-        /*
-        scoresRef.keepSynced(false)
-         */
-
-        // We can use this code to record on the server when the user was last seen
-        /*val userLastOnlineRef = Firebase.database.getReference("users/joe/lastOnline")
-        userLastOnlineRef.onDisconnect().setValue(ServerValue.TIMESTAMP)*/
-
-        // The following code can be used to track when users are online and when they were last seen
-        // Since I can connect from multiple devices, we store each connection instance separately
-        // any time that connectionsRef's value is null (i.e. has no children) I am offline
-        /*val database = Firebase.database
-        val myConnectionsRef = database.getReference("users/joe/connections")
-
-        // Stores the timestamp of my last disconnect (the last time I was seen online)
-        val lastOnlineRef = database.getReference("/users/joe/lastOnline")
-
-        val connectedRef = database.getReference(".info/connected")
-        connectedRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val connected = snapshot.getValue<Boolean>() ?: false
-                if (connected) {
-                    val con = myConnectionsRef.push()
-
-                    // When this device disconnects, remove it
-                    con.onDisconnect().removeValue()
-
-                    // When I disconnect, update the last time I was seen online
-                    lastOnlineRef.onDisconnect().setValue(ServerValue.TIMESTAMP)
-
-                    // Add this device to my connections list
-                    // this value could contain info about the device or a timestamp too
-                    con.setValue(java.lang.Boolean.TRUE)
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.w(TAG, "Listener was cancelled at .info/connected")
-            }
-        })*/
-
         connectedReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.getValue(Boolean::class.java) == true) {
@@ -174,28 +124,6 @@ object FirebaseDB {
         } catch (e: Error) {
             null
         }
-
-        /* OLD IMPLEMENTATION
-        val picturesNode = databaseReference.child("pictures").child("userId")
-            .child(userId.toString())
-
-        // Compress the Bitmap
-        val stream = ByteArrayOutputStream()
-        image.compress(Bitmap.CompressFormat.PNG, 100, stream)
-        // Convert the stream to a list of Integers
-        val intList = stream.toByteArray().map { it.toInt() }
-
-        // Create a unique ID for the image
-
-        val uniqueID = picturesNode.push().key
-
-        // Upload the image to the database
-        if (uniqueID != null) {
-            val imageMap = HashMap<String, Any>()
-            imageMap["imageBytes"] = intList
-            picturesNode.child(uniqueID).setValue(imageMap)
-        }
-        return uniqueID*/
     }
 
     /**
@@ -230,23 +158,5 @@ object FirebaseDB {
             Log.d(TAG, "Failed with error message: ${storageEx.message}")
             throw storageEx
         }
-
-        /* OLD IMPLEMENTATION
-        return try {
-            // Points to the node where the image SHOULD be
-            val imageNode = databaseReference.child("pictures").child("userId")
-                .child(userId.toString()).child(imageId)
-
-            // Get the HashMap that contains the image
-            val imageMap = imageNode.get().await().value
-            // Map the HashMap back to a List of Ints  and return null if this fails
-            val intList =
-                imageMap?.let { it as? HashMap<*, *> }?.get("imageBytes") as? List<*> ?: return null
-            // Map the list of ints back to a Bitmap and returns it
-            val byteArray = intList.map { (it as Long).toByte() }.toByteArray()
-            return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-        } catch (e: Error) {
-            null
-        }*/
     }
 }
