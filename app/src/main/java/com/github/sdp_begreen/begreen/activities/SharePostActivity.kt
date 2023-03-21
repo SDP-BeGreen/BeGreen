@@ -1,17 +1,13 @@
 package com.github.sdp_begreen.begreen.activities
 
-import android.content.Intent
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.Toast
-import androidx.core.graphics.drawable.toBitmap
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.entities.Post
-import com.google.android.material.snackbar.Snackbar
 
 class SharePostActivity : AppCompatActivity() {
 
@@ -51,14 +47,11 @@ class SharePostActivity : AppCompatActivity() {
      */
     private fun getPostImage() : Bitmap {
 
-        if (intent.hasExtra(AddNewPostActivity.EXTRA_IMAGE_BITMAP)) {
+        val image = intent.extras?.get(AddNewPostActivity.EXTRA_IMAGE_BITMAP) as? Bitmap
 
-            val image = intent.extras!!.get(AddNewPostActivity.EXTRA_IMAGE_BITMAP) as? Bitmap
+        if (image != null) {
 
-            if (image != null) {
-
-                return image
-            }
+            return image
         }
 
         throw java.lang.IllegalArgumentException()

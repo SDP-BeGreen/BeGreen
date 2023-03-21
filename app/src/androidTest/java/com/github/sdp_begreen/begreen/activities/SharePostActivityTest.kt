@@ -45,17 +45,6 @@ class SharePostActivityTest {
     }
 
     @Test
-    fun activityLanchedWithCorrectIntent() {
-
-        val intent = Intent(ApplicationProvider.getApplicationContext(), SharePostActivity::class.java).apply {
-            this.putExtra("Hello", "Hello")
-        }
-        val activity = launchActivity<SharePostActivity>(intent)
-
-        sharePostButtonClickAssertThrowsIllegalArgumentException(activity)
-    }
-
-    @Test
     fun intentWithNoExtraImageThrowsIllegalArgumentException() {
 
         val intent = Intent(ApplicationProvider.getApplicationContext(), SharePostActivity::class.java).apply {
@@ -70,6 +59,16 @@ class SharePostActivityTest {
 
         val intent = Intent(ApplicationProvider.getApplicationContext(), SharePostActivity::class.java).apply {
             this.putExtra(AddNewPostActivity.EXTRA_IMAGE_BITMAP, "Hello")
+        }
+        val activity = launchActivity<SharePostActivity>(intent)
+
+        sharePostButtonClickAssertThrowsIllegalArgumentException(activity)
+    }
+
+    fun intentWithNullExtraThrowsIllegalArgumentException() {
+
+        val intent = Intent(ApplicationProvider.getApplicationContext(), SharePostActivity::class.java).apply {
+            this.replaceExtras(null)
         }
         val activity = launchActivity<SharePostActivity>(intent)
 
