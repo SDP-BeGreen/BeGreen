@@ -29,4 +29,6 @@
     <string name="profile_description">User has not a description yet...</string>
     <string name="image_activity_recent">This is one of the recentest photo from the user</string>
     <string name="profile_user_image">This is an image for the profile of the user</string>
+    <string name="nav_drawer_username">Username</string>
+    <string name="nav_drawer_description_info">More Info on user</string>
 </resources>

@@ -1,6 +1,6 @@
 package com.github.sdp_begreen.begreen.fragments
 
-import android.app.Notification.Action
+import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -14,6 +14,7 @@ import android.widget.RatingBar
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.models.Actions
 import com.github.sdp_begreen.begreen.models.User
 import kotlinx.coroutines.launch
@@ -34,7 +35,7 @@ class ProfileDetailsFragment : Fragment() {
         arguments?.let {
             user = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 it.getParcelable(ARG_USER, User::class.java)
-            }else {
+            } else {
                 it.getParcelable(ARG_USER)
             }
         }
@@ -58,17 +59,30 @@ class ProfileDetailsFragment : Fragment() {
         val userProgressBar = view.findViewById(R.id.fragment_profile_details_user_progress) as ProgressBar
         val followButton = view.findViewById(R.id.fragment_profile_details_follow_button) as Button
 
-        name.text = user?.name
+        name.text = user?.displayName
         rating.rating = user?.score?.toFloat() ?: 0.0f
-        profileImgView.setImageBitmap(user?.img?.getPhotoFromDataBase())
+        lifecycleScope.launch {
+            val img = user?.let { user ->
+                user.img?.let {
+                    FirebaseDB.getUserProfilePicture(it, user.id)
+                }
+            }
+            profileImgView.setImageBitmap(img
+                ?: Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888))
+        }
         profileDescription.text = user?.description
         profilePhone.text = user?.phone
         profileEmail.text = user?.email
         userTextLevel.text = getString(
-            R.string.user_details_level_text, user?.name ?: "Default User",
+            R.string.user_details_level_text, user?.displayName ?: "Default User",
         )
         userProgressBar.progress = user?.progression ?: 0
 
+        setupFollowListener(followButton)
+        return view
+    }
+
+    private fun setupFollowListener(followButton: Button) {
         followButton.setOnClickListener {
             if(followButton.text == Actions.FOLLOW.text) {
                 followButton.text = Actions.UNFOLLOW.text
@@ -84,7 +98,6 @@ class ProfileDetailsFragment : Fragment() {
             }
 
         }
-        return view
     }
 
     companion object {
