@@ -1,7 +1,9 @@
 package com.github.sdp_begreen.begreen.matchers
 
 import android.graphics.Bitmap
+import android.os.Bundle
 import android.util.Log
+import androidx.test.platform.app.InstrumentationRegistry
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
@@ -12,7 +14,7 @@ import java.io.ByteArrayOutputStream
  */
 class EqualsToBitmap private constructor(private val bmp: Bitmap): TypeSafeMatcher<Bitmap>() {
     override fun describeTo(description: Description?) {
-        description?.appendText("Check that the two bitmaps are equals")
+        description?.appendText(String.format("Expected item width: %s, expected item height: %s", bmp.width.toString(), bmp.height.toString()))
     }
 
     override fun matchesSafely(item: Bitmap?): Boolean {
@@ -29,6 +31,10 @@ class EqualsToBitmap private constructor(private val bmp: Bitmap): TypeSafeMatch
         }
 
         return true
+    }
+
+    override fun describeMismatchSafely(item: Bitmap?, mismatchDescription: Description?) {
+        mismatchDescription?.appendText(String.format("Received item width: %s, received item height: %s", item!!.width.toString(), item.height.toString()))
     }
 
     companion object {
