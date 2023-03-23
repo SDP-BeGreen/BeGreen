@@ -1,54 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/header_drawer_main_menu"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/nav_drawer_profile_picture_imageview"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/nav_drawer_username_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true"
-            android:layout_toStartOf="@+id/nav_drawer_profile_picture_imageview">
-            <TextView
-                android:id="@+id/nav_drawer_username_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/nav_drawer_username"
-                android:textAppearance="?attr/textAppearanceHeadline6"
-                />
-            <TextView
-                android:id="@+id/nav_drawer_description_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/nav_drawer_description_info"
-                android:layout_marginTop="8dp"
-                android:textAppearance="?attr/textAppearanceBody2"
-                android:textColor="?android:attr/textColorSecondary"
-                />
-        </LinearLayout>
+            android:text="@string/nav_drawer_username"
+            android:textAppearance="?attr/textAppearanceHeadline6" />
 
-        <!-- android:src="@drawable/blank_profile_picture" -->
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/nav_drawer_profile_picture_imageview"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+        <TextView
+            android:id="@+id/nav_drawer_description_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/nav_drawer_description_info"
+            android:textAppearance="?attr/textAppearanceBody2"
+            android:textColor="?android:attr/textColorSecondary" />
+    </LinearLayout>
 
-            android:background="#9A9A9A"
-            app:shapeAppearanceOverlay="@style/Circular"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="20dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
-            />
-    </RelativeLayout>
-</LinearLayout>
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/nav_drawer_profile_picture_imageview"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="20dp"
+        android:background="#9A9A9A"
+        app:shapeAppearanceOverlay="@style/Circular" />
+</RelativeLayout>

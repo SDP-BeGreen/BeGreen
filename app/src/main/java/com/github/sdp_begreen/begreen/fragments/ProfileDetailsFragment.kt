@@ -1,6 +1,7 @@
 package com.github.sdp_begreen.begreen.fragments
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -68,7 +69,7 @@ class ProfileDetailsFragment : Fragment() {
                 }
             }
             profileImgView.setImageBitmap(img
-                ?: Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888))
+                ?: BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture))
         }
         profileDescription.text = user?.description
         profilePhone.text = user?.phone
