@@ -2,6 +2,8 @@ package com.github.sdp_begreen.begreen.activities
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -15,10 +17,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.view.LayoutInflater
+import android.view.WindowManager
 
 class SignInActivity : AppCompatActivity() {
 
@@ -31,7 +35,7 @@ class SignInActivity : AppCompatActivity() {
         if (result.resultCode == Activity.RESULT_OK) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
             try {
-                // I will add a progress bar that appear when google sign in is uploading (new functionality)
+                showProgressDialog(this)
                 val account = task.getResult(ApiException::class.java)!!
                 firebaseAuthWithGoogle(account)
 
@@ -79,20 +83,51 @@ class SignInActivity : AppCompatActivity() {
         Log.d("TAG", "firebaseAuthWithGoogle:" + account.id)
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         firebaseAuth.signInWithCredential(credential)
-            .addOnCompleteListener(this,
-                OnCompleteListener<AuthResult?> { task ->
-                    if (task.isSuccessful) {
-                        if(!account.email!!.equals("")){
-                            val intent = Intent(this,MainActivity::class.java)
-                            startActivity(intent)
-                            // Here I will hide the progress bar when implemented
-                            finish()
-                        }
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w("TAG", "signInWithCredential:failure", task.exception)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    if (!account.email!!.equals("")) {
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
+                        hideProgressDialog()
+                        finish()
                     }
-                })
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w("TAG", "signInWithCredential:failure", task.exception)
+                }
+            }
     }
 
+    private var dialog: AlertDialog? = null
+    private fun showProgressDialog(context: Context) {
+
+        if(dialog == null){
+            val builder = AlertDialog.Builder(context)
+            builder.setCancelable(false) // if you want user to wait for some process to finish,
+            val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val v = inflater.inflate(R.layout.loading_circle, null)
+            builder.setView(v)
+            dialog = builder.create()
+            dialog!!.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            dialog!!.window!!.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            dialog!!.show()
+        }
+        else{
+            dialog!!.show()
+        }
+
+    }
+
+    private fun isProgressDialogShown(): Boolean {
+        return if (dialog != null)
+            dialog!!.isShowing
+        else
+            false
+    }
+
+    private fun hideProgressDialog() {
+        if (isProgressDialogShown())
+            dialog?.dismiss()
+        dialog=null
+    }
 }
