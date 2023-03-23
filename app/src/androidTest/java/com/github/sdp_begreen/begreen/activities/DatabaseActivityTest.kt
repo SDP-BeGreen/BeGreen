@@ -8,24 +8,28 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import com.github.sdp_begreen.begreen.FirebaseDB
 import com.github.sdp_begreen.begreen.R
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import com.google.firebase.storage.ktx.storage
+import org.junit.*
 import org.junit.runner.RunWith
+
 
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class DatabaseActivityTest {
 
-    @Before
-    fun init() {
-        Firebase.database.useEmulator("10.0.2.2",9000)
+    companion object {
+        @BeforeClass @JvmStatic fun setup() {
+            try {
+                Firebase.database.useEmulator("10.0.2.2", 9000)
+                Firebase.storage.useEmulator("10.0.2.2", 9199)
+                Firebase.auth.useEmulator("10.0.2.2", 9099)
+            } catch (_:java.lang.IllegalStateException){}
+        }
     }
 
     @get:Rule
@@ -52,7 +56,6 @@ class DatabaseActivityTest {
             .perform(typeText("1"))
             .perform(closeSoftKeyboard())
 
-
         // Press get button
         onView(withId(R.id.databaseGet))
             .perform(click())
@@ -63,6 +66,7 @@ class DatabaseActivityTest {
 
     @Test
     fun getOnNonStringValuePrintsNothing() {
+
         // Type phone number
         onView(withId(R.id.databasePhoneNumber))
             .perform(typeText("123"))
