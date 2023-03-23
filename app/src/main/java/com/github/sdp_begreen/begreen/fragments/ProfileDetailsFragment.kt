@@ -63,7 +63,7 @@ class ProfileDetailsFragment : Fragment() {
         rating.rating = user?.score?.toFloat() ?: 0.0f
         lifecycleScope.launch {
             val img = user?.let { user ->
-                user.img?.let {
+                user.profilePictureMetadata?.let {
                     FirebaseDB.getUserProfilePicture(it, user.id)
                 }
             }
