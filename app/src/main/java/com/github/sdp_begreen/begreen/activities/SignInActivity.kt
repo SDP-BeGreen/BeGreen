@@ -103,7 +103,7 @@ class SignInActivity : AppCompatActivity() {
 
         if(dialog == null){
             val builder = AlertDialog.Builder(context)
-            builder.setCancelable(false) // if you want user to wait for some process to finish,
+            //builder.setCancelable(false) // if you want user to wait for some process to finish
             val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val v = inflater.inflate(R.layout.loading_circle, null)
             builder.setView(v)
@@ -119,10 +119,10 @@ class SignInActivity : AppCompatActivity() {
     }
 
     private fun isProgressDialogShown(): Boolean {
-        return if (dialog != null)
-            dialog!!.isShowing
+        if (dialog != null)
+            return dialog!!.isShowing
         else
-            false
+            return false
     }
 
     private fun hideProgressDialog() {
