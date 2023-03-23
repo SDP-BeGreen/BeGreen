@@ -69,7 +69,7 @@ class ProfileDetailsFragment : Fragment() {
                 }
             }
             profileImgView.setImageBitmap(img
-                ?: BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture))
+                ?: Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888))
         }
         profileDescription.text = user?.description
         profilePhone.text = user?.phone
