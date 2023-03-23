@@ -45,16 +45,11 @@ class SharePostActivity : AppCompatActivity() {
     /**
      * Helper function to return the image post which is an extra of the intent
      */
-    private fun getPostImage() : Bitmap {
+    private fun getPostImage() : Bitmap? {
 
         val image = intent.extras?.get(AddNewPostActivity.EXTRA_IMAGE_BITMAP) as? Bitmap
 
-        if (image != null) {
-
-            return image
-        }
-
-        throw java.lang.IllegalArgumentException()
+        return image
     }
 
     /**
@@ -69,29 +64,28 @@ class SharePostActivity : AppCompatActivity() {
      */
     private fun displayPostImage() {
 
-        var image : Bitmap
+        // If the intent that launched the activity doesn't have the correct extra, "image" will be null.
+        // If so, we finish the activity. Otherwise we can display the image.
 
-        // Exception thrown while launching the activity cannot be caught by UI tests.
-        // So we prevent them during activity launching
-        try {
-            image = getPostImage()
-        } catch (e : IllegalArgumentException) {
+        var image = getPostImage()
 
-            // If there is no image as extra, display a fake image. Anyway the share button will
-            // prevent the user from sharing the image.
-            image = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+        if (image != null) {
+            postImageView.setImageBitmap(image)
+        } else {
+            finish()
         }
-
-        postImageView.setImageBitmap(image)
     }
 
     /**
      * Helper function to get the whole post instance
      */
-    private fun getPost() : Post {
+    private fun getPost() : Post? {
+
+        // "image" is non-null because we already checked it during the activity lauching. So we can force the casting.
+        // In other words, (image == null) is an unreachable path
 
         val title : String = getPostTitle()
-        val image : Bitmap = getPostImage()
+        val image : Bitmap = getPostImage()!!
 
         val post = Post(title, image)
 
@@ -108,7 +102,5 @@ class SharePostActivity : AppCompatActivity() {
         // TODO : Change it when the post will be shared to the database. Don't forget to change its test
 
         finish()
-
-        //Snackbar.make(sharePostBtn, POST_SHARED_MESSAGE, Snackbar.LENGTH_SHORT).show()
     }
 }

@@ -52,7 +52,7 @@ class SharePostActivityTest {
         }
         val activity = launchActivity<SharePostActivity>(intent)
 
-        sharePostButtonClickAssertThrowsIllegalArgumentException(activity)
+        assertTrue(activity.state.isAtLeast(Lifecycle.State.DESTROYED))
     }
 
     fun intentWithExtraNotBitmapThrowsIllegalArgumentException() {
@@ -62,7 +62,7 @@ class SharePostActivityTest {
         }
         val activity = launchActivity<SharePostActivity>(intent)
 
-        sharePostButtonClickAssertThrowsIllegalArgumentException(activity)
+        assertTrue(activity.state.isAtLeast(Lifecycle.State.DESTROYED))
     }
 
     fun intentWithNullExtraThrowsIllegalArgumentException() {
@@ -72,24 +72,7 @@ class SharePostActivityTest {
         }
         val activity = launchActivity<SharePostActivity>(intent)
 
-        sharePostButtonClickAssertThrowsIllegalArgumentException(activity)
-    }
-
-    private fun sharePostButtonClickAssertThrowsIllegalArgumentException(activity : ActivityScenario<SharePostActivity>) {
-
-        assertThrows(
-            IllegalArgumentException::class.java
-        ) {
-
-            try {
-                onView(withId(R.id.sharePostBtn)).perform(click());
-
-            } catch (e: PerformException) {
-
-                activity.close()
-                throw e.cause!!
-            }
-        }
+        assertTrue(activity.state.isAtLeast(Lifecycle.State.DESTROYED))
     }
 
     @Test
