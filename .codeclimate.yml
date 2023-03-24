@@ -12,3 +12,7 @@ checks:
       enabled: true
       config:
         threshold: 70
+
+  argument-count:
+    config:
+      threshold: 6

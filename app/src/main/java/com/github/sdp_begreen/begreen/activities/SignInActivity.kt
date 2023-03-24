@@ -89,27 +89,32 @@ class SignInActivity : AppCompatActivity() {
                     Log.w("TAG", "signInWithCredential:failure", task.exception)
                     return@addOnCompleteListener
                 }
-                if (!account.email!!.equals("")) {
-
-                    // When user login, check if we have already a user instance for him in our
-                    // database, if not then create one for him
-                    // (i.e. this will only be the case once, upon first login)
-                    lifecycleScope.launch {
-                        Firebase.auth.currentUser?.also {
-                            if (!FirebaseDB.userExists(it.uid)) {
-                                val user = User(it.uid,  0, it.displayName.orEmpty(),
-                                    email = it.email.orEmpty(), phone = it.phoneNumber.orEmpty())
-                                FirebaseDB.addUser(user, it.uid)
-                            }
-                        }
+                account.email?.also {
+                    if (it.isNotBlank()) {
+                        checkUserExistence()
+                        startActivity(Intent(this, MainActivity::class.java))
+                        // Here I will hide the progress bar when implemented
+                        finish()
                     }
-
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
-                    // Here I will hide the progress bar when implemented
-                    finish()
                 }
             }
+    }
+
+    /**
+     * Helper method to check if the currently authenticated user is present in our database as
+     * a [User].
+     *
+     * If not create a new entry for him in our database.
+     * The user will only be created the first time a user connects to the application
+     */
+    private fun checkUserExistence() = lifecycleScope.launch {
+        Firebase.auth.currentUser?.also {
+            if (!FirebaseDB.userExists(it.uid)) {
+                val user = User(it.uid,  0, it.displayName.orEmpty(),
+                    email = it.email.orEmpty(), phone = it.phoneNumber.orEmpty())
+                FirebaseDB.addUser(user, it.uid)
+            }
+        }
     }
 
 }
