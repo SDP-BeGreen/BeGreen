@@ -13,15 +13,16 @@
     <ImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:background="@mipmap/ic_launcher" />
+        android:background="@mipmap/ic_launcher"
+        android:contentDescription="@string/desc_logo_of_the_app"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:gravity="center"
-        android:text="Welcome to BeGreen"
-        android:textSize="20dp" />
+        android:text="@string/welcome_to_begreen"
+        android:textSize="20sp" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/signInGoogleLayout"
@@ -37,15 +38,16 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="center"
-            android:background="@drawable/ic_google" />
+            android:background="@drawable/ic_google"
+            android:contentDescription="@string/desc_of_google_logo"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:gravity="center"
-            android:text="sign in with google"
-            android:textSize="20dp" />
+            android:text="@string/sign_in_with_google"
+            android:textSize="20sp" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
