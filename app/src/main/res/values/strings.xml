@@ -30,5 +30,5 @@
     <string name="sign_in_with_google">sign in with google</string>
     <string name="user_name">User Name</string>
     <string name="more_info_on_user">More Info on user</string>
-    <string name="send_message">send message</string>
+    <string name="send_message">Send</string>
 </resources>

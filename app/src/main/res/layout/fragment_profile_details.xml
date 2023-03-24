@@ -21,6 +21,12 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:gravity="center"
+                android:maxHeight="150dp"
+                android:maxWidth="150dp"
+                android:minHeight="100dp"
+                android:minWidth="100dp"
+                android:scaleType="centerInside"
+                android:adjustViewBounds="true"
                 android:layout_height="match_parent">
                 <ImageView
                     android:id="@+id/fragment_profile_details_profile_image"
@@ -65,12 +71,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <Button
                     android:id="@+id/fragment_profile_details_msg_button"
-                    android:layout_width="wrap_content"
+                    android:layout_width="105dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
                     android:layout_marginHorizontal="10dp"
+                    android:layout_marginTop="6dp"
                     android:text="@string/send_message" />
 
                 <Button
