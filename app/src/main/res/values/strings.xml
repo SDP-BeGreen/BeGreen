@@ -31,4 +31,6 @@
     <string name="user_name">User Name</string>
     <string name="more_info_on_user">More Info on user</string>
     <string name="send_message">Send</string>
+    <string name="desc_publication">This is the publication of the user</string>
+    <string name="my_title">My title</string>
 </resources>
