@@ -23,9 +23,9 @@ import java.io.ByteArrayOutputStream
  */
 object FirebaseDB {
 
-    private val TAG: String = "Firebase Database"
-    private val TIMEOUT: Long = 10000 // Waiting time before aborting a <get> on the database
-    private val ONE_MEGABYTE: Long = 1024 * 1024 // Maximal image size allowed (in bytes), to prevent out of memory errors
+    private const val TAG: String = "Firebase Database"
+    private const val TIMEOUT: Long = 10000 // Waiting time before aborting a <get> on the database
+    private const val ONE_MEGABYTE: Long = 1024 * 1024 // Maximal image size allowed (in bytes), to prevent out of memory errors
     // Realtime database ref
     private val databaseReference: DatabaseReference = Firebase.database.reference
     // Storage ref (for images)
@@ -33,6 +33,7 @@ object FirebaseDB {
     private val connectedReference = Firebase.database.getReference(".info/connected")
     private const val USERS_PATH = "users"
     private const val USER_PROFILE_PICTURE_METADATA = "profilePictureMetadata"
+    private const val USER_ID_ATTRIBUTE = "id"
 
     // Logs (in the console) the connections and disconnections with the Firebase database
     // We might want to provide a new constructor that takes code to execute on connections/disconnections
@@ -150,7 +151,7 @@ object FirebaseDB {
         if (userId.isBlank())
             throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
 
-        metadata.pictureId = String.format("%s_%s", userId, "profile_picture")
+        metadata.pictureId = "${userId}_profile_picture"
 
         return storePicture(image, USER_PROFILE_PICTURE_METADATA, metadata,
             databaseReference.child(USERS_PATH).child(userId),
@@ -184,7 +185,10 @@ object FirebaseDB {
                 if (userId.isBlank())
                     throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
 
-                val data = databaseReference.child(USERS_PATH).child(userId).get().await()
+                val data = databaseReference
+                    .child(USERS_PATH)
+                    .child(userId)
+                    .child(USER_ID_ATTRIBUTE).get().await()
                 data.exists()
             }
         } catch (timeoutEx: TimeoutCancellationException) {

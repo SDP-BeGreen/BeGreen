@@ -28,8 +28,8 @@ class EqualsToBitmap private constructor(private val bmp: Bitmap): TypeSafeMatch
     override fun matchesSafely(item: Bitmap?): Boolean {
         if (item == null) return false
 
-        val width = if (bmp.width < item.width) bmp.width else item.width
-        val height = if (bmp.height < item.height) bmp.height else item.height
+        val width = bmp.width.coerceAtMost(item.width)
+        val height = bmp.height.coerceAtMost(item.height)
         val bmp2 = Bitmap.createScaledBitmap(bmp, width, height, false)
         val item2 = Bitmap.createScaledBitmap(item, width, height, false)
 
