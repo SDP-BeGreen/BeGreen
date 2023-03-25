@@ -19,7 +19,7 @@
             android:id="@+id/nav_drawer_username_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/nav_drawer_user_name"
+            android:text="@string/nav_drawer_username"
             android:textAppearance="?attr/textAppearanceHeadline6" />
 
         <TextView

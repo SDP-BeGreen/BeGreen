@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity() {
      */
     private fun setUpUserNameAndDescription(user: User?) {
         findViewById<TextView>(R.id.nav_drawer_username_textview).text =
-            user?.displayName ?: getString(R.string.nav_drawer_user_name)
+            user?.displayName ?: getString(R.string.nav_drawer_username)
 
         findViewById<TextView>(R.id.nav_drawer_description_textview).text =
             user?.description ?: getString(R.string.nav_drawer_user_description)
