@@ -5,14 +5,15 @@ import android.os.Parcel
 import android.os.Parcelable
 
 
-data class Photo(val key: String?, val takenOn: ParcelableDate?, val takenBy: User?, val category: String?) : Parcelable {
+data class Photo(val key: String?,val title: String?, val takenOn: ParcelableDate?, val takenBy: User?, val category: String?, val description: String?) : Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readString(),
         parcel.readString(),
         parcel.readParcelable(ParcelableDate::class.java.classLoader),
         parcel.readParcelable(User::class.java.classLoader),
+        parcel.readString(),
         parcel.readString()
-    ) {
-    }
+    )
 
     fun getPhotoFromDataBase() : Bitmap? {
         //TODO : get the photo from the database and maybe cache?

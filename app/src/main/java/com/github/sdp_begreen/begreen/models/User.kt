@@ -1,5 +1,6 @@
 package com.github.sdp_begreen.begreen.models
 
+import android.graphics.Bitmap
 import android.os.Parcel
 import android.os.Parcelable
 
@@ -13,6 +14,7 @@ data class User (val id: Int, val name: String, val score: Int) : Parcelable, Co
     var progression: Int = 0
     var followers: List<User> = listOf()
     var following: List<User> = listOf()
+    var avatar: Bitmap? = null
 
     constructor(id: Int, name: String, score: Int, rating: Int, img: Photo?, description: String, phone: String, email: String, progression: Int, followers: List<User>?, following: List<User>?) : this(id, name, score) {
         this.rating = rating
