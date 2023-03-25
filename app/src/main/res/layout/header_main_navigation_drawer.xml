@@ -19,7 +19,7 @@
             android:id="@+id/nav_drawer_username_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/nav_drawer_username"
+            android:text="@string/nav_drawer_user_name"
             android:textAppearance="?attr/textAppearanceHeadline6" />
 
         <TextView
@@ -27,11 +27,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/nav_drawer_description_info"
+            android:text="@string/nav_drawer_user_description"
             android:textAppearance="?attr/textAppearanceBody2"
             android:textColor="?android:attr/textColorSecondary" />
     </LinearLayout>
-
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/nav_drawer_profile_picture_imageview"
         android:layout_width="60dp"
