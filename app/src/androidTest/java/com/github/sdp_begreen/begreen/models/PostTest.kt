@@ -4,11 +4,11 @@ import android.graphics.Bitmap
 import org.junit.Test
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
-import org.mockito.Mockito.mock
 
+// Needs to be in Android Test to use Bitmap
 class PostTest {
 
-    private val testBitmap = mock(Bitmap::class.java)
+    private val testBitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
     private val testTitle = "Test Title"
     private val post = Post(testTitle, testBitmap)
 

@@ -67,12 +67,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-storage-ktx'
 
-    // Mockito library for testing
-    testImplementation 'org.mockito:mockito-inline:5.2.0'
-    androidTestImplementation 'org.mockito:mockito-core:5.2.0'
-    androidTestImplementation 'org.mockito.kotlin:mockito-kotlin:4.1.0'
-    androidTestImplementation 'org.mockito:mockito-android:5.2.0'
-
     // Bootcamp google auth
     // https://firebase.google.com/docs/auth/android/firebaseui?hl=fr
     // implementation 'com.firebaseui:firebase-ui-auth:7.2.0'

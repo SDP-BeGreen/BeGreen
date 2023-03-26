@@ -84,6 +84,8 @@ class SharePostActivityTest {
         onView(withId(R.id.postTitleEditText))
             .perform(typeText(title))
             .check(matches(withText(title)))
+
+        activity.close()
     }
 
     @Test
