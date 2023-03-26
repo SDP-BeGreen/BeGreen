@@ -3,11 +3,9 @@ package com.github.sdp_begreen.begreen.activities
 import android.content.Intent
 import android.graphics.Bitmap
 import androidx.lifecycle.Lifecycle
-import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.PerformException
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
@@ -15,12 +13,12 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
+import org.hamcrest.Matchers.*
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
 
 
@@ -45,34 +43,34 @@ class SharePostActivityTest {
     }
 
     @Test
-    fun intentWithNoExtraImageThrowsIllegalArgumentException() {
+    fun intentWithNoExtraImageFinishesActivity() {
 
         val intent = Intent(ApplicationProvider.getApplicationContext(), SharePostActivity::class.java).apply {
             this.putExtra("Hello", "Hello")
         }
         val activity = launchActivity<SharePostActivity>(intent)
 
-        assertTrue(activity.state.isAtLeast(Lifecycle.State.DESTROYED))
+        assertThat(activity.state, equalTo(Lifecycle.State.DESTROYED))
     }
 
-    fun intentWithExtraNotBitmapThrowsIllegalArgumentException() {
+    fun intentWithExtraNotBitmapFinishesActivity() {
 
         val intent = Intent(ApplicationProvider.getApplicationContext(), SharePostActivity::class.java).apply {
             this.putExtra(AddNewPostActivity.EXTRA_IMAGE_BITMAP, "Hello")
         }
         val activity = launchActivity<SharePostActivity>(intent)
 
-        assertTrue(activity.state.isAtLeast(Lifecycle.State.DESTROYED))
+        assertThat(activity.state, equalTo(Lifecycle.State.DESTROYED))
     }
 
-    fun intentWithNullExtraThrowsIllegalArgumentException() {
+    fun intentWithNullExtraFinishesActivity() {
 
         val intent = Intent(ApplicationProvider.getApplicationContext(), SharePostActivity::class.java).apply {
             this.replaceExtras(null)
         }
         val activity = launchActivity<SharePostActivity>(intent)
 
-        assertTrue(activity.state.isAtLeast(Lifecycle.State.DESTROYED))
+        assertThat(activity.state, equalTo(Lifecycle.State.DESTROYED))
     }
 
     @Test
@@ -86,8 +84,6 @@ class SharePostActivityTest {
         onView(withId(R.id.postTitleEditText))
             .perform(typeText(title))
             .check(matches(withText(title)))
-
-        activity.close()
     }
 
     @Test
@@ -99,9 +95,7 @@ class SharePostActivityTest {
             .perform(click())
 
         // Check that the activity has finished, so we go back to the previous
-        assertTrue(activity.state.isAtLeast(Lifecycle.State.DESTROYED))
-
-        activity.close()
+        assertThat(activity.state, equalTo(Lifecycle.State.DESTROYED))
     }
 
     /*

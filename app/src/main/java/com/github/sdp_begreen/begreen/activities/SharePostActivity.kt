@@ -1,13 +1,14 @@
 package com.github.sdp_begreen.begreen.activities
 
 import android.graphics.Bitmap
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.entities.Post
+import com.github.sdp_begreen.begreen.models.Post
 
 class SharePostActivity : AppCompatActivity() {
 
@@ -47,9 +48,13 @@ class SharePostActivity : AppCompatActivity() {
      */
     private fun getPostImage() : Bitmap? {
 
-        val image = intent.extras?.get(AddNewPostActivity.EXTRA_IMAGE_BITMAP) as? Bitmap
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return intent.extras?.getParcelable(AddNewPostActivity.EXTRA_IMAGE_BITMAP, Bitmap::class.java)
 
-        return image
+        } else {
+            @Suppress("DEPRECATION")
+            return intent.extras?.get(AddNewPostActivity.EXTRA_IMAGE_BITMAP) as? Bitmap
+        }
     }
 
     /**
@@ -67,7 +72,7 @@ class SharePostActivity : AppCompatActivity() {
         // If the intent that launched the activity doesn't have the correct extra, "image" will be null.
         // If so, we finish the activity. Otherwise we can display the image.
 
-        var image = getPostImage()
+        val image = getPostImage()
 
         if (image != null) {
             postImageView.setImageBitmap(image)

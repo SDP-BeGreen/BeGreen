@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.graphics.Bitmap
 import android.provider.MediaStore
+import androidx.activity.result.ActivityResult
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ApplicationProvider
@@ -19,9 +20,8 @@ import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
 import org.hamcrest.Matchers.*
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.*
-import org.junit.Assert.assertTrue
-import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
 
 
@@ -51,7 +51,7 @@ class AddNewPostActivityTest {
     }
 
     @Test
-    fun clickAddNewPostBtn_StartsCameraIntentIfCameraPermissionGranted() {
+    fun startCameraIntentIfCameraPermissionGrantedWhenAddNewPostButtonClicked() {
 
         // @get:Rule granted the CAMERA permission. Unfortunately, it is impossible to revoke or clear the permissions
         // in a secure way, so the other path cannot be tested. The only alternative to clear permission is to execute
@@ -65,15 +65,13 @@ class AddNewPostActivityTest {
     }
 
     @Test
-    fun onActivityResult_OK_FromCameraDisplaysShareActivity()
+    fun startShareActivityAfterTakingPhotoWithCameraAndGettingResultOK()
     {
         // Call the onActivityResult from the Camera activity method with the taken picture as extra
+        val result = ActivityResult(AppCompatActivity.RESULT_OK, correctCameraResponseIntent)
+
         activityRule.scenario.onActivity { activity ->
-            activity.onActivityResult(
-                AddNewPostActivity.REQUEST_IMAGE_CAPTURE,
-                AppCompatActivity.RESULT_OK,
-                correctCameraResponseIntent
-            )
+            activity.onCameraActivityResult(result)
         }
 
         // Verify that the SharePostActivity was started with the correct intent and extras
@@ -86,89 +84,48 @@ class AddNewPostActivityTest {
     }
 
     @Test
-    fun onActivityResult_CANCELED_FromCameraDoesntDisplayShareActivity()
+    fun doNotStartShareActivityAfterCancelingPhotoTakenWithCamera()
     {
         // Call the onActivityResult after cancelling the Camera activity
+        val result = ActivityResult(AppCompatActivity.RESULT_CANCELED, correctCameraResponseIntent)
+
         activityRule.scenario.onActivity { activity ->
-            activity.onActivityResult(
-                AddNewPostActivity.REQUEST_IMAGE_CAPTURE,
-                AppCompatActivity.RESULT_CANCELED,
-                Intent()
-            )
+            activity.onCameraActivityResult(result)
         }
 
         // Check that we resume the previous activity.
         // When debbuging, we noticed that for this test the value of state was RESUMED, while the state
-        // of the test onActivityResult_OK_FromCameraDisplaysShareActivity was CREATED. The state seems to be independent
+        // of the test startShareActivityAfterTakingPhotoWithCameraAndGettingResultOK was CREATED. The state seems to be independent
         // of the time since we tested at different instants with thread.sleep.
-        assertTrue(activityRule.scenario.state.isAtLeast(Lifecycle.State.RESUMED))
+        assertThat(activityRule.scenario.state, equalTo(Lifecycle.State.RESUMED))
     }
 
+
     @Test
-    fun onActivityResult_nullIntent_FromCameraDoesntDisplayShareActivity()
+    fun doNotStartShareActivityAfterTakingPhotoWithCameraButGettingNullIntent()
     {
-        // Call the onActivityResult after cancelling the Camera activity
+        val result = ActivityResult(AppCompatActivity.RESULT_OK, null)
+
         activityRule.scenario.onActivity { activity ->
-            activity.onActivityResult(
-                AddNewPostActivity.REQUEST_IMAGE_CAPTURE,
-                AppCompatActivity.RESULT_OK,
-                null
-            )
+            activity.onCameraActivityResult(result)
         }
 
-        assertTrue(activityRule.scenario.state.isAtLeast(Lifecycle.State.RESUMED))
+        assertThat(activityRule.scenario.state, equalTo(Lifecycle.State.RESUMED))
     }
 
     @Test
-    fun onActivityResult_nullExtras_FromCameraDoesntDisplayShareActivity()
+    fun doNotStartShareActivityAfterTakingPhotoWithCameraButGettingNullExtras()
     {
         val intent = Intent(ApplicationProvider.getApplicationContext(), SharePostActivity::class.java).apply {
             this.replaceExtras(null)
         }
 
-        // Call the onActivityResult after cancelling the Camera activity
+        val result = ActivityResult(AppCompatActivity.RESULT_OK, intent)
+
         activityRule.scenario.onActivity { activity ->
-            activity.onActivityResult(
-                AddNewPostActivity.REQUEST_IMAGE_CAPTURE,
-                AppCompatActivity.RESULT_OK,
-                intent
-            )
+            activity.onCameraActivityResult(result)
         }
 
-        assertTrue(activityRule.scenario.state.isAtLeast(Lifecycle.State.RESUMED))
-    }
-
-    @Test
-    fun onActivityResult_notFromCamera_DoesntDisplayShareActivity()
-    {
-        // Call the onActivityResult after cancelling the Camera activity
-        activityRule.scenario.onActivity { activity ->
-            activity.onActivityResult(
-                AddNewPostActivity.REQUEST_IMAGE_CAPTURE + 1,
-                AppCompatActivity.RESULT_OK,
-                correctCameraResponseIntent
-            )
-        }
-
-        assertTrue(activityRule.scenario.state.isAtLeast(Lifecycle.State.RESUMED))
-    }
-
-    @Test
-    fun onActivityResult_notBitmapResult_FromCameraDoesntDisplayShareActivity()
-    {
-        val intent = Intent(ApplicationProvider.getApplicationContext(), SharePostActivity::class.java).apply {
-            this.putExtra("data", "Hello")
-        }
-
-        // Call the onActivityResult after cancelling the Camera activity
-        activityRule.scenario.onActivity { activity ->
-            activity.onActivityResult(
-                AddNewPostActivity.REQUEST_IMAGE_CAPTURE,
-                AppCompatActivity.RESULT_OK,
-                intent
-            )
-        }
-
-        assertTrue(activityRule.scenario.state.isAtLeast(Lifecycle.State.RESUMED))
+        assertThat(activityRule.scenario.state, equalTo(Lifecycle.State.RESUMED))
     }
 }
