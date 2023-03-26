@@ -32,7 +32,7 @@
     <string name="desc_logo_of_the_app">Logo of the app</string>
     <string name="desc_of_google_logo">The logo of Google</string>
     <string name="sign_in_with_google">sign in with google</string>
-    <string name="user_name">User Name</string>
-    <string name="more_info_on_user">More Info on user</string>
+    <string name="nav_drawer_username">Username</string>
+    <string name="nav_drawer_user_description">More Info on user</string>
     <string name="send_message">Send</string>
 </resources>
