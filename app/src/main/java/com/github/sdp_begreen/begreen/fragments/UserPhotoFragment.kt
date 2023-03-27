@@ -9,7 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.models.Photo
+import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import kotlin.collections.ArrayList
 
 /**
@@ -18,7 +18,7 @@ import kotlin.collections.ArrayList
 class UserPhotoFragment : Fragment() {
 
     private var columnCount = 1
-    private var photoList: List<Photo>? = null
+    private var photoList: List<PhotoMetadata>? = null
     private var isFeed: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +62,7 @@ class UserPhotoFragment : Fragment() {
 
         // TODO: Customize parameter initialization
         @JvmStatic
-        fun newInstance(columnCount: Int, photoList: List<Photo>?, isFeed: Boolean) =
+        fun newInstance(columnCount: Int, photoList: List<PhotoMetadata>?, isFeed: Boolean) =
             UserPhotoFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_COLUMN_COUNT, columnCount)

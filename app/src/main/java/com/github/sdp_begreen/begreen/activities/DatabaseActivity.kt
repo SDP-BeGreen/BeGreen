@@ -47,7 +47,7 @@ class DatabaseActivity : AppCompatActivity() {
 
             lifecycleScope.launch {
                 imageId = FirebaseDB.addImage(bitmap, 3,
-                    PhotoMetadata(null, null, null, "Plastic bottle"))
+                    PhotoMetadata(null, null, null, null,"Plastic bottle",null))
             }
         }
 

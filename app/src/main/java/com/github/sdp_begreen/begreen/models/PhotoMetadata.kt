@@ -5,7 +5,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 
-data class PhotoMetadata(val pictureId: String? = null,val title: String? = null, val takenOn: ParcelableDate? = null, val takenBy: User? = null, val category: String? = null, val description: String? = null) : Parcelable {
+data class PhotoMetadata(var pictureId: String? = null, val title: String? = null, val takenOn: ParcelableDate? = null, val takenBy: User? = null, val category: String? = null, val description: String? = null) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readString(),
@@ -17,9 +17,11 @@ data class PhotoMetadata(val pictureId: String? = null,val title: String? = null
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(pictureId)
+        parcel.writeString(title)
         parcel.writeParcelable(takenOn, flags)
         parcel.writeParcelable(takenBy, flags)
         parcel.writeString(category)
+        parcel.writeString(description)
     }
 
     override fun describeContents(): Int {
