@@ -37,12 +37,12 @@ class UserFragmentTest {
     fun setup() {
         // Initialize test data
         userList = listOf(
-            User(0,"Alice", 10),
-            User(1,"Bob", 20),
-            User(2,"Charlie", 15)
+            User("0", 10, "Alice"),
+            User("1", 20, "Bob"),
+            User("2", 15, "Charlie")
         )
         // Create a new instance of the fragment with test arguments.
-        fragment = UserFragment.newInstance(2, listOf(User(0,"John", 10), User(1,"Jane", 8)), true)
+        fragment = UserFragment.newInstance(2, listOf(User("0", 10, "John"), User("1", 8, "Jane")), true)
     }
 
     @Test
