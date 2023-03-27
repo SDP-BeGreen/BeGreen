@@ -64,11 +64,13 @@ class PhotoTest {
     fun photoGettersWorks(){
         val date = ParcelableDate(Date())
         val user = User(1,"test",0)
-        val photo = Photo("key", date, user, "cat")
+        val photo = Photo("key", "test", date, user, "cat", "desc")
         assertThat(photo, allOf(
             hasProp("key", equalTo("key")),
+            hasProp("title", equalTo("test")),
             hasProp("takenOn", equalTo(date)),
             hasProp("takenBy", equalTo(user)),
-            hasProp("category", equalTo("cat"))))
+            hasProp("category", equalTo("cat")),
+            hasProp("description", equalTo("desc"))))
     }
 }

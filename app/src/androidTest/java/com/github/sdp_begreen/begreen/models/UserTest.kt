@@ -19,7 +19,7 @@ import java.util.*
 class UserTest {
     var user: User = User(1, "Test", 0)
     val photo: Photo =
-        Photo("1", ParcelableDate(Date()), User(1, "Alice", 33,), "Gros vilain pas beau")
+        Photo("1","title", ParcelableDate(Date()), User(1, "Alice", 33,), "Gros vilain pas beau", "desc")
     var user1: User = User(
         1,
         "Alice",

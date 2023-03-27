@@ -24,7 +24,18 @@ class ProfileDetailsFragmentTest {
 
     @Before
     fun setup() {
-        val photo: Photo = Photo("1", ParcelableDate(Date()), User(1, "Alice", 33, ), "Gros vilain pas beau")
+        val photos = listOf(
+            Photo("erfs","Look at me cleaning!", ParcelableDate(Date()),User(0, "SuperUser69",0), "Déchet organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),
+            Photo("1", "title", ParcelableDate(Date()), User(1, "Alice", 33, ), "Gros vilain pas beau", "desc"),
+            Photo("erfs","Look at me cleaning!", ParcelableDate(
+                Date()
+            ),User(0, "SuperUser69",0), "Déchet organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), Photo("erfs","Look at me cleaning!", ParcelableDate(
+                Date()
+            ),User(0, "SuperUser69",0), "Déchet organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), Photo("erfs","Look at me cleaning!", ParcelableDate(
+                Date()
+            ),User(0, "SuperUser69",0), "Déchet organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!")
+        )
+        val photo: Photo = Photo("1", "title", ParcelableDate(Date()), User(1, "Alice", 33, ), "Gros vilain pas beau", "desc")
         // Still need to pass the bundle, doesn't work in test to only call the factory from companion object
         // https://github.com/android/android-test/issues/442
         launchFragmentInContainer {
