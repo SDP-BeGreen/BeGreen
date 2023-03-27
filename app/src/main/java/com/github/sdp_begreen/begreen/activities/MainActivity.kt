@@ -1,20 +1,28 @@
 package com.github.sdp_begreen.begreen.activities
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.models.ParcelableDate
-import com.github.sdp_begreen.begreen.models.Photo
+import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.fragments.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -49,6 +57,39 @@ class MainActivity : AppCompatActivity() {
             handleDrawerMenuItemClick(item)
             true
         }
+    }
+
+    /**
+     * Helper function to setup the user info, description and profile picture in the drawer menu
+     */
+    private fun setupDrawerUserInfo() {
+        val userId: String? = Firebase.auth.currentUser?.uid
+
+        lifecycleScope.launch {
+            val profilePicture = userId?.let { id ->
+                val user = FirebaseDB.getUser(id)
+
+                setUpUserNameAndDescription(user)
+
+                user?.profilePictureMetadata?.let {
+                    FirebaseDB.getUserProfilePicture(it, id)
+                }
+            } ?: BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture)
+
+            findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview)
+                .setImageBitmap(profilePicture)
+        }
+    }
+
+    /**
+     * Helper method to set the username and the description of a user if it exists
+     */
+    private fun setUpUserNameAndDescription(user: User?) {
+        findViewById<TextView>(R.id.nav_drawer_username_textview).text =
+            user?.displayName ?: getString(R.string.nav_drawer_username)
+
+        findViewById<TextView>(R.id.nav_drawer_description_textview).text =
+            user?.description ?: getString(R.string.nav_drawer_user_description)
     }
 
     /**
@@ -118,6 +159,7 @@ class MainActivity : AppCompatActivity() {
             R.id.bottomMenuUser -> {
                 item.setIcon(R.drawable.ic_baseline_person)
                 drawerLayout.openDrawer(GravityCompat.END)
+                setupDrawerUserInfo()
             }
         }
     }
@@ -139,28 +181,28 @@ class MainActivity : AppCompatActivity() {
             //------------------------FOR DEMO PURPOSES ONLY------------------------
             //TODO Remove this when demo will be over
             R.id.mainNavDrawUserList -> {
-               val photo = Photo("erfs","erf", ParcelableDate(Date()),User(0, "Lui",0), "Profile","desc")
+               val photoMetadata = PhotoMetadata("erfs", ParcelableDate(Date()),User("0", 0, "Lui"), "Profile")
                 val desc = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed suscipit consectetur ante quis euismod. Morbi tincidunt orci sit amet libero elementum dictum. Quisque blandit ornare vehicula. Pellentesque eget auctor quam. Sed consequat bibendum risus, vitae scelerisque sapien pharetra a. Nullam pulvinar ultrices molestie."
                 val userList: List<User> = listOf(
-                    User(1, "Alice", 1, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User(2, "Bob", 43, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User(3, "Charlie", 330, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User(4, "Dylan", 13, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User(5, "Evan", 2, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User(6, "Frederic", 5432, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User(7, "Gaelle", 35, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User(8, "Hellen", 3, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User(9, "Irene", 33, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User(10, "Julianne", 23, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User(1, "Kennan", 36, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User(1, "Léa", 14, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User(1, "Manon", 845, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User(1, "Ninon", 376, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User(1, "Orianne", 16, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User(1, "Pedro", 96, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User(1, "Sullivan", 4, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User(1, "Valentin", 6, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User(1, "Frank", 8, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                    User("1",  1, "Alice", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                    User("2",  43, "Bob", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                    User("3",  330, "Charlie", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                    User("4",  13, "Dylan", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                    User("5",  2, "Evan", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                    User("6",  5432, "Frederic", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                    User("7",  35, "Gaelle", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                    User("8",  3, "Hellen", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                    User("9",  33, "Irene", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                    User("10", 23,  "Julianne", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                    User("1",  36, "Kennan", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                    User("1",  14, "Léa", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                    User("1",  845, "Manon", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                    User("1",  376, "Ninon", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                    User("1",  16, "Orianne", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                    User("1",  96, "Pedro", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                    User("1",  4, "Sullivan", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                    User("1",  6, "Valentin", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                    User("1",  8, "Frank", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
                 )
                 replaceFragInMainContainer(UserFragment.newInstance(1, userList.toCollection(ArrayList()), true)) 
             }

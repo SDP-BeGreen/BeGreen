@@ -1,22 +1,25 @@
 package com.github.sdp_begreen.begreen.fragments
 
-import android.graphics.Bitmap
+import android.app.Notification.Action
 import android.os.Build
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.toBitmap
-import androidx.fragment.app.Fragment
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.RatingBar
+import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.models.Actions
-import com.github.sdp_begreen.begreen.models.Photo
 import com.github.sdp_begreen.begreen.models.User
 import kotlinx.coroutines.launch
-import java.util.*
+
+
 
 
 /**
@@ -42,6 +45,7 @@ class ProfileDetailsFragment : Fragment() {
                 it.getParcelableArrayList(ARG_RECENT_POSTS)
             }
         }
+
     }
 
     override fun onCreateView(
@@ -61,17 +65,24 @@ class ProfileDetailsFragment : Fragment() {
         val userProgressBar = view.findViewById(R.id.fragment_profile_details_user_progress) as ProgressBar
         val followButton = view.findViewById(R.id.fragment_profile_details_follow_button) as Button
 
-        name.text = user?.name
+        name.text = user?.displayName
         rating.rating = user?.score?.toFloat() ?: 0.0f
-        val drawable = ContextCompat.getDrawable(inflater.context, R.drawable.ic_baseline_person)
-        val defaultAvatar =
-            drawable?.toBitmap()?.let { Bitmap.createScaledBitmap(it, 500, 500, false) }
-        profileImgView.setImageBitmap(defaultAvatar)
+        lifecycleScope.launch {
+            val img = user?.let { user ->
+                user.profilePictureMetadata?.let {
+                    FirebaseDB.getUserProfilePicture(it, user.id)
+                }
+            }
+            val drawable = ContextCompat.getDrawable(inflater.context, R.drawable.ic_baseline_person)
+            val defaultAvatar =
+                drawable?.toBitmap()?.let { Bitmap.createScaledBitmap(it, 500, 500, false) }
+            profileImgView.setImageBitmap(defaultAvatar)
+        }
         profileDescription.text = user?.description
         profilePhone.text = user?.phone
         profileEmail.text = user?.email
         userTextLevel.text = getString(
-            R.string.user_details_level_text, user?.name ?: "Default User",
+            R.string.user_details_level_text, user?.displayName ?: "Default User",
         )
         userProgressBar.progress = user?.progression ?: 0
 
@@ -79,6 +90,11 @@ class ProfileDetailsFragment : Fragment() {
             ?.replace(R.id.fragment_recent_profile_photo, UserPhotoFragment.newInstance(1, recentPosts, false), "")
             ?.commit()
 
+        setupFollowListener(followButton)
+        return view
+    }
+
+    private fun setupFollowListener(followButton: Button) {
         followButton.setOnClickListener {
             if(followButton.text == Actions.FOLLOW.text) {
                 followButton.text = Actions.UNFOLLOW.text

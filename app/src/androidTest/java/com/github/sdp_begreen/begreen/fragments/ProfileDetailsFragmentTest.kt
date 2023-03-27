@@ -11,7 +11,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.github.sdp_begreen.begreen.*
 import com.github.sdp_begreen.begreen.activities.MainActivity
 import com.github.sdp_begreen.begreen.models.ParcelableDate
-import com.github.sdp_begreen.begreen.models.Photo
+import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import org.junit.Before
 import org.junit.Rule

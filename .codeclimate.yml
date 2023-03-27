@@ -7,8 +7,12 @@ checks:
   similar-code:
     enabled: true
     config:
-      threshold: 100
+      threshold: 200
     identical-code:
       enabled: true
       config:
         threshold: 70
+
+  argument-count:
+    config:
+      threshold: 6

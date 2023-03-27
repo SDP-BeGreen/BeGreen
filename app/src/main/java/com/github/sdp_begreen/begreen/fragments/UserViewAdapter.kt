@@ -48,7 +48,7 @@ class UserViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val user : User = users?.get(position) ?: return
         holder.userScore.text = user.score.toString()
-        holder.userName.text = user.name
+        holder.userName.text = user.displayName
         holder.setListener(holder.itemView, position, user)
     }
 

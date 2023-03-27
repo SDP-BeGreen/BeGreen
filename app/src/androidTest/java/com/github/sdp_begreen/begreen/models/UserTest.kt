@@ -1,31 +1,23 @@
 package com.github.sdp_begreen.begreen.models
 
 import android.os.Parcel
-import com.github.sdp_begreen.begreen.matchers.ContainsPropertyMatcher.Companion.hasProp
-import com.github.sdp_begreen.begreen.models.ParcelableDate
-import com.github.sdp_begreen.begreen.models.Photo
-import com.github.sdp_begreen.begreen.models.User
 import org.hamcrest.CoreMatchers.*
-import org.hamcrest.Description
-import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.hasProperty
-import org.hamcrest.TypeSafeMatcher
 import org.junit.Before
 import org.junit.Test
 import java.util.*
 
 //Need to be in Android Test to use Parcel
 class UserTest {
-    var user: User = User(1, "Test", 0)
-    val photo: Photo =
-        Photo("1","title", ParcelableDate(Date()), User(1, "Alice", 33,), "Gros vilain pas beau", "desc")
+    var user: User = User("1",  0, "Test")
+    val photoMetadata: PhotoMetadata =
+        PhotoMetadata("1", ParcelableDate(Date()), User("1",  33, "Alice"), "Gros vilain pas beau")
     var user1: User = User(
-        1,
-        "Alice",
+        "1",
         33,
+        "Alice",
         1,
-        photo,
+        photoMetadata,
         "Description poutou poutou",
         "cc@gmail.com",
         "08920939459802",
@@ -36,12 +28,12 @@ class UserTest {
 
     @Before
     fun setup() {
-        user = User(1, "Test", 0)
+        user = User("1",  0, "Test")
     }
 
     @Test
     fun userConstructorIsNotNull() {
-        assertThat(User(0, "default", 12), notNullValue())
+        assertThat(User("0",  12, "default"), notNullValue())
     }
 
     @Test
@@ -52,7 +44,7 @@ class UserTest {
 
     @Test
     fun userCompareToOtherCorrectly() {
-        val other = User(2, "Test2", 1)
+        val other = User("2",  1, "Test2")
         assertThat(user.compareTo(other), equalTo(-1))
     }
 

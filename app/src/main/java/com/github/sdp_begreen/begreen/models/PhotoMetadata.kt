@@ -5,7 +5,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 
-data class Photo(val key: String?,val title: String?, val takenOn: ParcelableDate?, val takenBy: User?, val category: String?, val description: String?) : Parcelable {
+data class PhotoMetadata(val pictureId: String? = null,val title: String? = null, val takenOn: ParcelableDate? = null, val takenBy: User? = null, val category: String? = null, val description: String? = null) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readString(),
@@ -15,13 +15,8 @@ data class Photo(val key: String?,val title: String?, val takenOn: ParcelableDat
         parcel.readString()
     )
 
-    fun getPhotoFromDataBase() : Bitmap? {
-        //TODO : get the photo from the database and maybe cache?
-        return Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
-    }
-
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(key)
+        parcel.writeString(pictureId)
         parcel.writeParcelable(takenOn, flags)
         parcel.writeParcelable(takenBy, flags)
         parcel.writeString(category)
@@ -33,12 +28,12 @@ data class Photo(val key: String?,val title: String?, val takenOn: ParcelableDat
 
 
 
-    companion object CREATOR : Parcelable.Creator<Photo> {
-        override fun createFromParcel(parcel: Parcel): Photo {
-            return Photo(parcel)
+    companion object CREATOR : Parcelable.Creator<PhotoMetadata> {
+        override fun createFromParcel(parcel: Parcel): PhotoMetadata {
+            return PhotoMetadata(parcel)
         }
 
-        override fun newArray(size: Int): Array<Photo?> {
+        override fun newArray(size: Int): Array<PhotoMetadata?> {
             return arrayOfNulls(size)
         }
     }
