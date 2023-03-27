@@ -35,13 +35,14 @@ class SignInActivity : AppCompatActivity() {
         if (result.resultCode == Activity.RESULT_OK) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
             try {
+                // Show a progress dialog while the app authenticates the user
                 showProgressDialog(this)
                 val account = task.getResult(ApiException::class.java)!!
                 firebaseAuthWithGoogle(account)
 
 
             } catch (e: ApiException) {
-                // Handling the ApiException based on its status code
+                // Handle the Google sign-in error
                 val message = when (e.statusCode) {
                     GoogleSignInStatusCodes.SIGN_IN_CANCELLED -> "Google sign-in cancelled"
                     GoogleSignInStatusCodes.SIGN_IN_FAILED -> "Google sign-in failed"
@@ -60,8 +61,8 @@ class SignInActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
 
+        // Find the sign-in button and initialize firebaseAuth
         signInGoogleLayout =findViewById(R.id.signInGoogleLayout)
-
         firebaseAuth = FirebaseAuth.getInstance()
 
         // When the google sign in image is clicked, the google sign in page appears
@@ -98,34 +99,62 @@ class SignInActivity : AppCompatActivity() {
             }
     }
 
+    // Variable to hold the progress dialog
     private var dialog: AlertDialog? = null
+
+    /**
+    Displays a progress dialog with a loading circle while a process is executing.
+    @param context the context in which the progress dialog will be displayed
+     */
     private fun showProgressDialog(context: Context) {
 
+        // If the dialog is not already displayed
         if(dialog == null){
+            // Creating an AlertDialog to display the progress dialog
             val builder = AlertDialog.Builder(context)
-            //builder.setCancelable(false) // if you want user to wait for some process to finish
+
+            // Setting the dialog to be not cancelable
+            builder.setCancelable(false)
+
+            // Inflating the layout for the progress dialog
             val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val v = inflater.inflate(R.layout.loading_circle, null)
+
+            // Setting the view of the dialog to the inflated layout
             builder.setView(v)
+
+            // Creating the dialog
             dialog = builder.create()
+
+            // Setting the background of the dialog to be transparent
             dialog!!.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+            // Clearing the flag of the dialog to dim behind the dialog
             dialog!!.window!!.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+
+            // Showing the dialog
             dialog!!.show()
         }
         else{
+            // If the dialog is already displayed, show it again
             dialog!!.show()
         }
 
     }
 
+    /**
+    Returns a Boolean indicating whether the progress dialog is currently displayed or not.
+    @return a Boolean indicating whether the progress dialog is currently displayed or not
+     */
     private fun isProgressDialogShown(): Boolean {
-        if (dialog != null)
-            return dialog!!.isShowing
-        else
-            return false
+        return dialog != null && dialog!!.isShowing
     }
 
+    /**
+    Hides the progress dialog.
+     */
     private fun hideProgressDialog() {
+        // If the dialog is currently displayed, dismiss it and set it to null
         if (isProgressDialogShown())
             dialog?.dismiss()
         dialog=null
