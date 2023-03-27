@@ -134,6 +134,7 @@ class SignInActivity : AppCompatActivity() {
     private fun hideProgressDialog() {
         dialog?.takeIf { it.isShowing }?.dismiss()
         dialog = null
+    }
 
     /**
      * Helper method to check if the currently authenticated user is present in our database as
