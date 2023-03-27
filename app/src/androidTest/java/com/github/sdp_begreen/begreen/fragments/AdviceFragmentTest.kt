@@ -8,6 +8,7 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.utils.utilsTest
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -37,5 +38,19 @@ class AdviceFragmentTest {
         Espresso.onView(ViewMatchers.withId(R.id.adviceFragmentTextView))
             .check(ViewAssertions.matches(ViewMatchers.withText("Fragment where we can display ecological advice to the user Param 1, Param 2")))
 
+    }
+
+    @Test
+    fun checkTextviewEmpty(){
+        launchFragmentInContainer<AdviceFragment>()
+        val result = utilsTest.getText(ViewMatchers.withId(R.id.adviceFragmentTextView))
+        utilsTest.checkTextViewIsEmpty(result!!)
+    }
+
+    @Test
+    fun checkTextviewStringLength(){
+        launchFragmentInContainer<AdviceFragment>()
+        val result = utilsTest.getText(ViewMatchers.withId(R.id.adviceFragmentTextView))
+        utilsTest.checkStringLength(result!!)
     }
 }

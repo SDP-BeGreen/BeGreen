@@ -15,7 +15,7 @@ import kotlin.random.Random
  * create an instance of this fragment.
  */
 class AdviceFragment : Fragment() {
-    // TODO: Rename and change types of parameters
+
     private lateinit var adviceFragmentTextView: TextView
 
     // This will hold the pieces of advice that will be displayed in the TextView
