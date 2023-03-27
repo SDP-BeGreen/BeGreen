@@ -11,7 +11,10 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.firebase.FirebaseDB
+import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.social.GoogleAuth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -22,6 +25,9 @@ import com.google.firebase.auth.GoogleAuthProvider
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.WindowManager
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
 
 class SignInActivity : AppCompatActivity() {
 
@@ -83,17 +89,19 @@ class SignInActivity : AppCompatActivity() {
         Log.d("TAG", "firebaseAuthWithGoogle:" + account.id)
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         firebaseAuth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    if (!account.email!!.equals("")) {
-                        val intent = Intent(this, MainActivity::class.java)
-                        startActivity(intent)
+            .addOnCompleteListener(this
+            ) { task ->
+                if (!task.isSuccessful) {
+                    Log.w("TAG", "signInWithCredential:failure", task.exception)
+                    return@addOnCompleteListener
+                }
+                account.email?.also {
+                    if (it.isNotBlank()) {
+                        checkUserExistence()
+                        startActivity(Intent(this, MainActivity::class.java))
                         hideProgressDialog()
                         finish()
                     }
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w("TAG", "signInWithCredential:failure", task.exception)
                 }
             }
     }
@@ -126,6 +134,21 @@ class SignInActivity : AppCompatActivity() {
     private fun hideProgressDialog() {
         dialog?.takeIf { it.isShowing }?.dismiss()
         dialog = null
-    }
 
+    /**
+     * Helper method to check if the currently authenticated user is present in our database as
+     * a [User].
+     *
+     * If not create a new entry for him in our database.
+     * The user will only be created the first time a user connects to the application
+     */
+    private fun checkUserExistence() = lifecycleScope.launch {
+        Firebase.auth.currentUser?.also {
+            if (!FirebaseDB.userExists(it.uid)) {
+                val user = User(it.uid,  0, it.displayName.orEmpty(),
+                    email = it.email.orEmpty(), phone = it.phoneNumber.orEmpty())
+                FirebaseDB.addUser(user, it.uid)
+            }
+        }
+    }
 }

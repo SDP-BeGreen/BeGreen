@@ -20,30 +20,30 @@ import com.github.sdp_begreen.begreen.R
 class UserViewAdapterTest {
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
-    private var userViewAdapter = UserViewAdapter(listOf(User(1, "Test", 0), User(2, "Test2", 1)), null)
+    private var userViewAdapter = UserViewAdapter(listOf(User("1",  0, "Test"), User("2",  1, "Test2")), null)
     private val appContext = InstrumentationRegistry.getInstrumentation().targetContext
     private val userList = listOf(
-        User(1,"Bob", 20),
-        User(2,"Charlie", 15),
-        User(1,"Bob", 20),
-        User(2,"Charlie", 15),
-        User(1,"Bob", 20),
-        User(2,"Charlie", 15),
-        User(1,"Bob", 20),
-        User(2,"Charlie", 15),
-        User(1,"Bob", 20),
-        User(2,"Charlie", 15),
-        User(1,"Bob", 20),
-        User(2,"Charlie", 15),
-        User(1,"Bob", 20),
-        User(2,"Charlie", 15),
-        User(1,"Bob", 20),
-        User(2,"Charlie", 15),
-        User(1,"Bob", 20),
-        User(2,"Charlie", 15),
-        User(0,"Alice", 10),
-        User(1,"Bob", 20),
-        User(2,"Charlie", 15)
+        User("1", 20, "Bob"),
+        User("2", 15, "Charlie"),
+        User("1", 20, "Bob"),
+        User("2", 15, "Charlie"),
+        User("1", 20, "Bob"),
+        User("2", 15, "Charlie"),
+        User("1", 20, "Bob"),
+        User("2", 15, "Charlie"),
+        User("1", 20, "Bob"),
+        User("2", 15, "Charlie"),
+        User("1", 20, "Bob"),
+        User("2", 15, "Charlie"),
+        User("1", 20, "Bob"),
+        User("2", 15, "Charlie"),
+        User("1", 20, "Bob"),
+        User("2", 15, "Charlie"),
+        User("1", 20, "Bob"),
+        User("2", 15, "Charlie"),
+        User("0", 10, "Alice"),
+        User("1", 20, "Bob"),
+        User("2", 15, "Charlie")
     )
     @Test
     fun userViewAdapterGetItemCountWorksOnTrivialList() {

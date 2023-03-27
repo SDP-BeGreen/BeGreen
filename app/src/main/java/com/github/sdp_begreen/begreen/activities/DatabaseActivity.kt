@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import kotlinx.coroutines.launch
 
 /**
@@ -17,7 +18,7 @@ import kotlinx.coroutines.launch
  */
 class DatabaseActivity : AppCompatActivity() {
 
-    private var imageId: String? = null
+    private var imageId: PhotoMetadata? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +46,8 @@ class DatabaseActivity : AppCompatActivity() {
             bitmap.eraseColor(Color.RED)
 
             lifecycleScope.launch {
-                imageId = FirebaseDB.addImage(bitmap, 3)
+                imageId = FirebaseDB.addImage(bitmap, 3,
+                    PhotoMetadata(null, null, null, "Plastic bottle"))
             }
         }
 
