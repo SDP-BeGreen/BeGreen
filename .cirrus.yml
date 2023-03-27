@@ -43,7 +43,7 @@ check_android_task:
     curl -Lo ./firebase_bin https://firebase.tools/bin/linux/latest
   check_script: |
     chmod +x firebase_bin
-    ./firebase_bin emulators:exec --project sdp-firebase-bootcamp-abe7c './gradlew check connectedCheck'
+    ./firebase_bin emulators:exec --import=./firebase_emulator_data --project sdp-firebase-bootcamp-abe7c './gradlew check connectedCheck'
   report_codeclimate_script: |
     export JACOCO_SOURCE_PATH=app/src/main/java/
     ./cc-test-reporter format-coverage ./app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml --input-type jacoco

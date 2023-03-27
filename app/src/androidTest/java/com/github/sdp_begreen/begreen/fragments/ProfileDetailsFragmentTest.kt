@@ -1,6 +1,5 @@
 package com.github.sdp_begreen.begreen.fragments
 
-import android.os.Bundle
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
@@ -12,7 +11,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.github.sdp_begreen.begreen.*
 import com.github.sdp_begreen.begreen.activities.MainActivity
 import com.github.sdp_begreen.begreen.models.ParcelableDate
-import com.github.sdp_begreen.begreen.models.Photo
+import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import org.junit.Before
 import org.junit.Rule
@@ -25,11 +24,11 @@ class ProfileDetailsFragmentTest {
 
     @Before
     fun setup() {
-        val photo: Photo = Photo("1", ParcelableDate(Date()), User(1, "Alice", 33, ), "Gros vilain pas beau")
+        val photoMetadata: PhotoMetadata = PhotoMetadata("1", ParcelableDate(Date()), User("1",  33, "Alice"), "Gros vilain pas beau")
         // Still need to pass the bundle, doesn't work in test to only call the factory from companion object
         // https://github.com/android/android-test/issues/442
         launchFragmentInContainer {
-            ProfileDetailsFragment.newInstance(user = User(1, "Alice", 33, 1, photo, "Description poutou poutou", "cc@gmail.com", "08920939459802", 67, null, null))
+            ProfileDetailsFragment.newInstance(user = User("1",  33, "Alice", 1, photoMetadata, "Description poutou poutou", "cc@gmail.com", "08920939459802", 67, null, null))
         }
     }
     @Test
