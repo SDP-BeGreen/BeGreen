@@ -100,7 +100,8 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.bottomMenuFeed -> {
                 item.setIcon(R.drawable.ic_baseline_feed)
-                replaceFragInMainContainer(FeedFragment())
+                val photos = listOf(Photo("erfs","Look at me cleaning!", ParcelableDate(Date()),User(0, "SuperUser69",0), "Déchet organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), Photo("erfs","Look at me cleaning!", ParcelableDate(Date()),User(0, "SuperUser69",0), "Déchet organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), Photo("erfs","Look at me cleaning!", ParcelableDate(Date()),User(0, "SuperUser69",0), "Déchet organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), Photo("erfs","Look at me cleaning!", ParcelableDate(Date()),User(0, "SuperUser69",0), "Déchet organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), Photo("erfs","Look at me cleaning!", ParcelableDate(Date()),User(0, "SuperUser69",0), "Déchet organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"))
+                replaceFragInMainContainer(UserPhotoFragment.newInstance(1, photos, true))
             }
             R.id.bottomMenuMap -> {
                 item.setIcon(R.drawable.ic_baseline_map)
@@ -138,7 +139,7 @@ class MainActivity : AppCompatActivity() {
             //------------------------FOR DEMO PURPOSES ONLY------------------------
             //TODO Remove this when demo will be over
             R.id.mainNavDrawUserList -> {
-               val photo = Photo("erfs", ParcelableDate(Date()),User(0, "Lui",0), "Profile")
+               val photo = Photo("erfs","erf", ParcelableDate(Date()),User(0, "Lui",0), "Profile","desc")
                 val desc = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed suscipit consectetur ante quis euismod. Morbi tincidunt orci sit amet libero elementum dictum. Quisque blandit ornare vehicula. Pellentesque eget auctor quam. Sed consequat bibendum risus, vitae scelerisque sapien pharetra a. Nullam pulvinar ultrices molestie."
                 val userList: List<User> = listOf(
                     User(1, "Alice", 1, 1, photo, desc, "cc@gmail.com", "08920939459802", 67, null, null),

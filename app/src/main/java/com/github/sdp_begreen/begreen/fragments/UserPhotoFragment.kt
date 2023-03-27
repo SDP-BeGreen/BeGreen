@@ -9,9 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.fragments.placeholder.PlaceholderContent
 import com.github.sdp_begreen.begreen.models.Photo
-import com.github.sdp_begreen.begreen.models.User
+import kotlin.collections.ArrayList
 
 /**
  * A fragment representing a list of Items.

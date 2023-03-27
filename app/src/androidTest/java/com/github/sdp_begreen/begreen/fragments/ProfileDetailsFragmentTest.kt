@@ -1,6 +1,5 @@
 package com.github.sdp_begreen.begreen.fragments
 
-import android.os.Bundle
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
@@ -29,7 +28,10 @@ class ProfileDetailsFragmentTest {
         // Still need to pass the bundle, doesn't work in test to only call the factory from companion object
         // https://github.com/android/android-test/issues/442
         launchFragmentInContainer {
-            ProfileDetailsFragment.newInstance(user = User(1, "Alice", 33, 1, photo, "Description poutou poutou", "cc@gmail.com", "08920939459802", 67, null, null))
+            ProfileDetailsFragment.newInstance(
+                user = User(1, "Alice", 33, 1, photo, "Description poutou poutou", "cc@gmail.com", "08920939459802", 67, null, null),
+                photos = photos
+            )
         }
     }
     @Test
