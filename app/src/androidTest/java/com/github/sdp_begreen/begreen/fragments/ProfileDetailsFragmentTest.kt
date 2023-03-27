@@ -25,22 +25,14 @@ class ProfileDetailsFragmentTest {
     @Before
     fun setup() {
         val photos = listOf(
-            Photo("erfs","Look at me cleaning!", ParcelableDate(Date()),User(0, "SuperUser69",0), "Déchet organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),
-            Photo("1", "title", ParcelableDate(Date()), User(1, "Alice", 33, ), "Gros vilain pas beau", "desc"),
-            Photo("erfs","Look at me cleaning!", ParcelableDate(
-                Date()
-            ),User(0, "SuperUser69",0), "Déchet organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), Photo("erfs","Look at me cleaning!", ParcelableDate(
-                Date()
-            ),User(0, "SuperUser69",0), "Déchet organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), Photo("erfs","Look at me cleaning!", ParcelableDate(
-                Date()
-            ),User(0, "SuperUser69",0), "Déchet organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!")
+            PhotoMetadata("erfs","Look at me cleaning!", ParcelableDate(Date()),User("0", 111, "SuperUser69",0), "Déchet organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),
+            PhotoMetadata("1", "title", ParcelableDate(Date()), User("1", 812, "Alice", 33, ), "Gros vilain pas beau", "desc"),
         )
-        val photo: Photo = Photo("1", "title", ParcelableDate(Date()), User(1, "Alice", 33, ), "Gros vilain pas beau", "desc")
         // Still need to pass the bundle, doesn't work in test to only call the factory from companion object
         // https://github.com/android/android-test/issues/442
         launchFragmentInContainer {
             ProfileDetailsFragment.newInstance(
-                user = User(1, "Alice", 33, 1, photo, "Description poutou poutou", "cc@gmail.com", "08920939459802", 67, null, null),
+                user = User("1",142, "Alice", 56, photos[0], "Description poutou poutou", "cc@gmail.com", "08920939459802", 67, null, null),
                 photos = photos
             )
         }

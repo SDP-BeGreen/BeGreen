@@ -1,6 +1,7 @@
 package com.github.sdp_begreen.begreen.models
 
 import android.os.Parcel
+import com.github.sdp_begreen.begreen.matchers.ContainsPropertyMatcher.Companion.hasProp
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
@@ -11,7 +12,7 @@ import java.util.*
 class UserTest {
     var user: User = User("1",  0, "Test")
     val photoMetadata: PhotoMetadata =
-        PhotoMetadata("1", ParcelableDate(Date()), User("1",  33, "Alice"), "Gros vilain pas beau")
+        PhotoMetadata("1", "title", ParcelableDate(Date()), User("1",  33, "Alice"), "Gros vilain pas beau", "desc")
     var user1: User = User(
         "1",
         33,
@@ -85,7 +86,7 @@ class UserTest {
     @Test
     fun userGettersReturnsCorrectValues() {
         assertThat(user.id, equalTo(1))
-        assertThat(user.name, equalTo("Test"))
+        assertThat(user.displayName, equalTo("Test"))
         assertThat(user.rating, equalTo(0))
         assertThat(user.followers, equalTo(listOf<User>()))
         assertThat(user.following, equalTo(listOf<User>()))
@@ -105,7 +106,6 @@ class UserTest {
         user.followers = listOf(user)
         user.following = listOf(user)
         user.rating = 1
-        user.img = photo
         user.progression = 1
         assertThat(
             user, allOf(
@@ -114,7 +114,6 @@ class UserTest {
                 hasProp("followers", equalTo(listOf(user))),
                 hasProp("following", equalTo(listOf(user))),
                 hasProp("rating", equalTo(1)),
-                hasProp("img", equalTo(photo)),
                 hasProp("progression", equalTo(1))
             )
         )
