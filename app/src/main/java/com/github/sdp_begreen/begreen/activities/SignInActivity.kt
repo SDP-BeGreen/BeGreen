@@ -21,7 +21,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.view.LayoutInflater
 import android.view.WindowManager
 
 class SignInActivity : AppCompatActivity() {
@@ -103,60 +102,30 @@ class SignInActivity : AppCompatActivity() {
     private var dialog: AlertDialog? = null
 
     /**
-    Displays a progress dialog with a loading circle while a process is executing.
-    @param context the context in which the progress dialog will be displayed
+     * Displays a progress dialog with a loading circle while a process is executing.
+     *
+     * @param context The context in which the progress dialog will be displayed.
      */
     private fun showProgressDialog(context: Context) {
+        if (dialog?.isShowing == true) return // Dialog is already displayed, no need to create a new one.
 
-        // If the dialog is not already displayed
-        if(dialog == null){
-            // Creating an AlertDialog to display the progress dialog
-            val builder = AlertDialog.Builder(context)
-
-            // Setting the dialog to be not cancelable
-            builder.setCancelable(false)
-
-            // Inflating the layout for the progress dialog
-            val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            val v = inflater.inflate(R.layout.loading_circle, null)
-
-            // Setting the view of the dialog to the inflated layout
-            builder.setView(v)
-
-            // Creating the dialog
-            dialog = builder.create()
-
-            // Setting the background of the dialog to be transparent
-            dialog!!.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-            // Clearing the flag of the dialog to dim behind the dialog
-            dialog!!.window!!.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-
-            // Showing the dialog
-            dialog!!.show()
-        }
-        else{
-            // If the dialog is already displayed, show it again
-            dialog!!.show()
-        }
-
+        dialog = AlertDialog.Builder(context)
+            .setView(R.layout.loading_circle)
+            .setCancelable(false)
+            .create().apply {
+                window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+                show()
+            }
     }
 
-    /**
-    Returns a Boolean indicating whether the progress dialog is currently displayed or not.
-    @return a Boolean indicating whether the progress dialog is currently displayed or not
-     */
-    private fun isProgressDialogShown(): Boolean {
-        return dialog != null && dialog!!.isShowing
-    }
 
     /**
-    Hides the progress dialog.
+     * Hides the progress dialog.
      */
     private fun hideProgressDialog() {
-        // If the dialog is currently displayed, dismiss it and set it to null
-        if (isProgressDialogShown())
-            dialog?.dismiss()
-        dialog=null
+        dialog?.takeIf { it.isShowing }?.dismiss()
+        dialog = null
     }
+
 }
