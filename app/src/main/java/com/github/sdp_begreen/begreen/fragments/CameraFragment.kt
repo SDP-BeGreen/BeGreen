@@ -1,17 +1,25 @@
 package com.github.sdp_begreen.begreen.fragments
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.Button
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.github.sdp_begreen.begreen.R
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import com.github.sdp_begreen.begreen.activities.SharePostActivity
 
 /**
  * A simple [Fragment] subclass.
@@ -19,48 +27,115 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class CameraFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+    private lateinit var addNewPostBtn : Button
+    private lateinit var cameraActivityLauncher : ActivityResultLauncher<Intent>
+
+    companion object {
+        const val PERMISSION_CAMERA_REQUEST_CODE = 100
+        const val EXTRA_IMAGE_BITMAP = "image_bitmap"
+
+        /**
+         * Use this factory method to create a new instance of
+         * this fragment using the provided parameters.
+         *
+         * @return A new instance.
+         */
+        @JvmStatic
+        fun newInstance() = CameraFragment()
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        val view: View? = inflater.inflate(R.layout.fragment_camera, container, false)
-        val tView: TextView? = view?.findViewById(R.id.cameraFragmentTextView)
 
-        tView?.text = getString(R.string.camera_fragment_text, param1?.let { " $it" }.orEmpty(), param2?.let {", $it"}.orEmpty())
-
-        return view
+        return inflater.inflate(R.layout.fragment_camera, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CameraFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupAddNewPostBtn()
+    }
+
+    /**
+     * Helper function to setup the behavior of the "Add new post" button
+     */
+    private fun setupAddNewPostBtn() {
+
+        // If the user clicks on the "Add new post" button it will ask him to take a picture
+        addNewPostBtn = requireView().findViewById(R.id.addNewPostBtn)
+        addNewPostBtn.setOnClickListener {
+            startCameraIntent()
+        }
+
+        // Set up the camera Activity result launcher
+        cameraActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            onCameraActivityResult(result)
+        }
+    }
+
+    /**
+     * Helper function to start the camera intent, or ask for permission if not granted.
+     */
+    private fun startCameraIntent() {
+
+        // If the camera permission is not granted, ask for it. Otherwise start the camera intent.
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.CAMERA),
+                CameraFragment.PERMISSION_CAMERA_REQUEST_CODE
+            )
+
+        } else {
+
+            // Start the camera intent. Actually, it handles the permission checks by its own so the previous
+            // verification is not mandatory. But keep it if android decides to change the behavior of the camera permission.
+            cameraActivityLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+        }
+    }
+
+    /**
+     * Helper function to start the SharePost activity
+     *
+     * @param image The photo to share
+     */
+    private fun startSharePostActivity(image: Bitmap) {
+
+        // Send the image to the SharePostActivity
+        val intent = Intent(requireContext(), SharePostActivity::class.java)
+        intent.putExtra(CameraFragment.EXTRA_IMAGE_BITMAP, image)
+        startActivity(intent)
+    }
+
+    /**
+     * Callback function that will be executed once the Camera Activity will return a result after being launched.
+     * While this method could be private, we preferred to remove the private access control so it can be tested.
+     *
+     * @param result The result sent by the camera activity
+     */
+    fun onCameraActivityResult(result : ActivityResult) {
+
+        // When we receive the photo from the camera, we start a new activity to share it
+        if (result.resultCode == AppCompatActivity.RESULT_OK && result.data != null) {
+
+            val image: Bitmap?
+
+            // Get the image from the camera activity
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                image = result.data!!.extras?.getParcelable("data", Bitmap::class.java)
+
+            } else {
+                @Suppress("DEPRECATION")
+                image = result.data!!.extras?.get("data") as? Bitmap
             }
+
+
+            if (image != null) {
+
+                // Start the SharePost activity with the taken image
+                startSharePostActivity(image)
+            }
+        }
     }
 }
