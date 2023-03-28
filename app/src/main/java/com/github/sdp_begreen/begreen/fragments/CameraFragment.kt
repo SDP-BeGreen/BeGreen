@@ -114,7 +114,7 @@ class CameraFragment : Fragment() {
      *
      * @param result The result sent by the camera activity
      */
-    fun onCameraActivityResult(result : ActivityResult) {
+    private fun onCameraActivityResult(result : ActivityResult) {
 
         // When we receive the photo from the camera, we start a new activity to share it
         if (result.resultCode == AppCompatActivity.RESULT_OK && result.data != null) {

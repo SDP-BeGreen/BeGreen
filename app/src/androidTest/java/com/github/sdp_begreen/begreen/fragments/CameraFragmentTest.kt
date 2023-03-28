@@ -1,15 +1,20 @@
 package com.github.sdp_begreen.begreen.fragments
 
+import android.app.Activity
+import android.app.Instrumentation
 import android.content.Intent
 import android.graphics.Bitmap
 import android.provider.MediaStore
 import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.lifecycle.Lifecycle
+import androidx.test.core.app.ActivityScenario.launch
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.core.internal.deps.guava.base.Joiner.on
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -66,7 +71,7 @@ class CameraFragmentTest {
         Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
     }
 
-
+/*
     @Test
     fun startShareActivityAfterTakingPhotoWithCameraAndGettingResultOK()
     {
@@ -84,17 +89,50 @@ class CameraFragmentTest {
                 IntentMatchers.hasExtra(CameraFragment.EXTRA_IMAGE_BITMAP, image)
             )
         )
-    }
+    }*/
 
     @Test
-    fun doNotStartShareActivityAfterCancelingPhotoTakenWithCamera()
-    {
-        // Call the onActivityResult after cancelling the Camera activity
-        val result = ActivityResult(AppCompatActivity.RESULT_CANCELED, correctCameraResponseIntent)
+    fun startShareActivityAfterTakingPhotoWithCameraAndGettingResultOK() {
 
         launchFragmentInContainer { fragment }
 
-        fragment.onCameraActivityResult(result)
+        // Define a correct result that the camera should return
+        val cameraResult = Instrumentation.ActivityResult(Activity.RESULT_OK, correctCameraResponseIntent)
+
+        // We expect that the camera activity will return "result"
+        Intents.intending(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(cameraResult)
+
+        // Click the add new post button to start the camera Activity
+        onView(withId(R.id.addNewPostBtn)).perform(ViewActions.click())
+
+        // Verify that the camera activity was actually launched
+        Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
+
+        // Verify that the SharePostActivity has been launched
+        Intents.intended(
+            Matchers.allOf(
+                IntentMatchers.hasComponent(SharePostActivity::class.java.name),
+                IntentMatchers.hasExtra(CameraFragment.EXTRA_IMAGE_BITMAP, image)
+            )
+        )
+    }
+
+    @Test
+    fun doNotStartShareActivityAfterCancelingPhotoTakenWithCamera() {
+
+        launchFragmentInContainer { fragment }
+
+        // Define a correct result that the camera should return
+        val cameraResult = Instrumentation.ActivityResult(Activity.RESULT_CANCELED, correctCameraResponseIntent)
+
+        // We expect that the camera activity will return "result"
+        Intents.intending(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(cameraResult)
+
+        // Click the add new post button to start the camera Activity
+        onView(withId(R.id.addNewPostBtn)).perform(ViewActions.click())
+
+        // Verify that the camera activity was actually launched
+        Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
 
         // Check that we resume the previous activity.
         // When debbuging, we noticed that for this test the value of state was RESUMED, while the state
@@ -110,12 +148,24 @@ class CameraFragmentTest {
     @Test
     fun doNotStartShareActivityAfterTakingPhotoWithCameraButGettingNullIntent()
     {
-        val result = ActivityResult(AppCompatActivity.RESULT_OK, null)
-
         launchFragmentInContainer { fragment }
 
-        fragment.onCameraActivityResult(result)
+        // Define a correct result that the camera should return
+        val cameraResult = Instrumentation.ActivityResult(Activity.RESULT_OK, null)
 
+        // We expect that the camera activity will return "result"
+        Intents.intending(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(cameraResult)
+
+        // Click the add new post button to start the camera Activity
+        onView(withId(R.id.addNewPostBtn)).perform(ViewActions.click())
+
+        // Verify that the camera activity was actually launched
+        Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
+
+        // Check that we resume the previous activity.
+        // When debbuging, we noticed that for this test the value of state was RESUMED, while the state
+        // of the test startShareActivityAfterTakingPhotoWithCameraAndGettingResultOK was CREATED. The state seems to be independent
+        // of the time since we tested at different instants with thread.sleep.
         MatcherAssert.assertThat(
             fragment.lifecycle.currentState,
             Matchers.equalTo(Lifecycle.State.RESUMED)
@@ -123,18 +173,33 @@ class CameraFragmentTest {
     }
 
     @Test
-    fun doNotStartShareActivityAfterTakingPhotoWithCameraButGettingNullExtras()
-    {
-        val intent = Intent(ApplicationProvider.getApplicationContext(), SharePostActivity::class.java).apply {
+    fun doNotStartShareActivityAfterTakingPhotoWithCameraButGettingNullExtras() {
+
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            SharePostActivity::class.java
+        ).apply {
             this.replaceExtras(null)
         }
 
-        val result = ActivityResult(AppCompatActivity.RESULT_OK, intent)
-
         launchFragmentInContainer { fragment }
 
-        fragment.onCameraActivityResult(result)
+        // Define a correct result that the camera should return
+        val cameraResult = Instrumentation.ActivityResult(Activity.RESULT_OK, intent)
 
+        // We expect that the camera activity will return "result"
+        Intents.intending(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(cameraResult)
+
+        // Click the add new post button to start the camera Activity
+        onView(withId(R.id.addNewPostBtn)).perform(ViewActions.click())
+
+        // Verify that the camera activity was actually launched
+        Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
+
+        // Check that we resume the previous activity.
+        // When debbuging, we noticed that for this test the value of state was RESUMED, while the state
+        // of the test startShareActivityAfterTakingPhotoWithCameraAndGettingResultOK was CREATED. The state seems to be independent
+        // of the time since we tested at different instants with thread.sleep.
         MatcherAssert.assertThat(
             fragment.lifecycle.currentState,
             Matchers.equalTo(Lifecycle.State.RESUMED)
