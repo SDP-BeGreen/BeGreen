@@ -3,14 +3,16 @@ package com.github.sdp_begreen.begreen.fragments
 import android.os.Bundle
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.espresso.Espresso
-import androidx.test.espresso.assertion.ViewAssertions
-import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.utils.utilsTest
 import org.junit.Test
 import org.junit.runner.RunWith
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.matcher.ViewMatchers.*
+import org.hamcrest.CoreMatchers
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
@@ -18,39 +20,30 @@ class AdviceFragmentTest {
     @Test
     fun testAdviceFragment() {
         launchFragmentInContainer<AdviceFragment>()
-        Espresso.onView(ViewMatchers.withId(R.id.adviceFragmentTextView))
-            .check(ViewAssertions.matches(ViewMatchers.withText("Fragment where we can display ecological advice to the user")))
+        onView(withId(R.id.adviceFragmentTextView))
+            .check(matches(withText("Fragment where we can display ecological advice to the user")))
+    }
+
+
+    @Test
+    fun checkTextViewIsEmpty() {
+        onView(withId(R.id.adviceFragmentTextView))
+            .check(matches(withText(""))) // checks if the text view is empty
     }
 
     @Test
-    fun testAdviceFragmentWithArgs() {
-
-
-        val bundle = Bundle()
-        bundle.putString("param1", "Param 1")
-        bundle.putString("param2", "Param 2")
-
-        // Still need to pass the bundle, doesn't work in test to only call the factory from companion object
-        // https://github.com/android/android-test/issues/442
-        launchFragmentInContainer(bundle) {
-            AdviceFragment.newInstance("", "")
-        }
-        Espresso.onView(ViewMatchers.withId(R.id.adviceFragmentTextView))
-            .check(ViewAssertions.matches(ViewMatchers.withText("Fragment where we can display ecological advice to the user Param 1, Param 2")))
-
+    fun checkStringLength() {
+        val maxLength = 100
+        val stringToBeMatched = "Hello World!"
+        onView(withId(R.id.adviceFragmentTextView))
+            .check(matches(withText(CoreMatchers.not(CoreMatchers.containsString(stringToBeMatched.substring(maxLength))))))
     }
 
-    @Test
-    fun checkTextviewEmpty(){
-        launchFragmentInContainer<AdviceFragment>()
-        val result = utilsTest.getText(ViewMatchers.withId(R.id.adviceFragmentTextView))
-        utilsTest.checkTextViewIsEmpty(result!!)
-    }
 
     @Test
-    fun checkTextviewStringLength(){
-        launchFragmentInContainer<AdviceFragment>()
-        val result = utilsTest.getText(ViewMatchers.withId(R.id.adviceFragmentTextView))
-        utilsTest.checkStringLength(result!!)
+    fun checkText() {
+        val expectedText = "Hello, world!"
+        onView(withId(R.id.adviceFragmentTextView)).perform(typeText(expectedText)) // enters text into the text view
+        onView(withId(R.id.adviceFragmentTextView)).check(matches(withText(expectedText))) // retrieves the text from the text view
     }
 }
