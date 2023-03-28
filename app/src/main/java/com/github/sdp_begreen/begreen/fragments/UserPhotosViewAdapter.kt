@@ -1,6 +1,5 @@
 package com.github.sdp_begreen.begreen.fragments
 
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
@@ -11,18 +10,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.databinding.FragmentUserPhotoBinding
-import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
-import kotlinx.coroutines.launch
 import java.net.URL
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.GlobalScope
 
 
 /**
@@ -47,16 +39,6 @@ class UserPhotosViewAdapter(
             )
         )
 
-    }
-    private fun getFromDB( photo: PhotoMetadata) : Bitmap? {
-        GlobalScope.launch {
-            val img = photo.takenBy?.let { user ->
-                user.profilePictureMetadata?.let {
-                    FirebaseDB.getUserProfilePicture(it, user.id)
-                }
-            }
-        }
-        return null
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

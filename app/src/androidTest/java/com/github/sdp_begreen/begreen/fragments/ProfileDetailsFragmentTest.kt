@@ -1,11 +1,18 @@
 package com.github.sdp_begreen.begreen.fragments
 
+import android.os.Bundle
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.clearFragmentResultListener
+import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.coroutineScope
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.github.sdp_begreen.begreen.*
@@ -13,12 +20,20 @@ import com.github.sdp_begreen.begreen.activities.MainActivity
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
+import com.google.firebase.storage.StorageException
+import org.hamcrest.CoreMatchers
+import org.hamcrest.MatcherAssert
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.io.IOException
 import java.util.*
 
 class ProfileDetailsFragmentTest {
+    private val ARG_USER = "USER"
+    private val ARG_RECENT_POSTS = "recent_posts"
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
 
@@ -59,5 +74,17 @@ class ProfileDetailsFragmentTest {
     @Test
     fun testProfileDetailsWithCompleteUserFragmentIsCorrectlyDisplayed() {
         Espresso.onView(ViewMatchers.withId(R.id.fragment_profile_details)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+    }
+
+    @Test
+    fun testListenerForProfileImage() {
+        val args = Bundle().apply {
+            putParcelable(ARG_USER, User("1",142, "Alice", 56, PhotoMetadata(), "Description poutou poutou", "cc@gmail.com", "08920939459802", 67, null, null, PhotoMetadata("VaRgQioAuiGtfDlv5uNuosNsACCJ_profile_picture")))
+        }
+
+        // Launch fragment with arguments
+        val scenario = FragmentScenario.launchInContainer(ProfileDetailsFragment::class.java, args)
+        assertNotNull(scenario.onFragment{fragment ->fragment.parentFragmentManager.beginTransaction().remove(fragment).commit()
+        })
     }
 }
