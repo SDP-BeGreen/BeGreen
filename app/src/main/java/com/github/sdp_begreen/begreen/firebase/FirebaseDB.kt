@@ -17,6 +17,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
 import java.io.ByteArrayOutputStream
 import com.google.android.gms.maps.model.LatLng
+import kotlin.random.Random
 
 
 /**
@@ -25,7 +26,7 @@ import com.google.android.gms.maps.model.LatLng
 object FirebaseDB {
 
     private const val TAG: String = "Firebase Database"
-    private const val TIMEOUT: Long = 10000 // Waiting time before aborting a <get> on the database
+    private const val TIMEOUT: Long = 10000 // Default waiting time before aborting a <get> on the database
     private const val ONE_MEGABYTE: Long = 1024 * 1024 // Maximal image size allowed (in bytes), to prevent out of memory errors
     // Realtime database ref
     private val databaseReference: DatabaseReference = Firebase.database.reference
@@ -60,15 +61,16 @@ object FirebaseDB {
      * Returns the value associated to the to given [key] in the database
      *
      * @param key the key we want to know the value of
+     * @param timeout the maximum time we wait for the database to respond
      * @return the value associated to the [key] or null if could not retrieve it
      * @throws DatabaseTimeoutException if the database could not be reached
      * @throws DatabaseException if the an exception occurred while retrieving the data
      */
-    suspend fun get(key: String): String? {
+    suspend fun get(key: String, timeout: Long = TIMEOUT): String? {
 
         return try {
-            // Cancel the query and throw exception after TIMEOUT ms
-            withTimeout(TIMEOUT) {
+            // Cancel the query and throw exception after [timeout] ms
+            withTimeout(timeout) {
                 val data = databaseReference.child(key).get().await()
                 data.value?.let { it as? String }
             }
@@ -90,11 +92,11 @@ object FirebaseDB {
      * @param value the new value for the [key]
      * * @throws IllegalArgumentException if the userId is blank or empty
      */
-    operator fun set(key: String, value: String) {
+    suspend fun set(key: String, value: String) {
         if (key.isBlank())
             throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
 
-        databaseReference.child(key).setValue(value)
+        databaseReference.child(key).setValue(value).await()
     }
 
     /**
@@ -104,26 +106,27 @@ object FirebaseDB {
      * @param userId the userId to use as key to store the user
      * @throws IllegalArgumentException if the userId is blank or empty
      */
-    fun addUser(user: User, userId: String) {
+    suspend fun addUser(user: User, userId: String) {
         if (userId.isBlank())
             throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
 
-        databaseReference.child(USERS_PATH).child(userId).setValue(user)
+        databaseReference.child(USERS_PATH).child(userId).setValue(user).await()
     }
 
     /**
      * Retrieve the [User] associated with the given [userId]
      *
-     * @param userId The id of the user we want to retrieve from the database
+     * @param userId The id of the user we want to retrieve from the
+     * @param timeout the maximum time we wait for the database to respond
      * @return the [User] associated to the given [userId], or null if it wasn't found
      *
      * @throws DatabaseTimeoutException if the database could not be reached
      * @throws DatabaseException if the an exception occurred while retrieving the data
      * @throws IllegalArgumentException if the [userId] was blank or empty
      */
-    suspend fun getUser(userId: String): User? {
+    suspend fun getUser(userId: String, timeout: Long = TIMEOUT): User? {
         return try {
-            withTimeout(TIMEOUT) {
+            withTimeout(timeout) {
                 if (userId.isBlank())
                     throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
 
@@ -179,11 +182,12 @@ object FirebaseDB {
      * Test whether a [User] exists in the database for the given [userId]
      *
      * @param userId The id of the user to check for the existence in the database
+     * @param timeout the maximum time we wait for the database to respond
      * @return true if the user exists, false otherwise
      */
-    suspend fun userExists(userId: String): Boolean {
+    suspend fun userExists(userId: String, timeout: Long = TIMEOUT): Boolean {
         return try {
-            withTimeout(TIMEOUT) {
+            withTimeout(timeout) {
                 if (userId.isBlank())
                     throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
 
@@ -208,18 +212,19 @@ object FirebaseDB {
      *
      * @param metadata the metadata associated with the given image we want to retrieve
      * @param userId the ID of the user where we should find the image
+     * @param timeout the maximum time we wait for the database to respond
      * @return the image, or null if no image was found
      *
      * @throws StorageException if the image could not be retrieved
      * @throws DatabaseTimeoutException if the database could not be reached
      * @throws DatabaseException if the an exception occurred while retrieving the image
      */
-    suspend fun getImage(metadata: PhotoMetadata, userId: Int): Bitmap? {
+    suspend fun getImage(metadata: PhotoMetadata, userId: Int, timeout: Long = TIMEOUT): Bitmap? {
         // Points to the node where we the image SHOULD be
         // The path will change when we will actually stores the real pictures
         return metadata.pictureId?.let {
             getPicture(storageReference.child("userId").child(
-                userId.toString()).child(it))
+                userId.toString()).child(it), timeout)
         }
     }
 
@@ -228,18 +233,19 @@ object FirebaseDB {
      *
      * @param metadata the metadata associated with the given image we want to retrieve
      * @param userId the ID of the user where we should find the image
+     * @param timeout the maximum time we wait for the database to respond
      * @return the image, or null if no image was found
      * @throws StorageException if the image could not be retrieved
      * @throws DatabaseTimeoutException if the database could not be reached
      * @throws DatabaseException if the an exception occurred while retrieving the image
      */
-    suspend fun getUserProfilePicture(metadata: PhotoMetadata, userId: String): Bitmap? {
+    suspend fun getUserProfilePicture(metadata: PhotoMetadata, userId: String, timeout: Long = TIMEOUT): Bitmap? {
         if (userId.isBlank())
             throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
 
         return metadata.pictureId?.let {
             getPicture(storageReference.child(USERS_PATH).child(userId).child(
-                USER_PROFILE_PICTURE_METADATA).child(it))
+                USER_PROFILE_PICTURE_METADATA).child(it), timeout)
         }
     }
 
@@ -247,11 +253,12 @@ object FirebaseDB {
      * Helper function to perform the actual call to the database to retrieve the image
      *
      * @param storageNode the node from which to retrieve the image
+     * @param timeout the maximum time we wait for the database to respond
      * @return the retrieved [Bitmap] or null if an error occured
      */
-    private suspend fun getPicture(storageNode: StorageReference): Bitmap? {
+    private suspend fun getPicture(storageNode: StorageReference, timeout: Long = TIMEOUT): Bitmap? {
         return try {
-            withTimeout(TIMEOUT) {
+            withTimeout(timeout) {
                 val compressedImage = storageNode.getBytes(ONE_MEGABYTE).await()
                 BitmapFactory.decodeByteArray(compressedImage, 0, compressedImage.size)
             }
@@ -300,9 +307,28 @@ object FirebaseDB {
      * Store the given [location] as the location of a recycling bin.
      *
      * @param location the location of the bin
+     *
+     * @return true if the location got stored in the database, and false if it failed
      */
-    fun storeBinLocation(location: LatLng){
-        val freshId = databaseReference.child(BIN_LOCATION_PATH).push().key ?: return
+    // TODO remove "= ..."
+    suspend fun storeBinLocation(location: LatLng = LatLng(Random.nextDouble(), Random.nextDouble())): Boolean{
+        val freshId = databaseReference.child(BIN_LOCATION_PATH).push().key ?: return false
+        databaseReference.child(BIN_LOCATION_PATH).child(freshId).setValue(location).await()
+        return true
     }
+
+    /**
+     * Retrieves the list of all bin locations currently present in the database
+     *
+     * @return the set of locations of all the bins, or null if an error happened
+     */
+    suspend fun getAllBinLocations(): Collection<LatLng>?{
+        // Looks like manually deleting the unchecked cast is the only way to remove the warning
+        @Suppress("UNCHECKED_CAST")
+        val childrens = databaseReference.child(BIN_LOCATION_PATH).get().await().value
+                as? Map<String, LatLng> ?: return null
+        return childrens.values
+    }
+
 
 }

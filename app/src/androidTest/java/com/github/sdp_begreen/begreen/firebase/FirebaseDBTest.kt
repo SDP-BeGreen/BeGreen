@@ -47,14 +47,18 @@ class FirebaseDBTest {
     @Test
     fun setWithBlankKeyThrowIllegalArgument() {
         assertThrows(IllegalArgumentException::class.java) {
-            FirebaseDB[" "] = "Trying blank value"
+            runBlocking {
+                FirebaseDB.set(" ", "Trying blank value")
+            }
         }
     }
 
     @Test
     fun addUserBlankUserIdThrowIllegalArgument() {
         assertThrows(IllegalArgumentException::class.java) {
-            FirebaseDB.addUser(User("1",  1, "test"), " ")
+            runBlocking {
+                FirebaseDB.addUser(User("1", 1, "test"), " ")
+            }
         }
     }
 
@@ -97,9 +101,9 @@ class FirebaseDBTest {
     @Test
     fun retrieveUserAfterSetShouldMatch() {
         val user = User("1",  100, "User Test", 10, null, "description", "0076286372", "test@email.com", 1, null, null)
-        FirebaseDB.addUser(user, user.id)
 
         runBlocking {
+            FirebaseDB.addUser(user, user.id)
             assertThat(FirebaseDB.getUser(user.id), `is`(equalTo(user)))
         }
     }
@@ -107,7 +111,9 @@ class FirebaseDBTest {
     @Test
     fun retrieveUserProfilePictureAfterAddShouldMatch() {
         val user = User("2", 10, "User Test 2")
-        FirebaseDB.addUser(user, user.id)
+        runBlocking {
+            FirebaseDB.addUser(user, user.id)
+        }
 
         // to be able to access resources, need to be in an activity
         activityRule.scenario.onActivity { activity ->
@@ -138,9 +144,9 @@ class FirebaseDBTest {
     @Test
     fun freshlyAddedUserExistsInDatabase() {
         val user = User("existingUser",  10, "Existing User")
-        FirebaseDB.addUser(user, user.id)
 
         runBlocking {
+            FirebaseDB.addUser(user, user.id)
             assertTrue(FirebaseDB.userExists(user.id))
         }
     }
