@@ -1,5 +1,6 @@
 package com.github.sdp_begreen.begreen.fragments
 
+import android.Manifest
 import android.app.Activity
 import android.app.Instrumentation
 import android.content.Intent
@@ -16,6 +17,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.activities.MainActivity
 import com.github.sdp_begreen.begreen.activities.SharePostActivity
@@ -33,6 +35,9 @@ class CameraFragmentTest {
 
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
+
+    @get:Rule
+    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
 
     private val fragment = CameraFragment.newInstance()
     private val image = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
@@ -135,7 +140,7 @@ class CameraFragmentTest {
         onView(withId(R.id.addNewPostBtn)).perform(ViewActions.click())
 
         // Verify that the camera activity was actually launched
-        //Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
+        Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
 
         // Check that we resume the previous activity.
         // When debbuging, we noticed that for this test the value of state was RESUMED, while the state
