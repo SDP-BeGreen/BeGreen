@@ -35,6 +35,7 @@ object FirebaseDB {
     private const val USERS_PATH = "users"
     private const val USER_PROFILE_PICTURE_METADATA = "profilePictureMetadata"
     private const val USER_ID_ATTRIBUTE = "id"
+    private const val BIN_LOCATION_PATH = "bin"
 
     // Logs (in the console) the connections and disconnections with the Firebase database
     // We might want to provide a new constructor that takes code to execute on connections/disconnections
@@ -294,4 +295,9 @@ object FirebaseDB {
             null
         }
     }
+
+    fun storeBinLocation(location: LatLng){
+
+    }
+
 }
