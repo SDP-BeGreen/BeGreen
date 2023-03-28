@@ -14,6 +14,7 @@ import android.widget.Button
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -29,7 +30,7 @@ import com.github.sdp_begreen.begreen.activities.SharePostActivity
 class CameraFragment : Fragment() {
 
     private lateinit var addNewPostBtn : Button
-    private lateinit var cameraActivityLauncher : ActivityResultLauncher<Intent>
+    private lateinit var cameraActivityLauncher : ActivityResultLauncher<Void?>
 
     companion object {
         const val PERMISSION_CAMERA_REQUEST_CODE = 100
@@ -71,8 +72,8 @@ class CameraFragment : Fragment() {
         }
 
         // Set up the camera Activity result launcher
-        cameraActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            onCameraActivityResult(result)
+        cameraActivityLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
+            onCameraActivityResult(bitmap)
         }
     }
 
@@ -91,7 +92,7 @@ class CameraFragment : Fragment() {
 
             // Start the camera intent. Actually, it handles the permission checks by its own so the previous
             // verification is not mandatory. But keep it if android decides to change the behavior of the camera permission.
-            cameraActivityLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+            cameraActivityLauncher.launch()
         }
     }
 
@@ -114,28 +115,14 @@ class CameraFragment : Fragment() {
      *
      * @param result The result sent by the camera activity
      */
-    private fun onCameraActivityResult(result : ActivityResult) {
+    private fun onCameraActivityResult(bitmap: Bitmap?) {
 
-        // When we receive the photo from the camera, we start a new activity to share it
-        if (result.resultCode == AppCompatActivity.RESULT_OK && result.data != null) {
+        // When we receive the photo from the camera, we start a new activity to share it.
+        // bitmap is null if the picture was cancelled
+        if (bitmap != null) {
 
-            val image: Bitmap?
-
-            // Get the image from the camera activity
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                image = result.data!!.extras?.getParcelable("data", Bitmap::class.java)
-
-            } else {
-                @Suppress("DEPRECATION")
-                image = result.data!!.extras?.get("data") as? Bitmap
-            }
-
-
-            if (image != null) {
-
-                // Start the SharePost activity with the taken image
-                startSharePostActivity(image)
-            }
+            // Start the SharePost activity with the taken image
+            startSharePostActivity(bitmap)
         }
     }
 }
