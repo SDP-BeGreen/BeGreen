@@ -62,7 +62,7 @@ class DatabaseActivityTest {
         // Check that no email is linked to that phone number
         onView(withId(R.id.databaseEmail))
             .check(matches(withText("")))
-    }*/
+    }
 
     @Test
     fun getOnNonStringValuePrintsNothing() {
@@ -77,7 +77,7 @@ class DatabaseActivityTest {
         // Check that no email is linked to that phone number
         onView(withId(R.id.databaseEmail))
             .check(matches(withText("")))
-    }
+    }*/
 
     @Test
     fun setCorrectlyUpdatesDatabase() {

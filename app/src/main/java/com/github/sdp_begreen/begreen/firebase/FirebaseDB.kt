@@ -16,6 +16,7 @@ import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
 import java.io.ByteArrayOutputStream
+import com.google.android.gms.maps.model.LatLng
 
 
 /**
