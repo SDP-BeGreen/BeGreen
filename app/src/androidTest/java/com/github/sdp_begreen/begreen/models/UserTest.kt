@@ -10,8 +10,20 @@ import java.util.*
 
 //Need to be in Android Test to use Parcel
 class UserTest {
-    var user: User = User("1",  0, "Test")
-    val photoMetadata: PhotoMetadata =
+    var user: User = User(
+        "1",
+        0,
+        "Test",
+        0,
+        null,
+        "desc",
+        "phone",
+        "email",
+        50,
+        null,
+        null)
+
+        val photoMetadata: PhotoMetadata =
         PhotoMetadata("1", "title", ParcelableDate(Date()), User("1",  33, "Alice"), "Gros vilain pas beau", "desc")
     var user1: User = User(
         "1",
@@ -85,11 +97,11 @@ class UserTest {
 
     @Test
     fun userGettersReturnsCorrectValues() {
-        assertThat(user.id, equalTo(1))
+        assertThat(user.id, equalTo("1"))
         assertThat(user.displayName, equalTo("Test"))
         assertThat(user.rating, equalTo(0))
-        assertThat(user.followers, equalTo(listOf<User>()))
-        assertThat(user.following, equalTo(listOf<User>()))
+        assertThat(user.followers, equalTo(null))
+        assertThat(user.following, equalTo(null))
     }
 
     @Test

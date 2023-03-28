@@ -11,12 +11,18 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.databinding.FragmentUserPhotoBinding
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import kotlinx.coroutines.launch
 import java.net.URL
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.GlobalScope
 
 
 /**
@@ -24,7 +30,7 @@ import java.net.URL
  * TODO: Replace the implementation with code for your data type.
  */
 class UserPhotosViewAdapter(
-    private val photos: List<PhotoMetadata>, private val isFeed: Boolean
+    val photos: List<PhotoMetadata>, private val isFeed: Boolean
 ) : RecyclerView.Adapter<UserPhotosViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -42,13 +48,15 @@ class UserPhotosViewAdapter(
         )
 
     }
-    private suspend fun getFromDB( photo: PhotoMetadata) : Bitmap? {
-        val img = photo.takenBy?.let { user ->
-            user.profilePictureMetadata?.let {
-                FirebaseDB.getUserProfilePicture(it, user.id)
+    private fun getFromDB( photo: PhotoMetadata) : Bitmap? {
+        GlobalScope.launch {
+            val img = photo.takenBy?.let { user ->
+                user.profilePictureMetadata?.let {
+                    FirebaseDB.getUserProfilePicture(it, user.id)
+                }
             }
         }
-        return img
+        return null
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
