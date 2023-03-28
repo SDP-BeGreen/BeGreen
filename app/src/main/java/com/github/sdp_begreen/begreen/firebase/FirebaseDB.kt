@@ -296,8 +296,13 @@ object FirebaseDB {
         }
     }
 
+    /**
+     * Store the given [location] as the location of a recycling bin.
+     *
+     * @param location the location of the bin
+     */
     fun storeBinLocation(location: LatLng){
-
+        val freshId = databaseReference.child(BIN_LOCATION_PATH).push().key ?: return
     }
 
 }
