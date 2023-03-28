@@ -22,4 +22,7 @@
             android:title="@string/settings"/>
 
     </group>
+    <item
+        android:id="@+id/mainNavDrawLogout"
+        android:title="@string/logout"/>
 </menu>
