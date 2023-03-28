@@ -79,7 +79,7 @@ class CameraFragmentTest {
         // Define a correct result that the camera should return
         val cameraResult = Instrumentation.ActivityResult(Activity.RESULT_OK, correctCameraResponseIntent)
 
-        // We expect that the camera activity will return "result"
+        // We expect that the camera activity will return "cameraResult"
         Intents.intending(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(cameraResult)
 
         // Click the add new post button to start the camera Activity
@@ -105,7 +105,7 @@ class CameraFragmentTest {
         // Define a correct result that the camera should return
         val cameraResult = Instrumentation.ActivityResult(Activity.RESULT_CANCELED, correctCameraResponseIntent)
 
-        // We expect that the camera activity will return "result"
+        // We expect that the camera activity will return "cameraResult"
         Intents.intending(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(cameraResult)
 
         // Click the add new post button to start the camera Activity
@@ -133,7 +133,7 @@ class CameraFragmentTest {
         // Define a correct result that the camera should return
         val cameraResult = Instrumentation.ActivityResult(Activity.RESULT_OK, null)
 
-        // We expect that the camera activity will return "result"
+        // We expect that the camera activity will return "cameraResult"
         Intents.intending(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(cameraResult)
 
         // Click the add new post button to start the camera Activity
@@ -143,9 +143,6 @@ class CameraFragmentTest {
         Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
 
         // Check that we resume the previous activity.
-        // When debbuging, we noticed that for this test the value of state was RESUMED, while the state
-        // of the test startShareActivityAfterTakingPhotoWithCameraAndGettingResultOK was CREATED. The state seems to be independent
-        // of the time since we tested at different instants with thread.sleep.
         MatcherAssert.assertThat(
             fragment.lifecycle.currentState,
             Matchers.equalTo(Lifecycle.State.RESUMED)
@@ -167,7 +164,7 @@ class CameraFragmentTest {
         // Define a correct result that the camera should return
         val cameraResult = Instrumentation.ActivityResult(Activity.RESULT_OK, intent)
 
-        // We expect that the camera activity will return "result"
+        // We expect that the camera activity will return "cameraResult"
         Intents.intending(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(cameraResult)
 
         // Click the add new post button to start the camera Activity
@@ -177,9 +174,6 @@ class CameraFragmentTest {
         Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
 
         // Check that we resume the previous activity.
-        // When debbuging, we noticed that for this test the value of state was RESUMED, while the state
-        // of the test startShareActivityAfterTakingPhotoWithCameraAndGettingResultOK was CREATED. The state seems to be independent
-        // of the time since we tested at different instants with thread.sleep.
         MatcherAssert.assertThat(
             fragment.lifecycle.currentState,
             Matchers.equalTo(Lifecycle.State.RESUMED)
