@@ -56,7 +56,7 @@ class UserPhotoFragmentTest {
     }
 
     @Test
-    fun onCreateViewWithValidViewReturnsView() {
+    fun onCreateViewFeedWithValidViewReturnsView() {
         val args = Bundle().apply {
             putInt(ARG_COLUMN_COUNT, 1)
             putParcelableArrayList(ARG_PHOTO_LIST, photoList.toCollection(ArrayList()))
@@ -74,7 +74,25 @@ class UserPhotoFragmentTest {
     }
 
     @Test
-    fun onCreateViewWithUnsortedListShowsUnsortedList() {
+    fun onCreateViewWithValidViewReturnsView() {
+        val args = Bundle().apply {
+            putInt(ARG_COLUMN_COUNT, 1)
+            putParcelableArrayList(ARG_PHOTO_LIST, photoList.toCollection(ArrayList()))
+            putBoolean(ARG_IS_FEED, false)
+        }
+
+        // Launch fragment with arguments
+        val scenario = FragmentScenario.launchInContainer(UserPhotoFragment::class.java, args)
+        // Wait for the fragment to be created
+        scenario.onFragment { fragment ->
+            val recyclerView = fragment.view
+            assertNotNull(recyclerView)
+            assertTrue(recyclerView is RecyclerView)
+        }
+    }
+
+    @Test
+    fun onCreateViewWithListShowsList() {
         // Set up the inflater and container to create a valid view.
         val args = Bundle().apply {
             putInt(ARG_COLUMN_COUNT, 1)

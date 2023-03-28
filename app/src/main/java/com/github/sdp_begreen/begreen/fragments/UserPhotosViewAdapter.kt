@@ -22,7 +22,7 @@ import java.net.URL
  * TODO: Replace the implementation with code for your data type.
  */
 class UserPhotosViewAdapter(
-    val photos: List<PhotoMetadata>, private val isFeed: Boolean
+    val photos: List<PhotoMetadata>?, private val isFeed: Boolean
 ) : RecyclerView.Adapter<UserPhotosViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -42,7 +42,7 @@ class UserPhotosViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val photo = photos[position]
+        val photo = photos?.get(position)
         if(isFeed) {
             val drawable = ContextCompat.getDrawable(holder.avatarView.context, R.drawable.ic_baseline_person)
             val defaultAvatar = drawable?.toBitmap()
@@ -51,17 +51,18 @@ class UserPhotosViewAdapter(
         }else{
             holder.avatarView.visibility = View.GONE
         }
-        holder.titleView.text = photo.title
-        holder.subtitleView.text = (photo.takenOn?.toString() ?: "Unknown date") + " | " + photo.category
+        holder.titleView.text = photo?.title ?: "No title"
+        holder.subtitleView.text = (photo?.takenOn?.toString() ?: "Unknown date") + " | " + (photo?.category
+            ?: "")
         //holder.photoView.setImageBitmap(photo.getPhotoFromDataBase())
         //TODO------------FOR DEMO -----------------
         val url = URL("https://picsum.photos/400")
         holder.photoView.setImageBitmap(BitmapFactory.decodeStream(url.openConnection().getInputStream()))
         //------------FOR DEMO -----------------
-        holder.descriptionView.text = photo.description
+        holder.descriptionView.text = photo?.description
     }
 
-    override fun getItemCount(): Int = photos.size
+    override fun getItemCount(): Int = photos?.size ?: 0
 
     inner class ViewHolder(binding: FragmentUserPhotoBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -70,10 +71,6 @@ class UserPhotosViewAdapter(
         val subtitleView: TextView = binding.subtitleText
         val photoView: ImageView = binding.mediaImage
         val descriptionView: TextView = binding.supportingText
-
-        override fun toString(): String {
-            return super.toString() + " '" + titleView.text + "'"
-        }
     }
 
 }
