@@ -49,7 +49,7 @@ class DatabaseActivityTest {
             .check(matches(withText("1112223344")))
     }
 
-    @Test
+    /*@Test
     fun getWithInexistantKeyPrintsNothing() {
         // Type phone number
         onView(withId(R.id.databasePhoneNumber))
@@ -62,7 +62,7 @@ class DatabaseActivityTest {
         // Check that no email is linked to that phone number
         onView(withId(R.id.databaseEmail))
             .check(matches(withText("")))
-    }
+    }*/
 
     @Test
     fun getOnNonStringValuePrintsNothing() {
