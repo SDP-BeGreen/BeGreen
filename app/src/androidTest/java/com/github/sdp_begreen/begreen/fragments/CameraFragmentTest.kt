@@ -71,26 +71,6 @@ class CameraFragmentTest {
         Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
     }
 
-/*
-    @Test
-    fun startShareActivityAfterTakingPhotoWithCameraAndGettingResultOK()
-    {
-        // Call the onActivityResult from the Camera activity method with the taken picture as extra
-        val result = ActivityResult(AppCompatActivity.RESULT_OK, correctCameraResponseIntent)
-
-        launchFragmentInContainer { fragment }
-
-        fragment.onCameraActivityResult(result)
-
-        // Verify that the SharePostActivity was started with the correct intent and extras
-        Intents.intended(
-            Matchers.allOf(
-                IntentMatchers.hasComponent(SharePostActivity::class.java.name),
-                IntentMatchers.hasExtra(CameraFragment.EXTRA_IMAGE_BITMAP, image)
-            )
-        )
-    }*/
-
     @Test
     fun startShareActivityAfterTakingPhotoWithCameraAndGettingResultOK() {
 
