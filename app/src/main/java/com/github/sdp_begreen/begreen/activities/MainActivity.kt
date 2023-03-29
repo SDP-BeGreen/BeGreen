@@ -63,16 +63,13 @@ class MainActivity : AppCompatActivity() {
      * Helper function to setup the user info, description and profile picture in the drawer menu
      */
     private fun setupDrawerUserInfo() {
-        val userId: String? = Firebase.auth.currentUser?.uid
-
         lifecycleScope.launch {
-            val profilePicture = userId?.let { id ->
-                val user = FirebaseDB.getUser(id)
+            val profilePicture = getConnectedUser()?.let { user ->
 
                 setUpUserNameAndDescription(user)
 
-                user?.profilePictureMetadata?.let {
-                    FirebaseDB.getUserProfilePicture(it, id)
+                user.profilePictureMetadata?.let {
+                    FirebaseDB.getUserProfilePicture(it, user.id)
                 }
             } ?: BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture)
 
@@ -80,6 +77,12 @@ class MainActivity : AppCompatActivity() {
                 .setImageBitmap(profilePicture)
         }
     }
+
+    /**
+     * Helper method to get the currently logged in user if it exists
+     */
+    private suspend fun getConnectedUser(): User? =
+        Firebase.auth.currentUser?.uid?.let { FirebaseDB.getUser(it) }
 
     /**
      * Helper method to set the username and the description of a user if it exists
@@ -172,7 +175,11 @@ class MainActivity : AppCompatActivity() {
     private fun handleDrawerMenuItemClick(item: MenuItem) {
         when (item.itemId) {
             R.id.mainNavDrawProfile -> {
-                replaceFragInMainContainer(ProfileFragment())
+                lifecycleScope.launch {
+                    getConnectedUser()?.also {
+                        replaceFragInMainContainer(ProfileDetailsFragment.newInstance(it))
+                    }
+                }
             }
             R.id.mainNavDrawFollowers -> {
                 replaceFragInMainContainer(FollowersFragment())

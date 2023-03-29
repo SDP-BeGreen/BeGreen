@@ -4,7 +4,6 @@
     <string name="map_fragment_text">Fragment where we can display the map%1$s%2$s</string>
     <string name="camera_fragment_text">Fragment where we can display the camera%1$s%2$s</string>
     <string name="advice_fragment_text">Fragment where we can display ecological advice to the user%1$s%2$s</string>
-    <string name="profile_fragment_text">Fragment where we can display the user profile%1$s%2$s</string>
     <string name="settings_fragment_text">Fragment where we can display settings for the user%1$s%2$s</string>
     <string name="followers_fragment_text">Fragment where we can display the user\'s followers%1$s%2$s</string>
     <string name="user_details_level_text">%1$s\'s level</string>

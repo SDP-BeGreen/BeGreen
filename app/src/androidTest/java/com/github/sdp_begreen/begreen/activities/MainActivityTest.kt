@@ -126,7 +126,7 @@ class MainActivityTest {
     }
 
     @Test
-    fun pressDrawerMenuProfileDisplayProfileFragment() {
+    fun pressDrawerMenuProfileDisplayProfileDetailsFragment() {
         onView(withId(R.id.mainDrawerLayout)).perform(DrawerActions.open(GravityCompat.END))
 
         onView(withId(R.id.mainNavDrawProfile))
@@ -134,7 +134,7 @@ class MainActivityTest {
             .check(matches(isDisplayed()))
             .perform(click())
 
-        onView(withId(R.id.profileFragment))
+        onView(withId(R.id.fragment_profile_details))
             .check(matches(isDisplayed()))
     }
 
