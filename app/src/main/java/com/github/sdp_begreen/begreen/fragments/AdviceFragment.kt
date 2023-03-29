@@ -36,20 +36,19 @@ class AdviceFragment : Fragment() {
 
     companion object {
 
-        private val QUOTES = "quotes"
+        private const val QUOTES = "quotes"
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param param1 Parameter 1.
+         * @param list list of quotes.
          * @return A new instance of fragment FavoriteFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: ArrayList<String>) =
+        fun newInstance(list: ArrayList<String>) =
             AdviceFragment().apply {
                 arguments = Bundle().apply {
-                    putStringArrayList(QUOTES, param1)
+                    putStringArrayList(QUOTES, list)
                 }
             }
     }
