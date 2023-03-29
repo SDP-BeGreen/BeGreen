@@ -37,4 +37,7 @@
     <string name="send_message">Send</string>
     <string name="desc_publication">This is the publication of the user</string>
     <string name="my_title">My title</string>
+    <string name="title">Title</string>
+    <string name="subhead">subhead</string>
+    <string name="default_description_of_the_post">Default description of the post</string>
 </resources>

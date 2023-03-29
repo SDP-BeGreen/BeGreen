@@ -37,18 +37,14 @@ class ProfileDetailsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            user = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                it.getParcelable(ARG_USER, User::class.java)
-            }else {
-                it.getParcelable(ARG_USER)
-            }
-            recentPosts = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                it.getParcelableArrayList(ARG_RECENT_POSTS, PhotoMetadata::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                user = it.getParcelable(ARG_USER, User::class.java)
+                recentPosts = it.getParcelableArrayList(ARG_RECENT_POSTS, PhotoMetadata::class.java)
             } else {
-                it.getParcelableArrayList(ARG_RECENT_POSTS)
+                user = it.getParcelable(ARG_USER)
+                recentPosts = it.getParcelableArrayList(ARG_RECENT_POSTS)
             }
         }
-
     }
 
     override fun onCreateView(

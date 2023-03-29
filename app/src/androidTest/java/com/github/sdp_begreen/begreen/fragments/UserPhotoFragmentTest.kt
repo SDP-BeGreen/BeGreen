@@ -18,6 +18,7 @@ import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import junit.framework.TestCase.*
 import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.instanceOf
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -71,6 +72,7 @@ class UserPhotoFragmentTest {
             assertNotNull(recyclerView)
             assertTrue(recyclerView is RecyclerView)
         }
+        scenario.close()
     }
 
     @Test
@@ -87,8 +89,9 @@ class UserPhotoFragmentTest {
         scenario.onFragment { fragment ->
             val recyclerView = fragment.view
             assertNotNull(recyclerView)
-            assertTrue(recyclerView is RecyclerView)
+            assertThat(recyclerView, instanceOf(RecyclerView::class.java))
         }
+        scenario.close()
     }
 
     @Test
@@ -109,6 +112,7 @@ class UserPhotoFragmentTest {
             val adapter = (view as RecyclerView).adapter as UserPhotosViewAdapter
             assertEquals(photoList, adapter.photos)
         }
+        scenario.close()
     }
 
     @Test
@@ -135,6 +139,7 @@ class UserPhotoFragmentTest {
             // Verify that the RecyclerView has the correct number of items
             assertThat(recyclerView?.adapter?.itemCount, equalTo(photoList.size))
         }
+        scenario.close()
     }
 
     @Test
@@ -159,5 +164,6 @@ class UserPhotoFragmentTest {
             // Verify that the RecyclerView has the correct layout manager
             assertThat(recyclerView?.layoutManager?.javaClass ?: "", equalTo(GridLayoutManager(ApplicationProvider.getApplicationContext(),1).javaClass))
         }
+        scenario.close()
     }
 }

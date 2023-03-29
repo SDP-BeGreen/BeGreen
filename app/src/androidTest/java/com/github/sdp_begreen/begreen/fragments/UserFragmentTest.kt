@@ -60,6 +60,7 @@ class UserFragmentTest {
             assertNotNull(recyclerView)
             assertTrue(recyclerView is RecyclerView)
         }
+        scenario.close()
     }
 
     @Test
@@ -80,6 +81,7 @@ class UserFragmentTest {
             val adapter = (view as RecyclerView).adapter as UserViewAdapter
             assertEquals(userList, adapter.users)
         }
+        scenario.close()
     }
     @Test
     fun onCreateViewWithSortedListShowsSortedList() {
@@ -100,6 +102,7 @@ class UserFragmentTest {
             val adapter = (view as RecyclerView).adapter as UserViewAdapter
             assertEquals(userList.sortedDescending(), adapter.users)
         }
+        scenario.close()
     }
     @Test
     fun testRecyclerViewAdapterOnOneColumn() {
@@ -125,6 +128,7 @@ class UserFragmentTest {
             // Verify that the RecyclerView has the correct number of items
             assertThat(recyclerView?.adapter?.itemCount, equalTo(userList.size))
         }
+        scenario.close()
     }
 
     @Test
@@ -148,6 +152,7 @@ class UserFragmentTest {
             // Verify that the RecyclerView has the correct layout manager
             assertThat(recyclerView?.layoutManager?.javaClass ?: "", equalTo(GridLayoutManager(ApplicationProvider.getApplicationContext(),1).javaClass))
         }
+        scenario.close()
     }
 
     @Test
@@ -178,5 +183,6 @@ class UserFragmentTest {
                 assertThat((recyclerView.adapter as UserViewAdapter).users?.get(i) ?: 0, equalTo(sortedList[i]))
             }
         }
+        scenario.close()
     }
 }

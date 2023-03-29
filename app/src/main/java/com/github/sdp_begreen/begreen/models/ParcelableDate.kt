@@ -28,6 +28,7 @@ class ParcelableDate() : Parcelable {
 
     override fun toString(): String {
         val dateStr = this.date.toString()
+        //Take a substring of the date to remove the day, seconds and gmt part
         return dateStr.substring(4,16)
     }
 
