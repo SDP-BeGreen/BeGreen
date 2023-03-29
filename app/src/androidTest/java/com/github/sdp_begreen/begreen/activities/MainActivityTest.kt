@@ -1,14 +1,12 @@
 package com.github.sdp_begreen.begreen.activities
 
-import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
-import android.widget.ImageView
 import androidx.core.view.GravityCompat
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.DrawerActions
 import androidx.test.espresso.contrib.DrawerMatchers
+import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.*
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -16,7 +14,6 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBitmap
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -178,6 +175,7 @@ class MainActivityTest {
 
     @Test
     fun pressDrawerMenuLogoutDisplaySignInActivity() {
+        Intents.init()
         // Open the navigation drawer
         onView(withId(R.id.mainDrawerLayout)).perform(DrawerActions.open(GravityCompat.END))
 
@@ -189,6 +187,7 @@ class MainActivityTest {
 
         // Verify that the SignInActivity is opened
         intended(hasComponent(SignInActivity::class.java.name))
+        Intents.release()
     }
 
     // TODO All the following test requiring a comparison of bitmap have been disabled for now
