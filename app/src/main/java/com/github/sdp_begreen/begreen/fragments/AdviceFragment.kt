@@ -41,7 +41,7 @@ class AdviceFragment : Fragment() {
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param list list of quotes.
+         * @param list of quotes.
          * @return A new instance of fragment FavoriteFragment.
          */
         @JvmStatic
