@@ -17,7 +17,6 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
 import java.io.ByteArrayOutputStream
 import com.google.android.gms.maps.model.LatLng
-import kotlin.random.Random
 
 
 /**
@@ -310,8 +309,7 @@ object FirebaseDB {
      *
      * @return true if the location got stored in the database, and false if it failed
      */
-    // TODO remove "= ..."
-    suspend fun storeBinLocation(location: LatLng = LatLng(Random.nextDouble(), Random.nextDouble())): Boolean{
+    suspend fun storeBinLocation(location: LatLng): Boolean{
         val freshId = databaseReference.child(BIN_LOCATION_PATH).push().key ?: return false
         databaseReference.child(BIN_LOCATION_PATH).child(freshId).setValue(location).await()
         return true
@@ -320,15 +318,23 @@ object FirebaseDB {
     /**
      * Retrieves the list of all bin locations currently present in the database
      *
-     * @return the set of locations of all the bins, or null if an error happened
+     * @return the list of locations of all the bins, or null if an error happened
      */
-    suspend fun getAllBinLocations(): Collection<LatLng>?{
-        // Looks like manually deleting the unchecked cast is the only way to remove the warning
+    suspend fun getAllBinLocations(): List<LatLng>?{
+        // Looks like manually deleting the unchecked cast is the only way to remove the warnings
         @Suppress("UNCHECKED_CAST")
         val childrens = databaseReference.child(BIN_LOCATION_PATH).get().await().value
-                as? Map<String, LatLng> ?: return null
-        return childrens.values
+                as? Map<String, Any> ?: return null
+
+        val locations = mutableListOf<LatLng>()
+        for (child in childrens.values) {
+            // Converts the Map back to a LatLng
+            @Suppress("UNCHECKED_CAST")
+            val location = child as? HashMap<String, Double>? ?: child as? HashMap<String, Long>? ?: return null
+            val lat = location["latitude"] ?: return null
+            val lng = location["longitude"] ?: return null
+            locations.add(LatLng(lat.toDouble(), lng.toDouble()))
+        }
+        return locations
     }
-
-
 }

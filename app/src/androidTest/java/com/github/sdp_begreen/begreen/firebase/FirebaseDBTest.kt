@@ -13,6 +13,7 @@ import com.github.sdp_begreen.begreen.activities.DatabaseActivity
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBitmap
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -23,6 +24,7 @@ import org.junit.*
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.runner.RunWith
 
 
@@ -162,6 +164,45 @@ class FirebaseDBTest {
     fun getProfilePictureEmptyPhotoIdReturnNull() {
         runBlocking {
             assertThat(FirebaseDB.getImage(PhotoMetadata(), 1), nullValue())
+        }
+    }
+
+    @Test
+    fun storeBinLocationReturnsTrue() {
+        runBlocking {
+            assertTrue(FirebaseDB.storeBinLocation(LatLng(1.1, -2.2)))
+        }
+    }
+
+    @Test
+    fun storeBinLocationCorrectlyUpdatesDatabase() {
+
+        val binLocation = LatLng(12.3, -43.0)
+
+        runBlocking {
+
+            assertTrue(FirebaseDB.storeBinLocation(binLocation))
+
+            val binLocations = FirebaseDB.getAllBinLocations()
+            assertNotNull(binLocations)
+            // Checks that the location got correctly added
+            assertThat(binLocations, hasItem(binLocation))
+        }
+
+    }
+
+    @Test
+    fun getAllBinLocationsReturnsPreviouslyAddedLocations() {
+
+        runBlocking {
+
+            val binLocations = FirebaseDB.getAllBinLocations()
+            assertNotNull(binLocations)
+            // Checks that the location got correctly added
+            assertThat(binLocations, hasItems(
+                LatLng(69.6969, 420.42),
+                LatLng(123.456, 654.321)
+            ))
         }
     }
 
