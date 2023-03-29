@@ -118,7 +118,7 @@ class CameraFragment : Fragment() {
     private fun onCameraActivityResult(bitmap: Bitmap?) {
 
         // When we receive the photo from the camera, we start a new activity to share it.
-        // bitmap is null if the picture was cancelled
+        // bitmap is null if the picture was cancelled (the user has clicked on the "< back" button of the camera to quit)
         if (bitmap != null) {
 
             // Start the SharePost activity with the taken image

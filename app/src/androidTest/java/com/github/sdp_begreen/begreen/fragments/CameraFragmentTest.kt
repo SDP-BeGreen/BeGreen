@@ -115,9 +115,10 @@ class CameraFragmentTest {
         Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
 
         // Check that we resume the previous activity.
-        // When debbuging, we noticed that for this test the value of state was RESUMED, while the state
-        // of the test startShareActivityAfterTakingPhotoWithCameraAndGettingResultOK was CREATED. The state seems to be independent
-        // of the time since we tested at different instants with thread.sleep.
+        // When debugging, I noticed that for this test the value of state was RESUMED, while the state
+        // of the test startShareActivityAfterTakingPhotoWithCameraAndGettingResultOK was CREATED.
+        // Since I reverse engineered this test I verified that the output doesn't depend on the time by inserting random thread.sleep
+        // This test is always deterministic no matter the time.
         MatcherAssert.assertThat(
             fragment.lifecycle.currentState,
             Matchers.equalTo(Lifecycle.State.RESUMED)
