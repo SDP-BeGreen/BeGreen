@@ -328,11 +328,11 @@ object FirebaseDB {
 
         val locations = mutableListOf<LatLng>()
         for (child in childrens.values) {
-            // Converts the Map back to a LatLng
+            // Converts the Map back to a LatLng. If some child does not have the correct format, skip it
             @Suppress("UNCHECKED_CAST")
-            val location = child as? HashMap<String, Double>? ?: child as? HashMap<String, Long>? ?: return null
-            val lat = location["latitude"] ?: return null
-            val lng = location["longitude"] ?: return null
+            val location = child as? HashMap<String, Double>? ?: child as? HashMap<String, Long>? ?: continue
+            val lat = location["latitude"] ?: continue
+            val lng = location["longitude"] ?: continue
             locations.add(LatLng(lat.toDouble(), lng.toDouble()))
         }
         return locations
