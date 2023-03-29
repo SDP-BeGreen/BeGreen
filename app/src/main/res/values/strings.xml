@@ -34,4 +34,8 @@
     <string name="nav_drawer_username">Username</string>
     <string name="nav_drawer_user_description">More Info on user</string>
     <string name="send_message">Send</string>
+    <string name="fragment_profile_details_profile_name_descriptions_edit">Button to switch to edit profile</string>
+    <string name="fragment_profile_details_profile_name_descriptions_save">Button to save profile modification</string>
+    <string name="fragment_profile_details_ratingBar">Bar where the user rating are displayed</string>
+    <string name="fragment_profile_details_take_picture">Button to take a profile picture</string>
 </resources>

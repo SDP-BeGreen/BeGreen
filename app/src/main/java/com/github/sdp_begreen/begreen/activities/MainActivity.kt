@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -12,24 +13,27 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
-import com.github.sdp_begreen.begreen.models.ParcelableDate
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
-import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.fragments.*
+import com.github.sdp_begreen.begreen.models.ParcelableDate
+import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import java.util.*
-import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
+    private val connectedUserViewModel: ConnectedUserViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        retrieveUserWithProfilePicture()
 
         val bottomBar: BottomNavigationView = findViewById(R.id.mainNavigationView)
         val drawerLayout: DrawerLayout = findViewById(R.id.mainDrawerLayout)
@@ -60,21 +64,37 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
+     * Helper function to retrieve the connected User along with its profile picture.
+     *
+     * The purpose of this method is to be called while creating the activity, to prefetch
+     * the user and the image from the database, and have them directly loaded and ready to display
+     * when opening the drawer menu
+     */
+    private fun retrieveUserWithProfilePicture() {
+        lifecycleScope.launch {
+            getConnectedUser()?.also { user ->
+                connectedUserViewModel.currentUser.value = user
+                connectedUserViewModel.currentUserProfilePicture.value = user.profilePictureMetadata?.let {
+                    FirebaseDB.getUserProfilePicture(it, user.id)
+                }
+            }
+        }
+    }
+
+    /**
      * Helper function to setup the user info, description and profile picture in the drawer menu
      */
     private fun setupDrawerUserInfo() {
-        lifecycleScope.launch {
-            val profilePicture = getConnectedUser()?.let { user ->
+        connectedUserViewModel.currentUser.observe(this) {
+            setUpUserNameAndDescription(it)
+        }
 
-                setUpUserNameAndDescription(user)
-
-                user.profilePictureMetadata?.let {
-                    FirebaseDB.getUserProfilePicture(it, user.id)
-                }
-            } ?: BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture)
-
-            findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview)
-                .setImageBitmap(profilePicture)
+        connectedUserViewModel.currentUserProfilePicture.observe(this) {
+            val imageView: ImageView = findViewById(R.id.nav_drawer_profile_picture_imageview)
+            imageView.setImageBitmap(
+                it ?:
+                BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture)
+            )
         }
     }
 
@@ -160,8 +180,8 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.bottomMenuUser -> {
                 item.setIcon(R.drawable.ic_baseline_person)
-                drawerLayout.openDrawer(GravityCompat.END)
                 setupDrawerUserInfo()
+                drawerLayout.openDrawer(GravityCompat.END)
             }
         }
     }
@@ -175,10 +195,8 @@ class MainActivity : AppCompatActivity() {
     private fun handleDrawerMenuItemClick(item: MenuItem) {
         when (item.itemId) {
             R.id.mainNavDrawProfile -> {
-                lifecycleScope.launch {
-                    getConnectedUser()?.also {
-                        replaceFragInMainContainer(ProfileDetailsFragment.newInstance(it))
-                    }
+                connectedUserViewModel.currentUser.value?.also {
+                    replaceFragInMainContainer(ProfileDetailsFragment.newInstance(it))
                 }
             }
             R.id.mainNavDrawFollowers -> {

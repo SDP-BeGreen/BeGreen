@@ -20,47 +20,95 @@
             android:orientation="horizontal">
             <RelativeLayout
                 android:layout_width="wrap_content"
-                android:gravity="center"
                 android:maxHeight="150dp"
                 android:maxWidth="150dp"
                 android:minHeight="100dp"
                 android:minWidth="100dp"
-                android:scaleType="centerInside"
-                android:adjustViewBounds="true"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
                 android:layout_height="match_parent">
                 <ImageView
                     android:id="@+id/fragment_profile_details_profile_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:src="@tools:sample/avatars"
-                    android:contentDescription="@string/profile_user_image" />
+                    android:layout_alignParentStart="true"
+                    android:scaleType="centerInside"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/profile_user_image"
+                    />
+                <ImageButton
+                    android:id="@+id/fragment_profile_details_take_picture"
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:src="@drawable/ic_baseline_add_a_photo_24"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerInside"
+                    android:visibility="gone"
+                    android:contentDescription="@string/fragment_profile_details_take_picture"
+                    />
             </RelativeLayout>
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center"
-                android:layout_height="wrap_content">
-                <LinearLayout
+                android:orientation="vertical"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp">
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                    >
                     <TextView
                         android:id="@+id/fragment_profile_details_profile_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/name" />
+                        android:text="@string/name"
+                        android:layout_alignParentStart="true"
+                        android:layout_toStartOf="@+id/fragment_profile_details_edit_profile"
+                        android:layout_centerInParent="true" />
 
-                    <RatingBar
-                        android:id="@+id/fragment_profile_details_profile_rating"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="13dp"
-                        app:layout_constraintEnd_toEndOf="parent" />
-                </LinearLayout>
-            </RelativeLayout>
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/fragment_profile_details_edit_profile"
+                        android:layout_width="36dp"
+                        android:layout_height="48dp"
+                        android:inset="0dp"
+                        app:icon="@drawable/ic_baseline_mode_edit_24"
+                        app:iconGravity="textStart"
+                        app:iconPadding="0dp"
+                        app:shapeAppearanceOverlay="@style/Circular"
+                        android:layout_alignParentEnd="true"
+                        android:contentDescription="@string/fragment_profile_details_profile_name_descriptions_edit"
+                        />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/fragment_profile_details_save_profile"
+                        android:layout_width="36dp"
+                        android:layout_height="48dp"
+                        android:inset="0dp"
+                        app:icon="@drawable/ic_baseline_save_24"
+                        app:iconGravity="textStart"
+                        app:iconPadding="0dp"
+                        app:shapeAppearanceOverlay="@style/Circular"
+                        android:layout_alignParentEnd="true"
+                        android:contentDescription="@string/fragment_profile_details_profile_name_descriptions_save"
+                        android:visibility="gone"
+                        />
+                </RelativeLayout>
+
+                <RatingBar
+                    android:id="@+id/fragment_profile_details_profile_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:contentDescription="@string/fragment_profile_details_ratingBar"/>
+            </LinearLayout>
 
         </LinearLayout>
 
