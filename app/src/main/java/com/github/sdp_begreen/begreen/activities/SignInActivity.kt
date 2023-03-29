@@ -35,6 +35,9 @@ class SignInActivity : AppCompatActivity() {
     private lateinit var signInGoogleLayout: LinearLayoutCompat
     private lateinit var firebaseAuth: FirebaseAuth
 
+    // Variable to hold the progress dialog
+    private var dialog: AlertDialog? = null
+
     // Using ActivityResultContracts to register a launcher for starting the Google sign-in activity
     private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -105,9 +108,6 @@ class SignInActivity : AppCompatActivity() {
                 }
             }
     }
-
-    // Variable to hold the progress dialog
-    private var dialog: AlertDialog? = null
 
     /**
      * Displays a progress dialog with a loading circle while a process is executing.
