@@ -61,7 +61,7 @@ dependencies {
 
     // Real time DB + storage + google authentificator (check the following link to add any other dependency:
     // https://firebase.google.com/docs/android/setup#available-libraries
-    implementation platform('com.google.firebase:firebase-bom:31.4.0')
+    implementation platform('com.google.firebase:firebase-bom:31.2.3')
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-database-ktx'
     implementation 'com.google.firebase:firebase-auth-ktx'
