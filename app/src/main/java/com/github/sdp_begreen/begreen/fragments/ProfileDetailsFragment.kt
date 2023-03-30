@@ -1,7 +1,6 @@
 package com.github.sdp_begreen.begreen.fragments
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -13,10 +12,13 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.RatingBar
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.models.Actions
+import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import kotlinx.coroutines.launch
 
@@ -30,17 +32,19 @@ import kotlinx.coroutines.launch
  */
 class ProfileDetailsFragment : Fragment() {
     var user: User? = null
+    var recentPosts: List<PhotoMetadata>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            user = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                it.getParcelable(ARG_USER, User::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                user = it.getParcelable(ARG_USER, User::class.java)
+                recentPosts = it.getParcelableArrayList(ARG_RECENT_POSTS, PhotoMetadata::class.java)
             } else {
-                it.getParcelable(ARG_USER)
+                user = it.getParcelable(ARG_USER)
+                recentPosts = it.getParcelableArrayList(ARG_RECENT_POSTS)
             }
         }
-
     }
 
     override fun onCreateView(
@@ -68,8 +72,10 @@ class ProfileDetailsFragment : Fragment() {
                     FirebaseDB.getUserProfilePicture(it, user.id)
                 }
             }
-            profileImgView.setImageBitmap(img
-                ?: Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888))
+            val drawable = ContextCompat.getDrawable(inflater.context, R.drawable.ic_baseline_person)
+            val defaultAvatar =
+                drawable?.toBitmap()?.let { Bitmap.createScaledBitmap(it, 500, 500, false) }
+            profileImgView.setImageBitmap(img ?: defaultAvatar)
         }
         profileDescription.text = user?.description
         profilePhone.text = user?.phone
@@ -78,6 +84,10 @@ class ProfileDetailsFragment : Fragment() {
             R.string.user_details_level_text, user?.displayName ?: "Default User",
         )
         userProgressBar.progress = user?.progression ?: 0
+
+        activity?.supportFragmentManager?.beginTransaction()
+            ?.replace(R.id.fragment_recent_profile_photo, UserPhotoFragment.newInstance(1, recentPosts, false), "")
+            ?.commit()
 
         setupFollowListener(followButton)
         return view
@@ -97,7 +107,6 @@ class ProfileDetailsFragment : Fragment() {
                     //user?.removeFollower(User.currentUser)
                 }
             }
-
         }
     }
 
@@ -107,15 +116,18 @@ class ProfileDetailsFragment : Fragment() {
          * this fragment using the provided parameters.
          *
          * @param user user to show details.
+         * @param recentPosts recent posts of the user.
          * @return A new instance of fragment ProfileDetailsFragment.
          */
         // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
         private const val ARG_USER = "USER"
+        private const val ARG_RECENT_POSTS = "recent_posts"
         @JvmStatic
-        fun newInstance(user: User) =
+        fun newInstance(user: User, photos: List<PhotoMetadata>) =
             ProfileDetailsFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_USER, user)
+                    putParcelableArrayList(ARG_RECENT_POSTS, photos.toCollection(ArrayList()))
                 }
             }
     }
