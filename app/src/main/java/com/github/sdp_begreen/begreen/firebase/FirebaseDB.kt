@@ -316,17 +316,17 @@ object FirebaseDB {
     }
 
     /**
-     * Retrieves the list of all bin locations currently present in the database
+     * Retrieves the set of all bin locations currently present in the database
      *
-     * @return the list of locations of all the bins, or null if an error happened
+     * @return the set of locations of all the bins, or null if an error happened
      */
-    suspend fun getAllBinLocations(): List<LatLng>?{
+    suspend fun getAllBinLocations(): Set<LatLng>?{
         // Looks like manually deleting the unchecked cast is the only way to remove the warnings
         @Suppress("UNCHECKED_CAST")
         val childrens = databaseReference.child(BIN_LOCATION_PATH).get().await().value
                 as? Map<String, Any> ?: return null
 
-        val locations = mutableListOf<LatLng>()
+        val locations = mutableSetOf<LatLng>()
         for (child in childrens.values) {
             // Converts the Map back to a LatLng. If some child does not have the correct format, skip it
             @Suppress("UNCHECKED_CAST")
