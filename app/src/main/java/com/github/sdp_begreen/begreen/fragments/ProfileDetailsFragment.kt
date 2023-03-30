@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
 import androidx.core.content.ContextCompat
@@ -34,7 +35,8 @@ import java.util.*
  * Use the [ProfileDetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class ProfileDetailsFragment : Fragment() {
+class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultRegistry? = null)
+    : Fragment() {
     var user: User? = null
 
     private val connectedUserViewModel:
@@ -118,7 +120,10 @@ class ProfileDetailsFragment : Fragment() {
         connectedUserViewModel.currentUserProfilePicture.observe(viewLifecycleOwner) {
             if (connectedUserViewModel.currentUser.value?.id == user?.id) {
                 val img = it ?: BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture)
-                profileImgView.setImageBitmap(BitmapsUtils.rescaleImage(img, 400, 400))
+                profileImgView.setImageBitmap(BitmapsUtils.rescaleImage(img,
+                    PROFILE_PICTURE_DIM,
+                    PROFILE_PICTURE_DIM
+                ))
             } else {
                 lifecycleScope.launch {
                     val img = user?.let { user ->
@@ -126,7 +131,10 @@ class ProfileDetailsFragment : Fragment() {
                             FirebaseDB.getUserProfilePicture(pMetadata, user.id)
                         }
                     } ?: BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture)
-                    profileImgView.setImageBitmap(BitmapsUtils.rescaleImage(img, 400, 400))
+                    profileImgView.setImageBitmap(BitmapsUtils.rescaleImage(img,
+                        PROFILE_PICTURE_DIM,
+                        PROFILE_PICTURE_DIM
+                    ))
                 }
             }
         }
@@ -179,21 +187,20 @@ class ProfileDetailsFragment : Fragment() {
      * @param saveVisibility The visibility to pass to object that should be visible in display mode
      */
     private fun toggleVisibleElement(editVisibility: Int, saveVisibility: Int) {
-        requireView().findViewById<Button>(R.id.fragment_profile_details_edit_profile)
-            .visibility = editVisibility
-        requireView().findViewById<Button>(R.id.fragment_profile_details_save_profile)
-            .visibility = saveVisibility
-        requireView().findViewById<ImageView>(R.id.fragment_profile_details_profile_image)
-            .visibility = editVisibility
-        requireView().findViewById<ImageButton>(R.id.fragment_profile_details_take_picture)
-            .visibility = saveVisibility
+        EDIT_RELATED_VIEW.forEach {
+            requireView().findViewById<View>(it).visibility = editVisibility
+        }
+        SAVE_RELATED_VIEW.forEach {
+            requireView().findViewById<View>(it).visibility = saveVisibility
+        }
     }
 
     /**
      * Helper function to register an activity to launch the camera to take a picture
      */
-    private fun registerTakePictureActivity(): ActivityResultLauncher<Void?> {
-        return registerForActivityResult(ActivityResultContracts.TakePicturePreview())
+     fun registerTakePictureActivity(): ActivityResultLauncher<Void?> {
+        return registerForActivityResult(ActivityResultContracts.TakePicturePreview(),
+            testActivityRegistry ?: requireActivity().activityResultRegistry)
         { photo ->
             val photoMetadata: PhotoMetadata =
                 PhotoMetadata(takenBy = user, takenOn = ParcelableDate(Date()))
@@ -225,6 +232,9 @@ class ProfileDetailsFragment : Fragment() {
                     takePicture.launch()
                 }
             } else {
+                //TODO Handle this case better in the future, by using a popup for example
+                // to explain to the user that he won't be able to take picture if he
+                // doesn't accept
                 Log.d(
                     "Camera permission not granted",
                     "The user did not grant camera permission"
@@ -299,6 +309,15 @@ class ProfileDetailsFragment : Fragment() {
          */
         // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
         private const val ARG_USER = "USER"
+        private const val PROFILE_PICTURE_DIM = 400
+        private val EDIT_RELATED_VIEW= listOf(
+            R.id.fragment_profile_details_edit_profile,
+            R.id.fragment_profile_details_profile_image
+        )
+        private val SAVE_RELATED_VIEW= listOf(
+            R.id.fragment_profile_details_save_profile,
+            R.id.fragment_profile_details_take_picture
+        )
 
         @JvmStatic
         fun newInstance(user: User) =

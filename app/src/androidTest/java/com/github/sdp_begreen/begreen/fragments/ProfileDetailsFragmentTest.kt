@@ -1,7 +1,12 @@
 package com.github.sdp_begreen.begreen.fragments
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
+import androidx.activity.result.ActivityResultRegistry
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.launch
+import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.fragment.app.viewModels
@@ -15,19 +20,40 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.*
+import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
-import org.hamcrest.CoreMatchers.not
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import junit.framework.AssertionFailedError
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import org.hamcrest.CoreMatchers.*
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.io.IOException
 import java.util.*
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class ProfileDetailsFragmentTest {
+
+    companion object {
+        @BeforeClass
+        @JvmStatic fun setupEmulator() {
+            try {
+                Firebase.database.useEmulator("10.0.2.2", 9000)
+                Firebase.storage.useEmulator("10.0.2.2", 9199)
+                Firebase.auth.useEmulator("10.0.2.2", 9099)
+            } catch (_:java.lang.IllegalStateException){}
+        }
+    }
 
     private val ARG_USER = "USER"
     lateinit var fragScenario: FragmentScenario<ProfileDetailsFragment>
@@ -193,6 +219,127 @@ class ProfileDetailsFragmentTest {
         frag.close()
 
         Intents.release()
+    }
+
+    @Test
+    fun takingPictureCorrectlyStoresPictureInDatabase() {
+
+
+        val user = User("Test_take_picture", 1, "Test")
+        val bundle = Bundle().apply { putParcelable(ARG_USER, user) }
+        val fakePicture = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+
+        // fake test registry for testing camera
+        val testRegistry = object : ActivityResultRegistry() {
+            override fun <I : Any?, O : Any?> onLaunch(
+                requestCode: Int,
+                contract: ActivityResultContract<I, O>,
+                input: I,
+                options: ActivityOptionsCompat?
+            ) {
+                dispatchResult(requestCode, fakePicture)
+            }
+        }
+
+        with(launchFragmentInContainer(bundle) { ProfileDetailsFragment(testRegistry) }) {
+            onFragment {
+                val connectedUserViewModel:
+                        ConnectedUserViewModel by it.viewModels(ownerProducer = { it.requireActivity() })
+                connectedUserViewModel.currentUser.value = user
+            }
+
+            // initially test that the user does not contains any profile picture metadata
+            assertThat(user.profilePictureMetadata, `is`(nullValue()))
+
+            // store user in db, so it exists
+            FirebaseDB.addUser(user, user.id)
+
+            // click on button to edit profile
+            onView(withId(R.id.fragment_profile_details_edit_profile))
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+            // take picture
+            onView(withId(R.id.fragment_profile_details_take_picture))
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+            // check that the user has now its picture stored on the db
+            runBlocking {
+                // It may take times to store picture in db, so retry a couple of time to fetch user
+                // that contains the profile picture
+                repeat(10) { iter ->// retry at most 10 times
+                    try {
+                        FirebaseDB.getUser(user.id)?.also {
+                            assertThat(it.profilePictureMetadata, `is`(not(nullValue())))
+                        }
+                        // Early return once no error is caught
+                        return@repeat
+                    } catch (e: AssertionFailedError) {
+                        // if number of iteration is done rethrow exception
+                        if (iter == 9) throw e
+                    }
+                    // retry after 1 seconds
+                    delay(1000)
+                }
+
+            }
+            close()
+        }
+    }
+
+    @Test
+    fun takingPictureCorrectlyStoresPictureInLiveData() {
+
+
+        val user = User("Test_take_picture", 1, "Test")
+        val bundle = Bundle().apply { putParcelable(ARG_USER, user) }
+        val fakePicture = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+
+        // fake test registry for testing camera
+        val testRegistry = object : ActivityResultRegistry() {
+            override fun <I : Any?, O : Any?> onLaunch(
+                requestCode: Int,
+                contract: ActivityResultContract<I, O>,
+                input: I,
+                options: ActivityOptionsCompat?
+            ) {
+                dispatchResult(requestCode, fakePicture)
+            }
+        }
+
+        with(launchFragmentInContainer(bundle) { ProfileDetailsFragment(testRegistry) }) {
+            onFragment {
+                val connectedUserViewModel:
+                        ConnectedUserViewModel by it.viewModels(ownerProducer = { it.requireActivity() })
+                connectedUserViewModel.currentUser.value = user
+
+                // initially check that no profile picture is associated with this user
+                assertThat(connectedUserViewModel.currentUserProfilePicture.value, `is`(nullValue()))
+            }
+
+            // click on button to edit profile
+            onView(withId(R.id.fragment_profile_details_edit_profile))
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+            // take picture
+            onView(withId(R.id.fragment_profile_details_take_picture))
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+            // check that the user has now its picture stored on the db
+
+            onFragment {
+                val connectedUserViewModel:
+                        ConnectedUserViewModel by it.viewModels(ownerProducer = { it.requireActivity() })
+                connectedUserViewModel.currentUser.value = user
+
+                // check that the value is now the taken picture
+                assertThat(connectedUserViewModel.currentUserProfilePicture.value, `is`(sameInstance(fakePicture)))
+            }
+            close()
+        }
     }
 
     @Test
