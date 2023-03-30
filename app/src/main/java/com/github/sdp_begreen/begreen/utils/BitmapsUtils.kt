@@ -40,6 +40,16 @@ object BitmapsUtils {
             xTranslation = (width - originalWidth * scale) / 2.0f
         }
 
+        drawOnCanvasWithTransformations(canvas, bitmap, scale, xTranslation, yTranslation)
+        return newImg
+    }
+
+    /**
+     * Helper function to draw the [bitmap] image on the [canvas], and apply the corresponding
+     * translation and scaling to the image.g
+     */
+    private fun drawOnCanvasWithTransformations(canvas: Canvas, bitmap: Bitmap, scale: Float,
+                             xTranslation: Float, yTranslation: Float) {
         val transformation = Matrix().apply {
             preScale(scale, scale)
             postTranslate(xTranslation, yTranslation)
@@ -48,6 +58,5 @@ object BitmapsUtils {
             isFilterBitmap = true
         }
         canvas.drawBitmap(bitmap, transformation, paint)
-        return newImg
     }
 }
