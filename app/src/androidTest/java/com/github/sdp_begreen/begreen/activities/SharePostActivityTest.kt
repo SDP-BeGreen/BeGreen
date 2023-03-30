@@ -13,6 +13,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.fragments.CameraFragment
 import org.hamcrest.Matchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
@@ -29,7 +30,7 @@ class SharePostActivityTest {
     private val image = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
 
     private val intentWithCorrectExtra = Intent(ApplicationProvider.getApplicationContext(), SharePostActivity::class.java).apply {
-        this.putExtra(AddNewPostActivity.EXTRA_IMAGE_BITMAP, image)
+        this.putExtra(CameraFragment.EXTRA_IMAGE_BITMAP, image)
     }
 
     @Before
@@ -56,7 +57,7 @@ class SharePostActivityTest {
     fun intentWithExtraNotBitmapFinishesActivity() {
 
         val intent = Intent(ApplicationProvider.getApplicationContext(), SharePostActivity::class.java).apply {
-            this.putExtra(AddNewPostActivity.EXTRA_IMAGE_BITMAP, "Hello")
+            this.putExtra(CameraFragment.EXTRA_IMAGE_BITMAP, "Hello")
         }
         val activity = launchActivity<SharePostActivity>(intent)
 

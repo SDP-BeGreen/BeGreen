@@ -7,15 +7,14 @@
     tools:context=".fragments.CameraFragment"
     android:id="@+id/cameraFragment">
 
-
-    <TextView
-        android:id="@+id/cameraFragmentTextView"
-        android:layout_width="149dp"
+    <Button
+        android:id="@+id/addNewPostBtn"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="136dp"
-        android:layout_marginTop="268dp"
-        android:text="@string/camera_fragment_text"
-        android:textSize="24sp"
+        android:text="@string/add_new_post"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
