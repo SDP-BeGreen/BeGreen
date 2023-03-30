@@ -31,10 +31,10 @@ class SignInActivityTest {
 
     @Test
     fun googleSignInActivityIsDisplayedAfterLayoutClicked() {
-        // Click the add new post button
+        // Click the google sign in button
         onView(withId(R.id.signInGoogleLayout)).perform(click())
 
-        // Check if the camera intent is opened
+        // Check if the google sign in action is opened
         intended(hasAction(GoogleAuth.googleSignIn().action))
     }
 
