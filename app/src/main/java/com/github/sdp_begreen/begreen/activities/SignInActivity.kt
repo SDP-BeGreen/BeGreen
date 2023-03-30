@@ -25,6 +25,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.WindowManager
+import androidx.activity.result.ActivityResult
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
@@ -40,6 +41,43 @@ class SignInActivity : AppCompatActivity() {
 
     // Using ActivityResultContracts to register a launcher for starting the Google sign-in activity
     private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
+        onGoogleSignInResult(result)
+    }
+
+
+    @SuppressLint("MissingInflatedId")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_sign_in)
+
+        // Find the sign-in button and initialize firebaseAuth
+        signInGoogleLayout =findViewById(R.id.signInGoogleLayout)
+        firebaseAuth = FirebaseAuth.getInstance()
+
+        setUpSignInLayout()
+    }
+
+    /**
+     * Helper function that to set up the UI components.
+     */
+    private fun setUpSignInLayout() {
+        // When the google sign in image is clicked, the google sign in page appears
+        signInGoogleLayout.setOnClickListener {
+            // Logging out of any existing Google account and starting the Google sign-in activity
+            // We can comment that if we want to connect directly with the current account
+            GoogleAuth.googleLogOut(this, logoutCallback = {})
+            GoogleAuth.googleClient(this)
+            launcher.launch(GoogleAuth.googleSignIn())
+        }
+    }
+
+
+    /**
+     * Helper function that handles the result of Google Sign In.
+     *
+     * @param result the google sign result
+     */
+    private fun onGoogleSignInResult(result : ActivityResult){
         if (result.resultCode == Activity.RESULT_OK) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
             try {
@@ -59,27 +97,6 @@ class SignInActivity : AppCompatActivity() {
                 // Displaying a toast message to the user with the error message
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             }
-
-        }
-    }
-
-
-    @SuppressLint("MissingInflatedId")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sign_in)
-
-        // Find the sign-in button and initialize firebaseAuth
-        signInGoogleLayout =findViewById(R.id.signInGoogleLayout)
-        firebaseAuth = FirebaseAuth.getInstance()
-
-        // When the google sign in image is clicked, the google sign in page appears
-        signInGoogleLayout.setOnClickListener {
-            // Logging out of any existing Google account and starting the Google sign-in activity
-            // We can comment that if we want to connect directly with the current account
-            GoogleAuth.googleLogOut(this, logoutCallback = {})
-            GoogleAuth.googleClient(this)
-            launcher.launch(GoogleAuth.googleSignIn())
         }
     }
 
