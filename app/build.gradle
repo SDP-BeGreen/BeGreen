@@ -74,6 +74,7 @@ dependencies {
     // Google dependency. See link :
     // https://developers.google.com/identity/sign-in/android/start-integrating
     implementation 'com.google.android.gms:play-services-auth:20.4.1'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
 }
 
 tasks.withType(Test) {
