@@ -28,7 +28,9 @@ class DatabaseActivity : AppCompatActivity() {
 
         // Set button
         findViewById<Button>(R.id.databaseSet).setOnClickListener {
-            FirebaseDB[phoneText.text.toString()] = emailText.text.toString()
+            lifecycleScope.launch {
+                FirebaseDB.set(phoneText.text.toString(), emailText.text.toString())
+            }
         }
 
         // Get button
@@ -47,7 +49,7 @@ class DatabaseActivity : AppCompatActivity() {
 
             lifecycleScope.launch {
                 imageId = FirebaseDB.addImage(bitmap, 3,
-                    PhotoMetadata(null, null, null, "Plastic bottle"))
+                    PhotoMetadata(null, null, null, null,"Plastic bottle",null))
             }
         }
 

@@ -26,6 +26,12 @@ class ParcelableDate() : Parcelable {
         dest.writeLong(date?.time ?: -1)
     }
 
+    override fun toString(): String {
+        val dateStr = this.date.toString()
+        //Take a substring of the date to remove the day, seconds and gmt part
+        return dateStr.substring(4,16)
+    }
+
     companion object CREATOR : Creator<ParcelableDate> {
         override fun createFromParcel(parcel: Parcel): ParcelableDate {
             return ParcelableDate(parcel)

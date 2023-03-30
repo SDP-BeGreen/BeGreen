@@ -179,7 +179,8 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.bottomMenuFeed -> {
                 item.setIcon(R.drawable.ic_baseline_feed)
-                replaceFragInMainContainer(FeedFragment())
+                val photos = listOf(PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()),User("0",100, "SuperUser69"), "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()),User("0",100, "SuperUser69"), "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()),User("0",100, "SuperUser69"), "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()),User("0",100, "SuperUser69"), "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()),User("0",100, "SuperUser69"), "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"))
+                replaceFragInMainContainer(UserPhotoFragment.newInstance(1, photos, true))
             }
             R.id.bottomMenuMap -> {
                 item.setIcon(R.drawable.ic_baseline_map)
@@ -191,7 +192,19 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.bottomMenuAdvice -> {
                 item.setIcon(R.drawable.ic_baseline_lightbulb)
-                replaceFragInMainContainer(AdviceFragment())
+                val adviceList= arrayListOf(
+                "Ecology helps us to understand how our actions affect the environment. It shows the individuals the extent of damage we cause to the environment.",
+                "With the knowledge of ecology, we are able to know which resources are necessary for the survival of different organisms. Lack of ecological knowledge has led to scarcity and deprivation of these resources, leading to competition.",
+                "All organisms require energy for their growth and development. Lack of ecological understanding leads to the over-exploitation of energy resources such as light, nutrition and radiation, leading to its depletion.",
+                "Ecology encourages harmonious living within the species and the adoption of a lifestyle that protects the ecology of life.",
+                "It focuses on the relationship between humans and the environment. It emphasizes the impact human beings have on the environment and gives knowledge on how we can improve ourselves for the betterment of humans and the environment.",
+                "It deals with the study of how organisms alter the environment for the benefit of themselves and other living beings. For eg, termites create a 6 feet tall mound and at the same time feed and protect their entire population.",
+                "Ecology plays a significant role in forming new species and modifying the existing ones. Natural selection is one of the many factors that influences evolutionary change.",
+                "Ecology was first devised by Ernst Haeckel, a German Zoologist. However, ecology has its origins in other sciences such as geology, biology, and evolution among others.",
+                "Habitat ecology is the type of natural environment in which a particular species of an organism live, characterized by both physical and biological features.",
+                "An organism free from the interference of other species and can use a full range of biotic and abiotic resources in which it can survive and reproduce is known as its fundamental niche."
+                )
+                replaceFragInMainContainer(AdviceFragment.newInstance(adviceList))
             }
             R.id.bottomMenuUser -> {
                 item.setIcon(R.drawable.ic_baseline_person)
@@ -211,7 +224,8 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.mainNavDrawProfile -> {
                 connectedUserViewModel.currentUser.value?.also {
-                    replaceFragInMainContainer(ProfileDetailsFragment.newInstance(it))
+                    val photos = listOf(PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()),User("0",100, "SuperUser69"), "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()),User("0",100, "SuperUser69"), "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"))
+                    replaceFragInMainContainer(ProfileDetailsFragment.newInstance(it, photos))
                 }
             }
             R.id.mainNavDrawFollowers -> {
@@ -220,7 +234,7 @@ class MainActivity : AppCompatActivity() {
             //------------------------FOR DEMO PURPOSES ONLY------------------------
             //TODO Remove this when demo will be over
             R.id.mainNavDrawUserList -> {
-               val photoMetadata = PhotoMetadata("erfs", ParcelableDate(Date()),User("0", 0, "Lui"), "Profile")
+               val photoMetadata = PhotoMetadata("0", "title", ParcelableDate(Date()),User("0", 0, "Lui"), "Profile")
                 val desc = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed suscipit consectetur ante quis euismod. Morbi tincidunt orci sit amet libero elementum dictum. Quisque blandit ornare vehicula. Pellentesque eget auctor quam. Sed consequat bibendum risus, vitae scelerisque sapien pharetra a. Nullam pulvinar ultrices molestie."
                 val userList: List<User> = listOf(
                     User("1",  1, "Alice", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),

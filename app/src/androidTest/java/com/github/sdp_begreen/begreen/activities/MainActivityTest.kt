@@ -59,7 +59,7 @@ class MainActivityTest {
             .check(matches(isDisplayed()))
             .perform(click())
 
-        onView(withId(R.id.feedFragment)).check(matches(isDisplayed()))
+        onView(withId(R.id.feed_list)).check(matches(isDisplayed()))
 
         // Go back to camera to test restore outline version of feed menu icon
         // Hard to compare icon in test
