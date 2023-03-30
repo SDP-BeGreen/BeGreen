@@ -100,7 +100,6 @@ class ProfileDetailsFragment : Fragment() {
         val profileEmail: TextView = view.findViewById(R.id.fragment_profile_details_profile_email)
 
         connectedUserViewModel.currentUser.observe(viewLifecycleOwner) { cUser ->
-            Log.d("Enter setUpUserInfo change current user", "$cUser")
             val userToUse = cUser?.let { if (it.id == user?.id) it else user } ?: user
             profileDescription.text =
                 userToUse?.description ?: getString(R.string.nav_drawer_user_description)
