@@ -29,6 +29,7 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private val connectedUserViewModel: ConnectedUserViewModel by viewModels()
+    private var drawerInitialized: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,14 +84,28 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * Helper function to setup the user info, description and profile picture in the drawer menu
+     *
+     * If the observable value have already been initialized then simply return
+     * avoid setting observe each time we open the drawer
      */
     private fun setupDrawerUserInfo() {
+        if (drawerInitialized) return
+
+        drawerInitialized = true
+        val imageView: ImageView = findViewById(R.id.nav_drawer_profile_picture_imageview)
+        if (connectedUserViewModel.currentUser.value == null) {
+            setUpUserNameAndDescription(null) // call with null to set default values
+        }
+        if (connectedUserViewModel.currentUserProfilePicture.value == null) {
+            imageView.setImageBitmap(
+                BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture))
+        }
+
         connectedUserViewModel.currentUser.observe(this) {
             setUpUserNameAndDescription(it)
         }
 
         connectedUserViewModel.currentUserProfilePicture.observe(this) {
-            val imageView: ImageView = findViewById(R.id.nav_drawer_profile_picture_imageview)
             imageView.setImageBitmap(
                 it ?:
                 BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture)

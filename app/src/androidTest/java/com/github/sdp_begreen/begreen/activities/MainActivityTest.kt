@@ -1,9 +1,7 @@
 package com.github.sdp_begreen.begreen.activities
 
-import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
-import android.widget.ImageView
 import androidx.core.view.GravityCompat
+import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -15,7 +13,6 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBitmap
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -185,17 +182,24 @@ class MainActivityTest {
             Firebase.auth.signOut()
             Firebase.auth.signInWithEmailAndPassword("user1@email.ch", "123456").await()
 
+            // Have to explicitly create a new activity here, otherwise the logged in user is take
+            // from the moment the activity was created, which in case of "@Rules" is before,
+            // leading to an inconsistent state.
+            val a = launchActivity<MainActivity>()
+            onView(withId(R.id.bottomMenuUser))
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+            onView(withId(R.id.nav_drawer_username_textview))
+                .check(matches(withText("User Test 1")))
+
+            onView(withId(R.id.nav_drawer_description_textview))
+                .check(matches(withText("That's the awesome description of test user 1")))
+            a.close()
+
         }
 
-        onView(withId(R.id.bottomMenuUser))
-            .check(matches(isDisplayed()))
-            .perform(click())
 
-        onView(withId(R.id.nav_drawer_username_textview))
-            .check(matches(withText("User Test 1")))
-
-        onView(withId(R.id.nav_drawer_description_textview))
-            .check(matches(withText("That's the awesome description of test user 1")))
 
         /*activityRule.scenario.onActivity {
             val drawable: BitmapDrawable =
@@ -210,6 +214,7 @@ class MainActivityTest {
     fun defaultValueDisplayedForUnauthenticatedUser() {
         Firebase.auth.signOut() // Ensure signed out
 
+        val a = launchActivity<MainActivity>()
         assertThat(Firebase.auth.currentUser, nullValue())
 
         onView(withId(R.id.bottomMenuUser))
@@ -221,6 +226,7 @@ class MainActivityTest {
 
         onView(withId(R.id.nav_drawer_description_textview))
             .check(matches((withText("More Info on user"))))
+        a.close()
 
         /*activityRule.scenario.onActivity {
             val drawable: BitmapDrawable =
@@ -237,19 +243,23 @@ class MainActivityTest {
         runBlocking {
             Firebase.auth.signOut()
             Firebase.auth.signInWithEmailAndPassword("notInDb@email.com", "123456").await()
+
+            val a = launchActivity<MainActivity>()
+            assertThat(Firebase.auth.currentUser, notNullValue())
+
+            onView(withId(R.id.bottomMenuUser))
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+            onView(withId(R.id.nav_drawer_username_textview))
+                .check(matches(withText("Username")))
+
+            onView(withId(R.id.nav_drawer_description_textview))
+                .check(matches((withText("More Info on user"))))
+            a.close()
         }
 
-        assertThat(Firebase.auth.currentUser, notNullValue())
 
-        onView(withId(R.id.bottomMenuUser))
-            .check(matches(isDisplayed()))
-            .perform(click())
-
-        onView(withId(R.id.nav_drawer_username_textview))
-            .check(matches(withText("Username")))
-
-        onView(withId(R.id.nav_drawer_description_textview))
-            .check(matches((withText("More Info on user"))))
 
         /*activityRule.scenario.onActivity {
             val drawable: BitmapDrawable =
@@ -265,19 +275,21 @@ class MainActivityTest {
         runBlocking {
             Firebase.auth.signOut()
             Firebase.auth.signInWithEmailAndPassword("user2@email.com", "123456").await()
+
+            val a = launchActivity<MainActivity>()
+            assertThat(Firebase.auth.currentUser, notNullValue())
+
+            onView(withId(R.id.bottomMenuUser))
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+            onView(withId(R.id.nav_drawer_username_textview))
+                .check(matches(withText("User Test 2")))
+
+            onView(withId(R.id.nav_drawer_description_textview))
+                .check(matches((withText("User 2 descriptions"))))
+            a.close()
         }
-
-        assertThat(Firebase.auth.currentUser, notNullValue())
-
-        onView(withId(R.id.bottomMenuUser))
-            .check(matches(isDisplayed()))
-            .perform(click())
-
-        onView(withId(R.id.nav_drawer_username_textview))
-            .check(matches(withText("User Test 2")))
-
-        onView(withId(R.id.nav_drawer_description_textview))
-            .check(matches((withText("User 2 descriptions"))))
 
         /*activityRule.scenario.onActivity {
             val drawable: BitmapDrawable =
@@ -294,19 +306,21 @@ class MainActivityTest {
         runBlocking {
             Firebase.auth.signOut()
             Firebase.auth.signInWithEmailAndPassword("user3@email.com", "123456").await()
+
+            val a = launchActivity<MainActivity>()
+            assertThat(Firebase.auth.currentUser, notNullValue())
+
+            onView(withId(R.id.bottomMenuUser))
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+            onView(withId(R.id.nav_drawer_username_textview))
+                .check(matches(withText("Username")))
+
+            onView(withId(R.id.nav_drawer_description_textview))
+                .check(matches((withText("More Info on user"))))
+            a.close()
         }
-
-        assertThat(Firebase.auth.currentUser, notNullValue())
-
-        onView(withId(R.id.bottomMenuUser))
-            .check(matches(isDisplayed()))
-            .perform(click())
-
-        onView(withId(R.id.nav_drawer_username_textview))
-            .check(matches(withText("Username")))
-
-        onView(withId(R.id.nav_drawer_description_textview))
-            .check(matches((withText("More Info on user"))))
 
         /*activityRule.scenario.onActivity {
             val drawable: BitmapDrawable =

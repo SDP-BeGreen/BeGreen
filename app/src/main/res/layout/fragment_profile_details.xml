@@ -74,7 +74,7 @@
                         android:layout_toStartOf="@+id/fragment_profile_details_edit_profile"
                         android:layout_centerInParent="true" />
 
-                    <com.google.android.material.button.MaterialButton
+                    <Button
                         android:id="@+id/fragment_profile_details_edit_profile"
                         android:layout_width="36dp"
                         android:layout_height="48dp"
@@ -86,7 +86,7 @@
                         android:layout_alignParentEnd="true"
                         android:contentDescription="@string/fragment_profile_details_profile_name_descriptions_edit"
                         />
-                    <com.google.android.material.button.MaterialButton
+                    <Button
                         android:id="@+id/fragment_profile_details_save_profile"
                         android:layout_width="36dp"
                         android:layout_height="48dp"
