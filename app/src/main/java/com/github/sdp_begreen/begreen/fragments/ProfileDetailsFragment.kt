@@ -23,6 +23,7 @@ import com.github.sdp_begreen.begreen.models.Actions
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.utils.BitmapsUtils
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import kotlinx.coroutines.launch
 import java.util.*
@@ -97,7 +98,9 @@ class ProfileDetailsFragment : Fragment() {
         val name: TextView = view.findViewById(R.id.fragment_profile_details_profile_name)
         val profilePhone: TextView = view.findViewById(R.id.fragment_profile_details_profile_phone)
         val profileEmail: TextView = view.findViewById(R.id.fragment_profile_details_profile_email)
+
         connectedUserViewModel.currentUser.observe(viewLifecycleOwner) { cUser ->
+            Log.d("Enter setUpUserInfo change current user", "$cUser")
             val userToUse = cUser?.let { if (it.id == user?.id) it else user } ?: user
             profileDescription.text =
                 userToUse?.description ?: getString(R.string.nav_drawer_user_description)
@@ -114,8 +117,19 @@ class ProfileDetailsFragment : Fragment() {
         val profileImgView: ImageView =
             view.findViewById(R.id.fragment_profile_details_profile_image)
         connectedUserViewModel.currentUserProfilePicture.observe(viewLifecycleOwner) {
-            val img = it ?: BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture)
-            profileImgView.setImageBitmap(rescaleImage(img))
+            if (connectedUserViewModel.currentUser.value?.id == user?.id) {
+                val img = it ?: BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture)
+                profileImgView.setImageBitmap(BitmapsUtils.rescaleImage(img, 400, 400))
+            } else {
+                lifecycleScope.launch {
+                    val img = user?.let { user ->
+                        user.profilePictureMetadata?.let { pMetadata->
+                            FirebaseDB.getUserProfilePicture(pMetadata, user.id)
+                        }
+                    } ?: BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture)
+                    profileImgView.setImageBitmap(BitmapsUtils.rescaleImage(img, 400, 400))
+                }
+            }
         }
     }
 
@@ -126,8 +140,12 @@ class ProfileDetailsFragment : Fragment() {
      * setup its listener
      */
     private fun setupEditButton(editButton: Button) {
-        if (connectedUserViewModel.currentUser.value != user) {
-            editButton.visibility = View.GONE
+
+        // listen for currentUserChange to hide or show button accordingly
+        connectedUserViewModel.currentUser.observe(viewLifecycleOwner) {
+            if (it != user) {
+                editButton.visibility = View.GONE
+            }
         }
 
         editButton.setOnClickListener {
@@ -141,8 +159,10 @@ class ProfileDetailsFragment : Fragment() {
      * Helper function to setup the save button
      */
     private fun setupSaveButton(saveButton: Button) {
-        if (connectedUserViewModel.currentUser.value != user) {
-            saveButton.visibility = View.GONE
+        connectedUserViewModel.currentUser.observe(viewLifecycleOwner) {
+            if (it != user) {
+                saveButton.visibility = View.GONE
+            }
         }
 
         saveButton.setOnClickListener {
@@ -160,14 +180,14 @@ class ProfileDetailsFragment : Fragment() {
      * @param saveVisibility The visibility to pass to object that should be visible in display mode
      */
     private fun toggleVisibleElement(editVisibility: Int, saveVisibility: Int) {
-        view?.findViewById<Button>(R.id.fragment_profile_details_edit_profile)
-            ?.visibility = editVisibility
-        view?.findViewById<Button>(R.id.fragment_profile_details_save_profile)
-            ?.visibility = saveVisibility
-        view?.findViewById<ImageView>(R.id.fragment_profile_details_profile_image)
-            ?.visibility = editVisibility
-        view?.findViewById<ImageButton>(R.id.fragment_profile_details_take_picture)
-            ?.visibility = saveVisibility
+        requireView().findViewById<Button>(R.id.fragment_profile_details_edit_profile)
+            .visibility = editVisibility
+        requireView().findViewById<Button>(R.id.fragment_profile_details_save_profile)
+            .visibility = saveVisibility
+        requireView().findViewById<ImageView>(R.id.fragment_profile_details_profile_image)
+            .visibility = editVisibility
+        requireView().findViewById<ImageButton>(R.id.fragment_profile_details_take_picture)
+            .visibility = saveVisibility
     }
 
     /**
@@ -236,42 +256,6 @@ class ProfileDetailsFragment : Fragment() {
     }
 
     /**
-     * Helper function to rescale a picture to a more appropriate size to be display in
-     * the small profile picture square
-     */
-    private fun rescaleImage(bitmap: Bitmap): Bitmap {
-        val width = 400
-        val height = 400
-        val newImg = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(newImg)
-        val originalWidth = bitmap.width
-        val originalHeight = bitmap.height
-        val xTranslation: Float
-        val yTranslation: Float
-        val scale: Float
-
-        if (bitmap.height < bitmap.width) {
-            scale = width / originalWidth.toFloat()
-            xTranslation = 0f
-            yTranslation = (height - originalHeight * scale) / 2.0f
-        } else {
-            scale = height / originalHeight.toFloat()
-            yTranslation = 0f
-            xTranslation = (width - originalWidth * scale) / 2.0f
-        }
-
-        val transformation = Matrix().apply {
-            preScale(scale, scale)
-            postTranslate(xTranslation, yTranslation)
-        }
-        val paint: Paint = Paint().apply {
-            isFilterBitmap = true
-        }
-        canvas.drawBitmap(bitmap, transformation, paint)
-        return newImg
-    }
-
-    /**
      * Helper function to setup the relative layout attribute of the
      * name text view
      *
@@ -279,8 +263,9 @@ class ProfileDetailsFragment : Fragment() {
      * to the text view
      */
     private fun setUpRelativeLayoutAttribute(startOf: Int) {
-        val tView = view?.findViewById<TextView>(R.id.fragment_profile_details_profile_name)
-        tView?.layoutParams = RelativeLayout.LayoutParams(tView?.layoutParams).apply {
+        val tView = requireView()
+            .findViewById<TextView>(R.id.fragment_profile_details_profile_name)
+        tView.layoutParams = RelativeLayout.LayoutParams(tView?.layoutParams).apply {
             addRule(RelativeLayout.START_OF, startOf)
             addRule(RelativeLayout.CENTER_IN_PARENT)
             addRule(RelativeLayout.ALIGN_PARENT_START)
