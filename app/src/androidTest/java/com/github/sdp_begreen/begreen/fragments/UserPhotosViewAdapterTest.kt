@@ -52,10 +52,11 @@ class UserPhotosViewAdapterTest {
 
     @Test
     fun userPhotosViewAdapterOnBindViewHolderWorksOnTrivialList() {
-        val vH = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
-        userPhotoViewAdapter.onBindViewHolder(vH, 0)
-        MatcherAssert.assertThat(vH.titleView.text, CoreMatchers.equalTo("title"))
-        MatcherAssert.assertThat(vH.subtitleView.text.subSequence(15,35), CoreMatchers.equalTo("Gros vilain pas beau"))
+        val viweHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
+        userPhotoViewAdapter.onBindViewHolder(viweHolder, 0)
+        MatcherAssert.assertThat(viweHolder.titleView.text, CoreMatchers.equalTo("title"))
+        MatcherAssert.assertThat(viweHolder.subtitleView, CoreMatchers.notNullValue())
+        MatcherAssert.assertThat(viweHolder.subtitleView.text.subSequence(15,35), CoreMatchers.equalTo("Gros vilain pas beau"))
     }
 
     @Test
@@ -66,15 +67,13 @@ class UserPhotosViewAdapterTest {
                 replace(R.id.mainFragmentContainer, UserPhotoFragment.newInstance(1, photoList, true))
             }
         }
-
+        //Here is an important test but i didn't manage to make it work, if it can give you some ideas to continue you're welcome
         //Espresso.onView(ViewMatchers.withId(R.id.user_fragment))
         //    .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-//
         //Espresso.onView(ViewMatchers.withId(R.id.user_fragment)).perform(
         //    RecyclerViewActions.actionOnItemAtPosition<UserPhotosViewAdapter.ViewHolder>(0,
         //        ViewActions.click()
         //    ))
-//
         //Espresso.onView(ViewMatchers.withId(R.id.fragment_profile_details_profile_name))
         //    .check(ViewAssertions.matches(ViewMatchers.withText("Bob")))
     }

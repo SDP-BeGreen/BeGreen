@@ -16,7 +16,6 @@ import java.util.*
 
 /**
  * [RecyclerView.Adapter] that can display a [User].
- * TODO: Replace the implementation with code for your data type.
  */
 class UserViewAdapter(
     val users: List<User>?, val parentFragmentManager: androidx.fragment.app.FragmentManager?

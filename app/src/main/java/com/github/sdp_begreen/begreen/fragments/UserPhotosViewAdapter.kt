@@ -19,7 +19,6 @@ import java.net.URL
 
 /**
  * [RecyclerView.Adapter] that can display a [Photo].
- * TODO: Replace the implementation with code for your data type.
  */
 class UserPhotosViewAdapter(
     val photos: List<PhotoMetadata>?, private val isFeed: Boolean
@@ -44,13 +43,16 @@ class UserPhotosViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val photo = photos?.get(position)
         if(isFeed) {
+            //Display avatar if on feed
             val drawable = ContextCompat.getDrawable(holder.avatarView.context, R.drawable.ic_baseline_person)
             val defaultAvatar = drawable?.toBitmap()
             //holder.avatarView.setImageBitmap(getFromDB(photo) ?: defaultAvatar)
             holder.avatarView.setImageBitmap( defaultAvatar)
         }else{
+            //Donot display avatar if not on feed
             holder.avatarView.visibility = View.GONE
         }
+        //Set default value
         holder.titleView.text = photo?.title ?: "No title"
         holder.subtitleView.text = (photo?.takenOn?.toString() ?: "Unknown date") + " | " + (photo?.category
             ?: "")

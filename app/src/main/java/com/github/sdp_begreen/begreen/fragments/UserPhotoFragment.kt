@@ -23,7 +23,7 @@ class UserPhotoFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        //Set args
         arguments?.let {
             columnCount = it.getInt(ARG_COLUMN_COUNT)
             photoList = it.getParcelableArrayList(ARG_PHOTO_LIST)
@@ -41,12 +41,14 @@ class UserPhotoFragment : Fragment() {
         if (view is RecyclerView) {
             with(view) {
                 layoutManager = when {
+                    //Display the photos in a grid if there are more than one
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
                 adapter = UserPhotosViewAdapter(photoList?: listOf(), isFeed)
             }
             if(!isFeed){
+                //If not in the feed display horizontally
                 view.layoutManager= LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             }
         }
@@ -55,14 +57,13 @@ class UserPhotoFragment : Fragment() {
 
     companion object {
 
-        // TODO: Customize parameter argument names
         const val ARG_COLUMN_COUNT = "column-count"
         const val ARG_PHOTO_LIST = "photo-list"
         const val ARG_IS_FEED = "is-feed"
 
-        // TODO: Customize parameter initialization
         @JvmStatic
         fun newInstance(columnCount: Int, photoList: List<PhotoMetadata>?, isFeed: Boolean) =
+            //Put args
             UserPhotoFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_COLUMN_COUNT, columnCount)
