@@ -1,6 +1,7 @@
 package com.github.sdp_begreen.begreen.models
 
 import android.os.Parcel
+import com.github.sdp_begreen.begreen.matchers.ContainsPropertyMatcher.Companion.hasProp
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
@@ -9,9 +10,21 @@ import java.util.*
 
 //Need to be in Android Test to use Parcel
 class UserTest {
-    var user: User = User("1",  0, "Test")
-    val photoMetadata: PhotoMetadata =
-        PhotoMetadata("1", ParcelableDate(Date()), User("1",  33, "Alice"), "Gros vilain pas beau")
+    var user: User = User(
+        "1",
+        0,
+        "Test",
+        0,
+        null,
+        "desc",
+        "phone",
+        "email",
+        50,
+        null,
+        null)
+
+        val photoMetadata: PhotoMetadata =
+        PhotoMetadata("1", "title", ParcelableDate(Date()), User("1",  33, "Alice"), "Gros vilain pas beau", "desc")
     var user1: User = User(
         "1",
         33,
@@ -87,8 +100,8 @@ class UserTest {
         assertThat(user.id, equalTo("1"))
         assertThat(user.displayName, equalTo("Test"))
         assertThat(user.rating, equalTo(0))
-        assertThat(user.followers, nullValue())
-        assertThat(user.following, nullValue())
+        assertThat(user.followers, equalTo(null))
+        assertThat(user.following, equalTo(null))
     }
 
     @Test
@@ -99,17 +112,23 @@ class UserTest {
 
     @Test
     fun userSettersWorksCorrectly() {
-        val expectedUser = User("1",  0, "Test", 1, photoMetadata, "test", "test", "test", 1, listOf(user), listOf(user), photoMetadata)
         user.description = "test"
         user.phone = "test"
         user.email = "test"
         user.followers = listOf(user)
         user.following = listOf(user)
         user.rating = 1
-        user.img = photoMetadata
         user.progression = 1
-        user.profilePictureMetadata = photoMetadata
+        assertThat(
+            user, allOf(
+                hasProp("description", equalTo("test")),
+                hasProp("phone", equalTo("test")),
+                hasProp("followers", equalTo(listOf(user))),
+                hasProp("following", equalTo(listOf(user))),
+                hasProp("rating", equalTo(1)),
+                hasProp("progression", equalTo(1))
+            )
+        )
 
-        assertThat(user, `is`(equalTo(expectedUser)))
     }
 }

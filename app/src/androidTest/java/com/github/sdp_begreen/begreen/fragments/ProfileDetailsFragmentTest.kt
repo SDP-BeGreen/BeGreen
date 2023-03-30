@@ -1,11 +1,18 @@
 package com.github.sdp_begreen.begreen.fragments
 
+import android.os.Bundle
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.clearFragmentResultListener
+import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.coroutineScope
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.github.sdp_begreen.begreen.*
@@ -13,22 +20,36 @@ import com.github.sdp_begreen.begreen.activities.MainActivity
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
+import com.google.firebase.storage.StorageException
+import org.hamcrest.CoreMatchers
+import org.hamcrest.MatcherAssert
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.io.IOException
 import java.util.*
 
 class ProfileDetailsFragmentTest {
+    private val ARG_USER = "USER"
+    private val ARG_RECENT_POSTS = "recent_posts"
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
 
     @Before
     fun setup() {
-        val photoMetadata: PhotoMetadata = PhotoMetadata("1", ParcelableDate(Date()), User("1",  33, "Alice"), "Gros vilain pas beau")
+        val photos = listOf(
+            PhotoMetadata("erfs","Look at me cleaning!", ParcelableDate(Date()),User("0", 111, "SuperUser69",0), "Déchet organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),
+            PhotoMetadata("1", "title", ParcelableDate(Date()), User("1", 812, "Alice", 33, ), "Gros vilain pas beau", "desc"),
+        )
         // Still need to pass the bundle, doesn't work in test to only call the factory from companion object
         // https://github.com/android/android-test/issues/442
         launchFragmentInContainer {
-            ProfileDetailsFragment.newInstance(user = User("1",  33, "Alice", 1, photoMetadata, "Description poutou poutou", "cc@gmail.com", "08920939459802", 67, null, null))
+            ProfileDetailsFragment.newInstance(
+                user = User("1",142, "Alice", 56, photos[0], "Description poutou poutou", "cc@gmail.com", "08920939459802", 67, null, null),
+                photos = photos
+            )
         }
     }
     @Test
@@ -54,4 +75,17 @@ class ProfileDetailsFragmentTest {
     fun testProfileDetailsWithCompleteUserFragmentIsCorrectlyDisplayed() {
         Espresso.onView(ViewMatchers.withId(R.id.fragment_profile_details)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
+
+    //Todo find how we can test async function throwing errors
+    //@Test
+    //fun testListenerForProfileImage() {
+    //    val args = Bundle().apply {
+    //        putParcelable(ARG_USER, User("1",142, "Alice", 56, PhotoMetadata(), "Description poutou poutou", "cc@gmail.com", "08920939459802", 67, null, null, PhotoMetadata("VaRgQioAuiGtfDlv5uNuosNsACCJ_profile_picture")))
+    //    }
+//
+    //    // Launch fragment with arguments
+    //    val scenario = FragmentScenario.launchInContainer(ProfileDetailsFragment::class.java, args)
+    //    assertNotNull(scenario.onFragment{fragment ->fragment.parentFragmentManager.beginTransaction().remove(fragment).commit()
+    //    })
+    //}
 }

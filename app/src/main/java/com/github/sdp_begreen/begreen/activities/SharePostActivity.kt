@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.fragments.CameraFragment
 import com.github.sdp_begreen.begreen.models.Post
 
 class SharePostActivity : AppCompatActivity() {
@@ -49,11 +50,11 @@ class SharePostActivity : AppCompatActivity() {
     private fun getPostImage() : Bitmap? {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            return intent.extras?.getParcelable(AddNewPostActivity.EXTRA_IMAGE_BITMAP, Bitmap::class.java)
+            return intent.extras?.getParcelable(CameraFragment.EXTRA_IMAGE_BITMAP, Bitmap::class.java)
 
         } else {
             @Suppress("DEPRECATION")
-            return intent.extras?.get(AddNewPostActivity.EXTRA_IMAGE_BITMAP) as? Bitmap
+            return intent.extras?.get(CameraFragment.EXTRA_IMAGE_BITMAP) as? Bitmap
         }
     }
 
