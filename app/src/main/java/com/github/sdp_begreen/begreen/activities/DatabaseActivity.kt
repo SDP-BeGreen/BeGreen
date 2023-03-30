@@ -28,7 +28,9 @@ class DatabaseActivity : AppCompatActivity() {
 
         // Set button
         findViewById<Button>(R.id.databaseSet).setOnClickListener {
-            FirebaseDB[phoneText.text.toString()] = emailText.text.toString()
+            lifecycleScope.launch {
+                FirebaseDB.set(phoneText.text.toString(), emailText.text.toString())
+            }
         }
 
         // Get button
