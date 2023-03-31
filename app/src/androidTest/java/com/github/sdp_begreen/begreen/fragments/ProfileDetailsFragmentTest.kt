@@ -1,5 +1,6 @@
 package com.github.sdp_begreen.begreen.fragments
 
+import android.Manifest
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
@@ -19,6 +20,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.*
 import com.github.sdp_begreen.begreen.activities.MainActivity
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
@@ -54,6 +56,9 @@ class ProfileDetailsFragmentTest {
             } catch (_:java.lang.IllegalStateException){}
         }
     }
+
+    @get:Rule
+    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
 
     private val ARG_USER = "USER"
     lateinit var fragScenario: FragmentScenario<ProfileDetailsFragment>
