@@ -3,7 +3,6 @@ package com.github.sdp_begreen.begreen.fragments
 import android.Manifest
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.provider.MediaStore
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.app.ActivityOptionsCompat
@@ -13,8 +12,6 @@ import androidx.fragment.app.viewModels
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
@@ -201,41 +198,6 @@ class ProfileDetailsFragmentTest {
         frag.close()
     }
 
-    //TODO Seems to make the CI camera bug
-    /*@Test
-    fun takingPictureContainsTheCorrectIntent() {
-
-        Intents.init()
-
-        val user = User("1", 1, "Test")
-
-        val bundle = Bundle().apply { putParcelable(ARG_USER, user) }
-        val frag = launchFragmentInContainer<ProfileDetailsFragment>(bundle)
-
-        frag.onFragment {
-            val connectedUserViewModel:
-                    ConnectedUserViewModel by it.viewModels(ownerProducer = { it.requireActivity() })
-            connectedUserViewModel.currentUser.value = user
-        }
-
-        onView(withId(R.id.fragment_profile_details_take_picture))
-            .check(matches(not(isDisplayed())))
-
-        onView(withId(R.id.fragment_profile_details_edit_profile))
-            .check(matches(isDisplayed()))
-            .perform(click())
-
-        onView(withId(R.id.fragment_profile_details_take_picture))
-            .check(matches(isDisplayed()))
-            .perform(click())
-
-        Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
-
-        frag.close()
-
-        Intents.release()
-    }*/
-
     @Test
     fun takingPictureCorrectlyStoresPictureInDatabase() {
 
@@ -278,6 +240,11 @@ class ProfileDetailsFragmentTest {
 
             // take picture
             onView(withId(R.id.fragment_profile_details_take_picture))
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+            // go back to normal view
+            onView(withId(R.id.fragment_profile_details_save_profile))
                 .check(matches(isDisplayed()))
                 .perform(click())
 
