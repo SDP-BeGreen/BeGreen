@@ -347,7 +347,7 @@ object FirebaseDB {
     suspend fun getAdvices(): Set<String> {
 
         val childrens = databaseReference.child(ADVICES_LOCATION_PATH).get().await().children
-        childrens.mapNotNull {
+        return childrens.mapNotNull {
             val advice = it.value as? String
             advice
         }.toSet()

@@ -7,14 +7,12 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.matchers.ContainsStringFromCollectionMatcher.Companion.hasStringFromCollection
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.runBlocking
-import org.hamcrest.Description
-import org.hamcrest.Matcher
-import org.hamcrest.TypeSafeMatcher
 import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -48,28 +46,12 @@ class AdviceFragmentTest {
         // Find the TextView by its ID and check if it's displayed
         onView(withId(R.id.adviceFragmentTextView)).check(matches(isDisplayed()))
         // Check if the TextView has text that is contained in the stringList
-        onView(withId(R.id.adviceFragmentTextView)).check(matches(withText(containsOneElementFromStringSet(advices))))
+        onView(withId(R.id.adviceFragmentTextView)).check(matches(withText(
+            hasStringFromCollection(advices)
+        )))
 
     }
 
-    // This matcher checks that the text displayed is contained in a Set of strings (quotes here)
-    private fun containsOneElementFromStringSet(stringSet: Set<String>): Matcher<String> {
-        return object : TypeSafeMatcher<String>() {
-            override fun describeTo(description: Description?) {
-                description?.appendText("should contain one of these strings: $stringSet")
-            }
 
-            override fun matchesSafely(item: String?): Boolean {
-                item?.let {
-                    for (string in stringSet) {
-                        if (it == string) {
-                            return true
-                        }
-                    }
-                }
-                return false
-            }
-        }
-    }
 
 }
