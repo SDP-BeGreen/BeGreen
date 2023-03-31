@@ -124,15 +124,25 @@ class MainActivityTest {
 
     @Test
     fun pressDrawerMenuProfileDisplayProfileDetailsFragment() {
-        onView(withId(R.id.mainDrawerLayout)).perform(DrawerActions.open(GravityCompat.END))
 
-        onView(withId(R.id.mainNavDrawProfile))
-            .perform(scrollTo())
-            .check(matches(isDisplayed()))
-            .perform(click())
+        runBlocking {
+            Firebase.auth.signOut()
+            Firebase.auth.signInWithEmailAndPassword("user1@email.ch", "123456").await()
 
-        onView(withId(R.id.fragment_profile_details))
-            .check(matches(isDisplayed()))
+            val a = launchActivity<MainActivity>()
+
+            onView(withId(R.id.mainDrawerLayout)).perform(DrawerActions.open(GravityCompat.END))
+
+            onView(withId(R.id.mainNavDrawProfile))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+            onView(withId(R.id.fragment_profile_details))
+                .check(matches(isDisplayed()))
+
+            a.close()
+        }
     }
 
     @Test
