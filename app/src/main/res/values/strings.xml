@@ -35,6 +35,7 @@
     <string name="nav_drawer_username">Username</string>
     <string name="nav_drawer_user_description">More Info on user</string>
     <string name="send_message">Send</string>
+    <string name="logout">Logout</string>
     <string name="desc_publication">This is the publication of the user</string>
     <string name="my_title">My title</string>
     <string name="title">Title</string>
