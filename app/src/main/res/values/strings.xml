@@ -4,7 +4,6 @@
     <string name="map_fragment_text">Fragment where we can display the map%1$s%2$s</string>
     <string name="camera_fragment_text">Fragment where we can display the camera%1$s%2$s</string>
     <string name="advice_fragment_text">Fragment where we can display ecological advice to the user%1$s%2$s</string>
-    <string name="profile_fragment_text">Fragment where we can display the user profile%1$s%2$s</string>
     <string name="settings_fragment_text">Fragment where we can display settings for the user%1$s%2$s</string>
     <string name="followers_fragment_text">Fragment where we can display the user\'s followers%1$s%2$s</string>
     <string name="user_details_level_text">%1$s\'s level</string>
@@ -35,6 +34,10 @@
     <string name="nav_drawer_username">Username</string>
     <string name="nav_drawer_user_description">More Info on user</string>
     <string name="send_message">Send</string>
+    <string name="fragment_profile_details_profile_name_descriptions_edit">Button to switch to edit profile</string>
+    <string name="fragment_profile_details_profile_name_descriptions_save">Button to save profile modification</string>
+    <string name="fragment_profile_details_ratingBar">Bar where the user rating are displayed</string>
+    <string name="fragment_profile_details_take_picture">Button to take a profile picture</string>
     <string name="logout">Logout</string>
     <string name="desc_publication">This is the publication of the user</string>
     <string name="my_title">My title</string>

@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -14,13 +15,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
-import com.github.sdp_begreen.begreen.models.ParcelableDate
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
-import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.fragments.*
+import com.github.sdp_begreen.begreen.models.ParcelableDate
+import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.social.GoogleAuth.mGoogleSignInClient
+import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -29,12 +31,15 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import java.util.*
-import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
+    private val connectedUserViewModel: ConnectedUserViewModel by viewModels()
+    private var drawerInitialized: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        retrieveUserWithProfilePicture()
 
         val bottomBar: BottomNavigationView = findViewById(R.id.mainNavigationView)
         val drawerLayout: DrawerLayout = findViewById(R.id.mainDrawerLayout)
@@ -65,26 +70,59 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Helper function to setup the user info, description and profile picture in the drawer menu
+     * Helper function to retrieve the connected User along with its profile picture.
+     *
+     * The purpose of this method is to be called while creating the activity, to prefetch
+     * the user and the image from the database, and have them directly loaded and ready to display
+     * when opening the drawer menu
      */
-    private fun setupDrawerUserInfo() {
-        val userId: String? = Firebase.auth.currentUser?.uid
-
+    private fun retrieveUserWithProfilePicture() {
         lifecycleScope.launch {
-            val profilePicture = userId?.let { id ->
-                val user = FirebaseDB.getUser(id)
-
-                setUpUserNameAndDescription(user)
-
-                user?.profilePictureMetadata?.let {
-                    FirebaseDB.getUserProfilePicture(it, id)
+            getConnectedUser()?.also { user ->
+                connectedUserViewModel.currentUser.value = user
+                connectedUserViewModel.currentUserProfilePicture.value = user.profilePictureMetadata?.let {
+                    FirebaseDB.getUserProfilePicture(it, user.id)
                 }
-            } ?: BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture)
-
-            findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview)
-                .setImageBitmap(profilePicture)
+            }
         }
     }
+
+    /**
+     * Helper function to setup the user info, description and profile picture in the drawer menu
+     *
+     * If the observable value have already been initialized then simply return
+     * avoid setting observe each time we open the drawer
+     */
+    private fun setupDrawerUserInfo() {
+        if (drawerInitialized) return
+
+        drawerInitialized = true
+        val imageView: ImageView = findViewById(R.id.nav_drawer_profile_picture_imageview)
+        if (connectedUserViewModel.currentUser.value == null) {
+            setUpUserNameAndDescription(null) // call with null to set default values
+        }
+        if (connectedUserViewModel.currentUserProfilePicture.value == null) {
+            imageView.setImageBitmap(
+                BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture))
+        }
+
+        connectedUserViewModel.currentUser.observe(this) {
+            setUpUserNameAndDescription(it)
+        }
+
+        connectedUserViewModel.currentUserProfilePicture.observe(this) {
+            imageView.setImageBitmap(
+                it ?:
+                BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture)
+            )
+        }
+    }
+
+    /**
+     * Helper method to get the currently logged in user if it exists
+     */
+    private suspend fun getConnectedUser(): User? =
+        Firebase.auth.currentUser?.uid?.let { FirebaseDB.getUser(it) }
 
     /**
      * Helper method to set the username and the description of a user if it exists
@@ -163,8 +201,8 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.bottomMenuUser -> {
                 item.setIcon(R.drawable.ic_baseline_person)
-                drawerLayout.openDrawer(GravityCompat.END)
                 setupDrawerUserInfo()
+                drawerLayout.openDrawer(GravityCompat.END)
             }
         }
     }
@@ -178,7 +216,10 @@ class MainActivity : AppCompatActivity() {
     private fun handleDrawerMenuItemClick(item: MenuItem) {
         when (item.itemId) {
             R.id.mainNavDrawProfile -> {
-                replaceFragInMainContainer(ProfileFragment())
+                connectedUserViewModel.currentUser.value?.also {
+                    val photos = listOf(PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()),User("0",100, "SuperUser69"), "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()),User("0",100, "SuperUser69"), "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"))
+                    replaceFragInMainContainer(ProfileDetailsFragment.newInstance(it, photos))
+                }
             }
             R.id.mainNavDrawFollowers -> {
                 replaceFragInMainContainer(FollowersFragment())
