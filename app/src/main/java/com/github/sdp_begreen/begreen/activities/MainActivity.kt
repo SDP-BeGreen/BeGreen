@@ -1,10 +1,12 @@
 package com.github.sdp_begreen.begreen.activities
 
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -19,7 +21,10 @@ import com.github.sdp_begreen.begreen.fragments.*
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.social.GoogleAuth.mGoogleSignInClient
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.ktx.auth
@@ -262,6 +267,28 @@ class MainActivity : AppCompatActivity() {
             //----------------------------------------------------------------------
             R.id.mainNavDrawSettings -> {
                 replaceFragInMainContainer(SettingsFragment())
+            }
+            // handle the "Logout" button in the navigation drawer of the app responsible for
+            // logging out a user who has signed in with Google Sign-In
+            R.id.mainNavDrawLogout -> {
+                val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(getString(R.string.default_web_client_id))
+                    .requestEmail()
+                    .build()
+
+                mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+
+                mGoogleSignInClient.signOut().addOnCompleteListener {
+                    val intent = Intent(this, SignInActivity::class.java)
+
+                    // short toast message to the user indicating that they are being logged out
+                    Toast.makeText(this, "Logging Out", Toast.LENGTH_SHORT).show()
+
+                    // When the sign-out operation is complete, it starts SignInActivity again
+                    startActivity(intent)
+
+                    finish()
+                }
             }
         }
     }

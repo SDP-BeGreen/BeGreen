@@ -7,6 +7,8 @@ import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.DrawerActions
 import androidx.test.espresso.contrib.DrawerMatchers
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.*
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
@@ -183,6 +185,23 @@ class MainActivityTest {
 
         onView(withId(R.id.settingsFragment))
             .check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun pressDrawerMenuLogoutDisplaySignInActivity() {
+        Intents.init()
+        // Open the navigation drawer
+        onView(withId(R.id.mainDrawerLayout)).perform(DrawerActions.open(GravityCompat.END))
+
+        // Click on the Logout button
+        onView(withId(R.id.mainNavDrawLogout))
+            .perform(scrollTo())
+            .check(matches(isDisplayed()))
+            .perform(click())
+
+        // Verify that the SignInActivity is opened
+        intended(hasComponent(SignInActivity::class.java.name))
+        Intents.release()
     }
 
     // TODO All the following test requiring a comparison of bitmap have been disabled for now

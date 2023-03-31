@@ -38,6 +38,7 @@
     <string name="fragment_profile_details_profile_name_descriptions_save">Button to save profile modification</string>
     <string name="fragment_profile_details_ratingBar">Bar where the user rating are displayed</string>
     <string name="fragment_profile_details_take_picture">Button to take a profile picture</string>
+    <string name="logout">Logout</string>
     <string name="desc_publication">This is the publication of the user</string>
     <string name="my_title">My title</string>
     <string name="title">Title</string>
