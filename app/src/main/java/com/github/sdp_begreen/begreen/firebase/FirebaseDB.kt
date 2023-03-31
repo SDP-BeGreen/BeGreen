@@ -347,13 +347,9 @@ object FirebaseDB {
     suspend fun getAdvices(): Set<String> {
 
         val childrens = databaseReference.child(ADVICES_LOCATION_PATH).get().await().children
-        val advicesList = mutableSetOf<String>()
-
-        childrens.forEach { postSnapshot ->
-            // If the advice is not of type String, ignore it (should never happen in theory)
-            val advice = postSnapshot.value as? String
-            advice?.also { advicesList.add(it) }
-        }
-        return advicesList
+        childrens.mapNotNull {
+            val advice = it.value as? String
+            advice
+        }.toSet()
     }
 }
