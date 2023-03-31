@@ -6,8 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
-import kotlin.random.Random
+import com.github.sdp_begreen.begreen.firebase.FirebaseDB
+import kotlinx.coroutines.launch
 
 /**
  * A simple [Fragment] subclass.
@@ -25,31 +27,14 @@ class AdviceFragment : Fragment() {
 
         val adviceFragmentTextView = view.findViewById<TextView>(R.id.adviceFragmentTextView)
 
-        // Sets the text of the adviceFragmentTextView to a random string from the adviceList variable.
-        arguments?.also { it.getStringArrayList(QUOTES)?.also { list ->  adviceFragmentTextView.text =
-            list[Random.nextInt(list.size)]
-        } }
+        // Sets the text of the adviceFragmentTextView to a random string from the adviceSet fetched from the DB.
+        lifecycleScope.launch {
+            val advicesSet: Set<String> = FirebaseDB.getAdvices()
+            if (advicesSet.isNotEmpty()) {
+                adviceFragmentTextView.text = advicesSet.random()
+            }
+        }
 
         return view
-    }
-
-
-    companion object {
-
-        private const val QUOTES = "quotes"
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param list of quotes.
-         * @return A new instance of fragment FavoriteFragment.
-         */
-        @JvmStatic
-        fun newInstance(list: ArrayList<String>) =
-            AdviceFragment().apply {
-                arguments = Bundle().apply {
-                    putStringArrayList(QUOTES, list)
-                }
-            }
     }
 }

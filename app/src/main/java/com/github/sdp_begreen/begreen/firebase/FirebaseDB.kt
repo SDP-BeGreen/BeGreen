@@ -36,6 +36,7 @@ object FirebaseDB {
     private const val USER_PROFILE_PICTURE_METADATA = "profilePictureMetadata"
     private const val USER_ID_ATTRIBUTE = "id"
     private const val BIN_LOCATION_PATH = "bin"
+    private const val ADVICES_LOCATION_PATH = "advices"
 
     // Logs (in the console) the connections and disconnections with the Firebase database
     // We might want to provide a new constructor that takes code to execute on connections/disconnections
@@ -336,5 +337,19 @@ object FirebaseDB {
             locations.add(LatLng(lat.toDouble(), lng.toDouble()))
         }
         return locations
+    }
+
+    /**
+     * Retrieves the list of advices from the realtime database
+     *
+     * @return the set of all advices
+     */
+    suspend fun getAdvices(): Set<String> {
+
+        val childrens = databaseReference.child(ADVICES_LOCATION_PATH).get().await().children
+        return childrens.mapNotNull {
+            val advice = it.value as? String
+            advice
+        }.toSet()
     }
 }
