@@ -131,7 +131,9 @@ class MainActivityTest {
 
             val a = launchActivity<MainActivity>()
 
-            onView(withId(R.id.mainDrawerLayout)).perform(DrawerActions.open(GravityCompat.END))
+            onView(withId(R.id.bottomMenuUser))
+                .check(matches(isDisplayed()))
+                .perform(click())
 
             onView(withId(R.id.mainNavDrawProfile))
                 .perform(scrollTo())
