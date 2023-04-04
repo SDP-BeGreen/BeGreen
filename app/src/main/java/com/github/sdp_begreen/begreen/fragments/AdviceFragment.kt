@@ -13,10 +13,11 @@ import kotlinx.coroutines.launch
 
 /**
  * A simple [Fragment] subclass.
- * Use the [AdviceFragment.newInstance] factory method to
  * create an instance of this fragment.
+ * @param testCallback A callback received from tests, it expects the set retrieved
+ *  from the database as parameter. It is null by default, should only be non null from tests.
  */
-class AdviceFragment : Fragment() {
+class AdviceFragment(private val testCallback: ((Set<String>) -> Unit)? = null) : Fragment() {
 
     // The purpose of this method is to inflate the fragment layout, initialize some views,
     // and display a random piece of advice on the screen.
@@ -32,6 +33,7 @@ class AdviceFragment : Fragment() {
             val advicesSet: Set<String> = FirebaseDB.getAdvices()
             if (advicesSet.isNotEmpty()) {
                 adviceFragmentTextView.text = advicesSet.random()
+                testCallback?.invoke(advicesSet)
             }
         }
 

@@ -12,7 +12,9 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -33,23 +35,22 @@ class AdviceFragmentTest {
 
     @Test
     fun textViewDisplaysStringFromListOfAdvices() {
-
-        // Advices stored in the emulator
-        val advices = setOf("Advice1", "Advice2", "Advice3")
-
-        // Since the AdviceFragment retrieves the advices in an asynchronous manner,
-        // we launch it inside a runBlocking block that waits for all suspend functions to complete
         runBlocking {
-            launchFragmentInContainer<AdviceFragment>()
+            val deferred = CompletableDeferred<Set<String>>()
+
+            launchFragmentInContainer{ AdviceFragment {deferred.complete(it)} }
+
+            withTimeout(5000) {
+                // get the advices retrieved from the database
+                val advices = deferred.await()
+                // Find the TextView by its ID and check if it's displayed
+                onView(withId(R.id.adviceFragmentTextView)).check(matches(isDisplayed()))
+                // Check if the TextView has text that is contained in the stringList
+                onView(withId(R.id.adviceFragmentTextView)).check(matches(withText(
+                    hasStringFromCollection(advices)
+                )))
+            }
         }
-
-        // Find the TextView by its ID and check if it's displayed
-        onView(withId(R.id.adviceFragmentTextView)).check(matches(isDisplayed()))
-        // Check if the TextView has text that is contained in the stringList
-        onView(withId(R.id.adviceFragmentTextView)).check(matches(withText(
-            hasStringFromCollection(advices)
-        )))
-
     }
 
 
