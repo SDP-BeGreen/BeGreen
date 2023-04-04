@@ -15,7 +15,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BeGreen"
         tools:targetApi="31"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:name=".BeGreenApp">
 
         <activity
             android:name=".activities.SignInActivity"

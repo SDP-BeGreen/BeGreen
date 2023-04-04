@@ -27,7 +27,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner 'com.github.sdp_begreen.begreen.InstrumentationTestRunner'
     }
 
     buildTypes {
@@ -48,6 +48,9 @@ android {
     }
     buildFeatures {
         viewBinding true
+    }
+    testOptions{
+        animationsDisabled = true
     }
 }
 
@@ -86,6 +89,16 @@ dependencies {
     // https://developers.google.com/identity/sign-in/android/start-integrating
     implementation 'com.google.android.gms:play-services-auth:20.4.1'
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
+
+    // insert-koin
+    implementation 'io.insert-koin:koin-core:3.4.0'
+    implementation 'io.insert-koin:koin-android:3.4.0'
+
+    // mockito
+    testImplementation "org.mockito:mockito-core:5.2.0"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:4.1.0"
+    androidTestImplementation 'org.mockito:mockito-android:5.2.0'
+
 }
 
 tasks.withType(Test) {
