@@ -6,6 +6,17 @@ plugins {
 }
 
 android {
+
+    // Personal keystore to store the signing certificate for the debug app,
+    // so that we don't have to all add our own SHA-1 to firebase
+    signingConfigs {
+        debug {
+            storeFile file('../BeGreen.keystore')
+            storePassword 'android'
+            keyAlias 'be_green_ks'
+            keyPassword 'android'
+        }
+    }
     namespace 'com.github.sdp_begreen.begreen'
     compileSdk 33
 
