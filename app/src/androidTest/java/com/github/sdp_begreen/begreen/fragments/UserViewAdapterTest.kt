@@ -2,6 +2,7 @@ package com.github.sdp_begreen.begreen.fragments
 
 import android.widget.LinearLayout
 import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -16,11 +17,12 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Rule
 import org.junit.Test
 import com.github.sdp_begreen.begreen.R
+import androidx.lifecycle.testing.TestLifecycleOwner
 
 class UserViewAdapterTest {
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
-    private var userViewAdapter = UserViewAdapter(listOf(User("1",  0, "Test"), User("2",  1, "Test2")), null)
+    private var userViewAdapter = UserViewAdapter(listOf(User("1",  0, "Test"), User("2",  1, "Test2")), null, TestLifecycleOwner().lifecycleScope, InstrumentationRegistry.getInstrumentation().targetContext.resources)
     private val appContext = InstrumentationRegistry.getInstrumentation().targetContext
     private val userList = listOf(
         User("1", 20, "Bob"),
@@ -52,13 +54,13 @@ class UserViewAdapterTest {
 
     @Test
     fun userViewAdapterGetItemCountWorksOnEmptyList() {
-        userViewAdapter = UserViewAdapter(listOf(), userViewAdapter.parentFragmentManager)
+        userViewAdapter = UserViewAdapter(listOf(), userViewAdapter.parentFragmentManager, TestLifecycleOwner().lifecycleScope, InstrumentationRegistry.getInstrumentation().targetContext.resources)
         assertThat(userViewAdapter.getItemCount(), equalTo(0))
     }
 
     @Test
     fun userViewAdapterGetItemCountWorksOnNullList() {
-        userViewAdapter = UserViewAdapter(null, userViewAdapter.parentFragmentManager)
+        userViewAdapter = UserViewAdapter(null, userViewAdapter.parentFragmentManager, TestLifecycleOwner().lifecycleScope, InstrumentationRegistry.getInstrumentation().targetContext.resources)
         assertThat(userViewAdapter.getItemCount(), equalTo(0))
     }
 
