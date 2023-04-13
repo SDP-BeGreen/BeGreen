@@ -114,7 +114,7 @@ class ProfileDetailsFragmentTest {
         frag.onFragment {
             val connectedUserViewModel:
                     ConnectedUserViewModel by it.viewModels(ownerProducer = { it.requireActivity() })
-            connectedUserViewModel.currentUser.value = user2
+        connectedUserViewModel.setCurrentUser(user2)
         }
 
         onView(withId(R.id.fragment_profile_details_edit_profile))
@@ -133,11 +133,12 @@ class ProfileDetailsFragmentTest {
 
         val bundle = Bundle().apply { putParcelable(ARG_USER, user) }
         val frag = launchFragmentInContainer<ProfileDetailsFragment>(bundle)
+        Firebase.auth.signOut()
 
         frag.onFragment {
             val connectedUserViewModel:
                     ConnectedUserViewModel by it.viewModels(ownerProducer = { it.requireActivity() })
-            connectedUserViewModel.currentUser.value = user
+            connectedUserViewModel.setCurrentUser(user)
         }
 
         onView(withId(R.id.fragment_profile_details_edit_profile))
@@ -156,7 +157,7 @@ class ProfileDetailsFragmentTest {
         frag.onFragment {
             val connectedUserViewModel:
                     ConnectedUserViewModel by it.viewModels(ownerProducer = { it.requireActivity() })
-            connectedUserViewModel.currentUser.value = user
+            connectedUserViewModel.setCurrentUser(user)
         }
 
         onView(withId(R.id.fragment_profile_details_save_profile))
@@ -182,7 +183,7 @@ class ProfileDetailsFragmentTest {
         frag.onFragment {
             val connectedUserViewModel:
                     ConnectedUserViewModel by it.viewModels(ownerProducer = { it.requireActivity() })
-            connectedUserViewModel.currentUser.value = user
+            connectedUserViewModel.setCurrentUser(user)
         }
 
         onView(withId(R.id.fragment_profile_details_take_picture))
@@ -222,7 +223,7 @@ class ProfileDetailsFragmentTest {
             onFragment {
                 val connectedUserViewModel:
                         ConnectedUserViewModel by it.viewModels(ownerProducer = { it.requireActivity() })
-                connectedUserViewModel.currentUser.value = user
+                connectedUserViewModel.setCurrentUser(user)
             }
 
             // initially test that the user does not contains any profile picture metadata
@@ -296,7 +297,7 @@ class ProfileDetailsFragmentTest {
             onFragment {
                 val connectedUserViewModel:
                         ConnectedUserViewModel by it.viewModels(ownerProducer = { it.requireActivity() })
-                connectedUserViewModel.currentUser.value = user
+                connectedUserViewModel.setCurrentUser(user)
 
                 // initially check that no profile picture is associated with this user
                 assertThat(connectedUserViewModel.currentUserProfilePicture.value, `is`(nullValue()))
@@ -317,7 +318,6 @@ class ProfileDetailsFragmentTest {
             onFragment {
                 val connectedUserViewModel:
                         ConnectedUserViewModel by it.viewModels(ownerProducer = { it.requireActivity() })
-                connectedUserViewModel.currentUser.value = user
 
                 // check that the value is now the taken picture
                 assertThat(connectedUserViewModel.currentUserProfilePicture.value, `is`(sameInstance(fakePicture)))
@@ -337,8 +337,7 @@ class ProfileDetailsFragmentTest {
         frag.onFragment {
             val connectedUserViewModel:
                     ConnectedUserViewModel by it.viewModels(ownerProducer = { it.requireActivity() })
-            connectedUserViewModel.currentUser.value = fakeAuthUser
-            connectedUserViewModel.currentUserProfilePicture.value = null
+            connectedUserViewModel.setCurrentUser(fakeAuthUser)
         }
 
         onView(withId(R.id.fragment_profile_details_profile_name))
