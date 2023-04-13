@@ -1,16 +1,23 @@
 package com.github.sdp_begreen.begreen.fragments
 
+import android.content.res.Resources
+import android.graphics.BitmapFactory
+import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.commit
+import androidx.lifecycle.LifecycleCoroutineScope
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.databinding.FragmentUserBinding
+import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -18,7 +25,7 @@ import java.util.*
  * [RecyclerView.Adapter] that can display a [User].
  */
 class UserViewAdapter(
-    val users: List<User>?, val parentFragmentManager: androidx.fragment.app.FragmentManager?
+    val users: List<User>?, val parentFragmentManager: androidx.fragment.app.FragmentManager?, val lifecycleScope: LifecycleCoroutineScope, val resources: Resources
 ) : RecyclerView.Adapter<UserViewAdapter.ViewHolder>() {
     //TODO----------------FOR DEMO------------------------
     private val photos = listOf(
@@ -45,6 +52,17 @@ class UserViewAdapter(
         val user : User = users?.get(position) ?: return
         holder.userScore.text = user.score.toString()
         holder.userName.text = user.displayName
+        holder.userPhoto.let {
+            lifecycleScope.launch {
+                val img = user.let { user ->
+                    user.profilePictureMetadata?.let { pMetadata->
+                        FirebaseDB.getUserProfilePicture(pMetadata, user.id)
+                        } }
+                    ?: BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture)
+
+                    it.setImageBitmap(img)
+            }
+        }
         holder.setListener(holder.itemView, position, user)
     }
 
@@ -52,6 +70,7 @@ class UserViewAdapter(
     inner class ViewHolder(binding: FragmentUserBinding) : RecyclerView.ViewHolder(binding.root) {
         val userScore: TextView = binding.userFragmentUserNumber
         val userName: TextView = binding.userFragmentContent
+        val userPhoto: ImageView = binding.avatarImage
 
         fun setListener(view: View, position: Int, user: User) {
             view.setOnClickListener {
