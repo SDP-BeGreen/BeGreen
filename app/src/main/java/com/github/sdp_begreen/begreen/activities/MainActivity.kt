@@ -235,7 +235,7 @@ class MainActivity : AppCompatActivity() {
                     User("3",  330, "Charlie", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
                     User("4",  13, "Dylan", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
                     User("5",  2, "Evan", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("dQ2cpCpZj5ZF7IyyPsPvxtTUpUi1",  5432, "Moi", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                    User("dQ2cpCpZj5ZF7IyyPsPvxtTUpUi1",  5432, "Moi", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null, PhotoMetadata("dQ2cpCpZj5ZF7IyyPsPvxtTUpUi1_profile_picture")),
                     User("7",  35, "Gaelle", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
                     User("8",  3, "Hellen", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
                     User("9",  33, "Irene", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
