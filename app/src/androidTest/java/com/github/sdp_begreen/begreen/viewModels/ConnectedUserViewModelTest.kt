@@ -229,4 +229,18 @@ class ConnectedUserViewModelTest: KoinTest {
         }
     }
 
+
+    @Test
+    fun setCurrentUserProfilePictureThrowsNullUserId() {
+        runTest {
+            launch {
+                delay(15)
+                val exception = assertThrows(IllegalArgumentException::class.java) {
+                    vm.setCurrentUserProfilePicture(fakePicture2, null)
+                }
+                assertThat(exception.message, `is`(equalTo("Trying to modify profile picture of another user")))
+            }
+        }
+    }
+
 }
