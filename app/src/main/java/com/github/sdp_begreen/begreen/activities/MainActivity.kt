@@ -19,21 +19,21 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.fragments.*
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
-import com.github.sdp_begreen.begreen.social.GoogleAuth.mGoogleSignInClient
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
-    private val connectedUserViewModel: ConnectedUserViewModel by viewModels()
+    private val connectedUserViewModel by viewModels<ConnectedUserViewModel>()
+    private val auth by inject<Auth>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +51,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         val headerView: View = navigationView.getHeaderView(0)
+        // By starting to listen for flow changes, the information will lickely have
+        // been prefetched for the first time we open the drawer
         setupDrawerUserInfo(
             headerView.findViewById(R.id.nav_drawer_profile_picture_imageview),
             headerView.findViewById(R.id.nav_drawer_username_textview),
@@ -246,24 +248,18 @@ class MainActivity : AppCompatActivity() {
             // handle the "Logout" button in the navigation drawer of the app responsible for
             // logging out a user who has signed in with Google Sign-In
             R.id.mainNavDrawLogout -> {
-                val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestIdToken(getString(R.string.default_web_client_id))
-                    .requestEmail()
-                    .build()
+                auth.signOutCurrentUser(this, getString(R.string.default_web_client_id))
+                    .addOnCompleteListener {
+                        val intent = Intent(this, SignInActivity::class.java)
 
-                mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+                        // short toast message to the user indicating that they are being logged out
+                        Toast.makeText(this, "Logging Out", Toast.LENGTH_SHORT).show()
 
-                mGoogleSignInClient.signOut().addOnCompleteListener {
-                    val intent = Intent(this, SignInActivity::class.java)
+                        // When the sign-out operation is complete, it starts SignInActivity again<
+                        startActivity(intent)
 
-                    // short toast message to the user indicating that they are being logged out
-                    Toast.makeText(this, "Logging Out", Toast.LENGTH_SHORT).show()
-
-                    // When the sign-out operation is complete, it starts SignInActivity again
-                    startActivity(intent)
-
-                    finish()
-                }
+                        finish()
+                    }
             }
         }
     }
