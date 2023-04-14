@@ -24,6 +24,7 @@ import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
@@ -60,8 +61,12 @@ class ProfileDetailsFragmentTest {
     private val ARG_USER = "USER"
     lateinit var fragScenario: FragmentScenario<ProfileDetailsFragment>
     private val ARG_RECENT_POSTS = "recent_posts"
+
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
+
+    @get:Rule
+    val koinTestRule = KoinTestRule()
 
     @Before
     fun setup() {

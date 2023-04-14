@@ -24,6 +24,10 @@ class ConnectedUserViewModel: ViewModel() {
     private val userFromAuth = auth.getConnectedUserIds().map {
         it?.let { db.getUser(it) }
     }.onEach {
+        // upon new connection, start by resetting the profile picture to be sure to not keep an
+        // old picture, if the new authenticated person doesn't have a profile picture for example
+        mutableCurrentUserProfilePicture.value = null
+
         // each time a new connection is done, directly fetch the user profile picture
         // and update the currentUserProfilePicture value
         it?.also { user ->

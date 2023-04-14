@@ -16,6 +16,8 @@ import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.contains
 import org.junit.Assert.assertThrows
+import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -37,24 +39,40 @@ class ConnectedUserViewModelTest: KoinTest {
      * Initialize some constant to use in every tests
      */
     companion object {
+        private val db: DB = mock(DB::class.java)
+        private val auth: Auth = mock(Auth::class.java)
         private val userPhotoMetadata = PhotoMetadata("user1_profile_picture")
+        private val userPhotoMetadata2 = PhotoMetadata("user3_profile_picture")
         private const val userId1 = "1234"
         private const val userId2 = "1235"
         private const val userId3 = "1236"
         private val user1 = User(userId1, 12, "User 1", profilePictureMetadata = userPhotoMetadata)
         private val user2 = User(userId2, 12, "User 2")
-        private val user3 = User(userId3, 12, "User 3")
+        private val user3 = User(userId3, 12, "User 3", profilePictureMetadata = userPhotoMetadata2)
         private val fakePicture1 = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
         private val fakePicture2 = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+
+        @BeforeClass
+        @JvmStatic
+        fun setUpAuth() {
+            // The implementation need to be provided before the rule is executed,
+            // that's why we do it in the beforeClass method
+            runTest {
+                // setup basic get user and getProfilePicture use in multiple tests
+                `when`(db.getUser(userId1)).thenReturn(user1)
+                `when`(db.getUser(userId2)).thenReturn(user2)
+                `when`(db.getUser(userId3)).thenReturn(user3)
+                `when`(db.getUserProfilePicture(userPhotoMetadata, userId1))
+                    .thenReturn(fakePicture1)
+                // add a small delay, just to be sure that it is triggered after initialization
+                // and arrive second, after the initial null value
+                `when`(auth.getConnectedUserIds())
+                    .thenReturn(flowOf(userId1).onEach { delay(10) })
+            }
+        }
     }
 
-    private val db: DB = mock(DB::class.java)
-    private val auth: Auth = mock(Auth::class.java)
-
-    private val testModule = module {
-        single { db }
-        single { auth }
-    }
+    private lateinit var vm: ConnectedUserViewModel
 
     /**
      * Needed to be able to test coroutine
@@ -70,20 +88,20 @@ class ConnectedUserViewModelTest: KoinTest {
      */
     @get:Rule
     val koinTestRule = KoinTestRule.create {
-        modules(testModule)
+        modules(module {
+            single { db }
+            single { auth }
+        })
+    }
+
+    @Before
+    fun setUpVM() {
+        vm = ConnectedUserViewModel()
     }
 
     @Test
     fun currentUserContainCorrectSignInUser() {
         runTest {
-            `when`(db.getUser(userId1)).thenReturn(user1)
-            // add a small delay, just to be sure that it is triggered after initialization
-            // and arrive second, after the initial null value
-            `when`(auth.getConnectedUserIds())
-                .thenReturn(flowOf(userId1).onEach { delay(10) })
-
-            val vm = ConnectedUserViewModel()
-
             assertThat(vm.currentUser.drop(1).first(), `is`(equalTo(user1)))
         }
     }
@@ -91,11 +109,6 @@ class ConnectedUserViewModelTest: KoinTest {
     @Test
     fun currentUserContainsCorrectUserSetManually() {
         runTest {
-            // Still need to mock this method to avoid null pointer
-            `when`(auth.getConnectedUserIds())
-                .thenReturn(flowOf(null).onEach { delay(10) })
-
-            val vm = ConnectedUserViewModel()
             vm.setCurrentUser(user1)
 
             assertThat(vm.currentUser.first(), `is`(equalTo(user1)))
@@ -105,14 +118,11 @@ class ConnectedUserViewModelTest: KoinTest {
     @Test
     fun currentUserContainCorrectSignInUserChangingUser() {
         runTest {
-            `when`(db.getUser(userId1)).thenReturn(user1)
-            `when`(db.getUser(userId2)).thenReturn(user2)
-            `when`(db.getUser(userId3)).thenReturn(user3)
             `when`(auth.getConnectedUserIds())
                 .thenReturn(flowOf(userId1, userId2, userId3).onEach { delay(10) })
 
+            // need new vm, as we modify the "getConnectedUserIds" value
             val vm = ConnectedUserViewModel()
-
             val users = vm.currentUser.drop(1).take(3).toList()
             assertThat(users, contains(user1, user2, user3))
         }
@@ -121,13 +131,10 @@ class ConnectedUserViewModelTest: KoinTest {
     @Test
     fun currentUserCorrectValueAuthAndUpdateUser() {
         runTest {
-            `when`(db.getUser(userId1)).thenReturn(user1)
-            `when`(db.getUser(userId3)).thenReturn(user3)
             `when`(auth.getConnectedUserIds())
                 .thenReturn(flowOf(userId1, userId3).onEach { delay(10) })
 
             val vm = ConnectedUserViewModel()
-
             // need to explicitly launch it for it to go into the dispatcher
             launch {
                 delay(15)
@@ -142,13 +149,6 @@ class ConnectedUserViewModelTest: KoinTest {
     @Test
     fun currentUserProfilePictureCorrectlySetSignedInUser() {
         runTest {
-            `when`(db.getUser(userId1)).thenReturn(user1)
-            `when`(db.getUserProfilePicture(userPhotoMetadata, userId1))
-                .thenReturn(fakePicture1)
-            `when`(auth.getConnectedUserIds())
-                .thenReturn(flowOf(userId1).onEach { delay(10) })
-
-            val vm = ConnectedUserViewModel()
             assertThat(
                 vm.currentUserProfilePicture.drop(1).first(),
                 `is`(equalTo(fakePicture1)))
@@ -156,15 +156,22 @@ class ConnectedUserViewModelTest: KoinTest {
     }
 
     @Test
-    fun currentUserProfilePictureCorrectlyResetManuallyModifyingUser() {
+    fun currentUserProfilePictureCorrectlyResetUponNewAuth() {
         runTest {
-            `when`(db.getUser(userId1)).thenReturn(user1)
-            `when`(db.getUserProfilePicture(userPhotoMetadata, userId1))
-                .thenReturn(fakePicture1)
             `when`(auth.getConnectedUserIds())
-                .thenReturn(flowOf(userId1).onEach { delay(10) })
+                .thenReturn(flowOf(userId1, userId2).onEach { delay(10) })
 
             val vm = ConnectedUserViewModel()
+            assertThat(
+                vm.currentUserProfilePicture.drop(1).take(2).toList(),
+                contains(fakePicture1, null)
+            )
+        }
+    }
+
+    @Test
+    fun currentUserProfilePictureCorrectlyResetManuallyModifyingUser() {
+        runTest {
             launch {
                 delay(15)
                 vm.setCurrentUser(user2)
@@ -178,15 +185,25 @@ class ConnectedUserViewModelTest: KoinTest {
     }
 
     @Test
-    fun currentUserProfilePictureCorrectManuallyModified() {
+    fun currentUserProfilePictureCorrectlyUpdatedUponNewAuth() {
         runTest {
-            `when`(db.getUser(userId1)).thenReturn(user1)
-            `when`(db.getUserProfilePicture(userPhotoMetadata, userId1))
-                .thenReturn(fakePicture1)
+            `when`(db.getUserProfilePicture(userPhotoMetadata2, userId3))
+                .thenReturn(fakePicture2)
             `when`(auth.getConnectedUserIds())
-                .thenReturn(flowOf(userId1).onEach { delay(10) })
+                .thenReturn(flowOf(userId1, userId3).onEach { delay(10) })
 
             val vm = ConnectedUserViewModel()
+            assertThat(
+                vm.currentUserProfilePicture.drop(1).take(2).toList(),
+                contains(fakePicture1, fakePicture2)
+            )
+        }
+    }
+
+
+    @Test
+    fun currentUserProfilePictureCorrectManuallyModified() {
+        runTest {
             launch {
                 delay(15)
                 vm.setCurrentUserProfilePicture(fakePicture2, userId1)
@@ -202,13 +219,6 @@ class ConnectedUserViewModelTest: KoinTest {
     @Test
     fun setCurrentUserProfilePictureThrowsWrongUserId() {
         runTest {
-            `when`(db.getUser(userId1)).thenReturn(user1)
-            `when`(db.getUserProfilePicture(userPhotoMetadata, userId1))
-                .thenReturn(fakePicture1)
-            `when`(auth.getConnectedUserIds())
-                .thenReturn(flowOf(userId1).onEach { delay(10) })
-
-            val vm = ConnectedUserViewModel()
             launch {
                 delay(15)
                 val exception = assertThrows(IllegalArgumentException::class.java) {
