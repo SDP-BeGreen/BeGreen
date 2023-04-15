@@ -88,7 +88,7 @@ class FirebaseAuthTest {
 
     @Test
     fun signOutCurrentUserCorrectlySignUserOut() {
-        runTest {
+        runBlocking {
             Firebase.auth.signOut()
             Firebase.auth.signInWithEmailAndPassword("user1@email.ch", "123456").await()
             assertThat(Firebase.auth.uid, `is`(equalTo("VaRgQioAuiGtfDlv5uNuosNsACCJ")))
