@@ -1,5 +1,6 @@
 package com.github.sdp_begreen.begreen.activities
 
+import android.Manifest
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
@@ -17,6 +18,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
@@ -101,6 +103,10 @@ class MainActivityTest {
             single { auth }
         })
     )
+
+    // Need permission for camera when testing launching profile fragment
+    @get:Rule
+    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
 
     @Test
     fun bottomNavigationBarVisible() {
