@@ -6,65 +6,40 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import com.github.sdp_begreen.begreen.firebase.DB
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 /**
  * A simple [Fragment] subclass.
- * Use the [AdviceFragment.newInstance] factory method to
  * create an instance of this fragment.
+ * @param testCallback A callback received from tests, it expects the set retrieved
+ *  from the database as parameter. It is null by default, should only be non null from tests.
  */
 class AdviceFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    // Get the db instance
+    private val db by inject<DB>()
+
+    // The purpose of this method is to inflate the fragment layout, initialize some views,
+    // and display a random piece of advice on the screen.
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View {
+
+        val view = inflater.inflate(R.layout.fragment_advice, container, false)!!
+
+        val adviceFragmentTextView = view.findViewById<TextView>(R.id.adviceFragmentTextView)
+
+        // Sets the text of the adviceFragmentTextView to a random string from the adviceSet fetched from the DB.
+        lifecycleScope.launch {
+            val advicesSet: Set<String> = db.getAdvices()
+            if (advicesSet.isNotEmpty()) {
+                adviceFragmentTextView.text = advicesSet.random()
+            }
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        val view: View? = inflater.inflate(R.layout.fragment_advice, container, false)
-        val tView: TextView? = view?.findViewById(R.id.adviceFragmentTextView)
-
-        tView?.text = getString(
-            R.string.advice_fragment_text,
-            param1?.let { " $it" }.orEmpty(),
-            param2?.let { ", $it" }.orEmpty()
-        )
 
         return view
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment AdviceFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            AdviceFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
     }
 }

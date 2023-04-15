@@ -8,8 +8,9 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.github.sdp_begreen.begreen.FirebaseDB.Companion.db
+import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import kotlinx.coroutines.launch
 
 /**
@@ -17,7 +18,7 @@ import kotlinx.coroutines.launch
  */
 class DatabaseActivity : AppCompatActivity() {
 
-    private var imageId: String? = null
+    private var imageId: PhotoMetadata? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,47 +26,38 @@ class DatabaseActivity : AppCompatActivity() {
         val emailText = findViewById<EditText>(R.id.databaseEmail)
         val phoneText = findViewById<EditText>(R.id.databasePhoneNumber)
 
-        // Set function
-        val setBtn: Button = findViewById(R.id.databaseSet)
-        setBtn.setOnClickListener {
-            db[phoneText.text.toString()] = emailText.text.toString()
-        }
-
-        // Get function
-        val getBtn: Button = findViewById(R.id.databaseGet)
-        getBtn.setOnClickListener {
-            /*db[phoneText.text.toString()].thenAccept {
-                if (it != null) emailText.setText(it)
-            }*/
+        // Set button
+        findViewById<Button>(R.id.databaseSet).setOnClickListener {
             lifecycleScope.launch {
-                db.get(phoneText.text.toString())?.also { emailText.setText(it) }
+                FirebaseDB.set(phoneText.text.toString(), emailText.text.toString())
             }
         }
 
-        val storePictureBtn: Button = findViewById(R.id.databaseStorePicture)
-        storePictureBtn.setOnClickListener {
-
-            val size = 100 // size of the square in pixels
-            val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
-            bitmap.eraseColor(Color.RED)
-
-            imageId = db.addImage(bitmap, 3)
-
+        // Get button
+        findViewById<Button>(R.id.databaseGet).setOnClickListener {
+            lifecycleScope.launch {
+                FirebaseDB.get(phoneText.text.toString())?.also { emailText.setText(it) }
+            }
         }
 
-        val getPictureBtn: Button = findViewById(R.id.databaseLoadPicture)
-        getPictureBtn.setOnClickListener {
+        // Store image button
+        findViewById<Button>(R.id.databaseStorePicture).setOnClickListener {
 
-            /*imageId?.also {
+            // Example image (red square)
+            val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+            bitmap.eraseColor(Color.RED)
 
-                db.getImage(it, 3).thenAccept {bitmap ->
-                    val image: ImageView = findViewById(R.id.databasePicture)
-                    image.setImageBitmap(bitmap)
-                }
-            }*/
+            lifecycleScope.launch {
+                imageId = FirebaseDB.addImage(bitmap, 3,
+                    PhotoMetadata(null, null, null, null,"Plastic bottle",null))
+            }
+        }
+
+        // Load image button
+        findViewById<Button>(R.id.databaseLoadPicture).setOnClickListener {
             lifecycleScope.launch {
                 imageId?.also {
-                    db.getImage(it, 3).also { bitmap ->
+                    FirebaseDB.getImage(it, 3).also { bitmap ->
                         findViewById<ImageView>(R.id.databasePicture).setImageBitmap(bitmap)
                     }
                 }
