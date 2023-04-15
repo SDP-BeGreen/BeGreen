@@ -6,16 +6,20 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.activities.MainActivity
+import com.github.sdp_begreen.begreen.rules.CoroutineTestRule
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.Matchers.contains
 import org.junit.BeforeClass
@@ -23,6 +27,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class FirebaseAuthTest {
@@ -43,9 +48,12 @@ class FirebaseAuthTest {
     @get:Rule
     val koinTestRule = KoinTestRule()
 
+    @get:Rule
+    val coroutineRules = CoroutineTestRule()
+
     @Test
     fun getConnectedUserIdReturnCorrectId() {
-        runBlocking {
+        runTest {
             Firebase.auth.signOut()
             Firebase.auth.signInWithEmailAndPassword("user1@email.ch", "123456").await()
 
@@ -55,8 +63,11 @@ class FirebaseAuthTest {
 
     @Test
     fun getConnectedUserIdReturnCorrectIdsMultipleConnection() {
-        runBlocking {
+        runTest {
             Firebase.auth.signOut()
+
+            // add some delay to be sure that we are signed out before we begin listening
+            delay(10)
             launch {
                 assertThat(firebaseAuth.getConnectedUserIds().take(6).toList(),
                     contains(null, "VaRgQioAuiGtfDlv5uNuosNsACCJ",
@@ -66,6 +77,9 @@ class FirebaseAuthTest {
                         "IvnU7seNMaG8qrx29ps6liiJamrw"))
             }
 
+            // add some delay to be sure that the listener is in place before we start
+            // emitting new values
+            delay(10)
             Firebase.auth.signInWithEmailAndPassword("user1@email.ch", "123456").await()
             Firebase.auth.signOut()
             Firebase.auth.signInWithEmailAndPassword("user2@email.com", "123456").await()
@@ -76,7 +90,7 @@ class FirebaseAuthTest {
 
     @Test
     fun signOutCurrentUserCorrectlySignUserOut() {
-        runBlocking {
+        runTest {
             Firebase.auth.signOut()
             Firebase.auth.signInWithEmailAndPassword("user1@email.ch", "123456").await()
             assertThat(Firebase.auth.uid, `is`(equalTo("VaRgQioAuiGtfDlv5uNuosNsACCJ")))
