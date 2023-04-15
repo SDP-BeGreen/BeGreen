@@ -1,13 +1,9 @@
 package com.github.sdp_begreen.begreen.firebase
 
-import androidx.test.core.app.launchActivity
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.filters.LargeTest
-import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.activities.MainActivity
+import androidx.test.filters.MediumTest
 import com.github.sdp_begreen.begreen.rules.CoroutineTestRule
-import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -17,7 +13,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.*
@@ -27,12 +22,11 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
-@LargeTest
-class FirebaseAuthTest {
-
-
+@MediumTest
+class FirebaseAuthTestNoUILinked {
     companion object {
         private val firebaseAuth = FirebaseAuth()
         @BeforeClass
@@ -44,9 +38,6 @@ class FirebaseAuthTest {
             } catch (_:java.lang.IllegalStateException){}
         }
     }
-
-    @get:Rule
-    val koinTestRule = KoinTestRule()
 
     @get:Rule
     val coroutineRules = CoroutineTestRule()
@@ -85,24 +76,4 @@ class FirebaseAuthTest {
             Firebase.auth.signInWithEmailAndPassword("user3@email.com", "123456").await()
         }
     }
-
-    @Test
-    fun signOutCurrentUserCorrectlySignUserOut() {
-        runBlocking {
-            Firebase.auth.signOut()
-            Firebase.auth.signInWithEmailAndPassword("user1@email.ch", "123456").await()
-            assertThat(Firebase.auth.uid, `is`(equalTo("VaRgQioAuiGtfDlv5uNuosNsACCJ")))
-
-            val a = launchActivity<MainActivity>()
-
-            a.onActivity {
-                firebaseAuth.signOutCurrentUser(it, it.getString(R.string.default_web_client_id))
-            }
-
-            assertThat(Firebase.auth.uid, nullValue())
-
-            a.close()
-        }
-    }
-
 }
