@@ -10,6 +10,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
@@ -61,20 +62,20 @@ class FirebaseAuthTestNoUILinked {
     @Test
     fun getConnectedUserIdReturnCorrectIdsMultipleConnection() {
         runTest {
-            Firebase.auth.signOut() // ensure signed out
             launch {
-                delay(10)
-                assertThat(firebaseAuth.getConnectedUserIds().take(6).toList(),
+                // drop first value, will contain previously connected user if any
+                // only focus on newly emitted values
+                assertThat(firebaseAuth.getConnectedUserIds().drop(1).take(6).toList(),
                     contains(null, "VaRgQioAuiGtfDlv5uNuosNsACCJ",
                         null,
                         "r32POH2SnXu9dSLTxa1GMOQgg8cp",
                         null,
                         "IvnU7seNMaG8qrx29ps6liiJamrw"))
             }
-
             // add some delay to be sure that the listener is in place before we start
             // emitting new values
             delay(20)
+            Firebase.auth.signOut()
             Firebase.auth.signInWithEmailAndPassword("user1@email.ch", "123456").await()
             Firebase.auth.signOut()
             Firebase.auth.signInWithEmailAndPassword("user2@email.com", "123456").await()
