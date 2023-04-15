@@ -2,7 +2,6 @@
     <string name="app_name">BeGreen</string>
     <string name="feed_fragment_text">Place where we can display a feed for this user%1$s%2$s</string>
     <string name="map_fragment_text">Fragment where we can display the map%1$s%2$s</string>
-    <string name="camera_fragment_text">Fragment where we can display the camera%1$s%2$s</string>
     <string name="advice_fragment_text">Fragment where we can display ecological advice to the user%1$s%2$s</string>
     <string name="settings_fragment_text">Fragment where we can display settings for the user%1$s%2$s</string>
     <string name="followers_fragment_text">Fragment where we can display the user\'s followers%1$s%2$s</string>
@@ -21,7 +20,6 @@
     <string name="name">PlaceholderName</string>
     <string name="user_level">PlaceholderUserLevel</string>
     <string name="profile_description">User has not a description yet…</string>
-    <string name="image_activity_recent">This is one of the recentest photo from the user</string>
     <string name="profile_user_image">This is an image for the profile of the user</string>
     <string name="add_new_post">Add new post</string>
     <string name="share_post">Share post</string>
@@ -40,7 +38,6 @@
     <string name="fragment_profile_details_take_picture">Button to take a profile picture</string>
     <string name="logout">Logout</string>
     <string name="desc_publication">This is the publication of the user</string>
-    <string name="my_title">My title</string>
     <string name="title">Title</string>
     <string name="subhead">subhead</string>
     <string name="default_description_of_the_post">Default description of the post</string>
