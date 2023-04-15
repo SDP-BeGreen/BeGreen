@@ -64,11 +64,9 @@ class FirebaseAuthTest {
     @Test
     fun getConnectedUserIdReturnCorrectIdsMultipleConnection() {
         runTest {
-            Firebase.auth.signOut()
-
-            // add some delay to be sure that we are signed out before we begin listening
-            delay(10)
+            Firebase.auth.signOut() // ensure signed out
             launch {
+                delay(10)
                 assertThat(firebaseAuth.getConnectedUserIds().take(6).toList(),
                     contains(null, "VaRgQioAuiGtfDlv5uNuosNsACCJ",
                         null,
@@ -79,7 +77,7 @@ class FirebaseAuthTest {
 
             // add some delay to be sure that the listener is in place before we start
             // emitting new values
-            delay(10)
+            delay(20)
             Firebase.auth.signInWithEmailAndPassword("user1@email.ch", "123456").await()
             Firebase.auth.signOut()
             Firebase.auth.signInWithEmailAndPassword("user2@email.com", "123456").await()
