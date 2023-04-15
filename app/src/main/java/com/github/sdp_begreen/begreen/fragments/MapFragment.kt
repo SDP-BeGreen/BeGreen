@@ -1,17 +1,25 @@
 package com.github.sdp_begreen.begreen.fragments
 
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.github.sdp_begreen.begreen.R
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.MarkerOptions
+
 
 /**
  * A simple [Fragment] subclass.
@@ -19,52 +27,96 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class MapFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        val view: View? = inflater.inflate(R.layout.fragment_map, container, false)
-        val tView: TextView? = view?.findViewById(R.id.mapFragmentTextView)
-
-        tView?.text = getString(
-            R.string.map_fragment_text,
-            param1?.let { " $it" }.orEmpty(),
-            param2?.let { ", $it" }.orEmpty()
-        )
-
-        return view
-    }
 
     companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment Home.
+         * @return A new instance.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MapFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+        fun newInstance() = MapFragment()
+    }
+
+    private lateinit var map: GoogleMap
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var lastLocation: Location
+
+    private val callback = OnMapReadyCallback { googleMap ->
+        /**
+         * Manipulates the map once available.
+         * This callback is triggered when the map is ready to be used.
+         * This is where we can add markers or lines, add listeners or move the camera.
+         */
+
+        map = googleMap
+        map.uiSettings.isZoomControlsEnabled = true
+
+        displayUserLocation()
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_map, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+        mapFragment?.getMapAsync(callback)
+
+        // Get the localisation of the user
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+    }
+
+    /**
+     * Displays the user current location. Asks for permissions if needed.
+     */
+    private fun displayUserLocation() {
+
+        // Checks if the user gave the ACCESS_FINE_LOCATION permission. If not ask for it.
+        if (ActivityCompat.checkSelfPermission(requireActivity(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(requireActivity(),
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                MapFragment.LOCATION_PERMISSION_REQUEST_CODE
+            )
+        }
+
+        // If the permissions are granted, display the map.
+        // Don't put this in an else-closure of the previous if-condition because
+        // we want to display the map after the user has granted the permissions
+        if (ActivityCompat.checkSelfPermission(requireActivity(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            // Fetch and display the user's current location
+            map.isMyLocationEnabled = true
+            fusedLocationClient.lastLocation.addOnSuccessListener(requireActivity()) { location ->
+                displayBlueDotLocation(location)
             }
+        }
+    }
+
+    private fun displayBlueDotLocation(location: Location?) {
+
+
+        // Got last known location. In some rare situations this can be null.
+        if (location != null) {
+
+            lastLocation = location
+            val currentLatLng = LatLng(location.latitude, location.longitude)
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+
+        } else {
+
+            //Toast.makeText(this, "Sorry, an error occured. Unable to show the user location", Toast.LENGTH_SHORT).show()
+        }
     }
 }
