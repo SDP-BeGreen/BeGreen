@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.github.sdp_begreen.begreen.R
@@ -68,7 +69,7 @@ class MapFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+        val mapFragment = childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
 
         // Get the localisation of the user
@@ -106,7 +107,6 @@ class MapFragment : Fragment() {
 
     private fun displayBlueDotLocation(location: Location?) {
 
-
         // Got last known location. In some rare situations this can be null.
         if (location != null) {
 
@@ -116,7 +116,7 @@ class MapFragment : Fragment() {
 
         } else {
 
-            //Toast.makeText(this, "Sorry, an error occured. Unable to show the user location", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireActivity(), "Sorry, an error occured. Unable to show the user location", Toast.LENGTH_SHORT).show()
         }
     }
 }
