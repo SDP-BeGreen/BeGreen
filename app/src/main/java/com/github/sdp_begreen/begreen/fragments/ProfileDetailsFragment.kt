@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.github.sdp_begreen.begreen.R
@@ -28,6 +29,7 @@ import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.utils.BitmapsUtils
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -110,8 +112,9 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         val profileEmail: TextView = view.findViewById(R.id.fragment_profile_details_profile_email)
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                connectedUserViewModel.currentUser.collect { cUser ->
+            connectedUserViewModel.currentUser
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { cUser ->
                     val userToUse = cUser?.let { if (it.id == user?.id) it else user } ?: user
                     profileDescription.text =
                         userToUse?.description ?: getString(R.string.nav_drawer_user_description)
@@ -119,7 +122,6 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
                     profilePhone.text = userToUse?.phone
                     profileEmail.text = userToUse?.email
                 }
-            }
         }
     }
 
@@ -130,8 +132,9 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         val profileImgView: ImageView =
             view.findViewById(R.id.fragment_profile_details_profile_image)
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                connectedUserViewModel.currentUserProfilePicture.collect {
+            connectedUserViewModel.currentUserProfilePicture
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect {
                     if (connectedUserViewModel.currentUser.value?.id == user?.id) {
                         val img = it ?: BitmapFactory.decodeResource(
                             resources,
@@ -152,7 +155,6 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
                         ))
                     }
                 }
-            }
         }
     }
 
@@ -166,8 +168,9 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
 
         // listen for currentUserChange to hide or show button accordingly
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                connectedUserViewModel.currentUser.collect {
+            connectedUserViewModel.currentUser
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect {
                     if (it != user) {
                         editButton.visibility = View.GONE
                     } else if (saveButton.visibility == View.GONE) {
@@ -175,7 +178,6 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
                         editButton.visibility = View.VISIBLE
                     }
                 }
-            }
         }
 
         editButton.setOnClickListener {
@@ -190,13 +192,13 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
      */
     private fun setupSaveButton(saveButton: Button) {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                connectedUserViewModel.currentUser.collect {
+            connectedUserViewModel.currentUser
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect {
                     if (it != user) {
                         saveButton.visibility = View.GONE
                     }
                 }
-            }
         }
 
         saveButton.setOnClickListener {
