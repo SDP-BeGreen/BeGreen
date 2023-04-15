@@ -1,7 +1,6 @@
 package com.github.sdp_begreen.begreen.firebase
 
 import androidx.test.core.app.launchActivity
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
@@ -13,13 +12,19 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
-import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.*
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-
+/**
+ * Testing [FirebaseAuth] needed to be split in half in order to be tested, due to problem
+ * with coroutine test environment and UI modification
+ *
+ * So this test class is responsible to test the sign out method, which is linked to UI
+ */
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class FirebaseAuthTestUILinked {
@@ -43,7 +48,7 @@ class FirebaseAuthTestUILinked {
         runBlocking {
             Firebase.auth.signOut()
             Firebase.auth.signInWithEmailAndPassword("user1@email.ch", "123456").await()
-            ViewMatchers.assertThat(Firebase.auth.uid, CoreMatchers.`is`(CoreMatchers.equalTo("VaRgQioAuiGtfDlv5uNuosNsACCJ")))
+            assertThat(Firebase.auth.uid, `is`(equalTo("VaRgQioAuiGtfDlv5uNuosNsACCJ")))
 
             val a = launchActivity<MainActivity>()
 
@@ -51,7 +56,7 @@ class FirebaseAuthTestUILinked {
                 firebaseAuth.signOutCurrentUser(it, it.getString(R.string.default_web_client_id))
             }
 
-            ViewMatchers.assertThat(Firebase.auth.uid, CoreMatchers.nullValue())
+            assertThat(Firebase.auth.uid, nullValue())
 
             a.close()
         }

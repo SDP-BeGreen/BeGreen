@@ -22,7 +22,13 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-
+/**
+ * Testing [FirebaseAuth] needed to be split in half in order to be tested, due to problem
+ * with coroutine test environment and UI modification
+ *
+ * So this test class is responsible to test getting the user id which doesn't require
+ * to start any activities
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 @MediumTest
