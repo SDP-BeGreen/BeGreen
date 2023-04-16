@@ -253,7 +253,7 @@ class MainActivity : AppCompatActivity() {
                         val intent = Intent(this, SignInActivity::class.java)
 
                         // short toast message to the user indicating that they are being logged out
-                        Toast.makeText(this, "Logging Out", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.toast_logout_info), Toast.LENGTH_SHORT).show()
 
                         // When the sign-out operation is complete, it starts SignInActivity again<
                         startActivity(intent)
