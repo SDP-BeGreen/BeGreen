@@ -3,6 +3,7 @@ package com.github.sdp_begreen.begreen.activities
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
@@ -17,7 +18,14 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
-import com.github.sdp_begreen.begreen.fragments.*
+import com.github.sdp_begreen.begreen.fragments.AdviceFragment
+import com.github.sdp_begreen.begreen.fragments.CameraFragment
+import com.github.sdp_begreen.begreen.fragments.FollowersFragment
+import com.github.sdp_begreen.begreen.fragments.MapFragment
+import com.github.sdp_begreen.begreen.fragments.ProfileDetailsFragment
+import com.github.sdp_begreen.begreen.fragments.SettingsFragment
+import com.github.sdp_begreen.begreen.fragments.UserFragment
+import com.github.sdp_begreen.begreen.fragments.UserPhotoFragment
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
@@ -25,12 +33,19 @@ import com.github.sdp_begreen.begreen.social.GoogleAuth.mGoogleSignInClient
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
-import java.util.*
+import kotlinx.coroutines.tasks.await
+import java.util.Date
+
 
 class MainActivity : AppCompatActivity() {
     private val connectedUserViewModel: ConnectedUserViewModel by viewModels()
@@ -229,28 +244,48 @@ class MainActivity : AppCompatActivity() {
             R.id.mainNavDrawUserList -> {
                val photoMetadata = PhotoMetadata("0", "title", ParcelableDate(Date()),User("0", 0, "Lui"), "Profile")
                 val desc = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed suscipit consectetur ante quis euismod. Morbi tincidunt orci sit amet libero elementum dictum. Quisque blandit ornare vehicula. Pellentesque eget auctor quam. Sed consequat bibendum risus, vitae scelerisque sapien pharetra a. Nullam pulvinar ultrices molestie."
-                val userList: List<User> = listOf(
-                    User("1",  1, "Alice", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("2",  43, "Bob", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("3",  330, "Charlie", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("4",  13, "Dylan", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("5",  2, "Evan", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("dQ2cpCpZj5ZF7IyyPsPvxtTUpUi1",  5432, "Moi", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null, PhotoMetadata("dQ2cpCpZj5ZF7IyyPsPvxtTUpUi1_profile_picture")),
-                    User("7",  35, "Gaelle", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("8",  3, "Hellen", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("9",  33, "Irene", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("10", 23,  "Julianne", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("1",  36, "Kennan", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("1",  14, "Léa", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("1",  845, "Manon", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("1",  376, "Ninon", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("1",  16, "Orianne", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("1",  96, "Pedro", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("1",  4, "Sullivan", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("1",  6, "Valentin", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("1",  8, "Frank", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                )
-                replaceFragInMainContainer(UserFragment.newInstance(1, userList.toCollection(ArrayList()), true)) 
+                //val userList: List<User> = listOf(
+                //    User("1",  1, "Alice", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                //    User("2",  43, "Bob", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                //    User("3",  330, "Charlie", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                //    User("4",  13, "Dylan", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                //    User("5",  2, "Evan", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                //    User("dQ2cpCpZj5ZF7IyyPsPvxtTUpUi1",  5432, "Moi", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null, PhotoMetadata("dQ2cpCpZj5ZF7IyyPsPvxtTUpUi1_profile_picture")),
+                //    User("7",  35, "Gaelle", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                //    User("8",  3, "Hellen", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                //    User("9",  33, "Irene", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                //    User("10", 23,  "Julianne", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                //    User("1",  36, "Kennan", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                //    User("1",  14, "Léa", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                //    User("1",  845, "Manon", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                //    User("1",  376, "Ninon", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                //    User("1",  16, "Orianne", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                //    User("1",  96, "Pedro", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                //    User("1",  4, "Sullivan", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                //    User("1",  6, "Valentin", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                //    User("1",  8, "Frank", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
+                //)
+
+                val userList: MutableList<User> = mutableListOf()
+                val idList = mutableListOf<String>()
+                val rootRef = FirebaseDatabase.getInstance().reference
+                val usersdRef = rootRef.child("users")
+                val eventListener: ValueEventListener = object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        for (ds in dataSnapshot.children) {
+                            val id = ds.child("id").getValue(String::class.java)
+                            id?.let { idList.add(it) }
+                            Log.d("TAG", idList.toString())
+                            userList.add(ds.getValue(User::class.java)!!)
+                            replaceFragInMainContainer(UserFragment.newInstance(1, userList.toCollection(ArrayList()), true))
+                        }
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {}
+                }
+                usersdRef.addListenerForSingleValueEvent(eventListener)
+
+                //replaceFragInMainContainer(UserFragment.newInstance(1, userList.toCollection(ArrayList()), true))
             }
             //----------------------------------------------------------------------
             R.id.mainNavDrawSettings -> {
