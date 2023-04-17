@@ -26,7 +26,7 @@ class AdviceFragmentTest {
     private val db: DB = mock(DB::class.java)
 
     @get:Rule
-    val koinTEstRule = KoinTestRule(
+    val koinTestRule = KoinTestRule(
         modules = listOf(module {
             single {db}
         })

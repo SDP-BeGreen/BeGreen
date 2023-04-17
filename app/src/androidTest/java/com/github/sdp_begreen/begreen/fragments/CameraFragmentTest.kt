@@ -14,12 +14,10 @@ import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.activities.MainActivity
 import com.github.sdp_begreen.begreen.activities.SharePostActivity
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
@@ -32,9 +30,6 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class CameraFragmentTest {
-
-    @get:Rule
-    val activityRule = ActivityScenarioRule(MainActivity::class.java)
 
     @get:Rule
     val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)

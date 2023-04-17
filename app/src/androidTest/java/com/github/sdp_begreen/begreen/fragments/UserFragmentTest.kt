@@ -13,6 +13,7 @@ import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.activities.MainActivity
+import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import junit.framework.TestCase.*
 import org.hamcrest.CoreMatchers
 import org.junit.Before
@@ -25,6 +26,9 @@ import org.junit.runner.RunWith
 class UserFragmentTest {
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
+
+    @get:Rule
+    val koinTestRule = KoinTestRule()
 
     private lateinit var fragment: UserFragment
     private lateinit var userList: List<User>
