@@ -19,7 +19,6 @@ import com.google.android.gms.maps.model.LatLng
 
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.MarkerOptions
 
 
 /**
@@ -31,15 +30,7 @@ class MapFragment : Fragment() {
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
-
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @return A new instance.
-         */
-        @JvmStatic
-        fun newInstance() = MapFragment()
+        private const val MAP_DEFAULT_ZOOM = 12f
     }
 
     private lateinit var map: GoogleMap
@@ -112,11 +103,11 @@ class MapFragment : Fragment() {
 
             lastLocation = location
             val currentLatLng = LatLng(location.latitude, location.longitude)
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, MAP_DEFAULT_ZOOM))
 
         } else {
 
-            Toast.makeText(requireActivity(), "Sorry, an error occured. Unable to show the user location", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireActivity(), getString(R.string.user_current_location_error), Toast.LENGTH_SHORT).show()
         }
     }
 }

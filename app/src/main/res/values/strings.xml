@@ -44,4 +44,5 @@
     <string name="title">Title</string>
     <string name="subhead">subhead</string>
     <string name="default_description_of_the_post">Default description of the post</string>
+    <string name="user_current_location_error">Sorry, an error occurred. Unable to show the user location</string>
 </resources>

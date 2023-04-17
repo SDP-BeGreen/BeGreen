@@ -36,13 +36,13 @@ class MapFragmentTest {
     @get:Rule
     val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION)
 
-    private val fragment = MapFragment.newInstance()
+    private val fragment = MapFragment()
 
 
     @Test
     fun testFragmentInflation() {
 
-        /* The googlemaps library is quite hard to test. For now, we have only tested the lauching of the mapFramgent.
+        /* The googlemaps library is quite hard to test. For now, we have only tested the launching of the mapFragment.
 
         According to the bootcamp https://github.com/sweng-epfl/public/blob/main/project/bootcamp/Maps.md :
 
