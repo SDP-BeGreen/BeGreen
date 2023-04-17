@@ -20,7 +20,7 @@ interface Auth {
      *
      * @return Returns a flow that will emit last uid upon changes
      */
-    fun getConnectedUserIds(): Flow<String?>
+    fun getFlowUserIds(): Flow<String?>
 
     /**
      * Method to sign out the currently logged in user

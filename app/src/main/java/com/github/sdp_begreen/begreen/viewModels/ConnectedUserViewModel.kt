@@ -21,7 +21,7 @@ class ConnectedUserViewModel: ViewModel() {
     /**
      * Flow that dynamically retrieve authenticated user from firebase upon any modification
      */
-    private val userFromAuth = auth.getConnectedUserIds().map {
+    private val userFromAuth = auth.getFlowUserIds().map {
         it?.let { db.getUser(it) }
     }.onEach {
         // upon new connection, start by resetting the profile picture to be sure to not keep an

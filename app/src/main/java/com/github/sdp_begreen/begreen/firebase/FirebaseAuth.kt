@@ -19,7 +19,7 @@ class FirebaseAuth: Auth {
 
     override fun getConnectedUserId(): String? = Firebase.auth.uid
 
-    override fun getConnectedUserIds(): Flow<String?> = callbackFlow {
+    override fun getFlowUserIds(): Flow<String?> = callbackFlow {
             val listener = FirebaseAuth.AuthStateListener { auth -> trySend(auth.uid) }
             Firebase.auth.addAuthStateListener(listener)
 

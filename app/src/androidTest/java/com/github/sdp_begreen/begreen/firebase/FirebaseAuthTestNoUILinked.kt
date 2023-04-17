@@ -65,7 +65,7 @@ class FirebaseAuthTestNoUILinked {
             launch {
                 // drop first value, will contain previously connected user if any
                 // only focus on newly emitted values
-                assertThat(firebaseAuth.getConnectedUserIds().drop(1).take(6).toList(),
+                assertThat(firebaseAuth.getFlowUserIds().drop(1).take(6).toList(),
                     contains(null, "VaRgQioAuiGtfDlv5uNuosNsACCJ",
                         null,
                         "r32POH2SnXu9dSLTxa1GMOQgg8cp",

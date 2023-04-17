@@ -66,7 +66,7 @@ class ConnectedUserViewModelTest: KoinTest {
                     .thenReturn(fakePicture1)
                 // add a small delay, just to be sure that it is triggered after initialization
                 // and arrive second, after the initial null value
-                `when`(auth.getConnectedUserIds())
+                `when`(auth.getFlowUserIds())
                     .thenReturn(flowOf(userId1).onEach { delay(10) })
             }
         }
@@ -118,7 +118,7 @@ class ConnectedUserViewModelTest: KoinTest {
     @Test
     fun currentUserContainCorrectSignInUserChangingUser() {
         runTest {
-            `when`(auth.getConnectedUserIds())
+            `when`(auth.getFlowUserIds())
                 .thenReturn(flowOf(userId1, userId2, userId3).onEach { delay(10) })
 
             // need new vm, as we modify the "getConnectedUserIds" value
@@ -131,7 +131,7 @@ class ConnectedUserViewModelTest: KoinTest {
     @Test
     fun currentUserCorrectValueAuthAndUpdateUser() {
         runTest {
-            `when`(auth.getConnectedUserIds())
+            `when`(auth.getFlowUserIds())
                 .thenReturn(flowOf(userId1, userId3).onEach { delay(10) })
 
             val vm = ConnectedUserViewModel()
@@ -158,7 +158,7 @@ class ConnectedUserViewModelTest: KoinTest {
     @Test
     fun currentUserProfilePictureCorrectlyResetUponNewAuth() {
         runTest {
-            `when`(auth.getConnectedUserIds())
+            `when`(auth.getFlowUserIds())
                 .thenReturn(flowOf(userId1, userId2).onEach { delay(10) })
 
             val vm = ConnectedUserViewModel()
@@ -189,7 +189,7 @@ class ConnectedUserViewModelTest: KoinTest {
         runTest {
             `when`(db.getUserProfilePicture(userPhotoMetadata2, userId3))
                 .thenReturn(fakePicture2)
-            `when`(auth.getConnectedUserIds())
+            `when`(auth.getFlowUserIds())
                 .thenReturn(flowOf(userId1, userId3).onEach { delay(10) })
 
             val vm = ConnectedUserViewModel()

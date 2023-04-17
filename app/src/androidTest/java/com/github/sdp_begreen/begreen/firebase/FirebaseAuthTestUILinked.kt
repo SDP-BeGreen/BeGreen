@@ -50,15 +50,15 @@ class FirebaseAuthTestUILinked {
             Firebase.auth.signInWithEmailAndPassword("user1@email.ch", "123456").await()
             assertThat(Firebase.auth.uid, `is`(equalTo("VaRgQioAuiGtfDlv5uNuosNsACCJ")))
 
-            val a = launchActivity<MainActivity>()
+            val activityScenario = launchActivity<MainActivity>()
 
-            a.onActivity {
+            activityScenario.onActivity {
                 firebaseAuth.signOutCurrentUser(it, it.getString(R.string.default_web_client_id))
             }
 
             assertThat(Firebase.auth.uid, nullValue())
 
-            a.close()
+            activityScenario.close()
         }
     }
 }

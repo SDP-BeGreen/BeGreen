@@ -87,7 +87,7 @@ class MainActivityTest {
                 // and arrive second, after the initial null value
                 // use a mutable state flow, so that we can easily simulate different authenticated
                 // user between tests, by simply pushing a new userId
-                `when`(auth.getConnectedUserIds())
+                `when`(auth.getFlowUserIds())
                     .thenReturn(authUserFlow.onEach { delay(10) })
             }
         }
