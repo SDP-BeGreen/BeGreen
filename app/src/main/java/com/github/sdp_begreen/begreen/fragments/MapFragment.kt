@@ -1,5 +1,6 @@
 package com.github.sdp_begreen.begreen.fragments
 
+import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -7,7 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.github.sdp_begreen.begreen.R
 
@@ -37,7 +39,7 @@ class MapFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var lastLocation: Location
 
-    private val callback = OnMapReadyCallback { googleMap ->
+    private val mapReadyCallback = OnMapReadyCallback { googleMap ->
         /**
          * Manipulates the map once available.
          * This callback is triggered when the map is ready to be used.
@@ -47,7 +49,14 @@ class MapFragment : Fragment() {
         map = googleMap
         map.uiSettings.isZoomControlsEnabled = true
 
-        displayUserLocation()
+        checkUserLocationPermissions()
+    }
+
+    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+
+        if (isGranted) {
+            displayUserLocation()
+        }
     }
 
     override fun onCreateView(
@@ -61,7 +70,7 @@ class MapFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment = childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment?
-        mapFragment?.getMapAsync(callback)
+        mapFragment?.getMapAsync(mapReadyCallback)
 
         // Get the localisation of the user
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -70,23 +79,30 @@ class MapFragment : Fragment() {
     /**
      * Displays the user current location. Asks for permissions if needed.
      */
+    private fun checkUserLocationPermissions() {
+
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED) {
+
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+
+        } else {
+
+            displayUserLocation()
+        }
+    }
+
+    /**
+     * Displays the user current location assuming that location permissions are granted
+     */
     private fun displayUserLocation() {
 
-        // Checks if the user gave the ACCESS_FINE_LOCATION permission. If not ask for it.
-        if (ActivityCompat.checkSelfPermission(requireActivity(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(requireActivity(),
-                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-                MapFragment.LOCATION_PERMISSION_REQUEST_CODE
-            )
-        }
-
-        // If the permissions are granted, display the map.
-        // Don't put this in an else-closure of the previous if-condition because
-        // we want to display the map after the user has granted the permissions
-        if (ActivityCompat.checkSelfPermission(requireActivity(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED) {
 
             // Fetch and display the user's current location
             map.isMyLocationEnabled = true
