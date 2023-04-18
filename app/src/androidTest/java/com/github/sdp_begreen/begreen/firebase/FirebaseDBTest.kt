@@ -204,4 +204,13 @@ class FirebaseDBTest {
             ))
         }
     }
+
+    @Test
+    fun getAllUsersReturnTheSameNumberOfUsers() {
+        runBlocking {
+            val users = FirebaseDB.getAllUsers()
+            assertNotNull(users)
+            assertThat(users.size, `is`(equalTo(7)))
+        }
+    }
 }
