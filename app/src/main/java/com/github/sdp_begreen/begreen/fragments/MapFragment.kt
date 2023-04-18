@@ -1,6 +1,7 @@
 package com.github.sdp_begreen.begreen.fragments
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -55,6 +56,8 @@ class MapFragment : Fragment() {
 
         if (isGranted) {
             displayUserLocation()
+        } else {
+            Toast.makeText(requireActivity(), getString(R.string.location_permissions_not_granted), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -96,18 +99,13 @@ class MapFragment : Fragment() {
     /**
      * Displays the user current location assuming that location permissions are granted
      */
+    @SuppressLint("MissingPermission")
     private fun displayUserLocation() {
 
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED) {
-
-            // Fetch and display the user's current location
-            map.isMyLocationEnabled = true
-            fusedLocationClient.lastLocation.addOnSuccessListener(requireActivity()) { location ->
-                displayBlueDotLocation(location)
-            }
+        // Fetch and display the user's current location
+        map.isMyLocationEnabled = true
+        fusedLocationClient.lastLocation.addOnSuccessListener(requireActivity()) { location ->
+            displayBlueDotLocation(location)
         }
     }
 

@@ -19,10 +19,7 @@ import kotlin.test.assertTrue
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class MapFragmentTest {
-
-    @get:Rule
-    val activityRule = ActivityScenarioRule(MainActivity::class.java)
-
+    
     @get:Rule
     val fineLocationPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION)
 

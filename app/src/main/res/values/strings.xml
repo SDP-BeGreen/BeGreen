@@ -42,5 +42,6 @@
     <string name="subhead">subhead</string>
     <string name="default_description_of_the_post">Default description of the post</string>
     <string name="user_current_location_error">Sorry, an error occurred. Unable to show the user location</string>
+    <string name="location_permissions_not_granted">Please grant the location access permissions in the settings</string>
     <string name="toast_logout_info">Logging Out</string>
 </resources>
