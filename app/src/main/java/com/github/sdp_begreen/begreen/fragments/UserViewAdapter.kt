@@ -25,17 +25,63 @@ import java.util.*
  * [RecyclerView.Adapter] that can display a [User].
  */
 class UserViewAdapter(
-    val users: List<User>?, val parentFragmentManager: androidx.fragment.app.FragmentManager?, val lifecycleScope: LifecycleCoroutineScope, val resources: Resources
+    val users: List<User>?,
+    val parentFragmentManager: androidx.fragment.app.FragmentManager?,
+    val lifecycleScope: LifecycleCoroutineScope,
+    val resources: Resources
 ) : RecyclerView.Adapter<UserViewAdapter.ViewHolder>() {
     //TODO----------------FOR DEMO------------------------
     private val photos = listOf(
-        PhotoMetadata("erfs","Look at me cleaning!", ParcelableDate(Date()),User("0",134, "SuperUser69",0), "Déchet organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),
-        PhotoMetadata("erfs","Look at me cleaning!", ParcelableDate(Date()),User("0",134, "SuperUser69",0), "Déchet organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),
-        PhotoMetadata("erfs","Look at me cleaning!", ParcelableDate(Date()),User("0",134, "SuperUser69",0), "Déchet organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),
-        PhotoMetadata("erfs","Look at me cleaning!", ParcelableDate(Date()),User("0",134, "SuperUser69",0), "Déchet organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),
-        PhotoMetadata("erfs","Look at me cleaning!", ParcelableDate(Date()),User("0",134, "SuperUser69",0), "Déchet organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),
-        PhotoMetadata("erfs","Look at me cleaning!", ParcelableDate(Date()),User("0",134, "SuperUser69",0), "Déchet organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),
+        PhotoMetadata(
+            "erfs",
+            "Look at me cleaning!",
+            ParcelableDate(Date()),
+            User("0", 134, "SuperUser69", 0),
+            "Déchet organique",
+            "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
+        ),
+        PhotoMetadata(
+            "erfs",
+            "Look at me cleaning!",
+            ParcelableDate(Date()),
+            User("0", 134, "SuperUser69", 0),
+            "Déchet organique",
+            "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
+        ),
+        PhotoMetadata(
+            "erfs",
+            "Look at me cleaning!",
+            ParcelableDate(Date()),
+            User("0", 134, "SuperUser69", 0),
+            "Déchet organique",
+            "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
+        ),
+        PhotoMetadata(
+            "erfs",
+            "Look at me cleaning!",
+            ParcelableDate(Date()),
+            User("0", 134, "SuperUser69", 0),
+            "Déchet organique",
+            "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
+        ),
+        PhotoMetadata(
+            "erfs",
+            "Look at me cleaning!",
+            ParcelableDate(Date()),
+            User("0", 134, "SuperUser69", 0),
+            "Déchet organique",
+            "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
+        ),
+        PhotoMetadata(
+            "erfs",
+            "Look at me cleaning!",
+            ParcelableDate(Date()),
+            User("0", 134, "SuperUser69", 0),
+            "Déchet organique",
+            "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
+        ),
     )
+
     //----------------FOR DEMO-----------------------------
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -49,18 +95,19 @@ class UserViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val user : User = users?.get(position) ?: return
+        val user: User = users?.get(position) ?: return
         holder.userScore.text = user.score.toString()
         holder.userName.text = user.displayName
         holder.userPhoto.let {
             lifecycleScope.launch {
                 val img = user.let { user ->
-                    user.profilePictureMetadata?.let { pMetadata->
+                    user.profilePictureMetadata?.let { pMetadata ->
                         FirebaseDB.getUserProfilePicture(pMetadata, user.id)
-                        } }
+                    }
+                }
                     ?: BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture)
 
-                    it.setImageBitmap(img)
+                it.setImageBitmap(img)
             }
         }
         holder.setListener(holder.itemView, position, user)
@@ -76,7 +123,10 @@ class UserViewAdapter(
             view.setOnClickListener {
                 parentFragmentManager?.commit {
                     setReorderingAllowed(true)
-                    replace(R.id.mainFragmentContainer,ProfileDetailsFragment.newInstance(user, photos))
+                    replace(
+                        R.id.mainFragmentContainer,
+                        ProfileDetailsFragment.newInstance(user, photos)
+                    )
                     addToBackStack(null)
                 }
             }
