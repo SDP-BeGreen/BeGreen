@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.github.sdp_begreen.begreen.R
@@ -41,8 +42,10 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import org.koin.android.ext.android.inject
 import java.util.*
 import java.util.Date
@@ -262,6 +265,12 @@ class MainActivity : AppCompatActivity() {
                 //    User("1",  6, "Valentin", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
                 //    User("1",  8, "Frank", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
                 //)
+
+                lifecycle.coroutineScope.launch {
+                    val data = Firebase.database.reference.child("users").get().await()
+                    //data.getValue(List<User>::class.java)
+                    Log.d("HEREEEE", data.childrenCount.toString())
+                }
 
                 val userList: MutableList<User> = mutableListOf()
                 val idList = mutableListOf<String>()
