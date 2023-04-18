@@ -358,17 +358,4 @@ class ProfileDetailsFragmentTest {
 
         frag.close()
     }
-
-    //Todo find how we can test async function throwing errors
-    //@Test
-    //fun testListenerForProfileImage() {
-    //    val args = Bundle().apply {
-    //        putParcelable(ARG_USER, User("1",142, "Alice", 56, PhotoMetadata(), "Description poutou poutou", "cc@gmail.com", "08920939459802", 67, null, null, PhotoMetadata("VaRgQioAuiGtfDlv5uNuosNsACCJ_profile_picture")))
-    //    }
-//
-    //    // Launch fragment with arguments
-    //    val scenario = FragmentScenario.launchInContainer(ProfileDetailsFragment::class.java, args)
-    //    assertNotNull(scenario.onFragment{fragment ->fragment.parentFragmentManager.beginTransaction().remove(fragment).commit()
-    //    })
-    //}
 }
