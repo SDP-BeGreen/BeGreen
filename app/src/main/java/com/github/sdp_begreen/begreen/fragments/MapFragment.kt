@@ -122,7 +122,7 @@ class MapFragment : Fragment() {
 
         } else {
 
-            Toast.makeText(requireActivity(), getString(R.string.user_current_location_error), Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireActivity(), getString(R.string.user_current_location_error), Toast.LENGTH_LONG).show()
         }
     }
 }
