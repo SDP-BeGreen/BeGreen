@@ -14,10 +14,13 @@ import androidx.lifecycle.LifecycleCoroutineScope
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.databinding.FragmentUserBinding
+import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
+import org.koin.java.KoinJavaComponent.inject
 import java.util.*
 
 
@@ -30,6 +33,7 @@ class UserViewAdapter(
     val lifecycleScope: LifecycleCoroutineScope,
     val resources: Resources
 ) : RecyclerView.Adapter<UserViewAdapter.ViewHolder>() {
+    private val db by inject<DB>(DB::class.java)
     //TODO----------------FOR DEMO------------------------
     private val photos = listOf(
         PhotoMetadata(
@@ -102,7 +106,7 @@ class UserViewAdapter(
             lifecycleScope.launch {
                 val img = user.let { user ->
                     user.profilePictureMetadata?.let { pMetadata ->
-                        FirebaseDB.getUserProfilePicture(pMetadata, user.id)
+                        db.getUserProfilePicture(pMetadata, user.id)
                     }
                 }
                     ?: BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture)

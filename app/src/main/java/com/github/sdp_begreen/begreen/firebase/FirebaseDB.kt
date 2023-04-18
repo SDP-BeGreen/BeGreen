@@ -181,7 +181,6 @@ object FirebaseDB: DB {
     override suspend fun getUserProfilePicture(metadata: PhotoMetadata, userId: String, timeout: Long): Bitmap? {
         if (userId.isBlank())
             throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
-
         return metadata.pictureId?.let {
             getPicture(storageReference.child(USERS_PATH).child(userId).child(
                 USER_PROFILE_PICTURE_METADATA).child(it), timeout)
