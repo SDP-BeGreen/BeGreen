@@ -7,7 +7,8 @@ import android.os.Parcelable
 data class User (var id: String, var score: Int, val displayName: String? = null, var rating: Int = 0,
                  var img: PhotoMetadata? = null, var description: String? = null, var phone: String? = null,
                  var email: String? = null, var progression: Int = 0, var followers: List<User>? = null,
-                 var following: List<User>? = null, var profilePictureMetadata: PhotoMetadata? = null) : Parcelable, Comparable<User> {
+                 var following: List<User>? = null, var profilePictureMetadata: PhotoMetadata? = null,
+                 var posts: List<PhotoMetadata>? = null) : Parcelable, Comparable<User> {
 
     // Default constructor required to deserialized object retrieved from firebase
     constructor() : this("1",  1)
@@ -24,7 +25,8 @@ data class User (var id: String, var score: Int, val displayName: String? = null
         parcel.readInt(),
         parcel.readArrayList(User::class.java.classLoader) as List<User>?,
         parcel.readArrayList(User::class.java.classLoader) as List<User>?,
-        parcel.readParcelable(PhotoMetadata::class.java.classLoader)
+        parcel.readParcelable(PhotoMetadata::class.java.classLoader),
+        parcel.readArrayList(PhotoMetadata::class.java.classLoader) as List<PhotoMetadata>?
     )
 
     suspend fun addFollower(follower: User) {
@@ -49,6 +51,7 @@ data class User (var id: String, var score: Int, val displayName: String? = null
         parcel.writeList(followers)
         parcel.writeList(following)
         parcel.writeParcelable(profilePictureMetadata, 0)
+        parcel.writeList(posts)
     }
 
     override fun describeContents(): Int {

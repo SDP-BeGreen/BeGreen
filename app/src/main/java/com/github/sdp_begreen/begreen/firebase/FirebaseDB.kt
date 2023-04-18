@@ -149,12 +149,12 @@ object FirebaseDB: DB {
         }
     }
 
-    override suspend fun getImage(metadata: PhotoMetadata, userId: Int, timeout: Long): Bitmap? {
+    override suspend fun getImage(metadata: PhotoMetadata, userId: String, timeout: Long): Bitmap? {
         // Points to the node where we the image SHOULD be
         // The path will change when we will actually stores the real pictures
         return metadata.pictureId?.let {
             getPicture(storageReference.child("userId").child(
-                userId.toString()).child(it), timeout)
+                userId).child(it), timeout)
         }
     }
 

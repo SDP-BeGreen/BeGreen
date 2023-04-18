@@ -7,8 +7,9 @@ import android.os.Parcelable
 
 data class PhotoMetadata(var pictureId: String? = null, val title: String? = null,
                          val takenOn: ParcelableDate? = null, val takenBy: User? = null,
-                         val category: String? = null, val description: String? = null)
-    : Parcelable {
+                         val category: String? = null, val description: String? = null,
+                         var picture: Bitmap? = null)
+    : Parcelable, Comparable<PhotoMetadata> {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readString(),
@@ -42,4 +43,9 @@ data class PhotoMetadata(var pictureId: String? = null, val title: String? = nul
             return arrayOfNulls(size)
         }
     }
+
+    override fun compareTo(other: PhotoMetadata): Int {
+        return takenOn?.date?.compareTo(other.takenOn?.date) ?: 0
+    }
+
 }
