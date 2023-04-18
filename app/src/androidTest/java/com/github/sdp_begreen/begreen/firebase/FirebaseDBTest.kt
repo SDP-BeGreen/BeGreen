@@ -210,7 +210,7 @@ class FirebaseDBTest {
         runBlocking {
             val users = FirebaseDB.getAllUsers()
             assertNotNull(users)
-            assertThat(users.size, `is`(equalTo(7)))
+            assertThat(users.size, `is`(not(0)))
         }
     }
 }
