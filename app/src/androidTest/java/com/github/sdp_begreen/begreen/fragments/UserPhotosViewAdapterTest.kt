@@ -16,6 +16,7 @@ import com.github.sdp_begreen.begreen.databinding.FragmentUserPhotoBinding
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert
@@ -26,6 +27,9 @@ import java.util.*
 class UserPhotosViewAdapterTest {
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
+    @get:Rule
+    val koinTestRule = KoinTestRule()
+
     private val photoList = listOf(
         PhotoMetadata("1", "title", ParcelableDate(Date()), User("1", 812, "Alice", 3), "Gros vilain pas beau", "desc"),
         PhotoMetadata("2", "title2", ParcelableDate(Date()), User("2", 81, "Bob", 4), "Gros vilain tout beau", "desc2")

@@ -5,9 +5,13 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
@@ -22,13 +26,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.view.WindowManager
-import androidx.activity.result.ActivityResult
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SignInActivity : AppCompatActivity() {
 
@@ -117,10 +119,16 @@ class SignInActivity : AppCompatActivity() {
                 }
                 account.email?.also {
                     if (it.isNotBlank()) {
-                        checkUserExistence()
-                        startActivity(Intent(this, MainActivity::class.java))
-                        hideProgressDialog()
-                        finish()
+                        lifecycleScope.launch {
+                            // block the check to ensure that when we are logged in,
+                            // the user really exists in our database
+                            withContext(Dispatchers.Default) { checkUserExistence() }
+                            startActivity(Intent(
+                                this@SignInActivity, MainActivity::class.java
+                            ))
+                            hideProgressDialog()
+                            finish()
+                        }
                     }
                 }
             }
@@ -160,7 +168,7 @@ class SignInActivity : AppCompatActivity() {
      * If not create a new entry for him in our database.
      * The user will only be created the first time a user connects to the application
      */
-    private fun checkUserExistence() = lifecycleScope.launch {
+    private suspend fun checkUserExistence() =
         Firebase.auth.currentUser?.also {
             if (!FirebaseDB.userExists(it.uid)) {
                 val user = User(it.uid,  0, it.displayName.orEmpty(),
@@ -168,5 +176,4 @@ class SignInActivity : AppCompatActivity() {
                 FirebaseDB.addUser(user, it.uid)
             }
         }
-    }
 }

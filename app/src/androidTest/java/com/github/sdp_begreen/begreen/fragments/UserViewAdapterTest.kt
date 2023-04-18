@@ -16,10 +16,14 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Rule
 import org.junit.Test
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.rules.KoinTestRule
 
 class UserViewAdapterTest {
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
+    @get:Rule
+    val koinTestRule = KoinTestRule()
+
     private var userViewAdapter = UserViewAdapter(listOf(User("1",  0, "Test"), User("2",  1, "Test2")), null)
     private val appContext = InstrumentationRegistry.getInstrumentation().targetContext
     private val userList = listOf(

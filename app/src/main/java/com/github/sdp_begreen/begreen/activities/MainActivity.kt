@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -14,32 +15,29 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.firebase.FirebaseDB
+import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.fragments.*
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
-import com.github.sdp_begreen.begreen.social.GoogleAuth.mGoogleSignInClient
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
-    private val connectedUserViewModel: ConnectedUserViewModel by viewModels()
-    private var drawerInitialized: Boolean = false
+    private val connectedUserViewModel by viewModels<ConnectedUserViewModel>()
+    private val auth by inject<Auth>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        retrieveUserWithProfilePicture()
 
         val bottomBar: BottomNavigationView = findViewById(R.id.mainNavigationView)
         val drawerLayout: DrawerLayout = findViewById(R.id.mainDrawerLayout)
@@ -51,6 +49,14 @@ class MainActivity : AppCompatActivity() {
                 add<CameraFragment>(R.id.mainFragmentContainer)
             }
         }
+
+        val headerView: View = navigationView.getHeaderView(0)
+        // By starting to listen for flow changes, the information will lickely have
+        // been prefetched for the first time we open the drawer
+        setupDrawerUserInfo(
+            headerView.findViewById(R.id.nav_drawer_profile_picture_imageview),
+            headerView.findViewById(R.id.nav_drawer_username_textview),
+            headerView.findViewById(R.id.nav_drawer_description_textview))
 
         // By default select camera
         bottomBar.selectedItemId = R.id.bottomMenuCamera
@@ -70,69 +76,53 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Helper function to retrieve the connected User along with its profile picture.
-     *
-     * The purpose of this method is to be called while creating the activity, to prefetch
-     * the user and the image from the database, and have them directly loaded and ready to display
-     * when opening the drawer menu
-     */
-    private fun retrieveUserWithProfilePicture() {
-        lifecycleScope.launch {
-            getConnectedUser()?.also { user ->
-                connectedUserViewModel.currentUser.value = user
-                connectedUserViewModel.currentUserProfilePicture.value = user.profilePictureMetadata?.let {
-                    FirebaseDB.getUserProfilePicture(it, user.id)
-                }
-            }
-        }
-    }
-
-    /**
      * Helper function to setup the user info, description and profile picture in the drawer menu
      *
-     * If the observable value have already been initialized then simply return
-     * avoid setting observe each time we open the drawer
+     * @param imageView The view that contains the image in the drawer
+     * @param usernameTW The view that contains the username in the drawer
+     * @param descriptionTW The view that contains the description in the drawer
      */
-    private fun setupDrawerUserInfo() {
-        if (drawerInitialized) return
-
-        drawerInitialized = true
-        val imageView: ImageView = findViewById(R.id.nav_drawer_profile_picture_imageview)
+    private fun setupDrawerUserInfo(
+        imageView: ImageView, usernameTW: TextView, descriptionTW: TextView
+    ) {
         if (connectedUserViewModel.currentUser.value == null) {
-            setUpUserNameAndDescription(null) // call with null to set default values
+            setUpUserNameAndDescription(null, usernameTW, descriptionTW) // call with null to set default values
         }
         if (connectedUserViewModel.currentUserProfilePicture.value == null) {
             imageView.setImageBitmap(
                 BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture))
         }
 
-        connectedUserViewModel.currentUser.observe(this) {
-            setUpUserNameAndDescription(it)
-        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    connectedUserViewModel.currentUser.collect {
+                        setUpUserNameAndDescription(it, usernameTW, descriptionTW)
+                    }
+                }
 
-        connectedUserViewModel.currentUserProfilePicture.observe(this) {
-            imageView.setImageBitmap(
-                it ?:
-                BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture)
-            )
+                launch {
+                    connectedUserViewModel.currentUserProfilePicture.collect {
+                        imageView.setImageBitmap(it ?:
+                        BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture))
+                    }
+                }
+            }
         }
     }
 
     /**
-     * Helper method to get the currently logged in user if it exists
-     */
-    private suspend fun getConnectedUser(): User? =
-        Firebase.auth.currentUser?.uid?.let { FirebaseDB.getUser(it) }
-
-    /**
      * Helper method to set the username and the description of a user if it exists
+     *
+     * @param user The user from whom to display information
+     * @param usernameTW The view that contains the username in the drawer
+     * @param descriptionTW The view that contains the description in the drawer
      */
-    private fun setUpUserNameAndDescription(user: User?) {
-        findViewById<TextView>(R.id.nav_drawer_username_textview).text =
-            user?.displayName ?: getString(R.string.nav_drawer_username)
-
-        findViewById<TextView>(R.id.nav_drawer_description_textview).text =
-            user?.description ?: getString(R.string.nav_drawer_user_description)
+    private fun setUpUserNameAndDescription(
+        user: User?, usernameTW: TextView, descriptionTW: TextView
+    ) {
+        usernameTW.text = user?.displayName ?: getString(R.string.nav_drawer_username)
+        descriptionTW.text = user?.description ?: getString(R.string.nav_drawer_user_description)
     }
 
     /**
@@ -201,7 +191,6 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.bottomMenuUser -> {
                 item.setIcon(R.drawable.ic_baseline_person)
-                setupDrawerUserInfo()
                 drawerLayout.openDrawer(GravityCompat.END)
             }
         }
@@ -250,7 +239,7 @@ class MainActivity : AppCompatActivity() {
                     User("1",  6, "Valentin", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
                     User("1",  8, "Frank", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
                 )
-                replaceFragInMainContainer(UserFragment.newInstance(1, userList.toCollection(ArrayList()), true)) 
+                replaceFragInMainContainer(UserFragment.newInstance(1, userList.toCollection(ArrayList()), true))
             }
             //----------------------------------------------------------------------
             R.id.mainNavDrawSettings -> {
@@ -259,24 +248,18 @@ class MainActivity : AppCompatActivity() {
             // handle the "Logout" button in the navigation drawer of the app responsible for
             // logging out a user who has signed in with Google Sign-In
             R.id.mainNavDrawLogout -> {
-                val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestIdToken(getString(R.string.default_web_client_id))
-                    .requestEmail()
-                    .build()
+                auth.signOutCurrentUser(this, getString(R.string.default_web_client_id))
+                    .addOnCompleteListener {
+                        val intent = Intent(this, SignInActivity::class.java)
 
-                mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+                        // short toast message to the user indicating that they are being logged out
+                        Toast.makeText(this, getString(R.string.toast_logout_info), Toast.LENGTH_SHORT).show()
 
-                mGoogleSignInClient.signOut().addOnCompleteListener {
-                    val intent = Intent(this, SignInActivity::class.java)
+                        // When the sign-out operation is complete, it starts SignInActivity again<
+                        startActivity(intent)
 
-                    // short toast message to the user indicating that they are being logged out
-                    Toast.makeText(this, "Logging Out", Toast.LENGTH_SHORT).show()
-
-                    // When the sign-out operation is complete, it starts SignInActivity again
-                    startActivity(intent)
-
-                    finish()
-                }
+                        finish()
+                    }
             }
         }
     }

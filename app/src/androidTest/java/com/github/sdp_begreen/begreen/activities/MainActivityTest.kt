@@ -1,7 +1,11 @@
 package com.github.sdp_begreen.begreen.activities
 
+import android.Manifest
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import android.widget.ImageView
 import androidx.core.view.GravityCompat
-import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -14,40 +18,95 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.firebase.Auth
+import com.github.sdp_begreen.begreen.firebase.DB
+import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBitmap
+import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.tasks.await
+import com.google.android.gms.tasks.Tasks
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.*
 import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.dsl.module
+import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class MainActivityTest {
+
+    /**
+     * Initialize some constant to use in tests
+     */
+    companion object {
+        private val userPhotoMetadata = PhotoMetadata("user1_profile_picture")
+        private const val userId1 = "1234"
+        private const val userId2 = "1235"
+        private const val userId3 = "1236"
+        private const val userId4 = "1237"
+        private val user1 = User(
+            userId1,
+            12,
+            "User 1",
+            5,
+            null, "user 1 description", "123456789",
+            "user1@email.com", profilePictureMetadata = userPhotoMetadata)
+        private val user2 = User(
+            userId2,
+            12,
+            "User 2",
+            description = "user 2 description")
+        private val user3 = User(userId3, 10)
+        private val fakePicture1 = Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888)
+        private val db: DB = Mockito.mock(DB::class.java)
+        private val auth: Auth = Mockito.mock(Auth::class.java)
+        // initially do as if no user were signed in
+        private val authUserFlow = MutableStateFlow<String?>(null)
+
+        @BeforeClass
+        @JvmStatic
+        fun setUp() {
+            // The implementation need to be provided before the rule is executed,
+            // that's why we do it in the beforeClass method
+            runTest {
+                // setup basic get user and getProfilePicture use in multiple tests
+                `when`(db.getUser(userId1)).thenReturn(user1)
+                `when`(db.getUserProfilePicture(userPhotoMetadata, userId1))
+                    .thenReturn(fakePicture1)
+                // add a small delay, just to be sure that it is triggered after initialization
+                // and arrive second, after the initial null value
+                // use a mutable state flow, so that we can easily simulate different authenticated
+                // user between tests, by simply pushing a new userId
+                `when`(auth.getFlowUserIds())
+                    .thenReturn(authUserFlow.onEach { delay(10) })
+            }
+        }
+    }
+
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
 
     @get:Rule
-    val rule = KoinTestRule()
+    val koinTestRule = KoinTestRule(
+        modules = listOf(module {
+            single { db }
+            single { auth }
+        })
+    )
 
-    companion object {
-        @BeforeClass
-        @JvmStatic fun setup() {
-            try {
-                Firebase.database.useEmulator("10.0.2.2", 9000)
-                Firebase.storage.useEmulator("10.0.2.2", 9199)
-                Firebase.auth.useEmulator("10.0.2.2", 9099)
-            } catch (_:java.lang.IllegalStateException){}
-        }
-
-    }
+    // Need permission for camera when testing launching profile fragment
+    @get:Rule
+    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
 
     @Test
     fun bottomNavigationBarVisible() {
@@ -96,14 +155,18 @@ class MainActivityTest {
 
     @Test
     fun pressAdviceMenuDisplayAdviceFragment() {
-        onView(withId(R.id.bottomMenuAdvice))
-            .check(matches(isDisplayed()))
-            .perform(click())
+        runTest {
+            val advices = setOf("Advice1", "Advice2", "Advice3")
+            `when`(db.getAdvices()).thenReturn(advices)
+            onView(withId(R.id.bottomMenuAdvice))
+                .check(matches(isDisplayed()))
+                .perform(click())
 
-        onView(withId(R.id.adviceFragment)).check(matches(isDisplayed()))
+            onView(withId(R.id.adviceFragment)).check(matches(isDisplayed()))
 
-        onView(withId(R.id.bottomMenuCamera))
-            .perform(click())
+            onView(withId(R.id.bottomMenuCamera))
+                .perform(click())
+        }
     }
 
     @Test
@@ -128,31 +191,24 @@ class MainActivityTest {
             .perform(click())
     }
 
-    //TODO commented for now, MUST FIND WHY int ONLY FAIL IN CI ?
-    /*@Test
+    @Test
     fun pressDrawerMenuProfileDisplayProfileDetailsFragment() {
+        runTest {
+            // sign in user
+            authUserFlow.emit(userId1)
 
-        runBlocking {
-            Firebase.auth.signOut()
-            Firebase.auth.signInWithEmailAndPassword("user1@email.ch", "123456").await()
-
-            val a = launchActivity<MainActivity>()
-
-            onView(withId(R.id.bottomMenuUser))
-                .check(matches(isDisplayed()))
-                .perform(click())
+            // Open the navigation drawer
+            onView(withId(R.id.mainDrawerLayout))
+                .perform(DrawerActions.open(GravityCompat.END))
 
             onView(withId(R.id.mainNavDrawProfile))
-                .perform(scrollTo())
                 .check(matches(isDisplayed()))
                 .perform(click())
 
             onView(withId(R.id.fragment_profile_details))
                 .check(matches(isDisplayed()))
-
-            a.close()
         }
-    }*/
+    }
 
     @Test
     fun pressDrawerMenuFollowersDisplayFollowersFragment() {
@@ -180,7 +236,8 @@ class MainActivityTest {
 
     @Test
     fun pressDrawerMenuSettingsDisplaySettingsFragment() {
-        onView(withId(R.id.mainDrawerLayout)).perform(DrawerActions.open(GravityCompat.END))
+        onView(withId(R.id.mainDrawerLayout))
+            .perform(DrawerActions.open(GravityCompat.END))
 
         onView(withId(R.id.mainNavDrawSettings))
             .perform(scrollTo())
@@ -193,9 +250,15 @@ class MainActivityTest {
 
     @Test
     fun pressDrawerMenuLogoutDisplaySignInActivity() {
+        // mock the signOutCurrentUser
+        activityRule.scenario.onActivity {
+            `when`(auth.signOutCurrentUser(it, it.getString(R.string.default_web_client_id)))
+                .thenReturn(Tasks.forResult(null))
+        }
         Intents.init()
         // Open the navigation drawer
-        onView(withId(R.id.mainDrawerLayout)).perform(DrawerActions.open(GravityCompat.END))
+        onView(withId(R.id.mainDrawerLayout))
+            .perform(DrawerActions.open(GravityCompat.END))
 
         // Click on the Logout button
         onView(withId(R.id.mainNavDrawLogout))
@@ -208,162 +271,133 @@ class MainActivityTest {
         Intents.release()
     }
 
-    // TODO All the following test requiring a comparison of bitmap have been disabled for now
-    // TODO Need to find a better way to compare bitmap image
-
     @Test
     fun correctInfoDisplayedForAuthenticatedUser() {
+        runTest {
+            // sign in user
+            authUserFlow.emit(userId1)
 
-        runBlocking {
-            Firebase.auth.signOut()
-            Firebase.auth.signInWithEmailAndPassword("user1@email.ch", "123456").await()
-
-            // Have to explicitly create a new activity here, otherwise the logged in user is take
-            // from the moment the activity was created, which in case of "@Rules" is before,
-            // leading to an inconsistent state.
-            val a = launchActivity<MainActivity>()
-            onView(withId(R.id.bottomMenuUser))
-                .check(matches(isDisplayed()))
-                .perform(click())
+            onView(withId(R.id.mainDrawerLayout))
+                .perform(DrawerActions.open(GravityCompat.END))
 
             onView(withId(R.id.nav_drawer_username_textview))
-                .check(matches(withText("User Test 1")))
+                .check(matches(withText(user1.displayName)))
 
             onView(withId(R.id.nav_drawer_description_textview))
-                .check(matches(withText("That's the awesome description of test user 1")))
-            a.close()
+                .check(matches(withText(user1.description)))
 
+
+            activityRule.scenario.onActivity {
+                val image = it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
+                        as BitmapDrawable
+                assertThat(image.bitmap, equalsBitmap(fakePicture1))
+            }
         }
-
-
-
-        /*activityRule.scenario.onActivity {
-            val drawable: BitmapDrawable =
-                it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable as BitmapDrawable
-
-            val expectedBitmap = BitmapFactory.decodeResource(it.resources, R.drawable.marguerite_test_image)
-            assertThat(drawable.bitmap, equalsBitmap(expectedBitmap))
-        }*/
     }
 
     @Test
     fun defaultValueDisplayedForUnauthenticatedUser() {
-        Firebase.auth.signOut() // Ensure signed out
+        runTest {
+            // simulate no authenticated user
+            authUserFlow.emit(null)
 
-        val a = launchActivity<MainActivity>()
-        assertThat(Firebase.auth.currentUser, nullValue())
+            onView(withId(R.id.mainDrawerLayout))
+                .perform(DrawerActions.open(GravityCompat.END))
 
-        onView(withId(R.id.bottomMenuUser))
-            .check(matches(isDisplayed()))
-            .perform(click())
+            onView(withId(R.id.nav_drawer_username_textview))
+                .check(matches(withText("Username")))
 
-        onView(withId(R.id.nav_drawer_username_textview))
-            .check(matches(withText("Username")))
+            onView(withId(R.id.nav_drawer_description_textview))
+                .check(matches(withText("More Info on user")))
 
-        onView(withId(R.id.nav_drawer_description_textview))
-            .check(matches((withText("More Info on user"))))
-        a.close()
 
-        /*activityRule.scenario.onActivity {
-            val drawable: BitmapDrawable =
-                it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable as BitmapDrawable
-
-            val expectedBitmap = BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
-            assertThat(drawable.bitmap, equalsBitmap(expectedBitmap))
-        }*/
-
+            activityRule.scenario.onActivity {
+                val image = it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
+                        as BitmapDrawable
+                val expected = BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
+                assertThat(image.bitmap, equalsBitmap(expected))
+            }
+        }
     }
 
     @Test
     fun defaultValueDisplayedForAuthenticatedUserNotInDB() {
-        runBlocking {
-            Firebase.auth.signOut()
-            Firebase.auth.signInWithEmailAndPassword("notInDb@email.com", "123456").await()
+        runTest {
+            // simulate not in db by returning a null user
+            `when`(db.getUser(userId4)).thenReturn(null)
 
-            val a = launchActivity<MainActivity>()
-            assertThat(Firebase.auth.currentUser, notNullValue())
+            // sign in user 2
+            authUserFlow.emit(userId4)
 
-            onView(withId(R.id.bottomMenuUser))
-                .check(matches(isDisplayed()))
-                .perform(click())
+            onView(withId(R.id.mainDrawerLayout))
+                .perform(DrawerActions.open(GravityCompat.END))
 
             onView(withId(R.id.nav_drawer_username_textview))
                 .check(matches(withText("Username")))
 
             onView(withId(R.id.nav_drawer_description_textview))
                 .check(matches((withText("More Info on user"))))
-            a.close()
+
+            activityRule.scenario.onActivity {
+                val image = it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
+                        as BitmapDrawable
+                val expected = BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
+                assertThat(image.bitmap, equalsBitmap(expected))
+            }
         }
-
-
-
-        /*activityRule.scenario.onActivity {
-            val drawable: BitmapDrawable =
-                it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable as BitmapDrawable
-
-            val expectedBitmap = BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
-            assertThat(drawable.bitmap, equalsBitmap(expectedBitmap))
-        }*/
     }
 
     @Test
     fun defaultProfilePicturesDisplayedAuthenticatedUserNoProfilePicturedRegistered() {
-        runBlocking {
-            Firebase.auth.signOut()
-            Firebase.auth.signInWithEmailAndPassword("user2@email.com", "123456").await()
+        runTest {
+            // user 2 doesn't have any profile picture
+            `when`(db.getUser(userId2)).thenReturn(user2)
 
-            val a = launchActivity<MainActivity>()
-            assertThat(Firebase.auth.currentUser, notNullValue())
+            // sign in user 2
+            authUserFlow.emit(userId2)
 
-            onView(withId(R.id.bottomMenuUser))
-                .check(matches(isDisplayed()))
-                .perform(click())
+            onView(withId(R.id.mainDrawerLayout))
+                .perform(DrawerActions.open(GravityCompat.END))
 
             onView(withId(R.id.nav_drawer_username_textview))
-                .check(matches(withText("User Test 2")))
+                .check(matches(withText("User 2")))
 
             onView(withId(R.id.nav_drawer_description_textview))
-                .check(matches((withText("User 2 descriptions"))))
-            a.close()
+                .check(matches((withText("user 2 description"))))
+
+            activityRule.scenario.onActivity {
+                val image = it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
+                        as BitmapDrawable
+                val expected = BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
+                assertThat(image.bitmap, equalsBitmap(expected))
+            }
         }
-
-        /*activityRule.scenario.onActivity {
-            val drawable: BitmapDrawable =
-                it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable as BitmapDrawable
-
-            val expectedBitmap = BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
-            assertThat(drawable.bitmap, equalsBitmap(expectedBitmap))
-        }*/
-
     }
 
     @Test
     fun defaultValueDisplayedForAuthenticatedExistingUserWithoutExistingValues() {
-        runBlocking {
-            Firebase.auth.signOut()
-            Firebase.auth.signInWithEmailAndPassword("user3@email.com", "123456").await()
+        runTest {
+            // user 3 doesn't have any information
+            `when`(db.getUser(userId3)).thenReturn(user3)
 
-            val a = launchActivity<MainActivity>()
-            assertThat(Firebase.auth.currentUser, notNullValue())
+            // sign in user 3
+            authUserFlow.emit(userId3)
 
-            onView(withId(R.id.bottomMenuUser))
-                .check(matches(isDisplayed()))
-                .perform(click())
+            onView(withId(R.id.mainDrawerLayout))
+                .perform(DrawerActions.open(GravityCompat.END))
 
             onView(withId(R.id.nav_drawer_username_textview))
                 .check(matches(withText("Username")))
 
             onView(withId(R.id.nav_drawer_description_textview))
                 .check(matches((withText("More Info on user"))))
-            a.close()
+
+            activityRule.scenario.onActivity {
+                val image = it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
+                        as BitmapDrawable
+                val expected = BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
+                assertThat(image.bitmap, equalsBitmap(expected))
+            }
         }
-
-        /*activityRule.scenario.onActivity {
-            val drawable: BitmapDrawable =
-                it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable as BitmapDrawable
-
-            val expectedBitmap = BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
-            assertThat(drawable.bitmap, equalsBitmap(expectedBitmap))
-        }*/
     }
 }
