@@ -16,6 +16,7 @@ import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.activities.MainActivity
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import junit.framework.TestCase.*
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.instanceOf
@@ -31,6 +32,9 @@ import kotlin.collections.ArrayList
 class UserPhotoFragmentTest {
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
+
+    @get:Rule
+    val koinTestRule = KoinTestRule()
 
     private lateinit var fragment: UserPhotoFragment
     private lateinit var photoList: List<PhotoMetadata>

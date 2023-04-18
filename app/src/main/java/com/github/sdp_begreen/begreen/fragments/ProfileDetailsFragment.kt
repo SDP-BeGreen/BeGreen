@@ -2,8 +2,7 @@ package com.github.sdp_begreen.begreen.fragments
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.*
-import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -18,13 +17,10 @@ import androidx.activity.result.launch
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.RatingBar
-import android.widget.TextView
-import androidx.core.graphics.drawable.toBitmap
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.models.Actions
@@ -33,6 +29,7 @@ import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.utils.BitmapsUtils
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -44,8 +41,8 @@ import java.util.*
  */
 class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultRegistry? = null)
     : Fragment() {
-    var user: User? = null
-    var recentPosts: List<PhotoMetadata>? = null
+    private var user: User? = null
+    private var recentPosts: List<PhotoMetadata>? = null
 
     private val connectedUserViewModel:
             ConnectedUserViewModel by viewModels(ownerProducer = { requireActivity() })
@@ -92,7 +89,7 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         setUpUserInfo(view)
         setUpUserProfilePicture(view)
         setupFollowListener(followButton)
-        setupEditButton(editButton)
+        setupEditButton(editButton, saveButton)
         setupSaveButton(saveButton)
         setupTakePictureButton(takePictureButton)
         return view
@@ -114,13 +111,17 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         val profilePhone: TextView = view.findViewById(R.id.fragment_profile_details_profile_phone)
         val profileEmail: TextView = view.findViewById(R.id.fragment_profile_details_profile_email)
 
-        connectedUserViewModel.currentUser.observe(viewLifecycleOwner) { cUser ->
-            val userToUse = cUser?.let { if (it.id == user?.id) it else user } ?: user
-            profileDescription.text =
-                userToUse?.description ?: getString(R.string.nav_drawer_user_description)
-            name.text = userToUse?.displayName ?: getString(R.string.nav_drawer_username)
-            profilePhone.text = userToUse?.phone
-            profileEmail.text = userToUse?.email
+        lifecycleScope.launch {
+            connectedUserViewModel.currentUser
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { cUser ->
+                    val userToUse = cUser?.let { if (it.id == user?.id) it else user } ?: user
+                    profileDescription.text =
+                        userToUse?.description ?: getString(R.string.nav_drawer_user_description)
+                    name.text = userToUse?.displayName ?: getString(R.string.nav_drawer_username)
+                    profilePhone.text = userToUse?.phone
+                    profileEmail.text = userToUse?.email
+                }
         }
     }
 
@@ -130,26 +131,30 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
     private fun setUpUserProfilePicture(view: View) {
         val profileImgView: ImageView =
             view.findViewById(R.id.fragment_profile_details_profile_image)
-        connectedUserViewModel.currentUserProfilePicture.observe(viewLifecycleOwner) {
-            if (connectedUserViewModel.currentUser.value?.id == user?.id) {
-                val img = it ?: BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture)
-                profileImgView.setImageBitmap(BitmapsUtils.rescaleImage(img,
-                    PROFILE_PICTURE_DIM,
-                    PROFILE_PICTURE_DIM
-                ))
-            } else {
-                lifecycleScope.launch {
-                    val img = user?.let { user ->
-                        user.profilePictureMetadata?.let { pMetadata->
-                            FirebaseDB.getUserProfilePicture(pMetadata, user.id)
-                        }
-                    } ?: BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture)
-                    profileImgView.setImageBitmap(BitmapsUtils.rescaleImage(img,
-                        PROFILE_PICTURE_DIM,
-                        PROFILE_PICTURE_DIM
-                    ))
+        lifecycleScope.launch {
+            connectedUserViewModel.currentUserProfilePicture
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect {
+                    if (connectedUserViewModel.currentUser.value?.id == user?.id) {
+                        val img = it ?: BitmapFactory.decodeResource(
+                            resources,
+                            R.drawable.blank_profile_picture)
+                        profileImgView.setImageBitmap(BitmapsUtils.rescaleImage(img,
+                            PROFILE_PICTURE_DIM,
+                            PROFILE_PICTURE_DIM
+                        ))
+                    } else {
+                        val img = user?.let { user ->
+                            user.profilePictureMetadata?.let { pMetadata->
+                                FirebaseDB.getUserProfilePicture(pMetadata, user.id)
+                            }
+                        } ?: BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture)
+                        profileImgView.setImageBitmap(BitmapsUtils.rescaleImage(img,
+                            PROFILE_PICTURE_DIM,
+                            PROFILE_PICTURE_DIM
+                        ))
+                    }
                 }
-            }
         }
     }
 
@@ -159,13 +164,20 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
      * Setup if visible or not
      * setup its listener
      */
-    private fun setupEditButton(editButton: Button) {
+    private fun setupEditButton(editButton: Button, saveButton: Button) {
 
         // listen for currentUserChange to hide or show button accordingly
-        connectedUserViewModel.currentUser.observe(viewLifecycleOwner) {
-            if (it != user) {
-                editButton.visibility = View.GONE
-            }
+        lifecycleScope.launch {
+            connectedUserViewModel.currentUser
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect {
+                    if (it != user) {
+                        editButton.visibility = View.GONE
+                    } else if (saveButton.visibility == View.GONE) {
+                        // if same user and saveButton not visible, then set editButton as visible
+                        editButton.visibility = View.VISIBLE
+                    }
+                }
         }
 
         editButton.setOnClickListener {
@@ -179,10 +191,14 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
      * Helper function to setup the save button
      */
     private fun setupSaveButton(saveButton: Button) {
-        connectedUserViewModel.currentUser.observe(viewLifecycleOwner) {
-            if (it != user) {
-                saveButton.visibility = View.GONE
-            }
+        lifecycleScope.launch {
+            connectedUserViewModel.currentUser
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect {
+                    if (it != user) {
+                        saveButton.visibility = View.GONE
+                    }
+                }
         }
 
         saveButton.setOnClickListener {
@@ -211,16 +227,16 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
     /**
      * Helper function to register an activity to launch the camera to take a picture
      */
-     fun registerTakePictureActivity(): ActivityResultLauncher<Void?> {
+     private fun registerTakePictureActivity(): ActivityResultLauncher<Void?> {
         return registerForActivityResult(ActivityResultContracts.TakePicturePreview(),
             testActivityRegistry ?: requireActivity().activityResultRegistry)
         { photo ->
-            val photoMetadata: PhotoMetadata =
+            val photoMetadata =
                 PhotoMetadata(takenBy = user, takenOn = ParcelableDate(Date()))
             user?.apply {
                 photo?.let {
                     // set the taken picture to the current user profile picture
-                    connectedUserViewModel.currentUserProfilePicture.value = it
+                    connectedUserViewModel.setCurrentUserProfilePicture(it, user?.id)
 
                     // store the profile picture in the database
                     lifecycleScope.launch {
@@ -312,14 +328,6 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param user user to show details.
-         * @param recentPosts recent posts of the user.
-         * @return A new instance of fragment ProfileDetailsFragment.
-         */
         // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
         private const val ARG_USER = "USER"
         private const val PROFILE_PICTURE_DIM = 400
@@ -332,6 +340,15 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
             R.id.fragment_profile_details_take_picture
         )
         private const val ARG_RECENT_POSTS = "recent_posts"
+
+        /**
+         * Use this factory method to create a new instance of
+         * this fragment using the provided parameters.
+         *
+         * @param user user to show details.
+         * @param photos recent posts of the user.
+         * @return A new instance of fragment ProfileDetailsFragment.
+         */
         @JvmStatic
         fun newInstance(user: User, photos: List<PhotoMetadata>) =
             ProfileDetailsFragment().apply {

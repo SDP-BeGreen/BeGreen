@@ -12,7 +12,6 @@ import androidx.fragment.app.viewModels
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -24,6 +23,7 @@ import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
@@ -60,8 +60,12 @@ class ProfileDetailsFragmentTest {
     private val ARG_USER = "USER"
     lateinit var fragScenario: FragmentScenario<ProfileDetailsFragment>
     private val ARG_RECENT_POSTS = "recent_posts"
+
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
+
+    @get:Rule
+    val koinTestRule = KoinTestRule()
 
     @Before
     fun setup() {
@@ -87,14 +91,14 @@ class ProfileDetailsFragmentTest {
     @Test
     fun testProfileDetailsFragmentFollowButton(){
         onView(withId(R.id.fragment_profile_details_follow_button)).perform(click())
-        onView(withId(R.id.fragment_profile_details_follow_button)).check(matches(ViewMatchers.withText("Unfollow")))
+        onView(withId(R.id.fragment_profile_details_follow_button)).check(matches(withText("Unfollow")))
     }
 
     @Test
     fun testProfileDetailsFragmentFollowButton2(){
         onView(withId(R.id.fragment_profile_details_follow_button)).perform(click())
         onView(withId(R.id.fragment_profile_details_follow_button)).perform(click())
-        onView(withId(R.id.fragment_profile_details_follow_button)).check(matches(ViewMatchers.withText("Follow")))
+        onView(withId(R.id.fragment_profile_details_follow_button)).check(matches(withText("Follow")))
     }
 
     @Test
@@ -112,9 +116,9 @@ class ProfileDetailsFragmentTest {
         val frag = launchFragmentInContainer<ProfileDetailsFragment>(bundle)
 
         frag.onFragment {
-            val connectedUserViewModel:
-                    ConnectedUserViewModel by it.viewModels(ownerProducer = { it.requireActivity() })
-            connectedUserViewModel.currentUser.value = user2
+            val connectedUserViewModel
+                by it.viewModels<ConnectedUserViewModel>(ownerProducer = { it.requireActivity() })
+            connectedUserViewModel.setCurrentUser(user2)
         }
 
         onView(withId(R.id.fragment_profile_details_edit_profile))
@@ -133,11 +137,12 @@ class ProfileDetailsFragmentTest {
 
         val bundle = Bundle().apply { putParcelable(ARG_USER, user) }
         val frag = launchFragmentInContainer<ProfileDetailsFragment>(bundle)
+        Firebase.auth.signOut()
 
         frag.onFragment {
             val connectedUserViewModel:
                     ConnectedUserViewModel by it.viewModels(ownerProducer = { it.requireActivity() })
-            connectedUserViewModel.currentUser.value = user
+            connectedUserViewModel.setCurrentUser(user)
         }
 
         onView(withId(R.id.fragment_profile_details_edit_profile))
@@ -156,7 +161,7 @@ class ProfileDetailsFragmentTest {
         frag.onFragment {
             val connectedUserViewModel:
                     ConnectedUserViewModel by it.viewModels(ownerProducer = { it.requireActivity() })
-            connectedUserViewModel.currentUser.value = user
+            connectedUserViewModel.setCurrentUser(user)
         }
 
         onView(withId(R.id.fragment_profile_details_save_profile))
@@ -182,7 +187,7 @@ class ProfileDetailsFragmentTest {
         frag.onFragment {
             val connectedUserViewModel:
                     ConnectedUserViewModel by it.viewModels(ownerProducer = { it.requireActivity() })
-            connectedUserViewModel.currentUser.value = user
+            connectedUserViewModel.setCurrentUser(user)
         }
 
         onView(withId(R.id.fragment_profile_details_take_picture))
@@ -222,7 +227,7 @@ class ProfileDetailsFragmentTest {
             onFragment {
                 val connectedUserViewModel:
                         ConnectedUserViewModel by it.viewModels(ownerProducer = { it.requireActivity() })
-                connectedUserViewModel.currentUser.value = user
+                connectedUserViewModel.setCurrentUser(user)
             }
 
             // initially test that the user does not contains any profile picture metadata
@@ -296,7 +301,7 @@ class ProfileDetailsFragmentTest {
             onFragment {
                 val connectedUserViewModel:
                         ConnectedUserViewModel by it.viewModels(ownerProducer = { it.requireActivity() })
-                connectedUserViewModel.currentUser.value = user
+                connectedUserViewModel.setCurrentUser(user)
 
                 // initially check that no profile picture is associated with this user
                 assertThat(connectedUserViewModel.currentUserProfilePicture.value, `is`(nullValue()))
@@ -317,7 +322,6 @@ class ProfileDetailsFragmentTest {
             onFragment {
                 val connectedUserViewModel:
                         ConnectedUserViewModel by it.viewModels(ownerProducer = { it.requireActivity() })
-                connectedUserViewModel.currentUser.value = user
 
                 // check that the value is now the taken picture
                 assertThat(connectedUserViewModel.currentUserProfilePicture.value, `is`(sameInstance(fakePicture)))
@@ -337,8 +341,7 @@ class ProfileDetailsFragmentTest {
         frag.onFragment {
             val connectedUserViewModel:
                     ConnectedUserViewModel by it.viewModels(ownerProducer = { it.requireActivity() })
-            connectedUserViewModel.currentUser.value = fakeAuthUser
-            connectedUserViewModel.currentUserProfilePicture.value = null
+            connectedUserViewModel.setCurrentUser(fakeAuthUser)
         }
 
         onView(withId(R.id.fragment_profile_details_profile_name))

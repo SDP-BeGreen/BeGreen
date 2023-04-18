@@ -56,7 +56,7 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.core:core-ktx:1.10.0'
     implementation 'androidx.test:core-ktx:1.5.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
@@ -72,11 +72,11 @@ dependencies {
     androidTestImplementation 'androidx.test:rules:1.5.0'
     androidTestImplementation 'androidx.test.espresso:espresso-intents:3.5.1'
     implementation "androidx.fragment:fragment-ktx:1.5.6"
-    debugImplementation("androidx.fragment:fragment-testing:1.5.6")
-
+    debugImplementation "androidx.fragment:fragment-testing:1.5.6"
+    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
     // Real time DB + storage + google authentificator (check the following link to add any other dependency:
     // https://firebase.google.com/docs/android/setup#available-libraries
-    implementation platform('com.google.firebase:firebase-bom:31.2.3')
+    implementation platform('com.google.firebase:firebase-bom:31.5.0')
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-database-ktx'
     implementation 'com.google.firebase:firebase-auth-ktx'
@@ -88,12 +88,16 @@ dependencies {
 
     // Google dependency. See link :
     // https://developers.google.com/identity/sign-in/android/start-integrating
-    implementation 'com.google.android.gms:play-services-auth:20.4.1'
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
 
     // insert-koin
     implementation 'io.insert-koin:koin-core:3.4.0'
     implementation 'io.insert-koin:koin-android:3.4.0'
+    // Koin Test features
+    androidTestImplementation "io.insert-koin:koin-test:3.4.0"
+    // Koin for JUnit 4
+    androidTestImplementation "io.insert-koin:koin-test-junit4:3.4.0"
 
     // mockito
     testImplementation "org.mockito:mockito-core:5.2.0"
