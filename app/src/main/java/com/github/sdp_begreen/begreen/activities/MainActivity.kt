@@ -265,33 +265,17 @@ class MainActivity : AppCompatActivity() {
                 //    User("1",  6, "Valentin", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
                 //    User("1",  8, "Frank", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
                 //)
-
+                val userList: MutableList<User> = mutableListOf()
                 lifecycle.coroutineScope.launch {
                     val data = Firebase.database.reference.child("users").get().await()
                     //data.getValue(List<User>::class.java)
-                    Log.d("HEREEEE", data.childrenCount.toString())
-                }
-
-                val userList: MutableList<User> = mutableListOf()
-                val idList = mutableListOf<String>()
-                val rootRef = FirebaseDatabase.getInstance().reference
-                val usersdRef = rootRef.child("users")
-                val eventListener: ValueEventListener = object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        for (ds in dataSnapshot.children) {
-                            val id = ds.child("id").getValue(String::class.java)
-                            id?.let { idList.add(it) }
-                            Log.d("TAG", idList.toString())
-                            userList.add(ds.getValue(User::class.java)!!)
-                            replaceFragInMainContainer(UserFragment.newInstance(1, userList.toCollection(ArrayList()), true))
-                        }
+                    data.children.forEach {
+                        userList.add( it.getValue(User::class.java) ?: User("0", 0, "Lui"))
                     }
-
-                    override fun onCancelled(databaseError: DatabaseError) {}
+                    replaceFragInMainContainer(UserFragment.newInstance(1, userList.toCollection(ArrayList()), true))
                 }
-                usersdRef.addListenerForSingleValueEvent(eventListener)
 
-                //replaceFragInMainContainer(UserFragment.newInstance(1, userList.toCollection(ArrayList()), true))
+
             }
             //----------------------------------------------------------------------
             R.id.mainNavDrawSettings -> {
