@@ -29,13 +29,11 @@ class MapFragmentTest {
     @get:Rule
     val coarseLocationPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_COARSE_LOCATION)
 
-   // private val fragment = MapFragment()
+    private val fragment = MapFragment()
 
 
     @Test
     fun testFragmentInflation() {
-
-        assertTrue(true)
 
         /* The googlemaps library is quite hard to test. For now, we have only tested the launching of the mapFragment.
 
@@ -45,8 +43,8 @@ class MapFragmentTest {
         Therefore, we advise you to write as much as possible code that is independent from map components, and that you can easily test.
         */
 
-     //   launchFragmentInContainer { fragment }
+        launchFragmentInContainer { fragment }
 
-       // onView(withId(R.id.mapFragment)).check(matches(isDisplayed()))
+        onView(withId(R.id.mapFragment)).check(matches(isDisplayed()))
     }
 }
