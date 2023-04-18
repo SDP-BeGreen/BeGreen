@@ -21,7 +21,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.Auth
-import com.github.sdp_begreen.begreen.fragments.*
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.fragments.AdviceFragment
 import com.github.sdp_begreen.begreen.fragments.CameraFragment
@@ -35,10 +34,6 @@ import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
-import com.google.android.gms.auth.api.Auth
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.ktx.auth
@@ -50,7 +45,6 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import java.util.*
-import kotlinx.coroutines.tasks.await
 import java.util.Date
 
 
@@ -74,7 +68,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val headerView: View = navigationView.getHeaderView(0)
-        // By starting to listen for flow changes, the information will lickely have
+        // By starting to listen for flow changes, the information will likely have
         // been prefetched for the first time we open the drawer
         setupDrawerUserInfo(
             headerView.findViewById(R.id.nav_drawer_profile_picture_imageview),
@@ -95,24 +89,6 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.END)
             handleDrawerMenuItemClick(item)
             true
-        }
-    }
-
-    /**
-     * Helper function to retrieve the connected User along with its profile picture.
-     *
-     * The purpose of this method is to be called while creating the activity, to prefetch
-     * the user and the image from the database, and have them directly loaded and ready to display
-     * when opening the drawer menu
-     */
-    private fun retrieveUserWithProfilePicture() {
-        lifecycleScope.launch {
-            getConnectedUser()?.also { user ->
-                connectedUserViewModel.currentUser.value = user
-                connectedUserViewModel.currentUserProfilePicture.value = user.profilePictureMetadata?.let {
-                    FirebaseDB.getUserProfilePicture(it, user.id)
-                }
-            }
         }
     }
 
@@ -238,7 +214,6 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.bottomMenuUser -> {
                 item.setIcon(R.drawable.ic_baseline_person)
-                setupDrawerUserInfo()
                 drawerLayout.openDrawer(GravityCompat.END)
             }
         }
