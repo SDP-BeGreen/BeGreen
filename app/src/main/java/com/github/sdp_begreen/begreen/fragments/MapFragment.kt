@@ -31,7 +31,6 @@ import com.google.android.gms.location.LocationServices
 class MapFragment : Fragment() {
 
     companion object {
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
         private const val MAP_DEFAULT_ZOOM = 12f
     }
 

@@ -43,5 +43,4 @@ class MapFragmentTest {
 
         onView(withId(R.id.mapFragment)).check(matches(isDisplayed()))
     }
-
 }
