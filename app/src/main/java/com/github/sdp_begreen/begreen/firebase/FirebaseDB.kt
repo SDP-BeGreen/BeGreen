@@ -108,6 +108,26 @@ object FirebaseDB: DB {
         }
     }
 
+    override suspend fun getAllUsers(timeout: Long): List<User> {
+        return try {
+            withTimeout(timeout) {
+                val data = databaseReference.child(USERS_PATH).get().await()
+                val users = mutableListOf<User>()
+                data.children.forEach {
+                    users.add(it.getValue(User::class.java)!!)
+                }
+                users
+            }
+        } catch (timeoutEx: TimeoutCancellationException) {
+            Log.d(TAG, "Timeout, can't connect with database")
+            throw DatabaseTimeoutException("Timeout, cant connect with database")
+        }
+        catch (databaseEx: DatabaseException) {
+            Log.d(TAG, "Failed with error message: ${databaseEx.message}")
+            throw databaseEx
+        }
+    }
+
     override suspend fun storeUserProfilePicture(image: Bitmap, userId: String, metadata: PhotoMetadata): PhotoMetadata? {
         if (userId.isBlank())
             throw java.lang.IllegalArgumentException("The userId cannot be a blank string")

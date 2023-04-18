@@ -22,6 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.Auth
+import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.fragments.AdviceFragment
 import com.github.sdp_begreen.begreen.fragments.CameraFragment
@@ -45,6 +46,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import org.koin.android.ext.android.inject
 import java.util.*
@@ -54,6 +56,8 @@ import java.util.Date
 class MainActivity : AppCompatActivity() {
     private val connectedUserViewModel by viewModels<ConnectedUserViewModel>()
     private val auth by inject<Auth>()
+    //TODO remove after demo
+    private val db by inject<DB>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -265,17 +269,9 @@ class MainActivity : AppCompatActivity() {
                 //    User("1",  6, "Valentin", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
                 //    User("1",  8, "Frank", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
                 //)
-                val userList: MutableList<User> = mutableListOf()
-                lifecycle.coroutineScope.launch {
-                    val data = Firebase.database.reference.child("users").get().await()
-                    //data.getValue(List<User>::class.java)
-                    data.children.forEach {
-                        userList.add( it.getValue(User::class.java) ?: User("0", 0, "Lui"))
-                    }
-                    replaceFragInMainContainer(UserFragment.newInstance(1, userList.toCollection(ArrayList()), true))
-                }
 
-
+                val userList = runBlocking { db.getAllUsers() }
+                replaceFragInMainContainer(UserFragment.newInstance(1, userList.toCollection(ArrayList()), true))
             }
             //----------------------------------------------------------------------
             R.id.mainNavDrawSettings -> {
