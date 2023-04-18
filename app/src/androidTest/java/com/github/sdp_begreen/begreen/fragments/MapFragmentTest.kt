@@ -1,41 +1,47 @@
 package com.github.sdp_begreen.begreen.fragments
 
-import android.os.Bundle
+import android.Manifest
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.activities.MainActivity
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.test.assertTrue
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class MapFragmentTest {
+    
+    @get:Rule
+    val fineLocationPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION)
+
+    @get:Rule
+    val coarseLocationPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_COARSE_LOCATION)
+
+    private val fragment = MapFragment()
+
 
     @Test
-    fun testMapFragment() {
-        launchFragmentInContainer<MapFragment>()
-        onView(withId(R.id.mapFragmentTextView)).check(matches(withText("Fragment where we can display the map")))
-    }
+    fun testFragmentInflation() {
 
-    @Test
-    fun testMapFragmentWithArgs() {
+        /* The googlemaps library is quite hard to test. For now, we have only tested the launching of the mapFragment.
 
+        According to the bootcamp https://github.com/sweng-epfl/public/blob/main/project/bootcamp/Maps.md :
 
-        val bundle = Bundle()
-        bundle.putString("param1", "Param 1")
-        bundle.putString("param2", "Param 2")
+        [...] since you cannot set the inputs, it will be difficult to achieve 100% of coverage.
+        Therefore, we advise you to write as much as possible code that is independent from map components, and that you can easily test.
+        */
 
-        // Still need to pass the bundle, doesn't work in test to only call the factory from companion object
-        // https://github.com/android/android-test/issues/442
-        launchFragmentInContainer(bundle) {
-            MapFragment.newInstance("", "")
-        }
-        onView(withId(R.id.mapFragmentTextView)).check(matches(withText("Fragment where we can display the map Param 1, Param 2")))
+        launchFragmentInContainer { fragment }
 
+        onView(withId(R.id.mapFragment)).check(matches(isDisplayed()))
     }
 }
