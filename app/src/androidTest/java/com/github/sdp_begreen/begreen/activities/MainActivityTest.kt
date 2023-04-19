@@ -111,6 +111,12 @@ class MainActivityTest {
     @get:Rule
     val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
 
+    @get:Rule
+    val fineLocationPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION)
+
+    @get:Rule
+    val coarseLocationPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_COARSE_LOCATION)
+
     @Test
     fun bottomNavigationBarVisible() {
         onView(withId(R.id.mainNavigationView)).check(matches(isDisplayed()))

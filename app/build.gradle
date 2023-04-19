@@ -103,6 +103,7 @@ dependencies {
     testImplementation "org.mockito:mockito-core:5.2.0"
     testImplementation "org.mockito.kotlin:mockito-kotlin:4.1.0"
     androidTestImplementation 'org.mockito:mockito-android:5.2.0'
+    androidTestImplementation 'org.mockito.kotlin:mockito-kotlin:4.1.0'
 
     // Googlemaps
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
