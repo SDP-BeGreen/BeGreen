@@ -70,7 +70,7 @@ class PhotoMetadataTest {
             hasProp("pictureId", equalTo("key")),
             hasProp("title", equalTo("title")),
             hasProp("takenOn", equalTo(date)),
-            hasProp("takenBy", equalTo(user)),
+            hasProp("takenBy", equalTo(user.id)),
             hasProp("category", equalTo("cat")),
             hasProp("description", equalTo("desc"))))
     }
