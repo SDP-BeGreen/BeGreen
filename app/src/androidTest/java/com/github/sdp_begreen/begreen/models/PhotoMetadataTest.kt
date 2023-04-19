@@ -1,12 +1,13 @@
 package com.github.sdp_begreen.begreen.models
 
-import android.graphics.Bitmap
 import android.os.Parcel
 import com.github.sdp_begreen.begreen.matchers.ContainsPropertyMatcher.Companion.hasProp
-import org.hamcrest.CoreMatchers.*
+import org.hamcrest.CoreMatchers.allOf
+import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
-import java.util.*
+import java.util.Date
 
 class PhotoMetadataTest {
     @Test
@@ -64,7 +65,7 @@ class PhotoMetadataTest {
     fun photoGettersWorks(){
         val date = ParcelableDate(Date())
         val user = User("1",0, "test")
-        val photoMetadata = PhotoMetadata("key","title", date, user, "cat", "desc")
+        val photoMetadata = PhotoMetadata("key","title", date, user.id, "cat", "desc")
         assertThat(photoMetadata, allOf(
             hasProp("pictureId", equalTo("key")),
             hasProp("title", equalTo("title")),

@@ -1,6 +1,7 @@
 package com.github.sdp_begreen.begreen.fragments
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.os.Build
@@ -9,18 +10,26 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.view.inputmethod.InputMethodManager
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.RatingBar
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.models.Actions
@@ -29,9 +38,9 @@ import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.utils.BitmapsUtils
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
-import kotlinx.coroutines.flow.collect
+import com.github.sdp_begreen.begreen.viewModels.ProfileEditedValuesViewModel
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Date
 
 
 /**
@@ -46,6 +55,7 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
 
     private val connectedUserViewModel:
             ConnectedUserViewModel by viewModels(ownerProducer = { requireActivity() })
+    private val profileEditedValuesViewModel by viewModels<ProfileEditedValuesViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,18 +78,15 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
 
         val view = inflater.inflate(R.layout.fragment_profile_details, container, false)
         val rating: RatingBar = view.findViewById(R.id.fragment_profile_details_profile_rating)
-        val userTextLevel: TextView = view.findViewById(R.id.fragment_profile_details_level)
         val userProgressBar: ProgressBar =
             view.findViewById(R.id.fragment_profile_details_user_progress)
         val followButton: Button = view.findViewById(R.id.fragment_profile_details_follow_button)
         val editButton: Button = view.findViewById(R.id.fragment_profile_details_edit_profile)
         val saveButton: Button = view.findViewById(R.id.fragment_profile_details_save_profile)
+        val cancelButton: Button = view.findViewById(R.id.fragment_profile_details_cancel_modification)
         val takePictureButton: ImageButton =
             view.findViewById(R.id.fragment_profile_details_take_picture)
         rating.rating = user?.score?.toFloat() ?: 0.0f
-        userTextLevel.text = getString(
-            R.string.user_details_level_text, user?.displayName ?: "Default User",
-        )
         userProgressBar.progress = user?.progression ?: 0
 
         activity?.supportFragmentManager?.beginTransaction()
@@ -87,12 +94,34 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
             ?.commit()
 
         setUpUserInfo(view)
+        setupUserFieldViewUponCreation(view)
         setUpUserProfilePicture(view)
         setupFollowListener(followButton)
-        setupEditButton(editButton, saveButton)
+        setupEditButton(editButton)
         setupSaveButton(saveButton)
+        setupCancelButton(cancelButton)
         setupTakePictureButton(takePictureButton)
         return view
+    }
+
+    /**
+     * Helper function to correctly setup the user related fields (i.e. set visibility) inside this
+     * view upon view creation.
+     *
+     * Determine which component to display based on whether we are displaying the profile
+     * of the currently connected user, and whether we were currently editing or not
+     *
+     * @param view The view where to find those components
+     */
+    private fun setupUserFieldViewUponCreation(view: View) {
+        if (
+            connectedUserViewModel.currentUser.value?.id == user?.id &&
+            profileEditedValuesViewModel.isCurrentlyEditing()
+        ) {
+            toggleVisibleElement(View.GONE, View.VISIBLE, view)
+        } else {
+            toggleVisibleElement(View.VISIBLE, View.GONE, view)
+        }
     }
 
     /**
@@ -107,9 +136,16 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
     private fun setUpUserInfo(view: View) {
         val profileDescription: TextView =
             view.findViewById(R.id.fragment_profile_details_profile_description)
+        val descriptionEdit: EditText =
+            view.findViewById(R.id.fragment_profile_details_profile_description_edit)
         val name: TextView = view.findViewById(R.id.fragment_profile_details_profile_name)
+        val nameEdit: EditText = view.findViewById(R.id.fragment_profile_details_profile_name_edit)
         val profilePhone: TextView = view.findViewById(R.id.fragment_profile_details_profile_phone)
+        val phoneEdit: EditText = view.findViewById(R.id.fragment_profile_details_profile_phone_edit)
         val profileEmail: TextView = view.findViewById(R.id.fragment_profile_details_profile_email)
+        val emailEdit: EditText = view.findViewById(R.id.fragment_profile_details_profile_email_edit)
+        val userTextLevel: TextView = view.findViewById(R.id.fragment_profile_details_level)
+        setupEditableUserInfoListener(nameEdit, phoneEdit, emailEdit, descriptionEdit)
 
         lifecycleScope.launch {
             connectedUserViewModel.currentUser
@@ -118,15 +154,56 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
                     val userToUse = cUser?.let { if (it.id == user?.id) it else user } ?: user
                     profileDescription.text =
                         userToUse?.description ?: getString(R.string.nav_drawer_user_description)
+                    descriptionEdit.setText(
+                        profileEditedValuesViewModel.description ?:
+                        userToUse?.description ?:
+                        getString(R.string.nav_drawer_user_description)
+                    )
                     name.text = userToUse?.displayName ?: getString(R.string.nav_drawer_username)
+                    nameEdit.setText(
+                        profileEditedValuesViewModel.displayName ?: // priority to edited name
+                        userToUse?.displayName
+                        ?: getString(R.string.fragment_profile_details_username_placeholder))
                     profilePhone.text = userToUse?.phone
+                    phoneEdit.setText(profileEditedValuesViewModel.phone ?: userToUse?.phone)
                     profileEmail.text = userToUse?.email
+                    emailEdit.setText(profileEditedValuesViewModel.email ?: userToUse?.email)
+                    userTextLevel.text = getString(
+                        R.string.user_details_level_text, userToUse?.displayName ?: "Default User",
+                    )
                 }
         }
     }
 
     /**
+     * Helper function to setup all the editable text listener, to persist their changes
+     * into the viewModel
+     *
+     * @param nameEdit The editText that contains the display name
+     * @param phoneEdit The editText that contains the phone number
+     * @param emailEdit The editText that contains de email
+     * @param descriptionEdit The editText that contains the description
+     */
+    private fun setupEditableUserInfoListener(
+        nameEdit: EditText, phoneEdit: EditText, emailEdit: EditText, descriptionEdit: EditText) {
+        nameEdit.addTextChangedListener {
+            profileEditedValuesViewModel.displayName = it.toString()
+        }
+        phoneEdit.addTextChangedListener {
+            profileEditedValuesViewModel.phone = it.toString()
+        }
+        emailEdit.addTextChangedListener {
+            profileEditedValuesViewModel.email = it.toString()
+        }
+        descriptionEdit.addTextChangedListener {
+            profileEditedValuesViewModel.description = it.toString()
+        }
+    }
+
+    /**
      * Helper function to setup the observer on the current profile picture to display
+     *
+     * @param view The view in which to look for visual element
      */
     private fun setUpUserProfilePicture(view: View) {
         val profileImgView: ImageView =
@@ -163,48 +240,149 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
      *
      * Setup if visible or not
      * setup its listener
+     *
+     * @param editButton The button representing the edit button
      */
-    private fun setupEditButton(editButton: Button, saveButton: Button) {
+    private fun setupEditButton(editButton: Button) {
 
-        // listen for currentUserChange to hide or show button accordingly
-        lifecycleScope.launch {
-            connectedUserViewModel.currentUser
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collect {
-                    if (it != user) {
-                        editButton.visibility = View.GONE
-                    } else if (saveButton.visibility == View.GONE) {
-                        // if same user and saveButton not visible, then set editButton as visible
-                        editButton.visibility = View.VISIBLE
-                    }
-                }
+        setupButtonVisibility(editButton) {
+            !profileEditedValuesViewModel.isCurrentlyEditing()
         }
 
         editButton.setOnClickListener {
+            profileEditedValuesViewModel.startEditing()
             toggleVisibleElement(View.GONE, View.VISIBLE)
-
-            setUpRelativeLayoutAttribute(R.id.fragment_profile_details_save_profile)
         }
     }
 
     /**
      * Helper function to setup the save button
+     *
+     * @param saveButton The button representing the save button
      */
     private fun setupSaveButton(saveButton: Button) {
+        setupButtonVisibility(saveButton) {
+            profileEditedValuesViewModel.isCurrentlyEditing()
+        }
+
+        saveButton.setOnClickListener {
+            saveEditedField()
+            profileEditedValuesViewModel.finishEditing()
+            hideKeyboard()
+            toggleVisibleElement(View.VISIBLE, View.GONE)
+        }
+    }
+
+    /**
+     * Helper function to setup the cancel button
+     *
+     * @param cancelButton The button representing the cancel button
+     */
+    private fun setupCancelButton(cancelButton: Button) {
+        setupButtonVisibility(cancelButton) {
+            profileEditedValuesViewModel.isCurrentlyEditing()
+        }
+
+        cancelButton.setOnClickListener {
+            // finish editing without saving
+            profileEditedValuesViewModel.finishEditing()
+            hideKeyboard()
+
+            toggleVisibleElement(View.VISIBLE, View.GONE)
+            // reset edited values
+            connectedUserViewModel.currentUser.value?.apply {
+                requireView()
+                    .findViewById<EditText>(R.id.fragment_profile_details_profile_description_edit)
+                    .setText(description ?:
+                    getString(R.string.nav_drawer_user_description))
+
+                requireView()
+                    .findViewById<EditText>(R.id.fragment_profile_details_profile_name_edit)
+                    .setText(displayName ?: getString(R.string.nav_drawer_username))
+
+                requireView()
+                    .findViewById<EditText>(R.id.fragment_profile_details_profile_phone_edit)
+                    .setText(phone)
+
+                requireView()
+                    .findViewById<EditText>(R.id.fragment_profile_details_profile_email_edit)
+                    .setText(email)
+            }
+        }
+    }
+
+    /**
+     * Helper function to setup the button visibility
+     *
+     * The visibility is determined based on if the currently logged in user is the user
+     * for whom we are currently displaying the profile, and a function telling whether the button
+     * should be visible or not
+     *
+     * @param button The button for which we want to setup the visibility
+     * @param shouldBeVisible A function telling whether this button should be visible or not
+     */
+    private fun setupButtonVisibility(button: Button, shouldBeVisible: () -> Boolean) {
         lifecycleScope.launch {
             connectedUserViewModel.currentUser
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collect {
-                    if (it != user) {
-                        saveButton.visibility = View.GONE
+                    if (it?.id != user?.id || !shouldBeVisible()) {
+                        button.visibility = View.GONE
+                    } else if(shouldBeVisible()) {
+                        button.visibility = View.VISIBLE
                     }
                 }
         }
+    }
 
-        saveButton.setOnClickListener {
-            toggleVisibleElement(View.VISIBLE, View.GONE)
-            setUpRelativeLayoutAttribute(R.id.fragment_profile_details_edit_profile)
+    /**
+     * Helper function to hide the soft keyboard
+     */
+    private fun hideKeyboard() {
+        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(requireView().windowToken, 0)
+    }
 
+    /**
+     * Helper function to save all the edited fields to the DB to persist changes,
+     *
+     * and also set the new values to the currentUser
+     */
+    private fun saveEditedField () {
+        connectedUserViewModel.currentUser.value?.apply {
+            // make a copy with edited value, or let old if unchanged (i.e. null)
+            val newUser = copy(
+                displayName = profileEditedValuesViewModel.displayName ?: displayName,
+                phone = profileEditedValuesViewModel.phone ?: phone,
+                email = profileEditedValuesViewModel.email ?: email,
+                description = profileEditedValuesViewModel.description ?: description
+            )
+
+            // set the new user as the current user, keep current profile picture in the case
+            // the user don't modify it, so that it's not set to null
+            connectedUserViewModel.setCurrentUser(newUser, true)
+
+            profileEditedValuesViewModel.profilePicture?.also {
+                // set the taken picture to the current user profile picture
+                connectedUserViewModel.setCurrentUserProfilePicture(it, id)
+            }
+
+            lifecycleScope.launch {
+                val metadata = profileEditedValuesViewModel.profilePicture?.let {
+                    FirebaseDB.storeUserProfilePicture(it, id,
+                        PhotoMetadata(takenBy = id, takenOn = ParcelableDate(Date()))
+                    )
+                }
+                // new user with
+                val newUserWithMetadata = newUser.copy(
+                    profilePictureMetadata = metadata ?: profilePictureMetadata
+                )
+                // store the new User in firebase
+                FirebaseDB.addUser(newUserWithMetadata, id)
+                // once stored, set again the new user along with his metadata in current
+                // user, for consistency
+                connectedUserViewModel.setCurrentUser(newUser, true)
+            }
         }
     }
 
@@ -214,52 +392,40 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
      *
      * @param editVisibility The visibility to pass to object that should be visible in edit mode
      * @param saveVisibility The visibility to pass to object that should be visible in display mode
+     * @param view The view in which to look for those components
      */
-    private fun toggleVisibleElement(editVisibility: Int, saveVisibility: Int) {
-        EDIT_RELATED_VIEW.forEach {
-            requireView().findViewById<View>(it).visibility = editVisibility
+    private fun toggleVisibleElement(
+        editVisibility: Int,
+        saveVisibility: Int,
+        view: View = requireView()
+    ) {
+        DISPLAY_RELATED_VIEW.forEach {
+            view.findViewById<View>(it).visibility = editVisibility
         }
-        SAVE_RELATED_VIEW.forEach {
-            requireView().findViewById<View>(it).visibility = saveVisibility
+        EDIT_RELATED_VIEW.forEach {
+            view.findViewById<View>(it).visibility = saveVisibility
         }
     }
 
     /**
      * Helper function to register an activity to launch the camera to take a picture
      */
-     private fun registerTakePictureActivity(): ActivityResultLauncher<Void?> {
-        return registerForActivityResult(ActivityResultContracts.TakePicturePreview(),
-            testActivityRegistry ?: requireActivity().activityResultRegistry)
-        { photo ->
-            val photoMetadata =
-                PhotoMetadata(takenBy = user, takenOn = ParcelableDate(Date()))
-            user?.apply {
-                photo?.let {
-                    // set the taken picture to the current user profile picture
-                    connectedUserViewModel.setCurrentUserProfilePicture(it, user?.id)
-
-                    // store the profile picture in the database
-                    lifecycleScope.launch {
-                        FirebaseDB.storeUserProfilePicture(it, id, photoMetadata)
-                    }
-                }
-            }
-        }
-    }
+    private fun registerTakePictureActivity() =
+        registerForActivityResult(
+            ActivityResultContracts.TakePicturePreview(),
+            testActivityRegistry ?: requireActivity().activityResultRegistry
+        ) { profileEditedValuesViewModel.profilePicture = it }
 
     /**
      * Helper function to register an activity to request the camera permission
+     *
+     * @param takePicture The registered activity to launch to take a picture
      */
-    private fun registerRequestCameraPermission(
-        takePicture: ActivityResultLauncher<Void?>,
-        button: ImageButton): ActivityResultLauncher<String> {
-
-        return registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+    private fun registerRequestCameraPermission(takePicture: ActivityResultLauncher<Void?>) =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             // If permission is granted then directly launch the camera
             if (it) {
-                button.setOnClickListener {
-                    takePicture.launch()
-                }
+                takePicture.launch()
             } else {
                 //TODO Handle this case better in the future, by using a popup for example
                 // to explain to the user that he won't be able to take picture if he
@@ -268,45 +434,34 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
                     "Camera permission not granted",
                     "The user did not grant camera permission"
                 )
+                // just display a toast for now
+                Toast.makeText(
+                    requireActivity(),
+                    getString(R.string.fragment_profile_details_camera_permission_denied),
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
-    }
 
     /**
      * Helper function to setup the take picture button listener
      *
      * Check if we have the permission, if yes take picture, if not ask them to the user
+     *
+     * @param button The image button for which to setup the listener
      */
     private fun setupTakePictureButton(button: ImageButton) {
         val takePicture = registerTakePictureActivity()
-        val requestPermissionLauncher = registerRequestCameraPermission(takePicture, button)
+        val requestPermissionLauncher = registerRequestCameraPermission(takePicture)
 
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.CAMERA
+        button.setOnClickListener {
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(), Manifest.permission.CAMERA
             ) == PackageManager.PERMISSION_GRANTED) {
-            button.setOnClickListener {
                 takePicture.launch()
+            } else {
+                requestPermissionLauncher.launch(Manifest.permission.CAMERA)
             }
-        } else {
-            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
-        }
-    }
-
-    /**
-     * Helper function to setup the relative layout attribute of the
-     * name text view
-     *
-     * @param startOf the index of the element we want to set as the START_OF element relative
-     * to the text view
-     */
-    private fun setUpRelativeLayoutAttribute(startOf: Int) {
-        val tView = requireView()
-            .findViewById<TextView>(R.id.fragment_profile_details_profile_name)
-        tView.layoutParams = RelativeLayout.LayoutParams(tView?.layoutParams).apply {
-            addRule(RelativeLayout.START_OF, startOf)
-            addRule(RelativeLayout.CENTER_IN_PARENT)
-            addRule(RelativeLayout.ALIGN_PARENT_START)
         }
     }
 
@@ -331,13 +486,24 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
         private const val ARG_USER = "USER"
         private const val PROFILE_PICTURE_DIM = 400
-        private val EDIT_RELATED_VIEW= listOf(
+        // View that should be displayed when simply displaying user info
+        private val DISPLAY_RELATED_VIEW= listOf(
             R.id.fragment_profile_details_edit_profile,
-            R.id.fragment_profile_details_profile_image
+            R.id.fragment_profile_details_profile_image,
+            R.id.fragment_profile_details_profile_name,
+            R.id.fragment_profile_details_profile_email,
+            R.id.fragment_profile_details_profile_phone,
+            R.id.fragment_profile_details_profile_description
         )
-        private val SAVE_RELATED_VIEW= listOf(
+        // View that should be displayed when editing
+        private val EDIT_RELATED_VIEW= listOf(
             R.id.fragment_profile_details_save_profile,
-            R.id.fragment_profile_details_take_picture
+            R.id.fragment_profile_details_cancel_modification,
+            R.id.fragment_profile_details_take_picture,
+            R.id.fragment_profile_details_profile_name_edit,
+            R.id.fragment_profile_details_profile_email_edit,
+            R.id.fragment_profile_details_profile_phone_edit,
+            R.id.fragment_profile_details_profile_description_edit
         )
         private const val ARG_RECENT_POSTS = "recent_posts"
 

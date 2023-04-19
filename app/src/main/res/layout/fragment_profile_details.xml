@@ -65,14 +65,30 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     >
+
                     <TextView
                         android:id="@+id/fragment_profile_details_profile_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/name"
                         android:layout_alignParentStart="true"
+                        android:layout_centerInParent="true"
                         android:layout_toStartOf="@+id/fragment_profile_details_edit_profile"
-                        android:layout_centerInParent="true" />
+                        android:text="@string/name"
+                        android:textAlignment="center"
+                        />
+
+                    <EditText
+                        android:id="@+id/fragment_profile_details_profile_name_edit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_toStartOf="@+id/fragment_profile_details_save_profile"
+                        android:autofillHints="username"
+                        android:hint="@string/fragment_profile_details_username_placeholder"
+                        android:inputType="textPersonName"
+                        android:text="@string/fragment_profile_details_username_placeholder"
+                        android:textAlignment="center"
+                        android:visibility="gone" />
 
                     <Button
                         android:id="@+id/fragment_profile_details_edit_profile"
@@ -95,8 +111,22 @@
                         app:iconGravity="textStart"
                         app:iconPadding="0dp"
                         app:shapeAppearanceOverlay="@style/Circular"
-                        android:layout_alignParentEnd="true"
+                        android:layout_toStartOf="@id/fragment_profile_details_cancel_modification"
                         android:contentDescription="@string/fragment_profile_details_profile_name_descriptions_save"
+                        android:layout_marginEnd="8sp"
+                        android:visibility="gone"
+                        />
+                    <Button
+                        android:id="@+id/fragment_profile_details_cancel_modification"
+                        android:layout_width="36dp"
+                        android:layout_height="48dp"
+                        android:inset="0dp"
+                        app:icon="@drawable/ic_baseline_cancel_24"
+                        app:iconGravity="textStart"
+                        app:iconPadding="0dp"
+                        app:shapeAppearanceOverlay="@style/Circular"
+                        android:layout_alignParentEnd="true"
+                        android:contentDescription="@string/fragment_profile_details_profile_name_descriptions_cancel"
                         android:visibility="gone"
                         />
                 </RelativeLayout>
@@ -142,13 +172,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:gravity="center">
+            android:layout_marginRight="10dp">
             <TextView
                 android:id="@+id/fragment_profile_details_profile_description"
                 android:layout_width="385dp"
                 android:layout_height="87dp"
                 android:text="@string/profile_description"
+                android:layout_alignParentStart="true"
+
+                />
+
+            <EditText
+                android:id="@+id/fragment_profile_details_profile_description_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:autofillHints="user description"
+                android:hint="@string/fragment_profile_details_description_placeholder"
+                android:inputType="text"
+                android:text="@string/fragment_profile_details_description_placeholder"
+                android:visibility="gone"
                 />
         </RelativeLayout>
 
@@ -172,6 +215,16 @@
                     android:layout_marginEnd="20dp"
                     android:gravity="center"
                     android:ems="10"/>
+                <EditText
+                    android:id="@+id/fragment_profile_details_profile_email_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"
+                    android:text="@string/fragment_profile_details_email_placeholder"
+                    android:autofillHints="user email address"
+                    android:visibility="gone"
+                    android:hint="@string/fragment_profile_details_email_placeholder"
+                    />
 
                 <TextView
                     android:id="@+id/fragment_profile_details_profile_phone"
@@ -179,6 +232,16 @@
                     android:layout_height="40dp"
                     android:gravity="center"
                     android:ems="10"/>
+                <EditText
+                    android:id="@+id/fragment_profile_details_profile_phone_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone"
+                    android:text="@string/fragment_profile_details_phone_placeholder"
+                    android:autofillHints="user phone number"
+                    android:visibility="gone"
+                    android:hint="@string/fragment_profile_details_phone_placeholder"
+                    />
             </LinearLayout>
         </RelativeLayout>
 

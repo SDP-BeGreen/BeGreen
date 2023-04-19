@@ -52,13 +52,14 @@ class ConnectedUserViewModel: ViewModel() {
     /**
      * Function to modify the current user
      *
-     * Changing the current user will reset the current profile picture (i.e. set its value to null)
-     *
      * @param user The new current user
+     * @param keepCurrentPicture Boolean to tell whether when changing the user we wish to keep
+     *  the profile picture that is already there if there is one. False by default (i.e. will
+     *  reset the current profile picture)
      */
-    fun setCurrentUser(user: User) {
+    fun setCurrentUser(user: User, keepCurrentPicture: Boolean = false) {
         mutableCurrentUser.value = user
-        mutableCurrentUserProfilePicture.value = null
+        if (!keepCurrentPicture) mutableCurrentUserProfilePicture.value = null
     }
 
     /**
