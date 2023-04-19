@@ -2,7 +2,6 @@ package com.github.sdp_begreen.begreen.fragments
 
 import android.content.res.Resources
 import android.graphics.BitmapFactory
-import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -15,11 +14,9 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.databinding.FragmentUserBinding
 import com.github.sdp_begreen.begreen.firebase.DB
-import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
 import org.koin.java.KoinJavaComponent.inject
 import java.util.*
 
@@ -42,7 +39,7 @@ class UserViewAdapter(
             "erfs",
             "Look at me cleaning!",
             ParcelableDate(Date()),
-            User("0", 134, "SuperUser69", 0),
+            "0",
             "Déchet organique",
             "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
         ),
@@ -50,7 +47,7 @@ class UserViewAdapter(
             "erfs",
             "Look at me cleaning!",
             ParcelableDate(Date()),
-            User("0", 134, "SuperUser69", 0),
+            "0",
             "Déchet organique",
             "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
         ),
@@ -58,7 +55,7 @@ class UserViewAdapter(
             "erfs",
             "Look at me cleaning!",
             ParcelableDate(Date()),
-            User("0", 134, "SuperUser69", 0),
+            "0",
             "Déchet organique",
             "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
         ),
@@ -66,7 +63,7 @@ class UserViewAdapter(
             "erfs",
             "Look at me cleaning!",
             ParcelableDate(Date()),
-            User("0", 134, "SuperUser69", 0),
+            "0",
             "Déchet organique",
             "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
         ),
@@ -74,7 +71,7 @@ class UserViewAdapter(
             "erfs",
             "Look at me cleaning!",
             ParcelableDate(Date()),
-            User("0", 134, "SuperUser69", 0),
+            "0",
             "Déchet organique",
             "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
         ),
@@ -82,7 +79,7 @@ class UserViewAdapter(
             "erfs",
             "Look at me cleaning!",
             ParcelableDate(Date()),
-            User("0", 134, "SuperUser69", 0),
+            "0",
             "Déchet organique",
             "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
         ),
