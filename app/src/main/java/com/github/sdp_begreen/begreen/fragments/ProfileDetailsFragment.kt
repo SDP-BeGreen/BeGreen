@@ -31,7 +31,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.firebase.FirebaseDB
+import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.Actions
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
@@ -40,6 +40,7 @@ import com.github.sdp_begreen.begreen.utils.BitmapsUtils
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.github.sdp_begreen.begreen.viewModels.ProfileEditedValuesViewModel
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import java.util.Date
 
 
@@ -56,6 +57,7 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
     private val connectedUserViewModel:
             ConnectedUserViewModel by viewModels(ownerProducer = { requireActivity() })
     private val profileEditedValuesViewModel by viewModels<ProfileEditedValuesViewModel>()
+    private val db by inject<DB>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -223,7 +225,7 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
                     } else {
                         val img = user?.let { user ->
                             user.profilePictureMetadata?.let { pMetadata->
-                                FirebaseDB.getUserProfilePicture(pMetadata, user.id)
+                                db.getUserProfilePicture(pMetadata, user.id)
                             }
                         } ?: BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture)
                         profileImgView.setImageBitmap(BitmapsUtils.rescaleImage(img,
@@ -369,7 +371,7 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
 
             lifecycleScope.launch {
                 val metadata = profileEditedValuesViewModel.profilePicture?.let {
-                    FirebaseDB.storeUserProfilePicture(it, id,
+                    db.storeUserProfilePicture(it, id,
                         PhotoMetadata(takenBy = id, takenOn = ParcelableDate(Date()))
                     )
                 }
@@ -378,7 +380,7 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
                     profilePictureMetadata = metadata ?: profilePictureMetadata
                 )
                 // store the new User in firebase
-                FirebaseDB.addUser(newUserWithMetadata, id)
+                db.addUser(newUserWithMetadata, id)
                 // once stored, set again the new user along with his metadata in current
                 // user, for consistency
                 connectedUserViewModel.setCurrentUser(newUser, true)
