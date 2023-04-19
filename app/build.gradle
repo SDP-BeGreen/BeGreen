@@ -73,7 +73,8 @@ dependencies {
     implementation "androidx.fragment:fragment-ktx:1.5.6"
     debugImplementation "androidx.fragment:fragment-testing:1.5.6"
     androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
-    // Real time DB + storage + google authentificator (check the following link to add any other dependency:
+
+    // Real time DB + storage + google authenticator (check the following link to add any other dependency:
     // https://firebase.google.com/docs/android/setup#available-libraries
     implementation platform('com.google.firebase:firebase-bom:31.5.0')
     implementation 'com.google.firebase:firebase-analytics-ktx'
@@ -85,10 +86,9 @@ dependencies {
     // https://firebase.google.com/docs/auth/android/firebaseui?hl=fr
     // implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
 
-    // Google dependency. See link :
+    // Google Sign-in. See link :
     // https://developers.google.com/identity/sign-in/android/start-integrating
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
-    implementation 'com.google.android.gms:play-services-maps:18.1.0'
 
     // insert-koin
     implementation 'io.insert-koin:koin-core:3.4.0'
@@ -102,6 +102,10 @@ dependencies {
     testImplementation "org.mockito:mockito-core:5.2.0"
     testImplementation "org.mockito.kotlin:mockito-kotlin:4.1.0"
     androidTestImplementation 'org.mockito:mockito-android:5.2.0'
+
+    // Googlemaps
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
 
     // Paging
     implementation("androidx.paging:paging-runtime:3.1.1")
