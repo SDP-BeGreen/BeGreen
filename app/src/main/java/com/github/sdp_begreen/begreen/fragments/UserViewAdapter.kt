@@ -33,7 +33,9 @@ class UserViewAdapter(
     val lifecycleScope: LifecycleCoroutineScope,
     val resources: Resources
 ) : RecyclerView.Adapter<UserViewAdapter.ViewHolder>() {
+    //inject the database
     private val db by inject<DB>(DB::class.java)
+
     //TODO----------------FOR DEMO------------------------
     private val photos = listOf(
         PhotoMetadata(
@@ -100,8 +102,10 @@ class UserViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val user: User = users?.get(position) ?: return
+        //Set all attributes of the user
         holder.userScore.text = user.score.toString()
         holder.userName.text = user.displayName
+        //Set the user's profile picture asynchronously
         holder.userPhoto.let {
             lifecycleScope.launch {
                 val img = user.let { user ->
@@ -114,10 +118,17 @@ class UserViewAdapter(
                 it.setImageBitmap(img)
             }
         }
+        //Set the listener for the user to profile details
         holder.setListener(holder.itemView, position, user)
     }
 
     override fun getItemCount(): Int = users?.size ?: 0
+
+    /**
+     * ViewHolder for the user
+     * @param binding the binding for the user
+     * @return the ViewHolder
+     */
     inner class ViewHolder(binding: FragmentUserBinding) : RecyclerView.ViewHolder(binding.root) {
         val userScore: TextView = binding.userFragmentUserNumber
         val userName: TextView = binding.userFragmentContent
@@ -127,6 +138,7 @@ class UserViewAdapter(
             view.setOnClickListener {
                 parentFragmentManager?.commit {
                     setReorderingAllowed(true)
+                    //Go to the profile details fragment
                     replace(
                         R.id.mainFragmentContainer,
                         ProfileDetailsFragment.newInstance(user, photos)
