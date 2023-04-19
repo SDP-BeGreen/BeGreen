@@ -185,6 +185,23 @@ class ConnectedUserViewModelTest: KoinTest {
     }
 
     @Test
+    fun currentUserProfilePictureNotResetWhenAskNotToReset() {
+        runTest {
+            launch {
+                delay(15)
+                vm.setCurrentUser(user2, true)
+            }
+
+            assertThat(
+                // Here take only one, because the listener won't ever fire as we don't modify
+                // the profile picture when keepCurrentPicture is set to true
+                vm.currentUserProfilePicture.drop(1).take(1).toList(),
+                contains(fakePicture1)
+            )
+        }
+    }
+
+    @Test
     fun currentUserProfilePictureCorrectlyUpdatedUponNewAuth() {
         runTest {
             `when`(db.getUserProfilePicture(userPhotoMetadata2, userId3))

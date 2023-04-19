@@ -34,6 +34,7 @@
     <string name="send_message">Send</string>
     <string name="fragment_profile_details_profile_name_descriptions_edit">Button to switch to edit profile</string>
     <string name="fragment_profile_details_profile_name_descriptions_save">Button to save profile modification</string>
+    <string name="fragment_profile_details_profile_name_descriptions_cancel">Button to cancel the modification without saving</string>
     <string name="fragment_profile_details_ratingBar">Bar where the user rating are displayed</string>
     <string name="fragment_profile_details_take_picture">Button to take a profile picture</string>
     <string name="logout">Logout</string>
@@ -44,4 +45,9 @@
     <string name="user_current_location_error">Sorry, an error occurred. Unable to show the user location</string>
     <string name="location_permissions_not_granted">Please grant the location access permissions in the settings</string>
     <string name="toast_logout_info">Logging Out</string>
+    <string name="fragment_profile_details_username_placeholder">My Username</string>
+    <string name="fragment_profile_details_description_placeholder">My description</string>
+    <string name="fragment_profile_details_email_placeholder">My email</string>
+    <string name="fragment_profile_details_phone_placeholder">My Phone number</string>
+    <string name="fragment_profile_details_camera_permission_denied">Camera permission not granted, impossible to take a profile picture</string>
 </resources>
