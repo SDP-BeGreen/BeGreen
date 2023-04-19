@@ -82,6 +82,9 @@ class ProfileEditedValuesViewModel: ViewModel() {
     private fun resetValues() {
         displayName = null
         profilePicture = null
+        email = null
+        phone = null
+        description = null
     }
 
 }
