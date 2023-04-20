@@ -206,7 +206,7 @@ class MapFragment : Fragment() {
 
         } else {
 
-            val bin = Bin(0, BinType.PLASTIC, userLocation!!.latitude, userLocation!!.latitude)
+            val bin = Bin(0, BinType.PLASTIC, userLocation!!.latitude, userLocation!!.longitude)
             BinsFakeDatabase.addBin(bin)
             displayBinsMarkers(BinsFakeDatabase.fakeBins)
         }
