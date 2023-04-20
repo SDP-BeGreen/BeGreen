@@ -206,7 +206,7 @@ class FirebaseDBTest {
     }
 
     @Test
-    fun getAllUsersReturnTheSameNumberOfUsers() {
+    fun getAllUsersReturnNotEmptyListUser() {
         runBlocking {
             val users = FirebaseDB.getAllUsers()
             assertNotNull(users)

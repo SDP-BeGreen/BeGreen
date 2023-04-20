@@ -112,11 +112,9 @@ object FirebaseDB: DB {
         return try {
             withTimeout(timeout) {
                 val data = databaseReference.child(USERS_PATH).get().await()
-                val users = mutableListOf<User>()
-                data.children.forEach {
-                    users.add(it.getValue(User::class.java)!!)
+                data.children.map {
+                    it.getValue(User::class.java)!!
                 }
-                users
             }
         } catch (timeoutEx: TimeoutCancellationException) {
             Log.d(TAG, "Timeout, can't connect with database")
