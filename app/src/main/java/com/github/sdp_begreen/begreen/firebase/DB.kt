@@ -58,6 +58,17 @@ interface DB {
     suspend fun getUser(userId: String, timeout: Long = TIMEOUT): User?
 
     /**
+     * Retrieve the list of all the users [User] in the database
+     *
+     * @param timeout the maximum time we wait for the database to respond
+     * @return the list of all the users [User] in the database
+     *
+     * @throws DatabaseTimeoutException if the database could not be reached
+     * @throws DatabaseException if the an exception occurred while retrieving the data
+     */
+    suspend fun getAllUsers(timeout: Long = TIMEOUT): List<User>
+
+    /**
      * Store the profile picture for the given [User]
      *
      * @param image the profile picture to store

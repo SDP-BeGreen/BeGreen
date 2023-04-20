@@ -6,15 +6,14 @@ import android.os.Parcelable
 
 
 data class PhotoMetadata(var pictureId: String? = null, val title: String? = null,
-                         val takenOn: ParcelableDate? = null, val takenBy: User? = null,
-                         val category: String? = null, val description: String? = null,
-                         var picture: Bitmap? = null)
+                         val takenOn: ParcelableDate? = null, val takenBy: String? = null,
+                         val category: String? = null, val description: String? = null)
     : Parcelable, Comparable<PhotoMetadata> {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readString(),
         parcel.readParcelable(ParcelableDate::class.java.classLoader),
-        parcel.readParcelable(User::class.java.classLoader),
+        parcel.readString(),
         parcel.readString(),
         parcel.readString()
     )
@@ -23,7 +22,7 @@ data class PhotoMetadata(var pictureId: String? = null, val title: String? = nul
         parcel.writeString(pictureId)
         parcel.writeString(title)
         parcel.writeParcelable(takenOn, flags)
-        parcel.writeParcelable(takenBy, flags)
+        parcel.writeString(takenBy)
         parcel.writeString(category)
         parcel.writeString(description)
     }

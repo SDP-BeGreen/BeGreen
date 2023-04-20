@@ -89,6 +89,9 @@ class MainActivityTest {
                 // user between tests, by simply pushing a new userId
                 `when`(auth.getFlowUserIds())
                     .thenReturn(authUserFlow.onEach { delay(10) })
+
+                `when`(db.getAllUsers()).thenReturn(listOf(user1))
+
             }
         }
     }
@@ -107,6 +110,12 @@ class MainActivityTest {
     // Need permission for camera when testing launching profile fragment
     @get:Rule
     val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
+
+    @get:Rule
+    val fineLocationPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION)
+
+    @get:Rule
+    val coarseLocationPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_COARSE_LOCATION)
 
     @Test
     fun bottomNavigationBarVisible() {

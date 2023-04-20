@@ -19,21 +19,34 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.firebase.Auth
-import com.github.sdp_begreen.begreen.fragments.*
-import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.firebase.Auth
+import com.github.sdp_begreen.begreen.firebase.DB
+import com.github.sdp_begreen.begreen.fragments.AdviceFragment
+import com.github.sdp_begreen.begreen.fragments.CameraFragment
+import com.github.sdp_begreen.begreen.fragments.FollowersFragment
+import com.github.sdp_begreen.begreen.fragments.MapFragment
+import com.github.sdp_begreen.begreen.fragments.ProfileDetailsFragment
+import com.github.sdp_begreen.begreen.fragments.SettingsFragment
+import com.github.sdp_begreen.begreen.fragments.UserFragment
+import com.github.sdp_begreen.begreen.fragments.UserPhotoFragment
+import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 import java.util.*
+import java.util.Date
+
 
 class MainActivity : AppCompatActivity() {
     private val connectedUserViewModel by viewModels<ConnectedUserViewModel>()
     private val auth by inject<Auth>()
+    //TODO remove after demo
+    private val db by inject<DB>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +64,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val headerView: View = navigationView.getHeaderView(0)
-        // By starting to listen for flow changes, the information will lickely have
+        // By starting to listen for flow changes, the information will likely have
         // been prefetched for the first time we open the drawer
         setupDrawerUserInfo(
             headerView.findViewById(R.id.nav_drawer_profile_picture_imageview),
@@ -174,7 +187,7 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.bottomMenuFeed -> {
                 item.setIcon(R.drawable.ic_baseline_feed)
-                val photos = listOf(PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()),User("0",100, "SuperUser69"), "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()),User("0",100, "SuperUser69"), "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()),User("0",100, "SuperUser69"), "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()),User("0",100, "SuperUser69"), "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()),User("0",100, "SuperUser69"), "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"))
+                val photos = listOf(PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"))
                 replaceFragInMainContainer(UserPhotoFragment.newInstance(1, photos, true))
             }
             R.id.bottomMenuMap -> {
@@ -206,7 +219,7 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.mainNavDrawProfile -> {
                 connectedUserViewModel.currentUser.value?.also {
-                    val photos = listOf(PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()),User("0",100, "SuperUser69"), "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()),User("0",100, "SuperUser69"), "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"))
+                    val photos = listOf(PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"))
                     replaceFragInMainContainer(ProfileDetailsFragment.newInstance(it, photos))
                 }
             }
@@ -216,29 +229,7 @@ class MainActivity : AppCompatActivity() {
             //------------------------FOR DEMO PURPOSES ONLY------------------------
             //TODO Remove this when demo will be over
             R.id.mainNavDrawUserList -> {
-               val photoMetadata = PhotoMetadata("0", "title", ParcelableDate(Date()),User("0", 0, "Lui"), "Profile")
-                val desc = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed suscipit consectetur ante quis euismod. Morbi tincidunt orci sit amet libero elementum dictum. Quisque blandit ornare vehicula. Pellentesque eget auctor quam. Sed consequat bibendum risus, vitae scelerisque sapien pharetra a. Nullam pulvinar ultrices molestie."
-                val userList: List<User> = listOf(
-                    User("1",  1, "Alice", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("2",  43, "Bob", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("3",  330, "Charlie", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("4",  13, "Dylan", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("5",  2, "Evan", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("6",  5432, "Frederic", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("7",  35, "Gaelle", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("8",  3, "Hellen", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("9",  33, "Irene", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("10", 23,  "Julianne", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("1",  36, "Kennan", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("1",  14, "Léa", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("1",  845, "Manon", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("1",  376, "Ninon", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("1",  16, "Orianne", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("1",  96, "Pedro", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("1",  4, "Sullivan", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("1",  6, "Valentin", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                    User("1",  8, "Frank", 1, photoMetadata, desc, "cc@gmail.com", "08920939459802", 67, null, null),
-                )
+                val userList = runBlocking { db.getAllUsers() }
                 replaceFragInMainContainer(UserFragment.newInstance(1, userList.toCollection(ArrayList()), true))
             }
             //----------------------------------------------------------------------
