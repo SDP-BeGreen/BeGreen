@@ -1,6 +1,5 @@
 package com.github.sdp_begreen.begreen.adapters
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -54,7 +53,6 @@ class ExpandableListAdapter(
     }
 
     // Provides the view for the group header, including its icon and title.
-    @SuppressLint("InflateParams")
     override fun getGroupView(
         groupPosition: Int,
         isExpanded: Boolean,
@@ -67,7 +65,7 @@ class ExpandableListAdapter(
         // Inflate the group view if it hasn't been created yet.
         if (view == null) {
             val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            view = inflater.inflate(R.layout.list_group, null)
+            view = inflater.inflate(R.layout.list_group, parent, false)
         }
 
         // Set the icon and title for the group view.
@@ -81,7 +79,6 @@ class ExpandableListAdapter(
     }
 
     // Provides the view for each child (item) in the group.
-    @SuppressLint("InflateParams")
     override fun getChildView(
         groupPosition: Int,
         childPosition: Int,
@@ -95,7 +92,7 @@ class ExpandableListAdapter(
         // Inflate the item view if it hasn't been created yet.
         if (view == null) {
             val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            view = inflater.inflate(R.layout.list_item, null)
+            view = inflater.inflate(R.layout.list_item, parent, false)
         }
 
         // Set the title for the item view.
