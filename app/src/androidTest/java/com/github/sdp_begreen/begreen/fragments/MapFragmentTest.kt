@@ -65,6 +65,8 @@ class MapFragmentTest {
 
         onView(withId(R.id.addNewBinBtn)).check(matches(isDisplayed()))
 
+        Thread.sleep(5000)
+
         // Click on the addNewBinBtn
         onView(withId(R.id.addNewBinBtn)).perform(ViewActions.click())
 
