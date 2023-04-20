@@ -46,7 +46,7 @@ object BitmapsUtils {
 
     /**
      * Helper function to draw the [bitmap] image on the [canvas], and apply the corresponding
-     * translation and scaling to the image.g
+     * translation and scaling to the image.
      */
     private fun drawOnCanvasWithTransformations(canvas: Canvas, bitmap: Bitmap, scale: Float,
                              xTranslation: Float, yTranslation: Float) {
