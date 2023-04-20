@@ -6,6 +6,22 @@
     android:id="@+id/fragmentContainerView"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/quote_of_the_day_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/quotes_of_the_day"
+        android:gravity="center"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:paddingTop="32dp"
+        android:paddingBottom="16dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
+
     <ExpandableListView
         android:id="@+id/expandable_list1"
         android:layout_width="match_parent"
