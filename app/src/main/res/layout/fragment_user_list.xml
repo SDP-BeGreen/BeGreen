@@ -8,6 +8,7 @@
     android:layout_height="match_parent"
     android:layout_marginLeft="3dp"
     android:layout_marginRight="3dp"
+    android:layout_marginTop="25dp"
     app:layoutManager="LinearLayoutManager"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
