@@ -52,4 +52,5 @@
     <string name="fragment_profile_details_camera_permission_denied">Camera permission not granted, impossible to take a profile picture</string>
     <string name="score">score</string>
     <string name="username">Username</string>
+    <string name="add_new_bin">Add new bin</string>
 </resources>

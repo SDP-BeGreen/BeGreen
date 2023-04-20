@@ -11,6 +11,7 @@ import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.BinsFakeDatabase
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.models.Bin
 import com.github.sdp_begreen.begreen.models.BinType
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.equalTo
@@ -51,14 +52,9 @@ class MapFragmentTest {
         onView(withId(R.id.mapFragment)).check(matches(isDisplayed()))
     }
 
-    /*
-
-    This test doesn't pass on CI probably because "Google Map" has another name.
-    After some researches, I found that this feature is not testable in a clean way.
-
 
     @Test
-    fun clickOnMapAddsNewBin() {
+    fun clickOnAddNewBinBtnAddsNewBin() {
 
         val nbOfBinsOld = BinsFakeDatabase.fakeBins.size
 
@@ -67,12 +63,17 @@ class MapFragmentTest {
         // Wait until the map fragment is displayed
         onView(withId(R.id.mapFragment)).check(matches(isDisplayed()))
 
-        // Click on the map view
-        onView(withContentDescription("Google Map")).perform(ViewActions.click())
+        onView(withId(R.id.addNewBinBtn)).check(matches(isDisplayed()))
+
+        // Click on the addNewBinBtn
+        onView(withId(R.id.addNewBinBtn)).perform(ViewActions.click())
 
         val nbOfBinsNew = BinsFakeDatabase.fakeBins.size
 
         // Check that a new bin have been added
-        assertThat(nbOfBinsOld, lessThan(nbOfBinsNew))
-    }*/
+        assertThat(nbOfBinsNew, greaterThan(nbOfBinsOld))
+    }
+
+    // After some researches, it seems that detecting a click on a googlemaps marker is not possible
+    // in a clean way and is quite difficult. Therefore, the remove bin cannot be tested.
 }
