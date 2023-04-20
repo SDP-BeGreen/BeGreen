@@ -23,10 +23,10 @@ class FeedRepository{
      * and returning the results in the form of flow [Flow<PagingData<PhotoMetadata>>]
      * since the [PagingDataAdapter] accepts the [PagingData] as the source in later stage
      */
-    fun letPhotoMetadataFlow(pagingConfig: PagingConfig = getDefaultPageConfig()): Flow<PagingData<PhotoMetadata>> {
+    fun letPhotoMetadataFlow(posts: List<PhotoMetadata>, pagingConfig: PagingConfig = getDefaultPageConfig()): Flow<PagingData<PhotoMetadata>> {
         return Pager(
             config = pagingConfig,
-            pagingSourceFactory = { PostPagingSource(listOf()) }
+            pagingSourceFactory = { PostPagingSource(posts) }
         ).flow
     }
 

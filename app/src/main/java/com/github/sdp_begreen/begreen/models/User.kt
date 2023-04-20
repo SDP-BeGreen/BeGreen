@@ -5,7 +5,7 @@ import android.os.Parcelable
 
 //Need to be Parcelable to be passed as an argument to a fragment
 data class User (var id: String, var score: Int, val displayName: String? = null, var rating: Int = 0,
-                 var img: PhotoMetadata? = null, var description: String? = null, var phone: String? = null,
+                 var description: String? = null, var phone: String? = null,
                  var email: String? = null, var progression: Int = 0, var followers: List<User>? = null,
                  var following: List<User>? = null, var profilePictureMetadata: PhotoMetadata? = null,
                  var posts: List<PhotoMetadata>? = null) : Parcelable, Comparable<User> {
@@ -18,7 +18,6 @@ data class User (var id: String, var score: Int, val displayName: String? = null
         parcel.readInt(),
         parcel.readString(),
         parcel.readInt(),
-        parcel.readParcelable(PhotoMetadata::class.java.classLoader),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
@@ -43,7 +42,6 @@ data class User (var id: String, var score: Int, val displayName: String? = null
         parcel.writeInt(score)
         parcel.writeString(displayName)
         parcel.writeInt(rating)
-        parcel.writeParcelable(img, 0)
         parcel.writeString(description)
         parcel.writeString(phone)
         parcel.writeString(email)

@@ -11,7 +11,7 @@ private const val  STARTING_KEY = 0
 
 class PostPagingSource(var photos: List<PhotoMetadata>) : PagingSource<Int, PhotoMetadata>() {
     private val db by KoinJavaComponent.inject<DB>(DB::class.java)
-    private val currentPos = 0
+    private var currentPos = 0
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PhotoMetadata> {
         // Start paging with the STARTING_KEY if this is the first load
@@ -23,13 +23,11 @@ class PostPagingSource(var photos: List<PhotoMetadata>) : PagingSource<Int, Phot
         return try {
             // Load the data from the network
             for (i in   range) {
-                photoBatch += photos[i].also {
-                    it.picture = db.getImage(photos[i], photos[i].takenBy?.id?: "0")
-                }
-
+                photoBatch += photos[i]
             }
             // Get the next key for the next page
             val nextKey = if (photoBatch.isEmpty()) null else position + photoBatch.size
+            //currentPos += photoBatch.size
             // Return the data and next key
             LoadResult.Page(
                 photoBatch,

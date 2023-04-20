@@ -86,7 +86,7 @@ interface DB {
      * @param userId the ID of the user wanting to store a new image
      * @return a unique ID under which the image got stored, and null if the image couldn't get stored
      */
-    suspend fun addImage(image: Bitmap, userId: Int, metadata: PhotoMetadata): PhotoMetadata?
+    suspend fun addImage(image: Bitmap, userId: String, metadata: PhotoMetadata): PhotoMetadata?
 
     /**
      * Test whether a [User] exists in the database for the given [userId]

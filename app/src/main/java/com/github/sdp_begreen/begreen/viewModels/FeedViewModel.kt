@@ -3,6 +3,9 @@ package com.github.sdp_begreen.begreen.viewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.PagingData
+import com.github.sdp_begreen.begreen.data.FeedRepository
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
@@ -18,28 +21,18 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import org.koin.java.KoinJavaComponent
 
-class FeedViewModel( private val currentUser: StateFlow<User?>) : ViewModel() {
+@ExperimentalPagingApi
+class FeedViewModel( private val currentUser: StateFlow<User?>,
+                     val repository: FeedRepository = FeedRepository.getInstance()
+) : ViewModel() {
 
-    private val db by KoinJavaComponent.inject<DB>(DB::class.java)
-    private val auth by KoinJavaComponent.inject<Auth>(Auth::class.java)
-
-    private val feedPosts : MutableList<PhotoMetadata> = mutableListOf()
-
-    //Need to be cached
-    val sortedFeedPosts: List<PhotoMetadata?> = feedPosts.also {
-        getFeedPosts(); orderFeedPosts()
-    }
-
-
-    private fun getFeedPosts() {
-        currentUser.value?.let { cur_user ->
-            cur_user.followers?.onEach { user ->
-                user.posts?.let { feedPosts.addAll(it) }
+    fun fetchFeed(): Flow<PagingData<PhotoMetadata>> {
+        val feedPosts : List<PhotoMetadata> = currentUser.value?.let { cur_user ->
+            cur_user.following?.flatMap { user ->
+                user.posts ?: emptyList()
             }
-        }
-    }
+        } ?: emptyList()
 
-    private fun orderFeedPosts() {
-        feedPosts.sort()
+        return repository.letPhotoMetadataFlow(feedPosts.sorted())
     }
 }
