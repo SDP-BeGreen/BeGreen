@@ -168,7 +168,7 @@ class MainActivityTest {
                 .check(matches(isDisplayed()))
                 .perform(click())
 
-            onView(withId(R.id.adviceFragment)).check(matches(isDisplayed()))
+            onView(withId(R.id.fragmentContainerView)).check(matches(isDisplayed()))
 
             onView(withId(R.id.bottomMenuCamera))
                 .perform(click())
