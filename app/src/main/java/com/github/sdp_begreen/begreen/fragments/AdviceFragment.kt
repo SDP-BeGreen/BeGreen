@@ -185,7 +185,7 @@ class AdviceFragment : Fragment() {
          * this fragment using the provided parameters.
          *
          * @param list of quotes.
-         * @return A new instance of fragment FavoriteFragment.
+         * @return A new instance of fragment AdviceFragment.
          */
         @JvmStatic
         fun newInstance(list: ArrayList<String>) =
