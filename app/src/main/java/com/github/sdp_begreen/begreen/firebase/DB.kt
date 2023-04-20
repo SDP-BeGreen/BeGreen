@@ -69,6 +69,19 @@ interface DB {
     suspend fun getAllUsers(timeout: Long = TIMEOUT): List<User>
 
     /**
+     * Retrieve the list of all users that have [nameOrEmail] as substring in their name and/or email
+     *
+     * @param nameOrEmail the string that every returned User should have in his name and/or email
+     * @param timeout the maximum time we wait for the database to respond
+     * @return the list of users that have matching names or emails
+     *
+     * @throws DatabaseTimeoutException if the database could not be reached
+     * @throws DatabaseException if the an exception occurred while retrieving the data
+     *
+     */
+    suspend fun findUserByNameOrEmail(nameOrEmail: String, timeout: Long = TIMEOUT): List<User>
+
+    /**
      * Store the profile picture for the given [User]
      *
      * @param image the profile picture to store

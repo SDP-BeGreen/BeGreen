@@ -126,6 +126,13 @@ object FirebaseDB: DB {
         }
     }
 
+    override suspend fun findUserByNameOrEmail(nameOrEmail: String, timeout: Long): List<User> {
+        return getAllUsers(timeout).filter {
+            it.email?.contains(nameOrEmail) ?: false ||
+            it.displayName?.contains(nameOrEmail) ?: false
+        }
+    }
+
     override suspend fun storeUserProfilePicture(image: Bitmap, userId: String, metadata: PhotoMetadata): PhotoMetadata? {
         if (userId.isBlank())
             throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
