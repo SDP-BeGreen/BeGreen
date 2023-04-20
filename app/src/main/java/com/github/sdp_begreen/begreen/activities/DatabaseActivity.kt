@@ -48,7 +48,7 @@ class DatabaseActivity : AppCompatActivity() {
             bitmap.eraseColor(Color.RED)
 
             lifecycleScope.launch {
-                imageId = FirebaseDB.addImage(bitmap, 3,
+                imageId = FirebaseDB.addImage(bitmap, "3",
                     PhotoMetadata(null, null, null, null,"Plastic bottle",null))
             }
         }
