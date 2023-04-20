@@ -9,8 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.models.User
+
 
 /**
  * A fragment representing a list of Items.
@@ -54,7 +56,7 @@ class UserFragment : Fragment() {
                 }
                 // Set the adapter of the RecyclerView to a new instance of UserViewAdapter,
                 // passing the list of users from the Fragment arguments as a parameter.
-                    adapter = UserViewAdapter(userList, parentFragmentManager)
+                    adapter = UserViewAdapter(userList, parentFragmentManager, lifecycleScope, resources)
             }
         }
         return view

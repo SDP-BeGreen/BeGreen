@@ -89,6 +89,9 @@ class MainActivityTest {
                 // user between tests, by simply pushing a new userId
                 `when`(auth.getFlowUserIds())
                     .thenReturn(authUserFlow.onEach { delay(10) })
+
+                `when`(db.getAllUsers()).thenReturn(listOf(user1))
+
             }
         }
     }
