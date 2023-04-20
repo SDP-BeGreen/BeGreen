@@ -24,26 +24,42 @@ class ExpandableListAdapter(
 
     // Returns the number of children (items) in a particular group.
     override fun getChildrenCount(groupPosition: Int): Int {
+        if (groupPosition < 0 || groupPosition >= groups.size) {
+            throw IllegalArgumentException()
+        }
         return groups[groupPosition].items.size
     }
 
+
     // Returns the group object at the specified position.
     override fun getGroup(groupPosition: Int): Any {
+        if (groupPosition < 0 || groupPosition >= groups.size) {
+            throw IllegalArgumentException()
+        }
         return groups[groupPosition]
     }
 
     // Returns the child (item) object in the specified group and child position.
     override fun getChild(groupPosition: Int, childPosition: Int): Any {
+        if (groupPosition < 0 || groupPosition >= groups.size) {
+            throw IllegalArgumentException()
+        }
         return groups[groupPosition].items[childPosition]
     }
 
     // Returns a unique identifier for a group.
     override fun getGroupId(groupPosition: Int): Long {
+        if (groupPosition < 0 || groupPosition >= groups.size) {
+            throw IllegalArgumentException()
+        }
         return groupPosition.toLong()
     }
 
     // Returns a unique identifier for a child (item) within a group.
     override fun getChildId(groupPosition: Int, childPosition: Int): Long {
+        if (groupPosition < 0 || groupPosition >= groups.size) {
+            throw IllegalArgumentException()
+        }
         return childPosition.toLong()
     }
 
@@ -105,6 +121,9 @@ class ExpandableListAdapter(
 
     // Indicates whether a child (item) is selectable.
     override fun isChildSelectable(groupPosition: Int, childPosition: Int): Boolean {
+        if (groupPosition < 0 || groupPosition >= groups.size) {
+            throw IllegalArgumentException()
+        }
         return true
     }
 }
