@@ -40,15 +40,6 @@ import org.mockito.Mockito
 @LargeTest
 class CameraFragmentTest {
 
-    private val db: DB = Mockito.mock(DB::class.java)
-
-    @get:Rule
-    val koinTestRule = KoinTestRule(
-        modules = listOf(module {
-            single {db}
-        })
-    )
-
     @get:Rule
     val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
 
@@ -66,34 +57,6 @@ class CameraFragmentTest {
     @After
     fun tearDown() {
         Intents.release()
-    }
-
-    @Test
-    fun works() {
-        runBlocking {
-            val advices = setOf("Advice1", "Advice2", "Advice3")
-            Mockito.`when`(db.getAdvices()).thenReturn(advices)
-
-            launchFragmentInContainer<AdviceFragment>()
-
-            withTimeout(5000) {
-                // get the advices retrieved from the database
-                // Find the TextView by its ID and check if it's displayed
-                onView(withId(R.id.adviceFragmentTextView)).check(
-                    ViewAssertions.matches(
-                        ViewMatchers.isDisplayed()
-                    )
-                )
-                // Check if the TextView has text that is contained in the stringList
-                onView(withId(R.id.adviceFragmentTextView)).check(
-                    ViewAssertions.matches(
-                        ViewMatchers.withText(
-                    ContainsStringFromCollectionMatcher.hasStringFromCollection(advices)
-                )
-                    )
-                )
-            }
-        }
     }
 
     @Test
