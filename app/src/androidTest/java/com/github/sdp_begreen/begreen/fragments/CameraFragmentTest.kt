@@ -11,14 +11,21 @@ import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.activities.SharePostActivity
+import com.github.sdp_begreen.begreen.firebase.DB
+import com.github.sdp_begreen.begreen.matchers.ContainsStringFromCollectionMatcher
+import com.github.sdp_begreen.begreen.rules.KoinTestRule
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 import org.junit.After
@@ -26,10 +33,21 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.dsl.module
+import org.mockito.Mockito
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class CameraFragmentTest {
+
+    private val db: DB = Mockito.mock(DB::class.java)
+
+    @get:Rule
+    val koinTestRule = KoinTestRule(
+        modules = listOf(module {
+            single {db}
+        })
+    )
 
     @get:Rule
     val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
@@ -48,6 +66,34 @@ class CameraFragmentTest {
     @After
     fun tearDown() {
         Intents.release()
+    }
+
+    @Test
+    fun works() {
+        runBlocking {
+            val advices = setOf("Advice1", "Advice2", "Advice3")
+            Mockito.`when`(db.getAdvices()).thenReturn(advices)
+
+            launchFragmentInContainer<AdviceFragment>()
+
+            withTimeout(5000) {
+                // get the advices retrieved from the database
+                // Find the TextView by its ID and check if it's displayed
+                onView(withId(R.id.adviceFragmentTextView)).check(
+                    ViewAssertions.matches(
+                        ViewMatchers.isDisplayed()
+                    )
+                )
+                // Check if the TextView has text that is contained in the stringList
+                onView(withId(R.id.adviceFragmentTextView)).check(
+                    ViewAssertions.matches(
+                        ViewMatchers.withText(
+                    ContainsStringFromCollectionMatcher.hasStringFromCollection(advices)
+                )
+                    )
+                )
+            }
+        }
     }
 
     @Test
