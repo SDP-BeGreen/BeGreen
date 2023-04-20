@@ -36,7 +36,7 @@ class AdviceFragment : Fragment() {
 
         expandableListView = view.findViewById(R.id.expandable_list1)
 
-        val groups = getGroups() // Replace this with your data source
+        val groups = getGroups()
 
         adapter = ExpandableListAdapter(requireContext(), groups)
         expandableListView.setAdapter(adapter)
@@ -45,7 +45,6 @@ class AdviceFragment : Fragment() {
     }
 
     private fun getGroups(): List<Group> {
-        // Replace this with your data source
         val groupFood = Group(R.drawable.baseline_fastfood_24, "Food", listOf(Item("1.\t\"Eat food. Not too much. Mostly plants.\" - Michael Pollan"),
             Item("2.\t\"The greatest change we need to make is from consumption to production, even if on a small scale, in our own gardens.\" - Bill Mollison"),
             Item("3.\t\"The solution to climate change is right beneath our feet.\" - Dr. Vandana Shiva"),
