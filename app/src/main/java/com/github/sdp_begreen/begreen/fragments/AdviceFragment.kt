@@ -27,8 +27,10 @@ class AdviceFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_advice, container, false)!!
 
+        // TO DO : refactor to get quotes from database
         /*val adviceFragmentTextView = view.findViewById<TextView>(R.id.adviceFragmentTextView)
 
+        // TO DO : generate a random quote per category
         // Sets the text of the adviceFragmentTextView to a random string from the adviceList variable.
         arguments?.also { it.getStringArrayList(QUOTES)?.also { list ->  adviceFragmentTextView.text =
             list[Random.nextInt(list.size)]

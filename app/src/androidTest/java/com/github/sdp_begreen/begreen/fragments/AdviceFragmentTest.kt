@@ -14,6 +14,7 @@ import org.junit.runner.RunWith
 import org.koin.dsl.module
 import org.mockito.Mockito.mock
 import androidx.fragment.app.testing.launchFragmentInContainer
+import androidx.test.espresso.action.ViewActions.click
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import org.mockito.Mockito.`when`
@@ -39,31 +40,13 @@ class AdviceFragmentTest {
             launchFragmentInContainer<AdviceFragment>()
 
             withTimeout(5000) {
-                // get the advices retrieved from the database
-                // Find the TextView by its ID and check if it's displayed
-                onView(withId(R.id.expandable_list1)).check(matches(isDisplayed()))
-                // Check if the TextView has text that is contained in the stringList
-//                onView(withId(R.id.expandable_list1)).check(matches(withText(
-//                    hasStringFromCollection(advices)
-//                )))
+                // get the advices retrieved from the database -> To be done next Sprint
+
+                onView(withId(R.id.fragmentContainerView)).check(matches(isDisplayed()))
+                // Find the expandable_lists by its ID and check if it's displayed
+                onView(withId(R.id.expandable_list1)).perform(click()).check(matches(isDisplayed()))
+
             }
         }
     }
-//
-//    @get:Rule
-//    val activityRule = ActivityScenarioRule(MainActivity::class.java)
-//
-//    @Test
-//    fun testFragmentIsDisplayed() {
-//        onView(withId(R.id.fragmentContainerView))
-//            .check(matches(isDisplayed()))
-//        onView(withId(R.id.expandable_list1))
-//            .check(matches(isDisplayed()))
-//    }
-//
-//    @Test
-//    fun testFragmentText() {
-//        onView(withId(R.id.expandable_list1))
-//            .check(matches(withText("Food")))
-//    }
 }
