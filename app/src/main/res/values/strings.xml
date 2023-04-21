@@ -53,5 +53,6 @@
     <string name="list_group_icon">list group icon</string>
     <string name="score">score</string>
     <string name="username">Username</string>
+    <string name="add_new_bin">Add new bin</string>
     <string name="quotes_of_the_day">Quotes of the day</string>
 </resources>
