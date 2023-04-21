@@ -50,7 +50,9 @@
     <string name="fragment_profile_details_email_placeholder">My email</string>
     <string name="fragment_profile_details_phone_placeholder">My Phone number</string>
     <string name="fragment_profile_details_camera_permission_denied">Camera permission not granted, impossible to take a profile picture</string>
+    <string name="list_group_icon">list group icon</string>
     <string name="score">score</string>
     <string name="username">Username</string>
-    <string name="search_user">Search user...</string>
+    <string name="search_user">Search user…</string>
+    <string name="quotes_of_the_day">Quotes of the day</string>
 </resources>
