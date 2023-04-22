@@ -25,6 +25,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.runner.RunWith
+import kotlin.test.assertContains
 
 
 @RunWith(AndroidJUnit4::class)
@@ -213,4 +214,14 @@ class FirebaseDBTest {
             assertThat(users.size, `is`(not(0)))
         }
     }
+
+    @Test
+    fun findUserByNameReturnsExpectedUsers() {
+        runBlocking {
+            val usernames = FirebaseDB.findUserByName("User").map { user -> user.id }
+
+            assertThat(usernames, hasItems("r32POH2SnXu9dSLTxa1GMOQgg8cp", "VaRgQioAuiGtfDlv5uNuosNsACCJ"))
+        }
+    }
+
 }

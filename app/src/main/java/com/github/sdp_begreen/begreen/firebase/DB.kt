@@ -79,7 +79,7 @@ interface DB {
      * @throws DatabaseException if the an exception occurred while retrieving the data
      *
      */
-    suspend fun findUserByNameOrEmail(nameOrEmail: String, timeout: Long = TIMEOUT): List<User>
+    suspend fun findUserByName(name: String, timeout: Long = TIMEOUT): List<User>
 
     /**
      * Store the profile picture for the given [User]

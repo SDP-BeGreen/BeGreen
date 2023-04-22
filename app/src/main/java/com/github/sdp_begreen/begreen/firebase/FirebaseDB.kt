@@ -126,10 +126,9 @@ object FirebaseDB: DB {
         }
     }
 
-    override suspend fun findUserByNameOrEmail(nameOrEmail: String, timeout: Long): List<User> {
+    override suspend fun findUserByName(name: String, timeout: Long): List<User> {
         return getAllUsers(timeout).filter {
-            it.email?.contains(nameOrEmail) ?: false ||
-            it.displayName?.contains(nameOrEmail) ?: false
+            it.displayName?.contains(name) ?: false
         }
     }
 
