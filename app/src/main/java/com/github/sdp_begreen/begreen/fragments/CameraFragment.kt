@@ -89,7 +89,6 @@ class CameraFragment : Fragment() {
     private suspend fun setUpSearchBar(view: View) {
 
         val users = db.getAllUsers()
-
         val adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, users)
 
         //Getting the instance of AutoCompleteTextView
@@ -98,7 +97,6 @@ class CameraFragment : Fragment() {
         actv.threshold = 1
         // Setting the adapter data into the AutoCompleteTextView
         actv.setAdapter(adapter)
-
     }
 
     /**
