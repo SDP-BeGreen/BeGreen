@@ -69,11 +69,11 @@ interface DB {
     suspend fun getAllUsers(timeout: Long = TIMEOUT): List<User>
 
     /**
-     * Retrieve the list of all users that have [nameOrEmail] as substring in their name and/or email
+     * Retrieve the list of all users that have [name] as substring in their username
      *
-     * @param nameOrEmail the string that every returned User should have in his name and/or email
+     * @param name the string that every returned User should have in his name
      * @param timeout the maximum time we wait for the database to respond
-     * @return the list of users that have matching names or emails
+     * @return the list of users that have matching names
      *
      * @throws DatabaseTimeoutException if the database could not be reached
      * @throws DatabaseException if the an exception occurred while retrieving the data
