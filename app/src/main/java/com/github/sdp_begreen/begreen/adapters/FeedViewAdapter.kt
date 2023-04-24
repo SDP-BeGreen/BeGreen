@@ -1,4 +1,4 @@
-package com.github.sdp_begreen.begreen.fragments
+package com.github.sdp_begreen.begreen.adapters
 
 import android.view.LayoutInflater
 import android.view.View

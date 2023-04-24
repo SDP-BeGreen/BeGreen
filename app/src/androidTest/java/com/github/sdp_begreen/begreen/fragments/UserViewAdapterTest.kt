@@ -19,6 +19,7 @@ import org.junit.Test
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import androidx.lifecycle.testing.TestLifecycleOwner
+import com.github.sdp_begreen.begreen.adapters.UserViewAdapter
 
 class UserViewAdapterTest {
     @get:Rule

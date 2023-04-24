@@ -101,7 +101,7 @@ class FirebaseDBTest {
 
     @Test
     fun retrieveUserAfterSetShouldMatch() {
-        val user = User("1",  100, "User Test", 10, null, "description", "0076286372", "test@email.com", 1, null, null)
+        val user = User("1",  100, "User Test", 10, "description",  "0076286372", "test@email.com", 1, null, null)
 
         runBlocking {
             FirebaseDB.addUser(user, user.id)

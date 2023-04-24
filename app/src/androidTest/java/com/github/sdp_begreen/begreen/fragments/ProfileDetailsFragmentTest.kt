@@ -75,7 +75,7 @@ class ProfileDetailsFragmentTest {
             142,
             "Alice",
             56,
-            photos[0],
+            dphotos[0],
             "Description poutou poutou",
             "08920939459802",
             "cc@gmail.com",

@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.adapters.UserPhotosViewAdapter
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import kotlin.collections.ArrayList
 

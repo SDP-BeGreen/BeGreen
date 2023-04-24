@@ -8,6 +8,7 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.adapters.FeedViewAdapter
 import com.github.sdp_begreen.begreen.viewModels.FeedViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged

@@ -1,4 +1,4 @@
-package com.github.sdp_begreen.begreen.fragments
+package com.github.sdp_begreen.begreen.adapters
 
 import android.graphics.BitmapFactory
 import android.os.StrictMode
