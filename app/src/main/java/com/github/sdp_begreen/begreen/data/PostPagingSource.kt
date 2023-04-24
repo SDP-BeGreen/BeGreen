@@ -8,10 +8,10 @@ import org.koin.java.KoinJavaComponent
 
 private const val  STARTING_KEY = 0
 
-
+/**
+ * A PagingSource that loads data from the network.
+ */
 class PostPagingSource(var photos: List<PhotoMetadata>) : PagingSource<Int, PhotoMetadata>() {
-    private val db by KoinJavaComponent.inject<DB>(DB::class.java)
-    private var currentPos = 0
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PhotoMetadata> {
         // Start paging with the STARTING_KEY if this is the first load
@@ -46,6 +46,6 @@ class PostPagingSource(var photos: List<PhotoMetadata>) : PagingSource<Int, Phot
      */
     private fun ensureValidKey(key: Int) = Integer.max(STARTING_KEY, key)
     override fun getRefreshKey(state: PagingState<Int, PhotoMetadata>): Int? {
-        TODO("Not yet implemented")
+        return state.anchorPosition
     }
 }

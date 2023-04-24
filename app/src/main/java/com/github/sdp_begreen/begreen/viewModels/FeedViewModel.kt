@@ -21,18 +21,22 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import org.koin.java.KoinJavaComponent
 
+/**
+ * ViewModel that will be used to retrieve the feed of the current user
+ */
 @ExperimentalPagingApi
-class FeedViewModel( private val currentUser: StateFlow<User?>,
-                     val repository: FeedRepository = FeedRepository.getInstance()
+class FeedViewModel(private val currentUser: StateFlow<User?> = ConnectedUserViewModel().currentUser,
+                    private val repository: FeedRepository = FeedRepository.getInstance()
 ) : ViewModel() {
 
+    /** Function to retrieve the feed of the current user */
     fun fetchFeed(): Flow<PagingData<PhotoMetadata>> {
         val feedPosts : List<PhotoMetadata> = currentUser.value?.let { cur_user ->
             cur_user.following?.flatMap { user ->
                 user.posts ?: emptyList()
             }
         } ?: emptyList()
-
-        return repository.letPhotoMetadataFlow(feedPosts.sorted())
+        //sort it by date
+        return repository.letPhotoMetadataFlow(feedPosts.sortedBy { it.takenOn})
     }
 }

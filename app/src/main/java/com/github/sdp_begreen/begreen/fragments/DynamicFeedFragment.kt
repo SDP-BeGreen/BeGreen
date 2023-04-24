@@ -1,10 +1,8 @@
 package com.github.sdp_begreen.begreen.fragments
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.GridLayoutManager
@@ -22,7 +20,7 @@ import kotlinx.coroutines.launch
 @ExperimentalPagingApi
 class DynamicFeedFragment : Fragment(R.layout.fragment_user_photo_list) {
 
-    lateinit var rvDoggoRemote: RecyclerView
+    lateinit var rvFeedRemote: RecyclerView
     lateinit var remoteViewModel: FeedViewModel
     lateinit var adapter: FeedViewAdapter
 
@@ -30,10 +28,13 @@ class DynamicFeedFragment : Fragment(R.layout.fragment_user_photo_list) {
         super.onViewCreated(view, savedInstanceState)
         initMembers()
         setUpViews(view)
-        fetchDoggoImages()
+        fetchFeedImages()
     }
 
-    private fun fetchDoggoImages() {
+    /**
+     * Fetches the feed images from the remote api
+     */
+    private fun fetchFeedImages() {
         lifecycleScope.launch {
             remoteViewModel.fetchFeed().distinctUntilChanged().collectLatest {
                 adapter.submitData(it)
@@ -41,14 +42,20 @@ class DynamicFeedFragment : Fragment(R.layout.fragment_user_photo_list) {
         }
     }
 
+    /**
+     * Initializes the members
+     */
     private fun initMembers() {
         remoteViewModel = defaultViewModelProviderFactory.create(FeedViewModel::class.java)
         adapter = FeedViewAdapter()
     }
 
+    /**
+     * Sets up the views
+     */
     private fun setUpViews(view: View) {
-        rvDoggoRemote = view.findViewById(R.id.feed_list)
-        rvDoggoRemote.layoutManager = GridLayoutManager(context, 2)
-        rvDoggoRemote.adapter = adapter
+        rvFeedRemote = view.findViewById(R.id.feed_list)
+        rvFeedRemote.layoutManager = GridLayoutManager(context, 2)
+        rvFeedRemote.adapter = adapter
     }
 }

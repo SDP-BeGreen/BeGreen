@@ -18,12 +18,14 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.ExperimentalPagingApi
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.fragments.AdviceFragment
 import com.github.sdp_begreen.begreen.fragments.CameraFragment
+import com.github.sdp_begreen.begreen.fragments.DynamicFeedFragment
 import com.github.sdp_begreen.begreen.fragments.FollowersFragment
 import com.github.sdp_begreen.begreen.fragments.MapFragment
 import com.github.sdp_begreen.begreen.fragments.ProfileDetailsFragment
@@ -183,12 +185,14 @@ class MainActivity : AppCompatActivity() {
      * @param drawerLayout The drawer layout to interact which in the case of the
      *                      user menu being clicked
      */
+    @OptIn(ExperimentalPagingApi::class)
     private fun handleBottomMenuItemClicked(item: MenuItem, drawerLayout: DrawerLayout) {
         when (item.itemId) {
             R.id.bottomMenuFeed -> {
                 item.setIcon(R.drawable.ic_baseline_feed)
-                val photos = listOf(PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"))
-                replaceFragInMainContainer(UserPhotoFragment.newInstance(1, photos, true))
+                //val photos = listOf(PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"))
+                //replaceFragInMainContainer(UserPhotoFragment.newInstance(1, photos, true))
+                replaceFragInMainContainer(DynamicFeedFragment())
             }
             R.id.bottomMenuMap -> {
                 item.setIcon(R.drawable.ic_baseline_map)

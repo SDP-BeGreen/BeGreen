@@ -14,7 +14,7 @@ class FeedRepository{
         const val DEFAULT_PAGE_INDEX = 1
         const val DEFAULT_PAGE_SIZE = 20
 
-        //get doggo repository instance
+        //get feed repository instance
         fun getInstance() = FeedRepository()
     }
 
@@ -40,7 +40,7 @@ class FeedRepository{
     //fun letPhotoMetadataFlowDb(pagingConfig: PagingConfig = getDefaultPageConfig()): Flow<PagingData<PhotoMetadata>> {
     //    if (db == null) throw IllegalStateException("Database is not initialized")
 //
-    //    val pagingSourceFactory = { appDatabase.getDoggoImageModelDao().getAllDoggoModel() }
+    //    val pagingSourceFactory = { appDatabase.getImageModelDao().getAllDoggoModel() }
     //    return Pager(
     //        config = pagingConfig,
     //        pagingSourceFactory = pagingSourceFactory,

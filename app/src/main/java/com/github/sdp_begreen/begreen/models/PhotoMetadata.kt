@@ -8,7 +8,7 @@ import android.os.Parcelable
 data class PhotoMetadata(var pictureId: String? = null, val title: String? = null,
                          val takenOn: ParcelableDate? = null, val takenBy: String? = null,
                          val category: String? = null, val description: String? = null)
-    : Parcelable, Comparable<PhotoMetadata> {
+    : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readString(),
@@ -31,6 +31,21 @@ data class PhotoMetadata(var pictureId: String? = null, val title: String? = nul
         return 0
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as PhotoMetadata
+
+        if (pictureId != other.pictureId) return false
+        if (title != other.title) return false
+        if (takenOn != other.takenOn) return false
+        if (takenBy != other.takenBy) return false
+        if (category != other.category) return false
+        if (description != other.description) return false
+
+        return true
+    }
 
 
     companion object CREATOR : Parcelable.Creator<PhotoMetadata> {
@@ -43,8 +58,6 @@ data class PhotoMetadata(var pictureId: String? = null, val title: String? = nul
         }
     }
 
-    override fun compareTo(other: PhotoMetadata): Int {
-        return takenOn?.date?.compareTo(other.takenOn?.date) ?: 0
-    }
+
 
 }
