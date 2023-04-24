@@ -8,11 +8,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.github.sdp_begreen.begreen.BinsFakeDatabase
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.models.Bin
+import com.github.sdp_begreen.begreen.models.BinType
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -22,6 +26,8 @@ import com.google.android.gms.maps.model.LatLng
 
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.MarkerOptions
 
 
 /**
@@ -39,6 +45,10 @@ class MapFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var lastLocation: Location
 
+    private lateinit var addNewBinBtn : Button
+
+    private var userLocation : Location? = null
+
     private val mapReadyCallback = OnMapReadyCallback { googleMap ->
         /**
          * Manipulates the map once available.
@@ -50,6 +60,9 @@ class MapFragment : Fragment() {
         map.uiSettings.isZoomControlsEnabled = true
 
         checkUserLocationPermissions()
+
+        displayBinsMarkers(BinsFakeDatabase.fakeBins)
+        setupAddBinBtn()
     }
 
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -76,6 +89,18 @@ class MapFragment : Fragment() {
 
         // Get the localisation of the user
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+    }
+
+    /**
+     * Helper function to setup the behavior of the "Add new post" button
+     */
+    private fun setupAddBinBtn() {
+
+        // If the user clicks on the "Add new bin" button it will add a new bin with its marker
+        addNewBinBtn = requireView().findViewById(R.id.addNewBinBtn)
+        addNewBinBtn.setOnClickListener {
+            addNewBin()
+        }
     }
 
     /**
@@ -106,6 +131,7 @@ class MapFragment : Fragment() {
         map.isMyLocationEnabled = true
         fusedLocationClient.lastLocation.addOnSuccessListener(requireActivity()) { location ->
             displayBlueDotLocation(location)
+            userLocation = location
         }
     }
 
@@ -121,6 +147,68 @@ class MapFragment : Fragment() {
         } else {
 
             Toast.makeText(requireActivity(), getString(R.string.user_current_location_error), Toast.LENGTH_LONG).show()
+        }
+    }
+
+    /**
+     * Helper functions that displays bins markers on the map
+     */
+    private fun displayBinsMarkers(bins: Set<Bin>) {
+
+        // Clear old bins so we don't display removed or duplicates bins
+        map.clear()
+
+        for (bin in bins) {
+
+            val location = LatLng(bin.lat, bin.long)
+
+            val marker = map.addMarker(
+                MarkerOptions()
+                    .position(location)
+                    .title(bin.type.toString())
+                    .icon(BitmapDescriptorFactory.defaultMarker(bin.type.markerColor))
+            )
+
+            marker!!.tag = bin.id
+        }
+
+        // Setup the markers click listener action
+        setupMarkersClick()
+    }
+
+    /**
+     * Helper function that setups a marker click listener action
+     */
+    private fun setupMarkersClick() {
+
+        // Delete a bin when the user clicks on the associated marker
+        map.setOnMarkerClickListener { marker ->
+
+            // Remove the bin associated to this marker
+            BinsFakeDatabase.removeBin(marker.tag as Int)
+            displayBinsMarkers(BinsFakeDatabase.fakeBins)
+
+            true // Return true to indicate that the event has been handled
+        }
+    }
+
+    /**
+     * Helper function that add a bin marker to the user current location
+     */
+    private fun addNewBin() {
+
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED) {
+
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+
+        } else {
+
+            val bin = Bin(0, BinType.PLASTIC, userLocation!!.latitude, userLocation!!.longitude)
+            BinsFakeDatabase.addBin(bin)
+            displayBinsMarkers(BinsFakeDatabase.fakeBins)
         }
     }
 }
