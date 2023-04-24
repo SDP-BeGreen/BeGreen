@@ -215,13 +215,4 @@ class FirebaseDBTest {
         }
     }
 
-    @Test
-    fun findUserByNameReturnsExpectedUsers() {
-        runBlocking {
-            val usernames = FirebaseDB.findUserByName("User").map { user -> user.id }
-
-            assertThat(usernames, hasItems("r32POH2SnXu9dSLTxa1GMOQgg8cp", "VaRgQioAuiGtfDlv5uNuosNsACCJ"))
-        }
-    }
-
 }
