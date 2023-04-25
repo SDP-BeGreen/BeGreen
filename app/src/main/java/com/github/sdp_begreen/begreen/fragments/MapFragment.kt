@@ -13,10 +13,11 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.github.sdp_begreen.begreen.BinsFakeDatabase
+import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.models.Bin
-import com.github.sdp_begreen.begreen.models.BinType
+import com.github.sdp_begreen.begreen.firebase.DB
+import com.github.sdp_begreen.begreen.map.Bin
+import com.github.sdp_begreen.begreen.map.BinType
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -28,6 +29,8 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 
 /**
@@ -36,6 +39,9 @@ import com.google.android.gms.maps.model.MarkerOptions
  * create an instance of this fragment.
  */
 class MapFragment : Fragment() {
+
+    // Get the db instance
+    private val db by inject<DB>()
 
     companion object {
         private const val MAP_DEFAULT_ZOOM = 12f
@@ -61,7 +67,10 @@ class MapFragment : Fragment() {
 
         checkUserLocationPermissions()
 
-        displayBinsMarkers(BinsFakeDatabase.fakeBins)
+        //displayBinsMarkers(BinsFakeDatabase.fakeBins)
+        lifecycleScope.launch {
+            displayBinsMarkers(db.getAllBins())
+        }
         setupAddBinBtn()
     }
 
@@ -152,24 +161,20 @@ class MapFragment : Fragment() {
 
     /**
      * Helper functions that displays bins markers on the map
+     * Only called once when the view is created
      */
     private fun displayBinsMarkers(bins: Set<Bin>) {
 
-        // Clear old bins so we don't display removed or duplicates bins
-        map.clear()
-
         for (bin in bins) {
 
-            val location = LatLng(bin.lat, bin.long)
-
-            val marker = map.addMarker(
+            map.addMarker(
                 MarkerOptions()
-                    .position(location)
+                    .position(bin.location())
                     .title(bin.type.toString())
                     .icon(BitmapDescriptorFactory.defaultMarker(bin.type.markerColor))
-            )
-
-            marker!!.tag = bin.id
+            )?.apply {
+                tag = bin.id
+            }
         }
 
         // Setup the markers click listener action
@@ -184,9 +189,13 @@ class MapFragment : Fragment() {
         // Delete a bin when the user clicks on the associated marker
         map.setOnMarkerClickListener { marker ->
 
-            // Remove the bin associated to this marker
-            BinsFakeDatabase.removeBin(marker.tag as Int)
-            displayBinsMarkers(BinsFakeDatabase.fakeBins)
+            // Remove the bin from the database
+            lifecycleScope.launch {
+                db.removeBin(marker.tag as String)
+            }
+
+            // Remove the marker from the map
+            marker.remove()
 
             true // Return true to indicate that the event has been handled
         }
@@ -206,9 +215,24 @@ class MapFragment : Fragment() {
 
         } else {
 
-            val bin = Bin(0, BinType.PLASTIC, userLocation!!.latitude, userLocation!!.longitude)
-            BinsFakeDatabase.addBin(bin)
-            displayBinsMarkers(BinsFakeDatabase.fakeBins)
+            userLocation?.apply {
+                Bin(BinType.PLASTIC, LatLng(latitude, longitude))
+                    .let {
+                        lifecycleScope.launch {
+                            db.addBin(it)
+
+                            map.addMarker(
+                                MarkerOptions()
+                                    .position(it.location())
+                                    .title(it.type.toString())
+                                    .icon(BitmapDescriptorFactory.defaultMarker(it.type.markerColor))
+                            )?.apply {
+                                tag = it.id
+                            }
+
+                        }
+                    }
+            }
         }
     }
 }

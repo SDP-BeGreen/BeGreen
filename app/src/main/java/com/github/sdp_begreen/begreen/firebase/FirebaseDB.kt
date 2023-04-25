@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import com.github.sdp_begreen.begreen.exceptions.DatabaseTimeoutException
+import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.google.firebase.database.*
@@ -16,7 +17,6 @@ import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
 import java.io.ByteArrayOutputStream
-import com.google.android.gms.maps.model.LatLng
 
 
 /**
@@ -112,8 +112,8 @@ object FirebaseDB: DB {
         return try {
             withTimeout(timeout) {
                 val data = databaseReference.child(USERS_PATH).get().await()
-                data.children.map {
-                    it.getValue(User::class.java)!!
+                data.children.mapNotNull {
+                    it.getValue(User::class.java)
                 }
             }
         } catch (timeoutEx: TimeoutCancellationException) {
@@ -185,28 +185,39 @@ object FirebaseDB: DB {
         }
     }
 
-    override suspend fun storeBinLocation(location: LatLng): Boolean {
+    override suspend fun addBin(bin: Bin): Boolean {
+
+        if (bin.id != null)
+            throw java.lang.IllegalArgumentException("Bin should not have an ID before being stored")
+
         val freshId = databaseReference.child(BIN_LOCATION_PATH).push().key ?: return false
-        databaseReference.child(BIN_LOCATION_PATH).child(freshId).setValue(location).await()
+        bin.id = freshId
+
+        databaseReference.child(BIN_LOCATION_PATH).child(freshId).setValue(bin).await()
         return true
     }
 
-    override suspend fun getAllBinLocations(): Set<LatLng>? {
-        // Looks like manually deleting the unchecked cast is the only way to remove the warnings
-        @Suppress("UNCHECKED_CAST")
-        val childrens = databaseReference.child(BIN_LOCATION_PATH).get().await().value
-                as? Map<String, Any> ?: return null
+    override suspend fun removeBin(binId: String) {
+        databaseReference.child(BIN_LOCATION_PATH).child(binId).removeValue().await()
+    }
 
-        val locations = mutableSetOf<LatLng>()
-        for (child in childrens.values) {
-            // Converts the Map back to a LatLng. If some child does not have the correct format, skip it
-            @Suppress("UNCHECKED_CAST")
-            val location = child as? HashMap<String, Double>? ?: child as? HashMap<String, Long>? ?: continue
-            val lat = location["latitude"] ?: continue
-            val lng = location["longitude"] ?: continue
-            locations.add(LatLng(lat.toDouble(), lng.toDouble()))
+    override suspend fun getAllBins(timeout: Long): Set<Bin> {
+
+        return try {
+            withTimeout(timeout) {
+                val data = databaseReference.child(BIN_LOCATION_PATH).get().await()
+                data.children.mapNotNull {
+                    it.getValue(Bin::class.java)
+                }.toSet()
+            }
+        } catch (timeoutEx: TimeoutCancellationException) {
+            Log.d(TAG, "Timeout, can't connect with database")
+            throw DatabaseTimeoutException("Timeout, cant connect with database")
         }
-        return locations
+        catch (databaseEx: DatabaseException) {
+            Log.d(TAG, "Failed with error message: ${databaseEx.message}")
+            throw databaseEx
+        }
     }
 
     override suspend fun getAdvices(): Set<String> {

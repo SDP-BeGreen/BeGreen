@@ -1,4 +1,4 @@
-package com.github.sdp_begreen.begreen.models
+package com.github.sdp_begreen.begreen.map
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 
