@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -55,8 +56,12 @@ class FeedViewAdapter :
             }
         }
 
-        //image view to show the images
-        var Main: ImageView = view.findViewById(R.id.media_image)
+        val avatarView: ImageView = view.findViewById(R.id.avatar_image)
+        val titleView: TextView = view.findViewById(R.id.title_text)
+        val subtitleView: TextView = view.findViewById(R.id.subtitle_text)
+        val photoView: ImageView = view.findViewById(R.id.media_image)
+        val descriptionView: TextView = view.findViewById(R.id.supporting_text)
+
 
         /**
          * function to bind the data to the view
@@ -64,7 +69,7 @@ class FeedViewAdapter :
          */
         fun bind(item: PhotoMetadata?) {
             //loads image from network using coil extension function
-            Main.load(item) {
+            photoView.load(item) {
                 placeholder(R.drawable.blank_profile_picture)
             }
         }

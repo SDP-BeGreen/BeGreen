@@ -76,6 +76,7 @@ class DynamicFeedFragmentTest {
     fun test() {
         // Launch fragment with arguments
         val scenario = FragmentScenario.launchInContainer(DynamicFeedFragment::class.java)
+        scenario.recreate()
     }
 
 }
