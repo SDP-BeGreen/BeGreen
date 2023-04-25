@@ -192,7 +192,7 @@ class MainActivity : AppCompatActivity() {
                 item.setIcon(R.drawable.ic_baseline_feed)
                 //val photos = listOf(PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"))
                 //replaceFragInMainContainer(UserPhotoFragment.newInstance(1, photos, true))
-                replaceFragInMainContainer(DynamicFeedFragment())
+                replaceFragInMainContainer(DynamicFeedFragment(true))
             }
             R.id.bottomMenuMap -> {
                 item.setIcon(R.drawable.ic_baseline_map)

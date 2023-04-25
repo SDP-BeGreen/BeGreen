@@ -1,5 +1,6 @@
 package com.github.sdp_begreen.begreen.fragments
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -11,12 +12,17 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.adapters.FeedViewAdapter
+import com.github.sdp_begreen.begreen.firebase.DB
+import com.github.sdp_begreen.begreen.firebase.FirebaseDB
+import com.github.sdp_begreen.begreen.models.User.CREATOR.currentUser
 import com.github.sdp_begreen.begreen.viewModels.FeedViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent
 
 /**
  * View to fetch the results from the remote api and directly shows in the recyclerview
@@ -24,6 +30,8 @@ import kotlinx.coroutines.launch
  */
 @ExperimentalPagingApi
 class DynamicFeedFragment(private val isFeed: Boolean) : Fragment(R.layout.fragment_user_photo_list) {
+
+    private val db by KoinJavaComponent.inject<DB>(FirebaseDB::class.java)
 
     lateinit var rvFeedRemote: RecyclerView
     lateinit var remoteViewModel: FeedViewModel
@@ -52,7 +60,7 @@ class DynamicFeedFragment(private val isFeed: Boolean) : Fragment(R.layout.fragm
      */
     private fun initMembers() {
         remoteViewModel = defaultViewModelProviderFactory.create(FeedViewModel::class.java)
-        adapter = FeedViewAdapter()
+        adapter = FeedViewAdapter(isFeed, lifecycleScope)
     }
 
     /**
@@ -61,12 +69,6 @@ class DynamicFeedFragment(private val isFeed: Boolean) : Fragment(R.layout.fragm
     private fun setUpViews(view: View) {
         rvFeedRemote = view.findViewById(R.id.feed_list)
         if (isFeed) {
-            //Display avatar if on feed
-            val avatarView: ImageView = view.findViewById(R.id.avatar_image)
-            val drawable = ContextCompat.getDrawable(requireContext() , R.drawable.ic_baseline_person)
-            val defaultAvatar = drawable?.toBitmap()
-            //holder.avatarView.setImageBitmap(getFromDB(photo) ?: defaultAvatar)
-            avatarView.setImageBitmap( defaultAvatar)
             rvFeedRemote.layoutManager = LinearLayoutManager(context)
         } else{
             rvFeedRemote.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
