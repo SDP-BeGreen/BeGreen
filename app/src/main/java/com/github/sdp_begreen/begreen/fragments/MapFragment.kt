@@ -3,8 +3,12 @@ package com.github.sdp_begreen.begreen.fragments
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.style.TextAppearanceSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +32,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -67,10 +72,14 @@ class MapFragment : Fragment() {
 
         checkUserLocationPermissions()
 
-        //displayBinsMarkers(BinsFakeDatabase.fakeBins)
+        // Displays the markers (fetched from the database) on the map
         lifecycleScope.launch {
             displayBinsMarkers(db.getAllBins())
         }
+
+        // Setup the markers click listener action
+        setupInfoWindowClick()
+
         setupAddBinBtn()
     }
 
@@ -160,44 +169,41 @@ class MapFragment : Fragment() {
     }
 
     /**
-     * Helper functions that displays bins markers on the map
+     * Helper functions that displays bins markers on the map, and sets up click events
      * Only called once when the view is created
      */
-    private fun displayBinsMarkers(bins: Set<Bin>) {
+    private fun displayBinsMarkers(bins: Set<Bin>) = bins.forEach{ addMarker(it) }
 
-        for (bin in bins) {
-
-            map.addMarker(
-                MarkerOptions()
-                    .position(bin.location())
-                    .title(bin.type.toString())
-                    .icon(BitmapDescriptorFactory.defaultMarker(bin.type.markerColor))
-            )?.apply {
-                tag = bin.id
-            }
-        }
-
-        // Setup the markers click listener action
-        setupMarkersClick()
-    }
 
     /**
-     * Helper function that setups a marker click listener action
+     * Helper function that setups a marker's info window click listener action
      */
-    private fun setupMarkersClick() {
+    private fun setupInfoWindowClick() {
 
-        // Delete a bin when the user clicks on the associated marker
-        map.setOnMarkerClickListener { marker ->
+        /**
+         * According to this page (the last sentence, at the very end):
+         * https://developers.google.com/maps/documentation/android-sdk/infowindows,
+         * it is impossible to distinguish where the user clicks on an info window.
+         * Thus, we cannot just add a button "remove" on the info window to remove the bin
+         * The only alternative I found was to implement the removal of bins with a long click
+         * on the marker's info window, which seems acceptable
+         */
+
+        map.setOnInfoWindowLongClickListener { marker ->
 
             // Remove the bin from the database
             lifecycleScope.launch {
-                db.removeBin(marker.tag as String)
+                // We always add the bin in the tag after the bin has been added to the database,
+                // hence the id is always valid
+                db.removeBin((marker.tag as Bin).id!!)
             }
 
             // Remove the marker from the map
             marker.remove()
 
-            true // Return true to indicate that the event has been handled
+            // Informs the user that his action took place
+            Toast.makeText(requireContext(), "Bin removed",
+                Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -216,23 +222,37 @@ class MapFragment : Fragment() {
         } else {
 
             userLocation?.apply {
+                // Adds a bin of type "plastic" at the user current location
+                // TODO: let the user choose the type of bin to be placed
                 Bin(BinType.PLASTIC, LatLng(latitude, longitude))
-                    .let {
+                    .let {bin ->
                         lifecycleScope.launch {
-                            db.addBin(it)
-
-                            map.addMarker(
-                                MarkerOptions()
-                                    .position(it.location())
-                                    .title(it.type.toString())
-                                    .icon(BitmapDescriptorFactory.defaultMarker(it.type.markerColor))
-                            )?.apply {
-                                tag = it.id
+                            // Add the new bin to the database
+                            if (db.addBin(bin)) {
+                                // Display the marker on the map
+                                addMarker(bin)
+                                // Informs the user that his action took place
+                                Toast.makeText(requireContext(), "Bin added",
+                                    Toast.LENGTH_SHORT).show();
                             }
-
                         }
                     }
             }
+        }
+    }
+
+    /**
+     * Helper function to add a marker on the map and set its tag with the bin infos
+     */
+    private fun addMarker(bin: Bin){
+        map.addMarker(
+            MarkerOptions()
+                .position(bin.location())
+                .title(bin.type.toString())
+                .snippet("Hold to remove the bin")
+                .icon(BitmapDescriptorFactory.defaultMarker(bin.type.markerColor))
+        )?.apply {
+            tag = bin
         }
     }
 }
