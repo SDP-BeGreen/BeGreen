@@ -25,8 +25,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.runner.RunWith
-import kotlin.test.assertContains
-
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
