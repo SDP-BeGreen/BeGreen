@@ -10,26 +10,41 @@ import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
-import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.RootMatchers
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.activities.SharePostActivity
+import com.github.sdp_begreen.begreen.firebase.DB
+import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.rules.KoinTestRule
+import kotlinx.coroutines.runBlocking
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 import org.junit.runner.RunWith
+import org.koin.dsl.module
+import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class CameraFragmentTest {
+
+    private val db: DB = Mockito.mock(DB::class.java)
+
+    @get:Rule
+    val koinTestRule = KoinTestRule(
+        modules = listOf(module {
+            single {db}
+        })
+    )
 
     @get:Rule
     val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
@@ -39,6 +54,7 @@ class CameraFragmentTest {
     private val correctCameraResponseIntent = Intent(ApplicationProvider.getApplicationContext(), SharePostActivity::class.java).apply {
         this.putExtra("data", image)
     }
+
 
     @Before
     fun setUp() {
@@ -60,7 +76,7 @@ class CameraFragmentTest {
         launchFragmentInContainer { fragment }
 
         // Click the add new post button
-        onView(withId(R.id.addNewPostBtn)).perform(ViewActions.click())
+        onView(withId(R.id.addNewPostBtn)).perform(click())
 
         // Check if the camera intent is opened
         Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
@@ -78,7 +94,7 @@ class CameraFragmentTest {
         Intents.intending(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(cameraResult)
 
         // Click the add new post button to start the camera Activity
-        onView(withId(R.id.addNewPostBtn)).perform(ViewActions.click())
+        onView(withId(R.id.addNewPostBtn)).perform(click())
 
         // Verify that the camera activity was actually launched
         Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
@@ -104,7 +120,7 @@ class CameraFragmentTest {
         Intents.intending(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(cameraResult)
 
         // Click the add new post button to start the camera Activity
-        onView(withId(R.id.addNewPostBtn)).perform(ViewActions.click())
+        onView(withId(R.id.addNewPostBtn)).perform(click())
 
         // Verify that the camera activity was actually launched
         Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
@@ -133,7 +149,7 @@ class CameraFragmentTest {
         Intents.intending(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(cameraResult)
 
         // Click the add new post button to start the camera Activity
-        onView(withId(R.id.addNewPostBtn)).perform(ViewActions.click())
+        onView(withId(R.id.addNewPostBtn)).perform(click())
 
         // Verify that the camera activity was actually launched
         Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
@@ -164,7 +180,7 @@ class CameraFragmentTest {
         Intents.intending(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(cameraResult)
 
         // Click the add new post button to start the camera Activity
-        onView(withId(R.id.addNewPostBtn)).perform(ViewActions.click())
+        onView(withId(R.id.addNewPostBtn)).perform(click())
 
         // Verify that the camera activity was actually launched
         Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
@@ -175,4 +191,48 @@ class CameraFragmentTest {
             Matchers.equalTo(Lifecycle.State.RESUMED)
         )
     }
+
+    @Test fun searchBarCorrectlyDisplaysWrittenText() {
+        runBlocking{
+            `when`(db.getAllUsers()).thenReturn(listOf())
+            launchFragmentInContainer { fragment }
+
+            onView(withId(R.id.userSearch)).perform(typeText("blabla!"))            // Verify that the AutoCompleteTextView now contains the selected item
+            onView(withId(R.id.userSearch)).check(matches(withText("blabla!")))
+        }
+    }
+
+    @Test fun searchBarDisplaysExpectedUsers() {
+        runBlocking {
+
+            val users = listOf<User>(
+                User("1", 123, "Alice"),
+                User("2", 0, "Bob Zeu bricoleur"),
+                User("3", 14, "Charlie Chaplin"),
+                User("4", 23, "David Pujadas"),
+                User("5", 10492, "Euler"),
+                User("6", 1234, "Alain Berset"),
+                User("7", 1235, "Mister Alix")
+            )
+            `when`(db.getAllUsers()).thenReturn(users)
+
+            launchFragmentInContainer { fragment }
+
+            val expectedResults = listOf("Alice", "Alain Berset", "Mister Alix")
+            for (name in expectedResults){
+
+                // Type in the search bar
+                onView(withId(R.id.userSearch))
+                    .perform(clearText(), typeText("al"))
+
+                // Wait for the dropdown list to be displayed and select the first item
+                onView(withText(name)).inRoot(RootMatchers.isPlatformPopup()).perform(click())
+                // Verify that the AutoCompleteTextView now contains the selected item
+                onView(withId(R.id.userSearch)).check(matches(withText(name)))
+            }
+        }
+    }
+
+
+
 }

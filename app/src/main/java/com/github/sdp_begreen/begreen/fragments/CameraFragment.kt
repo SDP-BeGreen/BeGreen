@@ -4,23 +4,23 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import androidx.activity.result.ActivityResult
+import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.activities.SharePostActivity
+import com.github.sdp_begreen.begreen.firebase.DB
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 /**
  * A simple [Fragment] subclass.
@@ -28,6 +28,10 @@ import com.github.sdp_begreen.begreen.activities.SharePostActivity
  * create an instance of this fragment.
  */
 class CameraFragment : Fragment() {
+
+
+    // Get the db instance
+    private val db by inject<DB>()
 
     private lateinit var addNewPostBtn : Button
     private lateinit var cameraActivityLauncher : ActivityResultLauncher<Void?>
@@ -57,16 +61,18 @@ class CameraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupAddNewPostBtn()
+        setupAddNewPostBtn(view)
+
+        lifecycleScope.launch { setUpSearchBar(view) }
     }
 
     /**
      * Helper function to setup the behavior of the "Add new post" button
      */
-    private fun setupAddNewPostBtn() {
+    private fun setupAddNewPostBtn(view: View) {
 
         // If the user clicks on the "Add new post" button it will ask him to take a picture
-        addNewPostBtn = requireView().findViewById(R.id.addNewPostBtn)
+        addNewPostBtn = view.findViewById(R.id.addNewPostBtn)
         addNewPostBtn.setOnClickListener {
             startCameraIntent()
         }
@@ -75,6 +81,22 @@ class CameraFragment : Fragment() {
         cameraActivityLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
             onCameraActivityResult(bitmap)
         }
+    }
+
+    /**
+     * Helper function to set up the search bar
+     */
+    private suspend fun setUpSearchBar(view: View) {
+
+        val users = db.getAllUsers()
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, users)
+
+        //Getting the instance of AutoCompleteTextView
+        val autoCompleteTV = view.findViewById<AutoCompleteTextView>(R.id.userSearch)
+        // Will start working from first character
+        autoCompleteTV.threshold = 1
+        // Setting the adapter data into the AutoCompleteTextView
+        autoCompleteTV.setAdapter(adapter)
     }
 
     /**

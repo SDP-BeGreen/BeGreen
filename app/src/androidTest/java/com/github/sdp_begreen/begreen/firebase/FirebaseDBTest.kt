@@ -26,7 +26,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.runner.RunWith
 
-
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class FirebaseDBTest {
@@ -213,4 +212,5 @@ class FirebaseDBTest {
             assertThat(users.size, `is`(not(0)))
         }
     }
+
 }
