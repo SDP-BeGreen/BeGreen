@@ -31,8 +31,6 @@ import org.koin.java.KoinJavaComponent
 @ExperimentalPagingApi
 class DynamicFeedFragment(private val isFeed: Boolean) : Fragment(R.layout.fragment_user_photo_list) {
 
-    private val db by KoinJavaComponent.inject<DB>(FirebaseDB::class.java)
-
     lateinit var rvFeedRemote: RecyclerView
     lateinit var remoteViewModel: FeedViewModel
     lateinit var adapter: FeedViewAdapter

@@ -31,6 +31,7 @@ class DynamicFeedFragmentTest {
 
     companion object {
         private val db: DB = Mockito.mock(DB::class.java)
+        private val posts = listOf(PhotoMetadata("id", "title", ParcelableDate(date = Date()), "user", "type", "desc"), PhotoMetadata("id", "title", ParcelableDate(date = Date()), "user", "type", "desc"), PhotoMetadata("id", "title", ParcelableDate(date = Date()), "user", "type", "desc"), PhotoMetadata("id", "title", ParcelableDate(date = Date()), "user", "type", "desc"), PhotoMetadata("id", "title", ParcelableDate(date = Date()), "user", "type", "desc"), PhotoMetadata("id", "title", ParcelableDate(date = Date()), "user", "type", "desc"))
         private val user1 = User("user1", 100, "user1", 100)
         private val user2 = User("user1", 100, "user1", 100, posts = listOf(PhotoMetadata("id", "title", ParcelableDate(date = Date()), "user2", "type", "desc")))
         private val user = User("user", 100, "user1", 100,
@@ -76,7 +77,7 @@ class DynamicFeedFragmentTest {
     fun test() {
         // Launch fragment with arguments
         val scenario = FragmentScenario.launchInContainer(DynamicFeedFragment::class.java)
-        scenario.recreate()
+        Espresso.onView(ViewMatchers.withId(R.id.))
     }
 
 }
