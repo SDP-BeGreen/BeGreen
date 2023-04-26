@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
                 setReorderingAllowed(true)
-                add<CameraFragment>(R.id.mainFragmentContainer)
+                add<CameraWithUIFragment>(R.id.mainFragmentContainer)
             }
         }
 

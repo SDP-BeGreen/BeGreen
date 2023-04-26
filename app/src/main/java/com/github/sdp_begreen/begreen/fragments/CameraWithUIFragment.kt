@@ -1,8 +1,14 @@
 package com.github.sdp_begreen.begreen.fragments
 
 import android.Manifest
-import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageFormat
+import android.graphics.Rect
+import android.graphics.YuvImage
+import android.media.Image
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -14,14 +20,17 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
@@ -29,30 +38,36 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.activities.SharePostActivity
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
-import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
+import com.google.android.material.textfield.TextInputEditText
+import com.squareup.picasso.Picasso
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.concurrent.thread
+
 
 class CameraWithUIFragment : Fragment() {
     // Get the db instance
     private val db by inject<DB>()
     private val auth by inject<Auth>()
     private val connectedUserViewModel by viewModels<ConnectedUserViewModel>()
+    private lateinit var outputDirectory: File
     private var viewFinder = view?.findViewById<PreviewView>(R.id.viewFinder)
     private var imageCapture: ImageCapture? = null
-    private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
     private var lensFacing = CameraSelector.DEFAULT_FRONT_CAMERA
 
@@ -91,13 +106,36 @@ class CameraWithUIFragment : Fragment() {
                 takePhoto()
             }
         }
-
-
         outputDirectory = getOutputDirectory()
         cameraExecutor = Executors.newSingleThreadExecutor()
         handleClicks()
         setUpProfileBtn()
+        setUpCancel()
+        setUpShare()
         lifecycleScope.launch { setUpSearchBar() }
+        preparePhoto()
+    }
+
+    private fun setUpCancel(){
+        val cancelBtn = view?.findViewById<ImageView>(R.id.cancel_post)
+        cancelBtn?.setOnClickListener {
+            preparePhoto()
+        }
+    }
+
+    private fun setUpShare(){
+        val shareBtn = view?.findViewById<ImageView>(R.id.send_post)
+        shareBtn?.setOnClickListener {
+            view?.findViewById<TextInputEditText>(R.id.post_description).also {
+                val description = it?.text.toString()
+                val user = connectedUserViewModel.currentUser.value
+                val date = ParcelableDate(Date())
+
+                val photoMetadata = PhotoMetadata("photo?.id", description, date, user?.id, "", description)
+            }
+            val msg = "Photo sent successfully"
+            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+        }
     }
     private suspend fun setUpSearchBar() {
 
@@ -192,14 +230,22 @@ class CameraWithUIFragment : Fragment() {
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                    preparePost()
                     //the uri of photo captured here
                     val savedUri = Uri.fromFile(photoFile)
+                    Picasso.Builder(requireContext()).build().load(savedUri).into(view?.findViewById(R.id.preview))
                     val msg = "Photo capture successfully"
                     Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
                 }
             })
+    }
 
+    private fun getOutputDirectory(): File {
+        val mediaDir = activity?.externalMediaDirs?.firstOrNull()?.let {
+            File(it, resources.getString(R.string.app_name)).apply { mkdirs() } }
+        return if (mediaDir != null && mediaDir.exists())
+            mediaDir else requireActivity().filesDir
     }
 
     private fun startCamera() {
@@ -239,16 +285,53 @@ class CameraWithUIFragment : Fragment() {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun getOutputDirectory(): File {
-        val mediaDir = activity?.externalMediaDirs?.firstOrNull()?.let {
-            File(it, resources.getString(R.string.app_name)).apply { mkdirs() } }
-        return if (mediaDir != null && mediaDir.exists())
-            mediaDir else requireActivity().filesDir
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()
+    }
+
+    private fun preparePost() {
+        view?.findViewById<ImageView>(R.id.img_switch_camera).also {
+            it?.visibility = View.GONE
+        }
+        view?.findViewById<ImageView>(R.id.profile_cam).also {
+            it?.visibility = View.GONE
+        }
+        view?.findViewById<ImageView>(R.id.search_cam).also {
+            it?.visibility = View.GONE
+        }
+        view?.findViewById<Button>(R.id.camera_capture_button).also {
+            it?.visibility = View.GONE
+        }
+        view?.findViewById<PreviewView>(R.id.viewFinder).also {
+            it?.visibility = View.GONE
+        }
+        view?.findViewById<ConstraintLayout>(R.id.post_background).also {
+            it?.visibility = View.VISIBLE
+        }
+
+    }
+
+    private fun preparePhoto() {
+        view?.findViewById<ImageView>(R.id.img_switch_camera).also {
+            it?.visibility = View.VISIBLE
+        }
+        view?.findViewById<ImageView>(R.id.profile_cam).also {
+            it?.visibility = View.VISIBLE
+        }
+        view?.findViewById<ImageView>(R.id.search_cam).also {
+            it?.visibility = View.VISIBLE
+        }
+        view?.findViewById<Button>(R.id.camera_capture_button).also {
+            it?.visibility = View.VISIBLE
+        }
+        view?.findViewById<PreviewView>(R.id.viewFinder).also {
+            it?.visibility = View.VISIBLE
+        }
+        view?.findViewById<ConstraintLayout>(R.id.post_background).also {
+            it?.visibility = View.GONE
+        }
+
     }
 
     companion object {
@@ -258,6 +341,7 @@ class CameraWithUIFragment : Fragment() {
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults:
         IntArray
