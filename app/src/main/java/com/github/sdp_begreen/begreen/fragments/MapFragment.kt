@@ -12,7 +12,9 @@ import android.text.style.TextAppearanceSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -56,8 +58,6 @@ class MapFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var lastLocation: Location
 
-    private lateinit var addNewBinBtn : Button
-
     private var userLocation : Location? = null
 
     private val mapReadyCallback = OnMapReadyCallback { googleMap ->
@@ -80,7 +80,7 @@ class MapFragment : Fragment() {
         // Setup the markers click listener action
         setupInfoWindowClick()
 
-        setupAddBinBtn()
+        setupAddBinBtnAndSelector()
     }
 
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -110,14 +110,26 @@ class MapFragment : Fragment() {
     }
 
     /**
-     * Helper function to setup the behavior of the "Add new post" button
+     * Helper function to setup the behavior of the "Add new post" button and its type selector
      */
-    private fun setupAddBinBtn() {
+    private fun setupAddBinBtnAndSelector() {
 
-        // If the user clicks on the "Add new bin" button it will add a new bin with its marker
-        addNewBinBtn = requireView().findViewById(R.id.addNewBinBtn)
+        val binTypeSelector: Spinner = requireView().findViewById(R.id.binTypeSelector)
+        val adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            BinType.values()
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item)
+        binTypeSelector.adapter = adapter
+
+        // If the user clicks on the "Add new bin" button it will add a new marker on the map
+        // with the type of the currently selected BinType
+        val addNewBinBtn: Button = requireView().findViewById(R.id.addNewBinBtn)
         addNewBinBtn.setOnClickListener {
-            addNewBin()
+            // Get the BinType from the selector
+            val binType: BinType = BinType.values()[binTypeSelector.selectedItemPosition]
+            addNewBin(binType)
         }
     }
 
@@ -203,14 +215,14 @@ class MapFragment : Fragment() {
 
             // Informs the user that his action took place
             Toast.makeText(requireContext(), "Bin removed",
-                Toast.LENGTH_SHORT).show();
+                Toast.LENGTH_SHORT).show()
         }
     }
 
     /**
-     * Helper function that add a bin marker to the user current location
+     * Helper function that add a bin marker to the user current location, with the given binType
      */
-    private fun addNewBin() {
+    private fun addNewBin(binType: BinType) {
 
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -224,7 +236,7 @@ class MapFragment : Fragment() {
             userLocation?.apply {
                 // Adds a bin of type "plastic" at the user current location
                 // TODO: let the user choose the type of bin to be placed
-                Bin(BinType.PLASTIC, LatLng(latitude, longitude))
+                Bin(binType, LatLng(latitude, longitude))
                     .let {bin ->
                         lifecycleScope.launch {
                             // Add the new bin to the database
@@ -233,7 +245,7 @@ class MapFragment : Fragment() {
                                 addMarker(bin)
                                 // Informs the user that his action took place
                                 Toast.makeText(requireContext(), "Bin added",
-                                    Toast.LENGTH_SHORT).show();
+                                    Toast.LENGTH_SHORT).show()
                             }
                         }
                     }
