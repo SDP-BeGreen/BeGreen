@@ -53,6 +53,7 @@
     <string name="username">Username</string>
     <string name="search_user">Search user…</string>
     <string name="add_new_bin">Add new bin</string>
+    <string name="remove_bin">Remove bin</string>
     <string name="quotes_of_the_day">Quotes of the day</string>
 
 </resources>

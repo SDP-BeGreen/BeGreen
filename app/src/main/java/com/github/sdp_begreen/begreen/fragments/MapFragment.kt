@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -55,6 +56,9 @@ class MapFragment : Fragment() {
 
     private var userLocation : Location? = null
 
+    // Currently selected marker on the map, or null if no marker selected
+    private var selectedMarker: Marker? = null
+
     private val mapReadyCallback = OnMapReadyCallback { googleMap ->
         /**
          * Manipulates the map once available.
@@ -72,10 +76,13 @@ class MapFragment : Fragment() {
             displayBinsMarkers(db.getAllBins())
         }
 
-        // Setup the markers click listener action
-        setupInfoWindowClick()
+        // Setup the marker and map clicks listener action
+        setupMarkerAndMapClicks()
 
         setupAddBinBtnAndSelector()
+
+
+
     }
 
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -109,6 +116,7 @@ class MapFragment : Fragment() {
      */
     private fun setupAddBinBtnAndSelector() {
 
+        // Type selector
         val binTypeSelector: Spinner = requireView().findViewById(R.id.binTypeSelector)
         val adapter = ArrayAdapter(
             requireContext(),
@@ -118,13 +126,33 @@ class MapFragment : Fragment() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_item)
         binTypeSelector.adapter = adapter
 
-        // If the user clicks on the "Add new bin" button it will add a new marker on the map
-        // with the type of the currently selected BinType
-        val addNewBinBtn: Button = requireView().findViewById(R.id.addNewBinBtn)
-        addNewBinBtn.setOnClickListener {
-            // Get the BinType from the selector
-            val binType: BinType = BinType.values()[binTypeSelector.selectedItemPosition]
-            addNewBin(binType)
+        // Button
+        val binBtn: Button = requireView().findViewById(R.id.binBtn)
+        binBtn.setOnClickListener {
+            // If no marker is currently selected, add a new one at the current location
+            if (selectedMarker == null) {
+                // Get the BinType from the selector
+                val binType: BinType = BinType.values()[binTypeSelector.selectedItemPosition]
+                addNewBin(binType)
+            } else {
+            // If a marker is currently selected, delete it
+                // Remove the bin from the database
+                lifecycleScope.launch {
+                    // We always add the bin in the tag after the bin has been added to the database,
+                    // hence the id is always valid and the "!!" is safe
+                    db.removeBin((selectedMarker!!.tag as Bin).id!!)
+                }
+
+                // Remove the marker from the map
+                selectedMarker!!.remove()
+                selectedMarker = null
+
+                binBtn.text = getString(R.string.add_new_bin)
+                // Informs the user that his action took place
+                Toast.makeText(requireContext(), "Bin removed",
+                    Toast.LENGTH_SHORT).show()
+            }
+
         }
     }
 
@@ -183,34 +211,20 @@ class MapFragment : Fragment() {
 
 
     /**
-     * Helper function that setups a marker's info window click listener action
+     * Helper function that setups marker and map click listener actions
      */
-    private fun setupInfoWindowClick() {
+    private fun setupMarkerAndMapClicks() {
 
-        /**
-         * According to this page (the last sentence, at the very end):
-         * https://developers.google.com/maps/documentation/android-sdk/infowindows,
-         * it is impossible to distinguish where the user clicks on an info window.
-         * Thus, we cannot just add a button "remove" on the info window to remove the bin
-         * The only alternative I found was to implement the removal of bins with a long click
-         * on the marker's info window, which seems acceptable
-         */
+        val addNewBinBtn: Button = requireView().findViewById(R.id.binBtn)
 
-        map.setOnInfoWindowLongClickListener { marker ->
-
-            // Remove the bin from the database
-            lifecycleScope.launch {
-                // We always add the bin in the tag after the bin has been added to the database,
-                // hence the id is always valid
-                db.removeBin((marker.tag as Bin).id!!)
-            }
-
-            // Remove the marker from the map
-            marker.remove()
-
-            // Informs the user that his action took place
-            Toast.makeText(requireContext(), "Bin removed",
-                Toast.LENGTH_SHORT).show()
+        map.setOnMarkerClickListener {
+            selectedMarker = it
+            addNewBinBtn.text = getString(R.string.remove_bin)
+            false
+        }
+        map.setOnMapClickListener {
+            selectedMarker = null
+            addNewBinBtn.text = getString(R.string.add_new_bin)
         }
     }
 
@@ -255,7 +269,6 @@ class MapFragment : Fragment() {
             MarkerOptions()
                 .position(bin.location())
                 .title(bin.type.toString())
-                .snippet("Hold to remove the bin")
                 .icon(BitmapDescriptorFactory.defaultMarker(bin.type.markerColor))
         )?.apply {
             tag = bin

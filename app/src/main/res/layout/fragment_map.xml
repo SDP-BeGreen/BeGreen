@@ -28,7 +28,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:id="@+id/addNewBinBtn"
+            android:id="@+id/binBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/add_new_bin" />
