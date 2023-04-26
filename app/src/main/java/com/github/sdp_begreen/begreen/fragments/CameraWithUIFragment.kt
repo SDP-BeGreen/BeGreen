@@ -34,6 +34,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -126,13 +127,20 @@ class CameraWithUIFragment : Fragment() {
     private fun setUpShare(){
         val shareBtn = view?.findViewById<ImageView>(R.id.send_post)
         shareBtn?.setOnClickListener {
+            var metadata : PhotoMetadata? = null
             view?.findViewById<TextInputEditText>(R.id.post_description).also {
                 val description = it?.text.toString()
                 val user = connectedUserViewModel.currentUser.value
                 val date = ParcelableDate(Date())
 
-                val photoMetadata = PhotoMetadata("photo?.id", description, date, user?.id, "", description)
+                metadata = PhotoMetadata("photo?.id", description, date, user?.id, "", description)
             }
+            view?.findViewById<ImageView>(R.id.preview)?.drawable?.toBitmap()?.let { bitmap ->
+                lifecycleScope.launch {
+                    //metadata = metadata?.let { it1 -> db.addImage(bitmap,1, it1) }
+                }
+            }
+
             val msg = "Photo sent successfully"
             Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
             preparePhoto()
