@@ -99,9 +99,9 @@ class CameraWithUIFragmentTest {
         }
         // Click the add new post button
         Espresso.onView(ViewMatchers.withId(R.id.camera_capture_button)).perform(ViewActions.click())
-        Thread.sleep(200)
+        Thread.sleep(1000)
         Espresso.onView(ViewMatchers.withId(R.id.send_post)).perform(ViewActions.click())
-        Thread.sleep(200)
+        Thread.sleep(1000)
         Espresso.onView(ViewMatchers.withId(R.id.camera_capture_button)).check(matches(ViewMatchers.isDisplayed()))
     }
 
