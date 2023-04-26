@@ -124,7 +124,7 @@ class MainActivityTest {
 
     @Test
     fun defaultDisplayedFragmentIsCamera() {
-        onView(withId(R.id.cameraFragment)).check(matches(isDisplayed()))
+        onView(withId(R.id.cameraUIFragment)).check(matches(isDisplayed()))
     }
 
     @Test
@@ -159,7 +159,7 @@ class MainActivityTest {
             .check(matches(isDisplayed()))
             .perform(click())
 
-        onView(withId(R.id.cameraFragment)).check(matches(isDisplayed()))
+        onView(withId(R.id.cameraUIFragment)).check(matches(isDisplayed()))
     }
 
     @Test

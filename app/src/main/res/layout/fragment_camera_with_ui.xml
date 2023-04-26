@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="fragments.CameraFragment">
+    tools:context="fragments.CameraFragment"
+    android:id="@+id/cameraUIFragment"
+    android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
 
 
     <ImageView

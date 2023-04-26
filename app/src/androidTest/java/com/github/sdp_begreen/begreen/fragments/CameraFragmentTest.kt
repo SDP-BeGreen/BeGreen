@@ -197,8 +197,8 @@ class CameraFragmentTest {
             `when`(db.getAllUsers()).thenReturn(listOf())
             launchFragmentInContainer { fragment }
 
-            onView(withId(R.id.userSearch)).perform(typeText("blabla!"))            // Verify that the AutoCompleteTextView now contains the selected item
-            onView(withId(R.id.userSearch)).check(matches(withText("blabla!")))
+            onView(withId(R.id.userSearch1)).perform(typeText("blabla!"))            // Verify that the AutoCompleteTextView now contains the selected item
+            onView(withId(R.id.userSearch1)).check(matches(withText("blabla!")))
         }
     }
 
@@ -222,13 +222,13 @@ class CameraFragmentTest {
             for (name in expectedResults){
 
                 // Type in the search bar
-                onView(withId(R.id.userSearch))
+                onView(withId(R.id.userSearch1))
                     .perform(clearText(), typeText("al"))
 
                 // Wait for the dropdown list to be displayed and select the first item
                 onView(withText(name)).inRoot(RootMatchers.isPlatformPopup()).perform(click())
                 // Verify that the AutoCompleteTextView now contains the selected item
-                onView(withId(R.id.userSearch)).check(matches(withText(name)))
+                onView(withId(R.id.userSearch1)).check(matches(withText(name)))
             }
         }
     }
