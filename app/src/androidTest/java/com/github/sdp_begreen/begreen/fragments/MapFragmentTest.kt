@@ -14,17 +14,49 @@ import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.map.BinType
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import kotlinx.coroutines.runBlocking
+import org.hamcrest.Matchers.*
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.dsl.module
 import org.mockito.Mockito
+import org.mockito.ArgumentMatchers.*
 
+
+
+//@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class MapFragmentTest {
 
-    private val db: DB = Mockito.mock(DB::class.java)
+    /**
+     * Initialize some constant to use in tests
+     */
+    companion object {
+
+        private val db: DB = Mockito.mock(DB::class.java)
+
+        private val bins = mutableSetOf(
+            Bin("1", BinType.CLOTHES, 4.3, 2.8),
+            Bin("2", BinType.PAPER, 56.3, 22.3),
+            Bin("3", BinType.CLOTHES, 6.0, 9.0)
+        )
+
+
+        /*
+        @BeforeClass
+        @JvmStatic
+        fun setUp() {
+            runTest {
+
+                Mockito.`when`(db.removeBin(anyString())).then {
+                    bins.filter { bin -> bin.id?.equals(it.arguments[0])?.not() ?: true }
+                }
+                Mockito.`when`(db.addBin(any(Bin::class.java) )).thenReturn(true)
+                Mockito.`when`(db.getAllBins()).thenReturn(bins)
+            }
+        } Doesnt work, for strange reasons */
+    }
 
     @get:Rule
     val koinTestRule = KoinTestRule(
@@ -32,7 +64,7 @@ class MapFragmentTest {
             single {db}
         })
     )
-    
+
     @get:Rule
     val fineLocationPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION)
 
@@ -52,13 +84,10 @@ class MapFragmentTest {
         [...] since you cannot set the inputs, it will be difficult to achieve 100% of coverage.
         Therefore, we advise you to write as much as possible code that is independent from map components, and that you can easily test.
         */
-        val bins: Set<Bin> = setOf(
-            Bin("1", BinType.CLOTHES, 4.3, 2.8),
-            Bin("2", BinType.PAPER, 56.3, 22.3),
-            Bin("3", BinType.CLOTHES, 6.0, 9.0)
-        )
+
 
         runBlocking {
+
             Mockito.`when`(db.getAllBins()).thenReturn(bins)
 
             launchFragmentInContainer { fragment }

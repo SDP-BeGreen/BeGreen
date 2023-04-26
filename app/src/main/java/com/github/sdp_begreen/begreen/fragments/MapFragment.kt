@@ -3,12 +3,8 @@ package com.github.sdp_begreen.begreen.fragments
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.style.TextAppearanceSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,7 +30,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -234,8 +229,7 @@ class MapFragment : Fragment() {
         } else {
 
             userLocation?.apply {
-                // Adds a bin of type "plastic" at the user current location
-                // TODO: let the user choose the type of bin to be placed
+                // Add a bin of type "binType" at the user current location
                 Bin(binType, LatLng(latitude, longitude))
                     .let {bin ->
                         lifecycleScope.launch {

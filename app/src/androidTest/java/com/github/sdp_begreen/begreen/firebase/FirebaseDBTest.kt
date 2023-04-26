@@ -10,6 +10,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.activities.DatabaseActivity
+import com.github.sdp_begreen.begreen.map.Bin
+import com.github.sdp_begreen.begreen.map.BinType
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.google.android.gms.maps.model.LatLng
@@ -166,44 +168,84 @@ class FirebaseDBTest {
     }
 
     // TODO: update tests with new implementation
-    /*@Test
-    fun storeBinLocationReturnsTrue() {
+
+    @Test
+    fun addBinThrowsIllegalArgumentExceptionWhenBinIdIsNotNull() {
+        assertThrows(IllegalArgumentException::class.java) {
+            runBlocking {
+                val bin = Bin("Not null ID", BinType.ELECTRONIC, 4.3, 2.1)
+                assertTrue(FirebaseDB.addBin(bin))
+            }
+        }
+    }
+    @Test
+    fun addBinReturnsTrueWhenStoreSucceeds() {
         runBlocking {
-            assertTrue(FirebaseDB.storeBinLocation(LatLng(1.1, -2.2)))
+            val bin = Bin(BinType.ELECTRONIC, LatLng(4.3, 2.1))
+            assertTrue(FirebaseDB.addBin(bin))
         }
     }
 
     @Test
-    fun storeBinLocationCorrectlyUpdatesDatabase() {
-
-        val binLocation = LatLng(12.3, -43.0)
-
+    fun addBinUpdatesBinIdWhenStoreSucceeds() {
         runBlocking {
-
-            assertTrue(FirebaseDB.storeBinLocation(binLocation))
-
-            val binLocations = FirebaseDB.getAllBinLocations()
-            assertNotNull(binLocations)
-            // Checks that the location got correctly added
-            assertThat(binLocations, hasItem(binLocation))
+            val bin = Bin(BinType.ELECTRONIC, LatLng(4.3, 2.1))
+            assertTrue(FirebaseDB.addBin(bin))
+            assertNotNull(bin.id)
         }
-
     }
 
     @Test
-    fun getAllBinLocationsReturnsPreviouslyAddedLocations() {
+    fun addBinCorrectlyUpdatesDatabase() {
+
+        val bin = Bin(BinType.PAPER, LatLng(10.2, -4.2))
 
         runBlocking {
 
-            val binLocations = FirebaseDB.getAllBinLocations()
-            assertNotNull(binLocations)
+            FirebaseDB.addBin(bin)
+
+            val bins = FirebaseDB.getAllBins()
+            // Checks that the bin got correctly added
+            assertThat(bins, hasItem(bin))
+        }
+    }
+
+    @Test
+    fun removeBinCorrectlyUpdatesDatabase() {
+
+        val bin = Bin(BinType.ORGANIC, LatLng(0.1, 89.9))
+
+        runBlocking {
+
+            FirebaseDB.addBin(bin)
+
+            var bins = FirebaseDB.getAllBins()
+            // Checks that the bin got correctly added
+            assertThat(bins, hasItem(bin))
+
+            FirebaseDB.removeBin(bin.id!!)
+
+            bins = FirebaseDB.getAllBins()
+            // Checks that the bin got removed
+            assertThat(bins, not(hasItem(bin)))
+
+        }
+    }
+
+    @Test
+    fun getAllBinsReturnsPreviouslyAddedLocations() {
+
+        runBlocking {
+
+            val binLocations = FirebaseDB.getAllBins()
+
             // Checks that the location got correctly added
             assertThat(binLocations, hasItems(
-                LatLng(69.6969, 420.42),
-                LatLng(123.456, 654.321)
+                Bin("123", BinType.PAPER,69.6969,420.42),
+                Bin("456", BinType.METAL,123.456,654.321)
             ))
         }
-    }*/
+    }
 
     @Test
     fun getAllUsersReturnNotEmptyListUser() {
