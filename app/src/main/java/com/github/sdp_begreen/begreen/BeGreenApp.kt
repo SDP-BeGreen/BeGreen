@@ -5,6 +5,8 @@ import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.FirebaseAuth
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
+import com.github.sdp_begreen.begreen.firebase.MeetingService
+import com.github.sdp_begreen.begreen.firebase.MeetingServiceImpl
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
@@ -15,6 +17,7 @@ import org.koin.dsl.module
 val productionDbModule = module {
     single<DB> { FirebaseDB }
     single<Auth> { FirebaseAuth() }
+    single<MeetingService> { MeetingServiceImpl() }
 }
 
 /**
