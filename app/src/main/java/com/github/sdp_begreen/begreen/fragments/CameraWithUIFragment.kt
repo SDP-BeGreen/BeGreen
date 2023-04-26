@@ -8,6 +8,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
@@ -20,19 +22,24 @@ import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.databinding.FragmentCameraBinding
-import com.github.sdp_begreen.begreen.databinding.FragmentCameraWithUiBinding
+import com.github.sdp_begreen.begreen.firebase.DB
+import com.github.sdp_begreen.begreen.models.ParcelableDate
+import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import java.io.File
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class CameraWithUIFragment : Fragment() {
-
-    //View binding, you can access your view anyhow you want
-    //private val binding by viewBinding(FragmentCameraBinding::bind)
+    // Get the db instance
+    private val db by inject<DB>()
     private var viewFinder = view?.findViewById<PreviewView>(R.id.viewFinder)
     private var imageCapture: ImageCapture? = null
     private lateinit var outputDirectory: File
@@ -49,20 +56,17 @@ class CameraWithUIFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_camera, container, false)
+        return inflater.inflate(R.layout.fragment_camera_with_ui, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewFinder = view.findViewById(R.id.viewFinder)
-        val captureBtn: Button = view.findViewById(R.id.camera_capture_button)
-        val switchCamera: ImageView = view.findViewById(R.id.img_switch_camera)
-        initView(captureBtn, switchCamera)
+        initView()
     }
 
 
-    private fun initView( btn: Button, imgView: ImageView) {
-
+    private fun initView() {
         // Request camera permissions
         if (allPermissionsGranted()) {
             startCamera()
@@ -71,27 +75,74 @@ class CameraWithUIFragment : Fragment() {
                 requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
             )
         }
-
         // Set up the listener for take photo button
-        btn.setOnClickListener {
-            takePhoto()
+        view?.findViewById<Button>(R.id.camera_capture_button).also {
+            it?.setOnClickListener {
+                takePhoto()
+            }
         }
+
 
         outputDirectory = getOutputDirectory()
         cameraExecutor = Executors.newSingleThreadExecutor()
-        handleClicks(imgView)
+        handleClicks()
+        setUpProfileBtn()
+        lifecycleScope.launch { setUpSearchBar() }
 
     }
+    private suspend fun setUpSearchBar() {
 
-    private fun handleClicks( imgView: ImageView){
+        val users = db.getAllUsers()
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, users)
+        val searchBtn = view?.findViewById<ImageView>(R.id.search_cam)
 
-        //on click switch camera
-        imgView.setOnClickListener {
-            if (lensFacing == CameraSelector.DEFAULT_FRONT_CAMERA) lensFacing = CameraSelector.DEFAULT_BACK_CAMERA;
-            else if (lensFacing == CameraSelector.DEFAULT_BACK_CAMERA) lensFacing = CameraSelector.DEFAULT_FRONT_CAMERA;
-            startCamera()
+        //Getting the instance of AutoCompleteTextView
+        view?.findViewById<AutoCompleteTextView>(R.id.userSearch).also {
+            // Will start working from first character
+            it?.threshold = 1
+            // Setting the adapter data into the AutoCompleteTextView
+            it?.setAdapter(adapter)
+            it?.visibility = View.INVISIBLE
         }
 
+        searchBtn?.setOnClickListener {
+            val searchBar = view?.findViewById<AutoCompleteTextView>(R.id.userSearch)
+            searchBar.also {
+                if(it?.visibility == View.VISIBLE) {
+                    it.visibility = View.INVISIBLE
+                } else
+                it?.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun setUpProfileBtn() {
+        val profileBtn = view?.findViewById<ImageView>(R.id.profile_cam)
+        profileBtn?.setOnClickListener {
+            val photos = listOf(
+                PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(
+                    Date()
+                ), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!")
+            )
+            val profileFragment = ConnectedUserViewModel().currentUser.value?.let {
+                ProfileDetailsFragment.newInstance(it,photos)
+            }
+            val transaction = requireActivity().supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.mainFragmentContainer, profileFragment!!)
+            transaction.addToBackStack(null)
+            transaction.commit()
+        }
+    }
+
+    private fun handleClicks(){
+        //on click switch camera
+        view?.findViewById<ImageView>(R.id.img_switch_camera).also {
+            it?.setOnClickListener {
+                if (lensFacing == CameraSelector.DEFAULT_FRONT_CAMERA) lensFacing = CameraSelector.DEFAULT_BACK_CAMERA;
+                else if (lensFacing == CameraSelector.DEFAULT_BACK_CAMERA) lensFacing = CameraSelector.DEFAULT_FRONT_CAMERA;
+                startCamera()
+            }
+        }
     }
 
     private fun takePhoto(){
