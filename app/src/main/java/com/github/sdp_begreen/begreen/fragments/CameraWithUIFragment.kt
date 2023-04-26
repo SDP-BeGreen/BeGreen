@@ -135,6 +135,7 @@ class CameraWithUIFragment : Fragment() {
             }
             val msg = "Photo sent successfully"
             Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+            preparePhoto()
         }
     }
     private suspend fun setUpSearchBar() {

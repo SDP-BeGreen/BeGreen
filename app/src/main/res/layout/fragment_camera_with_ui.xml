@@ -31,21 +31,6 @@
         app:layout_constraintTop_toTopOf="@+id/profile_cam"
         app:layout_constraintVertical_bias="0.0" />
 
-    <AutoCompleteTextView
-        android:id="@+id/userSearch"
-        android:layout_width="190dp"
-        android:layout_height="30dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:ems="10"
-        android:hint="@string/search_user"
-        android:background="@drawable/back"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toStartOf="@+id/img_switch_camera"
-        app:layout_constraintStart_toEndOf="@+id/search_cam"
-        app:layout_constraintTop_toTopOf="parent" />
-
 
 
     <ImageView
@@ -78,6 +63,21 @@
         android:layout_height="match_parent" >
     </androidx.camera.view.PreviewView>
 
+    <AutoCompleteTextView
+        android:id="@+id/userSearch"
+        android:layout_width="190dp"
+        android:layout_height="30dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:hint="@string/search_user"
+        android:background="@drawable/back"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toStartOf="@+id/img_switch_camera"
+        app:layout_constraintStart_toEndOf="@+id/search_cam"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/post_background"
         android:background="@color/white"
@@ -85,30 +85,21 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/cancel_post"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="20dp"
-            android:elevation="2dp"
-            android:src="@drawable/ic_cross"
+            android:id="@+id/preview"
+            android:layout_width="match_parent"
+            android:layout_height="600dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/preview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:elevation="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="75dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/preview">
+            app:layout_constraintTop_toBottomOf="@id/preview">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/post_description"
@@ -121,12 +112,23 @@
             android:id="@+id/send_post"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginBottom="15dp"
             android:layout_marginEnd="20dp"
+            android:layout_marginBottom="15dp"
             android:elevation="2dp"
             android:src="@drawable/ic_send"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/preview" />
+
+        <ImageView
+            android:id="@+id/cancel_post"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/ic_cross"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
 
