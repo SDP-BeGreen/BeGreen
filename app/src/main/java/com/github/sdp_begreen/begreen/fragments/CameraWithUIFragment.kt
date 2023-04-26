@@ -1,6 +1,7 @@
 package com.github.sdp_begreen.begreen.fragments
 
 import android.Manifest
+import android.app.Activity
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -8,11 +9,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -21,14 +24,19 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 import java.io.File
 import java.text.SimpleDateFormat
@@ -40,6 +48,8 @@ import java.util.concurrent.Executors
 class CameraWithUIFragment : Fragment() {
     // Get the db instance
     private val db by inject<DB>()
+    private val auth by inject<Auth>()
+    private val connectedUserViewModel by viewModels<ConnectedUserViewModel>()
     private var viewFinder = view?.findViewById<PreviewView>(R.id.viewFinder)
     private var imageCapture: ImageCapture? = null
     private lateinit var outputDirectory: File
@@ -88,7 +98,6 @@ class CameraWithUIFragment : Fragment() {
         handleClicks()
         setUpProfileBtn()
         lifecycleScope.launch { setUpSearchBar() }
-
     }
     private suspend fun setUpSearchBar() {
 
@@ -107,11 +116,17 @@ class CameraWithUIFragment : Fragment() {
 
         searchBtn?.setOnClickListener {
             val searchBar = view?.findViewById<AutoCompleteTextView>(R.id.userSearch)
-            searchBar.also {
-                if(it?.visibility == View.VISIBLE) {
-                    it.visibility = View.INVISIBLE
-                } else
-                it?.visibility = View.VISIBLE
+            searchBar.also { search ->
+                val imm = getSystemService(requireContext(), InputMethodManager::class.java)
+                if(search?.visibility == View.VISIBLE) {
+                    search.visibility = View.GONE
+                    view?.clearFocus()
+                    imm?.hideSoftInputFromWindow(search.windowToken, InputMethodManager.SHOW_IMPLICIT)
+                } else {
+                    search?.visibility = View.VISIBLE
+                    search?.requestFocus()
+                    imm?.showSoftInput(search, InputMethodManager.SHOW_IMPLICIT)
+                }
             }
         }
     }
@@ -119,19 +134,24 @@ class CameraWithUIFragment : Fragment() {
     private fun setUpProfileBtn() {
         val profileBtn = view?.findViewById<ImageView>(R.id.profile_cam)
         profileBtn?.setOnClickListener {
-            val photos = listOf(
-                PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(
-                    Date()
-                ), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!")
-            )
-            val profileFragment = ConnectedUserViewModel().currentUser.value?.let {
-                ProfileDetailsFragment.newInstance(it,photos)
-            }
             val transaction = requireActivity().supportFragmentManager.beginTransaction()
-            transaction.replace(R.id.mainFragmentContainer, profileFragment!!)
+            runBlocking {
+                transaction.replace(R.id.mainFragmentContainer, getProfile())
+            }
             transaction.addToBackStack(null)
             transaction.commit()
         }
+    }
+    private suspend fun getProfile() : Fragment {
+        val photos = listOf(
+            PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(
+                Date()
+            ), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!")
+        )
+        return (connectedUserViewModel.currentUser.value?.let {
+            ProfileDetailsFragment.newInstance(it, photos)
+        } ?: auth.getConnectedUserId().let { db.getUser(it!!) }
+            ?.let { ProfileDetailsFragment.newInstance(it, photos) })!!
     }
 
     private fun handleClicks(){

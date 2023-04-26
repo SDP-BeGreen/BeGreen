@@ -92,7 +92,7 @@ class CameraFragment : Fragment() {
         val adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, users)
 
         //Getting the instance of AutoCompleteTextView
-        val autoCompleteTV = view.findViewById<AutoCompleteTextView>(R.id.userSearch)
+        val autoCompleteTV = view.findViewById<AutoCompleteTextView>(R.id.userSearch1)
         // Will start working from first character
         autoCompleteTV.threshold = 1
         // Setting the adapter data into the AutoCompleteTextView
