@@ -31,6 +31,4 @@ class BinTest {
         val bin = Bin("id1", BinType.ORGANIC, 4.32, 3.25)
         assertEquals(bin.location(), LatLng(4.32, 3.25))
     }
-
-
 }
