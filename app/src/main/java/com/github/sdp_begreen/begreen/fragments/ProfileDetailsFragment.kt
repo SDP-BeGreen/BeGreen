@@ -502,7 +502,7 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         }
     }
 
-    private fun modifyFollowingWithFun(compNewFollowings: () -> List<String>?) {
+    private fun modifyFollowingWithFun(compNewFollowings: () -> Set<String>?) {
         lifecycleScope.launch {
             // new user with
             val newUserWithUpdatedFollowing = connectedUserViewModel.currentUser.value?.copy(
@@ -531,7 +531,7 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
             // new user with
             modifyFollowingWithFun {
                 connectedUserViewModel.currentUser.value?.following?.plus(following)
-                    ?: listOf(following)
+                    ?: setOf(following)
             }
         }
     }

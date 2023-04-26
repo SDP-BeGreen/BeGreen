@@ -8,8 +8,8 @@ import org.koin.java.KoinJavaComponent
 //Need to be Parcelable to be passed as an argument to a fragment
 data class User (var id: String, var score: Int, val displayName: String? = null, var rating: Int = 0,
                  var description: String? = null, var phone: String? = null,
-                 var email: String? = null, var progression: Int = 0, var followers: List<String>? = null,
-                 var following: List<String>? = null, var profilePictureMetadata: PhotoMetadata? = null,
+                 var email: String? = null, var progression: Int = 0, var followers: Set<String>? = null,
+                 var following: Set<String>? = null, var profilePictureMetadata: PhotoMetadata? = null,
                  var posts: List<PhotoMetadata>? = null) : Parcelable, Comparable<User> {
 
     private val db by KoinJavaComponent.inject<DB>(DB::class.java)
@@ -25,8 +25,8 @@ data class User (var id: String, var score: Int, val displayName: String? = null
         parcel.readString(),
         parcel.readString(),
         parcel.readInt(),
-        parcel.readArrayList(String::class.java.classLoader) as List<String>?,
-        parcel.readArrayList(String::class.java.classLoader) as List<String>?,
+        parcel.readArrayList(String::class.java.classLoader) as Set<String>?,
+        parcel.readArrayList(String::class.java.classLoader) as Set<String>?,
         parcel.readParcelable(PhotoMetadata::class.java.classLoader),
         parcel.readArrayList(PhotoMetadata::class.java.classLoader) as List<PhotoMetadata>?
     )
@@ -45,8 +45,10 @@ data class User (var id: String, var score: Int, val displayName: String? = null
         parcel.writeString(phone)
         parcel.writeString(email)
         parcel.writeInt(progression)
-        parcel.writeList(followers)
-        parcel.writeList(following)
+        //parcel.writeList(followers)
+        //parcel.writeList(following)
+        parcel.writeStringList(following?.toList()) as Set<String>?
+        parcel.writeStringList(followers?.toList()) as Set<String>?
         parcel.writeParcelable(profilePictureMetadata, 0)
         parcel.writeList(posts)
     }
