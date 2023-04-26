@@ -24,6 +24,7 @@ import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.fragments.AdviceFragment
 import com.github.sdp_begreen.begreen.fragments.CameraFragment
+import com.github.sdp_begreen.begreen.fragments.CameraWithUIFragment
 import com.github.sdp_begreen.begreen.fragments.FollowersFragment
 import com.github.sdp_begreen.begreen.fragments.MapFragment
 import com.github.sdp_begreen.begreen.fragments.ProfileDetailsFragment
@@ -196,7 +197,7 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.bottomMenuCamera -> {
                 item.setIcon(R.drawable.ic_baseline_photo_camera)
-                replaceFragInMainContainer(CameraFragment())
+                replaceFragInMainContainer(CameraWithUIFragment())
             }
             R.id.bottomMenuAdvice -> {
                 item.setIcon(R.drawable.ic_baseline_lightbulb)
