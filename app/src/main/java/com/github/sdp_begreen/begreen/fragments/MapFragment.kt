@@ -128,6 +128,13 @@ class MapFragment : Fragment() {
 
         // Button
         val binBtn: Button = requireView().findViewById(R.id.binBtn)
+        setUpBinButtonClick(binBtn, binTypeSelector)
+    }
+
+    /**
+     * Helper function that sets up button click events listeners
+     */
+    private fun setUpBinButtonClick(binBtn: Button, binTypeSelector: Spinner) {
         binBtn.setOnClickListener {
             // If no marker is currently selected, add a new one at the current location
             if (selectedMarker == null) {
@@ -135,7 +142,6 @@ class MapFragment : Fragment() {
                 val binType: BinType = BinType.values()[binTypeSelector.selectedItemPosition]
                 addNewBin(binType)
             } else {
-            // If a marker is currently selected, delete it
                 // Remove the bin from the database
                 lifecycleScope.launch {
                     // We always add the bin in the tag after the bin has been added to the database,
