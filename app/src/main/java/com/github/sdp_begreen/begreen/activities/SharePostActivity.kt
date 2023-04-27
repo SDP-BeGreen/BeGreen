@@ -13,9 +13,9 @@ import com.github.sdp_begreen.begreen.models.Post
 
 class SharePostActivity : AppCompatActivity() {
 
-    private lateinit var postImageView : ImageView;
-    private lateinit var postTitleEditText : EditText;
-    private lateinit var sharePostBtn : Button;
+    private lateinit var postImageView : ImageView
+    private lateinit var postTitleEditText : EditText
+    private lateinit var sharePostBtn : Button
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,9 +31,9 @@ class SharePostActivity : AppCompatActivity() {
     private fun setupUI() {
 
         // Bind all UIs
-        postTitleEditText = findViewById(R.id.postTitleEditText);
+        postTitleEditText = findViewById(R.id.postTitleEditText)
         sharePostBtn = findViewById(R.id.sharePostBtn)
-        postImageView = findViewById(R.id.postImageView);
+        postImageView = findViewById(R.id.postImageView)
 
         // Display the post image.
         displayPostImage()
@@ -85,7 +85,7 @@ class SharePostActivity : AppCompatActivity() {
     /**
      * Helper function to get the whole post instance
      */
-    private fun getPost() : Post? {
+    private fun getPost() : Post {
 
         // "image" is non-null because we already checked it during the activity lauching. So we can force the casting.
         // In other words, (image == null) is an unreachable path

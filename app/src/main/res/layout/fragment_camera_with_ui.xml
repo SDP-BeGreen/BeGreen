@@ -17,7 +17,8 @@
         android:elevation="2dp"
         android:src="@drawable/ic_profile"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/profile_button" />
 
     <ImageView
         android:id="@+id/search_cam"
@@ -31,7 +32,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/profile_cam"
         app:layout_constraintTop_toTopOf="@+id/profile_cam"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        android:contentDescription="@string/serch_a_user_button" />
 
 
 
@@ -44,7 +46,8 @@
         android:elevation="2dp"
         android:src="@drawable/ic_scwitch_cam"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/switch_camera_button" />
 
     <Button
         android:id="@+id/camera_capture_button"

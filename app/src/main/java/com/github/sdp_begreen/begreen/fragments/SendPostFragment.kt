@@ -23,6 +23,7 @@ import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 import java.util.Date
 
+//argument constant
 private const val ARG_URI = "uri"
 
 class SendPostFragment : Fragment() {
@@ -51,6 +52,7 @@ class SendPostFragment : Fragment() {
     }
 
     private fun initView(){
+        //load image
         Picasso.Builder(requireContext()).build().load(param_uri).into(view?.findViewById(R.id.preview))
         setUpCancel()
         setUpShare()
@@ -64,6 +66,7 @@ class SendPostFragment : Fragment() {
     }
 
     private fun returnToCamera() {
+        //return to camera fragment
         val transaction = requireActivity().supportFragmentManager.beginTransaction()
         transaction.detach(this).remove(this)
         runBlocking {
@@ -76,14 +79,23 @@ class SendPostFragment : Fragment() {
     private fun setUpShare(){
         val shareBtn = view?.findViewById<ImageView>(R.id.send_post)
         shareBtn?.setOnClickListener {
+            //create a metadata file
             var metadata : PhotoMetadata? = null
+            //fetch description on UI
             view?.findViewById<TextInputEditText>(R.id.post_description).also {
                 val description = it?.text.toString()
+                var category : String = ""
+                //fetch category on UI
+                view?.findViewById<TextInputEditText>(R.id.post_category)?.also { cat ->
+                    category = cat.text.toString()
+                }
+                //fetch current user
                 val user = connectedUserViewModel.currentUser.value
                 val date = ParcelableDate(Date())
 
-                metadata = PhotoMetadata("photo?.id", description, date, user?.id, "", description)
+                metadata = PhotoMetadata("photo?.id", description, date, user?.id, category, description)
             }
+            //Post photo to firebase
             view?.findViewById<ImageView>(R.id.preview)?.drawable?.toBitmap()?.let { bitmap ->
                 lifecycleScope.launch {
                     //metadata = metadata?.let { it1 -> db.addImage(bitmap,1, it1) }
@@ -91,11 +103,16 @@ class SendPostFragment : Fragment() {
             }
 
             val msg = "Photo sent successfully"
+            //display toast
             Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
             returnToCamera()
         }
     }
 
+    /**
+     * Companion object to create fragment
+     * with arguments
+     */
     companion object {
         @JvmStatic
         fun newInstance(param1: String) =

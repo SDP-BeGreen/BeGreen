@@ -39,28 +39,28 @@ class UserPhotosViewAdapterTest {
 
     @Test
     fun userViewAdapterGetItemCountWorksOnTrivialList() {
-        MatcherAssert.assertThat(userPhotoViewAdapter.getItemCount(), CoreMatchers.equalTo(2))
+        MatcherAssert.assertThat(userPhotoViewAdapter.itemCount, equalTo(2))
     }
 
     @Test
     fun userViewAdapterGetItemCountWorksOnEmptyList() {
         userPhotoViewAdapter = UserPhotosViewAdapter(listOf(), true)
-        MatcherAssert.assertThat(userPhotoViewAdapter.getItemCount(), CoreMatchers.equalTo(0))
+        MatcherAssert.assertThat(userPhotoViewAdapter.itemCount, equalTo(0))
     }
 
     @Test
     fun userPhotosViewAdapterGetItemCountWorksOnNullList() {
         userPhotoViewAdapter = UserPhotosViewAdapter(null, true)
-        MatcherAssert.assertThat(userPhotoViewAdapter.getItemCount(), CoreMatchers.equalTo(0))
+        MatcherAssert.assertThat(userPhotoViewAdapter.itemCount, equalTo(0))
     }
 
     @Test
     fun userPhotosViewAdapterOnBindViewHolderWorksOnTrivialList() {
         val viweHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
         userPhotoViewAdapter.onBindViewHolder(viweHolder, 0)
-        MatcherAssert.assertThat(viweHolder.titleView.text, CoreMatchers.equalTo("title"))
+        MatcherAssert.assertThat(viweHolder.titleView.text, equalTo("title"))
         MatcherAssert.assertThat(viweHolder.subtitleView, CoreMatchers.notNullValue())
-        MatcherAssert.assertThat(viweHolder.subtitleView.text.subSequence(15,35), CoreMatchers.equalTo("Gros vilain pas beau"))
+        MatcherAssert.assertThat(viweHolder.subtitleView.text.subSequence(15,35), equalTo("Gros vilain pas beau"))
     }
 
     @Test

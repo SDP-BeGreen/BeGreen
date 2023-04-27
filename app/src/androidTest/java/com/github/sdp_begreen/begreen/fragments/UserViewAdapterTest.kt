@@ -53,19 +53,19 @@ class UserViewAdapterTest {
     )
     @Test
     fun userViewAdapterGetItemCountWorksOnTrivialList() {
-        assertThat(userViewAdapter.getItemCount(), equalTo(2))
+        assertThat(userViewAdapter.itemCount, equalTo(2))
     }
 
     @Test
     fun userViewAdapterGetItemCountWorksOnEmptyList() {
         userViewAdapter = UserViewAdapter(listOf(), userViewAdapter.parentFragmentManager, TestLifecycleOwner().lifecycleScope, InstrumentationRegistry.getInstrumentation().targetContext.resources)
-        assertThat(userViewAdapter.getItemCount(), equalTo(0))
+        assertThat(userViewAdapter.itemCount, equalTo(0))
     }
 
     @Test
     fun userViewAdapterGetItemCountWorksOnNullList() {
         userViewAdapter = UserViewAdapter(null, userViewAdapter.parentFragmentManager, TestLifecycleOwner().lifecycleScope, InstrumentationRegistry.getInstrumentation().targetContext.resources)
-        assertThat(userViewAdapter.getItemCount(), equalTo(0))
+        assertThat(userViewAdapter.itemCount, equalTo(0))
     }
 
     @Test

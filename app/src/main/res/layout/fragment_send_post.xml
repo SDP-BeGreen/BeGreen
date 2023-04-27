@@ -15,7 +15,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:scaleType="fitStart"/>
+        android:scaleType="fitStart"
+        android:contentDescription="@string/here_is_the_photo_that_was_taken" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
@@ -60,7 +61,8 @@
         android:elevation="2dp"
         android:src="@drawable/ic_send"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/preview" />
+        app:layout_constraintTop_toBottomOf="@+id/preview"
+        android:contentDescription="@string/button_to_send_the_post_online" />
 
     <ImageView
         android:id="@+id/cancel_post"
@@ -70,5 +72,6 @@
         android:layout_marginTop="20dp"
         android:src="@drawable/ic_cross"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/cross_button_to_come_back_to_camera" />
 </androidx.constraintlayout.widget.ConstraintLayout>

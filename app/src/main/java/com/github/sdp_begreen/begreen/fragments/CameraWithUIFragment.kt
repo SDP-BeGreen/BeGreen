@@ -1,7 +1,6 @@
 package com.github.sdp_begreen.begreen.fragments
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -21,24 +20,18 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.activities.SharePostActivity
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
-import com.google.android.material.textfield.TextInputEditText
-import com.squareup.picasso.Picasso
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
@@ -62,10 +55,6 @@ class CameraWithUIFragment : Fragment() {
     private var lensFacing = CameraSelector.DEFAULT_FRONT_CAMERA
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -81,6 +70,9 @@ class CameraWithUIFragment : Fragment() {
     }
 
 
+    /**
+     * Initialize the view
+     */
     private fun initView() {
         // Request camera permissions
         if (allPermissionsGranted()) {
@@ -98,12 +90,15 @@ class CameraWithUIFragment : Fragment() {
         }
         outputDirectory = getOutputDirectory()
         cameraExecutor = Executors.newSingleThreadExecutor()
-        handleClicks()
+        setUpSwitch()
         setUpProfileBtn()
         lifecycleScope.launch { setUpSearchBar() }
     }
 
 
+    /**
+     * Handle the clicks on the search button
+     */
     private suspend fun setUpSearchBar() {
 
         val users = db.getAllUsers()
@@ -136,9 +131,14 @@ class CameraWithUIFragment : Fragment() {
         }
     }
 
+    /**
+     * Handle the clicks on the Profile button
+     */
     private fun setUpProfileBtn() {
+        // Set up the listener for profile button
         val profileBtn = view?.findViewById<ImageView>(R.id.profile_cam)
         profileBtn?.setOnClickListener {
+            // Create a transaction to replace the current fragment by the profile fragment
             val transaction = requireActivity().supportFragmentManager.beginTransaction()
             runBlocking {
                 transaction.replace(R.id.mainFragmentContainer, getProfile())
@@ -147,31 +147,45 @@ class CameraWithUIFragment : Fragment() {
             transaction.commit()
         }
     }
+
+    /**
+     * Retrieves the current user profile fragment
+     */
     private suspend fun getProfile() : Fragment {
+        //TODO remove this after demo
+        //_______________________________________________________
         val photos = listOf(
             PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(
                 Date()
             ), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!")
         )
+        //_______________________________________________________
         return (connectedUserViewModel.currentUser.value?.let {
             ProfileDetailsFragment.newInstance(it, photos)
         } ?: auth.getConnectedUserId().let { db.getUser(it!!) }
             ?.let { ProfileDetailsFragment.newInstance(it, photos) })!!
     }
 
-    private fun handleClicks(){
+    /**
+     *  Handles the clicks on the switch button
+     */
+    private fun setUpSwitch(){
         //on click switch camera
         view?.findViewById<ImageView>(R.id.img_switch_camera).also {
             it?.setOnClickListener {
+                // Flip between front and back lens
                 if (lensFacing == CameraSelector.DEFAULT_FRONT_CAMERA)
-                    lensFacing = CameraSelector.DEFAULT_BACK_CAMERA;
+                    lensFacing = CameraSelector.DEFAULT_BACK_CAMERA
                 else if (lensFacing == CameraSelector.DEFAULT_BACK_CAMERA)
-                    lensFacing = CameraSelector.DEFAULT_FRONT_CAMERA;
+                    lensFacing = CameraSelector.DEFAULT_FRONT_CAMERA
                 startCamera()
             }
         }
     }
 
+    /**
+     * Handle the capture of a photo
+     */
     private fun takePhoto(){
 
         // Get a stable reference of the modifiable image capture use case
@@ -203,6 +217,7 @@ class CameraWithUIFragment : Fragment() {
                     val savedUri = Uri.fromFile(photoFile)
                     val msg = "Photo capture successfully"
                     Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                    // Create a transaction to replace the current fragment by the send post fragment
                     val transaction = requireActivity().supportFragmentManager.beginTransaction()
                     runBlocking {
                         transaction.replace(R.id.mainFragmentContainer, SendPostFragment.newInstance(savedUri.toString()))
@@ -213,6 +228,9 @@ class CameraWithUIFragment : Fragment() {
             })
     }
 
+    /**
+     * Get the output directory
+     */
     private fun getOutputDirectory(): File {
         val mediaDir = activity?.externalMediaDirs?.firstOrNull()?.let {
             File(it, resources.getString(R.string.app_name)).apply { mkdirs() } }
@@ -220,6 +238,9 @@ class CameraWithUIFragment : Fragment() {
             mediaDir else requireActivity().filesDir
     }
 
+    /**
+     * Start the camera
+     */
     private fun startCamera() {
 
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
@@ -252,6 +273,9 @@ class CameraWithUIFragment : Fragment() {
 
     }
 
+    /**
+     * Check if all permissions are granted
+     */
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
             requireContext(), it
@@ -281,6 +305,9 @@ class CameraWithUIFragment : Fragment() {
         }
     }
 
+    /**
+     * Companion object to create the fragment
+     */
     companion object {
         private const val TAG = "CameraXBasic"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"

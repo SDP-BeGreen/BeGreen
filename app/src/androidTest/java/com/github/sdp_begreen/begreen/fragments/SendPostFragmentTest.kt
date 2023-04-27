@@ -1,4 +1,3 @@
 package com.github.sdp_begreen.begreen.fragments
 
-class SendPostFragmentTest {
-}
+class SendPostFragmentTest

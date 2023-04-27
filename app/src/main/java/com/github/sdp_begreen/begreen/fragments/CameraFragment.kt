@@ -107,7 +107,7 @@ class CameraFragment : Fragment() {
         // If the camera permission is not granted, ask for it. Otherwise start the camera intent.
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.CAMERA),
-                CameraFragment.PERMISSION_CAMERA_REQUEST_CODE
+                PERMISSION_CAMERA_REQUEST_CODE
             )
 
         } else {
@@ -127,7 +127,7 @@ class CameraFragment : Fragment() {
 
         // Send the image to the SharePostActivity
         val intent = Intent(requireContext(), SharePostActivity::class.java)
-        intent.putExtra(CameraFragment.EXTRA_IMAGE_BITMAP, image)
+        intent.putExtra(EXTRA_IMAGE_BITMAP, image)
         startActivity(intent)
     }
 
