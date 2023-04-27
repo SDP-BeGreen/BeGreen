@@ -3,8 +3,6 @@ package com.github.sdp_begreen.begreen.fragments
 import android.Manifest
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -20,7 +18,6 @@ import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
-import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
@@ -136,24 +133,9 @@ class CameraWithUIFragmentTest {
         onView(ViewMatchers.withId(R.id.userSearch)).check(matches(ViewMatchers.isDisplayed()))
     }
 
-    @Test fun searchBarCorrectlyDisplaysWrittenText() {
-        runBlocking{
-            //mock the db
-            Mockito.`when`(db.getAllUsers()).thenReturn(listOf())
-
-            // Click the search btn
-            onView(ViewMatchers.withId(R.id.search_cam)).perform(ViewActions.click())
-
-            // Type in the search bar
-            onView(ViewMatchers.withId(R.id.userSearch))
-                .perform(ViewActions.typeText("blabla!"))            // Verify that the AutoCompleteTextView now contains the selected item
-            onView(ViewMatchers.withId(R.id.userSearch))
-                .check(matches(ViewMatchers.withText("blabla!")))
-        }
-    }
-
     @Test fun searchBarDisplaysExpectedUsers() {
         runBlocking {
+            Mockito.`when`(db.getAllUsers()).thenReturn(users)
             val expectedResults = listOf("Alice", "Alain Berset", "Mister Alix")
             for (name in expectedResults){
                 onView(ViewMatchers.withId(R.id.search_cam)).perform(ViewActions.click())
@@ -169,6 +151,20 @@ class CameraWithUIFragmentTest {
                     .check(matches(ViewMatchers.withText(name)))
                 onView(ViewMatchers.withId(R.id.search_cam)).perform(ViewActions.click())
             }
+        }
+    }
+
+    @Test fun searchBarCorrectlyDisplaysWrittenText() {
+        runBlocking{
+
+            // Click the search btn
+            onView(ViewMatchers.withId(R.id.search_cam)).perform(ViewActions.click())
+
+            // Type in the search bar
+            onView(ViewMatchers.withId(R.id.userSearch))
+                .perform(ViewActions.typeText("blabla!"))            // Verify that the AutoCompleteTextView now contains the selected item
+            onView(ViewMatchers.withId(R.id.userSearch))
+                .check(matches(ViewMatchers.withText("blabla!")))
         }
     }
 }
