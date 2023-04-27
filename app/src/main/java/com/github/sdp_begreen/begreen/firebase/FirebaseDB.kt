@@ -201,14 +201,14 @@ object FirebaseDB: DB {
         databaseReference.child(BIN_LOCATION_PATH).child(binId).removeValue().await()
     }
 
-    override suspend fun getAllBins(timeout: Long): Set<Bin> {
+    override suspend fun getAllBins(timeout: Long): List<Bin> {
 
         return try {
             withTimeout(timeout) {
                 val data = databaseReference.child(BIN_LOCATION_PATH).get().await()
                 data.children.mapNotNull {
                     it.getValue(Bin::class.java)
-                }.toSet()
+                }
             }
         } catch (timeoutEx: TimeoutCancellationException) {
             Log.d(TAG, "Timeout, can't connect with database")

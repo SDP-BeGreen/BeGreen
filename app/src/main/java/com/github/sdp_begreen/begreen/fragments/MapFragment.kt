@@ -213,7 +213,7 @@ class MapFragment : Fragment() {
      * Helper functions that displays bins markers on the map, and sets up click events
      * Only called once when the view is created
      */
-    private fun displayBinsMarkers(bins: Set<Bin>) = bins.forEach{ addMarker(it) }
+    private fun displayBinsMarkers(bins: List<Bin>) = bins.forEach{ addMarker(it) }
 
 
     /**

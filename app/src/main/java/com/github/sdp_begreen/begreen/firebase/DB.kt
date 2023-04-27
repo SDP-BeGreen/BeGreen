@@ -143,14 +143,14 @@ interface DB {
 
 
     /**
-     * Retrieves the set of all bins currently stored in the database
+     * Retrieves the list of all bins currently stored in the database
      *
      * @param timeout the maximum time we wait for the database to respond
-     * @return the set of bins fetched from the database
+     * @return the list of bins fetched from the database
      * @throws DatabaseTimeoutException if the database could not be reached
      * @throws DatabaseException if an exception occurred while retrieving the data
      */
-    suspend fun getAllBins(timeout: Long = TIMEOUT): Set<Bin>
+    suspend fun getAllBins(timeout: Long = TIMEOUT): List<Bin>
 
     /**
      * Retrieves the list of advices from the realtime database
