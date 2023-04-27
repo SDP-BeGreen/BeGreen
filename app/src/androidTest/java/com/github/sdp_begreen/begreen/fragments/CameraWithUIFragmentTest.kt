@@ -97,22 +97,20 @@ class CameraWithUIFragmentTest {
     fun clickOnTakePhotoRedirectOnSharePost() {
         // Click the add new post button
         Espresso.onView(ViewMatchers.withId(R.id.camera_capture_button)).perform(ViewActions.click())
-        Thread.sleep(2000)
         Espresso.onView(ViewMatchers.withId(R.id.post_background)).check(matches(ViewMatchers.isDisplayed()))
     }
 
     @Test
     fun clickOnSendPostRedirectOnCamera() {
-        fragmentScenario.onFragment {
-            val connectedUserViewModel
-                    by it.viewModels<ConnectedUserViewModel>(ownerProducer = { it.requireActivity() })
-            connectedUserViewModel.setCurrentUser(user)
-        }
+        //fragmentScenario.onFragment {
+        //    val connectedUserViewModel
+        //            by it.viewModels<ConnectedUserViewModel>(ownerProducer = { it.requireActivity() })
+        //    connectedUserViewModel.setCurrentUser(user)
+        //}
         // Click the add new post button
-        Espresso.onView(ViewMatchers.withId(R.id.camera_capture_button)).perform(ViewActions.click())
-        Thread.sleep(2000)
-        Espresso.onView(ViewMatchers.withId(R.id.send_post)).perform(ViewActions.click())
-        Thread.sleep(2000)
+        Espresso.onView(ViewMatchers.withId(R.id.camera_capture_button)).check(matches(ViewMatchers.isDisplayed())).perform(ViewActions.click()).check(matches(ViewMatchers.isDisplayed()))
+        Espresso.onView(ViewMatchers.withId(R.id.post_background)).check(matches(ViewMatchers.isDisplayed()))
+        Espresso.onView(ViewMatchers.withId(R.id.send_post)).check(matches(ViewMatchers.isDisplayed())).perform(ViewActions.click()).check(matches(ViewMatchers.isDisplayed()))
         Espresso.onView(ViewMatchers.withId(R.id.camera_capture_button)).check(matches(ViewMatchers.isDisplayed()))
     }
 
@@ -120,7 +118,6 @@ class CameraWithUIFragmentTest {
     fun clickOnSwitchRedirectOnCamera() {
         // Click the add new post button
         Espresso.onView(ViewMatchers.withId(R.id.img_switch_camera)).perform(ViewActions.click())
-        Thread.sleep(2000)
         Espresso.onView(ViewMatchers.withId(R.id.camera_capture_button)).check(matches(ViewMatchers.isDisplayed()))
     }
 
@@ -135,24 +132,24 @@ class CameraWithUIFragmentTest {
     }
 
 //
-    //@Test
-    //fun clickOnProfileRedirectOnProfileDetails() {
-    //    fragmentScenario.onFragment {
-    //        val connectedUserViewModel
-    //                by it.viewModels<ConnectedUserViewModel>(ownerProducer = { it.requireActivity() })
-    //        connectedUserViewModel.setCurrentUser(user)
-    //        val fragmentManager = it.requireActivity().supportFragmentManager
-    //        val supportFragmentManager = it.childFragmentManager
-    //        supportFragmentManager.commit {
-    //            setReorderingAllowed(true)
-    //            add<CameraWithUIFragment>(R.id.mainFragmentContainer)
-    //        }
-    //        val fra = fragmentManager.findFragmentById(R.id.mainFragmentContainer)!!
-    //        fragmentManager.beginTransaction().add(fra, "mainFragmentContainer").commit()
-    //    }
-//
-    //    Espresso.onView(ViewMatchers.withId(R.id.profile_cam)).perform(ViewActions.click())
-//
-    //    Espresso.onView(ViewMatchers.withId(R.id.fragment_profile_details)).check(matches(ViewMatchers.isDisplayed()))
-    //}
+    @Test
+    fun clickOnProfileRedirectOnProfileDetails() {
+        fragmentScenario.onFragment {
+            val connectedUserViewModel
+                    by it.viewModels<ConnectedUserViewModel>(ownerProducer = { it.requireActivity() })
+            connectedUserViewModel.setCurrentUser(user)
+            val fragmentManager = it.requireActivity().supportFragmentManager
+            val supportFragmentManager = it.childFragmentManager
+            supportFragmentManager.commit {
+                setReorderingAllowed(true)
+                add<CameraWithUIFragment>(R.id.mainFragmentContainer)
+            }
+            val fra = fragmentManager.findFragmentById(R.id.mainFragmentContainer)!!
+            fragmentManager.beginTransaction().add(fra, "mainFragmentContainer").commit()
+        }
+
+        Espresso.onView(ViewMatchers.withId(R.id.profile_cam)).perform(ViewActions.click())
+
+        Espresso.onView(ViewMatchers.withId(R.id.fragment_profile_details)).check(matches(ViewMatchers.isDisplayed()))
+    }
 }

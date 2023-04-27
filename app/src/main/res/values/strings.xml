@@ -56,4 +56,6 @@
     <string name="search_user">Search user…</string>
     <string name="add_new_bin">Add new bin</string>
     <string name="quotes_of_the_day">Quotes of the day</string>
+    <string name="category">Category</string>
+    <string name="enter_description_here">Enter Description here</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.github.sdp_begreen.begreen.fragments
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -27,8 +28,10 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.activities.SharePostActivity
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
@@ -51,7 +54,7 @@ class CameraWithUIFragment : Fragment() {
     // Get the db instance
     private val db by inject<DB>()
     private val auth by inject<Auth>()
-    private val connectedUserViewModel by viewModels<ConnectedUserViewModel>()
+    private val connectedUserViewModel: ConnectedUserViewModel by viewModels(ownerProducer = { requireActivity() })
     private lateinit var outputDirectory: File
     private var viewFinder = view?.findViewById<PreviewView>(R.id.viewFinder)
     private var imageCapture: ImageCapture? = null
@@ -97,41 +100,10 @@ class CameraWithUIFragment : Fragment() {
         cameraExecutor = Executors.newSingleThreadExecutor()
         handleClicks()
         setUpProfileBtn()
-        setUpCancel()
-        setUpShare()
         lifecycleScope.launch { setUpSearchBar() }
-        preparePhoto()
     }
 
-    private fun setUpCancel(){
-        val cancelBtn = view?.findViewById<ImageView>(R.id.cancel_post)
-        cancelBtn?.setOnClickListener {
-            preparePhoto()
-        }
-    }
 
-    private fun setUpShare(){
-        val shareBtn = view?.findViewById<ImageView>(R.id.send_post)
-        shareBtn?.setOnClickListener {
-            var metadata : PhotoMetadata? = null
-            view?.findViewById<TextInputEditText>(R.id.post_description).also {
-                val description = it?.text.toString()
-                val user = connectedUserViewModel.currentUser.value
-                val date = ParcelableDate(Date())
-
-                metadata = PhotoMetadata("photo?.id", description, date, user?.id, "", description)
-            }
-            view?.findViewById<ImageView>(R.id.preview)?.drawable?.toBitmap()?.let { bitmap ->
-                lifecycleScope.launch {
-                    //metadata = metadata?.let { it1 -> db.addImage(bitmap,1, it1) }
-                }
-            }
-
-            val msg = "Photo sent successfully"
-            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-            preparePhoto()
-        }
-    }
     private suspend fun setUpSearchBar() {
 
         val users = db.getAllUsers()
@@ -191,8 +163,10 @@ class CameraWithUIFragment : Fragment() {
         //on click switch camera
         view?.findViewById<ImageView>(R.id.img_switch_camera).also {
             it?.setOnClickListener {
-                if (lensFacing == CameraSelector.DEFAULT_FRONT_CAMERA) lensFacing = CameraSelector.DEFAULT_BACK_CAMERA;
-                else if (lensFacing == CameraSelector.DEFAULT_BACK_CAMERA) lensFacing = CameraSelector.DEFAULT_FRONT_CAMERA;
+                if (lensFacing == CameraSelector.DEFAULT_FRONT_CAMERA)
+                    lensFacing = CameraSelector.DEFAULT_BACK_CAMERA;
+                else if (lensFacing == CameraSelector.DEFAULT_BACK_CAMERA)
+                    lensFacing = CameraSelector.DEFAULT_FRONT_CAMERA;
                 startCamera()
             }
         }
@@ -225,13 +199,16 @@ class CameraWithUIFragment : Fragment() {
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    preparePost()
                     //the uri of photo captured here
                     val savedUri = Uri.fromFile(photoFile)
-                    Picasso.Builder(requireContext()).build().load(savedUri).into(view?.findViewById(R.id.preview))
                     val msg = "Photo capture successfully"
                     Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-                    Log.d(TAG, msg)
+                    val transaction = requireActivity().supportFragmentManager.beginTransaction()
+                    runBlocking {
+                        transaction.replace(R.id.mainFragmentContainer, SendPostFragment.newInstance(savedUri.toString()))
+                    }
+                    transaction.addToBackStack(null)
+                    transaction.commit()
                 }
             })
     }
@@ -256,6 +233,7 @@ class CameraWithUIFragment : Fragment() {
                 .also {
                     it.setSurfaceProvider(viewFinder?.surfaceProvider)
                 }
+            viewFinder?.scaleType = PreviewView.ScaleType.FILL_CENTER
 
             imageCapture = ImageCapture.Builder()
                 .build()
@@ -284,52 +262,6 @@ class CameraWithUIFragment : Fragment() {
         super.onDestroy()
         cameraExecutor.shutdown()
     }
-
-    private fun preparePost() {
-        view?.findViewById<ImageView>(R.id.img_switch_camera).also {
-            it?.visibility = View.GONE
-        }
-        view?.findViewById<ImageView>(R.id.profile_cam).also {
-            it?.visibility = View.GONE
-        }
-        view?.findViewById<ImageView>(R.id.search_cam).also {
-            it?.visibility = View.GONE
-        }
-        view?.findViewById<Button>(R.id.camera_capture_button).also {
-            it?.visibility = View.GONE
-        }
-        view?.findViewById<PreviewView>(R.id.viewFinder).also {
-            it?.visibility = View.GONE
-        }
-        view?.findViewById<ConstraintLayout>(R.id.post_background).also {
-            it?.visibility = View.VISIBLE
-        }
-
-    }
-
-    private fun preparePhoto() {
-        view?.findViewById<ImageView>(R.id.img_switch_camera).also {
-            it?.visibility = View.VISIBLE
-        }
-        view?.findViewById<ImageView>(R.id.profile_cam).also {
-            it?.visibility = View.VISIBLE
-        }
-        view?.findViewById<ImageView>(R.id.search_cam).also {
-            it?.visibility = View.VISIBLE
-        }
-        view?.findViewById<Button>(R.id.camera_capture_button).also {
-            it?.visibility = View.VISIBLE
-        }
-        view?.findViewById<PreviewView>(R.id.viewFinder).also {
-            it?.visibility = View.VISIBLE
-        }
-        view?.findViewById<ConstraintLayout>(R.id.post_background).also {
-            it?.visibility = View.GONE
-        }
-
-    }
-
-
     @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults:
