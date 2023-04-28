@@ -155,9 +155,12 @@ interface DB {
     /**
      * Retrieves the list of advices from the realtime database
      *
+     * @param timeout the maximum time we wait for the database to respond
      * @return the set of all advices
+     * @throws DatabaseTimeoutException if the database could not be reached
+     * @throws DatabaseException if an exception occurred while retrieving the data
      */
-    suspend fun getAdvices(): Set<String>
+    suspend fun getAdvices(timeout: Long = TIMEOUT): Set<String>
 
 
 }
