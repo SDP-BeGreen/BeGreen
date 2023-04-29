@@ -1,12 +1,12 @@
 package com.github.sdp_begreen.begreen.fragments
 
 import android.Manifest
+import android.os.Bundle
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -20,7 +20,6 @@ import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.BeforeClass
@@ -92,13 +91,29 @@ class SendPostFragmentTest {
     //Setup the scenario
     @Before
     fun setup() {
-        fragmentScenario = launchFragmentInContainer()
+        fragmentScenario = launchFragmentInContainer(
+            fragmentArgs = Bundle().apply {
+                putString("uri", user.id)
+            }
+        )
     }
 
     @Test
     fun clickCategoryWorks() {
-        // Click the switch cam
-        onView(ViewMatchers.withId(R.id.post_category)).perform(ViewActions.click())
-
+        // Click the category input
+        onView(ViewMatchers.withId(R.id.post_category)).perform(ViewActions.click()).check(
+            matches(
+                ViewMatchers.isDisplayed()
+            )
+        )
+    }
+    @Test
+    fun clickDescriptionWorks() {
+        // Click the description input
+        onView(ViewMatchers.withId(R.id.post_category)).perform(ViewActions.click()).check(
+            matches(
+                ViewMatchers.isDisplayed()
+            )
+        )
     }
 }
