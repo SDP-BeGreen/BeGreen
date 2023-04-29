@@ -5,8 +5,14 @@ import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.FirebaseAuth
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
-import com.github.sdp_begreen.begreen.firebase.MeetingService
-import com.github.sdp_begreen.begreen.firebase.MeetingServiceImpl
+import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingCommentService
+import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingCommentServiceImpl
+import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingParticipantService
+import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingParticipantServiceImpl
+import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingPhotoService
+import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingPhotoServiceImpl
+import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingService
+import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingServiceImpl
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -30,10 +36,13 @@ object FirebaseRef {
  * The database module to use in a production environment
  */
 val productionDbModule = module {
+    single { FirebaseRef }
     single<DB> { FirebaseDB }
     single<Auth> { FirebaseAuth() }
     single<MeetingService> { MeetingServiceImpl }
-    single { FirebaseRef }
+    single<MeetingCommentService> { MeetingCommentServiceImpl }
+    single<MeetingParticipantService> { MeetingParticipantServiceImpl }
+    single<MeetingPhotoService> { MeetingPhotoServiceImpl }
 }
 
 /**
