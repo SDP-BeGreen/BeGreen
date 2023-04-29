@@ -14,6 +14,7 @@ import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.activities.MainActivity
+import com.github.sdp_begreen.begreen.fragments.CameraContainer
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.User
@@ -49,7 +50,6 @@ class CameraContainerTest {
             User("6", 1234, "Alain Berset"),
             User("7", 1235, "Mister Alix")
         )
-
         // Setup the mock
         @OptIn(ExperimentalCoroutinesApi::class)
         @BeforeClass

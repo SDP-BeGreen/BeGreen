@@ -10,6 +10,9 @@ import androidx.fragment.app.commit
 import com.github.sdp_begreen.begreen.R
 
 class CameraContainer : Fragment() {
+    companion object {
+        fun newInstance() = CameraContainer()
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
