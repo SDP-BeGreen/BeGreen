@@ -24,6 +24,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
@@ -139,9 +140,10 @@ class CameraWithUIFragment : Fragment() {
         val profileBtn = view?.findViewById<ImageView>(R.id.profile_cam)
         profileBtn?.setOnClickListener {
             // Create a transaction to replace the current fragment by the profile fragment
-            val transaction = requireActivity().supportFragmentManager.beginTransaction()
+            val transaction = childFragmentManager.beginTransaction()
+            //val transaction = requireActivity().supportFragmentManager.beginTransaction()
             runBlocking {
-                transaction.replace(R.id.mainFragmentContainer, getProfile())
+                transaction.replace(R.id.mainCameraFragmentContainer, getProfile())
             }
             transaction.addToBackStack(null)
             transaction.commit()
@@ -220,7 +222,7 @@ class CameraWithUIFragment : Fragment() {
                     // Create a transaction to replace the current fragment by the send post fragment
                     val transaction = requireActivity().supportFragmentManager.beginTransaction()
                     runBlocking {
-                        transaction.replace(R.id.mainFragmentContainer, SendPostFragment.newInstance(savedUri.toString()))
+                        transaction.replace(R.id.mainCameraFragmentContainer, SendPostFragment.newInstance(savedUri.toString()))
                     }
                     transaction.addToBackStack(null)
                     transaction.commit()
