@@ -32,17 +32,13 @@ object MeetingPhotoServiceImpl : MeetingPhotoService {
             !photoMetadata.takenBy.isNullOrBlank(),
             "The user that took the photo cannot be blank or null"
         )
-        val photoRef = dbRef.child(MEETING_PATH).child(meetingId).child(
-            PHOTOS_PATH
-        )
+        val photoRef = dbRef.child(MEETING_PATH).child(meetingId).child(PHOTOS_PATH)
         return photoRef.push().key?.let {
             val newPhotoMetadata = photoMetadata.copy(pictureId = it)
             val compressedImage = ByteArrayOutputStream()
             photo.compress(Bitmap.CompressFormat.JPEG, 100, compressedImage)
             putBytesToStorage(
-                storageRef.child(MEETING_PATH).child(meetingId).child(
-                    PHOTOS_PATH
-                ).child(it),
+                storageRef.child(MEETING_PATH).child(meetingId).child(PHOTOS_PATH).child(it),
                 compressedImage.toByteArray(),
                 "Error while storing the photo"
             )
