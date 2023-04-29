@@ -13,6 +13,13 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class CustomLatLng(var latitude: Double? = null, var longitude: Double? = null): Parcelable {
 
+    companion object {
+        /**
+         * Factory method to create a new [CustomLatLng] instance from an existing [LatLng].
+         */
+        fun fromMapLatLng(latLng: LatLng) = CustomLatLng(latLng.latitude, latLng.longitude)
+    }
+
     /**
      * Function to convert a [CustomLatLng] to a [LatLng]
      */

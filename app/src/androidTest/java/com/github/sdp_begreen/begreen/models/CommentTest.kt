@@ -1,5 +1,6 @@
 package com.github.sdp_begreen.begreen.models
 
+import com.github.sdp_begreen.begreen.models.meetings.Comment
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test

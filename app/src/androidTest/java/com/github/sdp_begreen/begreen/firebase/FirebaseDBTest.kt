@@ -12,6 +12,7 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.activities.DatabaseActivity
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
@@ -33,6 +34,9 @@ class FirebaseDBTest {
     // For some reason to perform the write in the database, an activity has to be started
     @get:Rule
     val activityRule = ActivityScenarioRule(DatabaseActivity::class.java)
+
+    @get:Rule
+    val koinTestRule = KoinTestRule()
 
     companion object {
         @BeforeClass @JvmStatic fun setup() {

@@ -3,6 +3,7 @@ package com.github.sdp_begreen.begreen.firebase
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
+import com.github.sdp_begreen.begreen.FirebaseRef
 import com.github.sdp_begreen.begreen.exceptions.DatabaseTimeoutException
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
@@ -11,12 +12,12 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
 import java.io.ByteArrayOutputStream
 import com.google.android.gms.maps.model.LatLng
+import org.koin.java.KoinJavaComponent.inject
 
 
 /**
@@ -24,13 +25,15 @@ import com.google.android.gms.maps.model.LatLng
  */
 object FirebaseDB: DB {
 
+    private val dbRefs by inject<FirebaseRef>(FirebaseRef::class.java)
+
     private const val TAG: String = "Firebase Database"
 
     private const val ONE_MEGABYTE: Long = 1024 * 1024 // Maximal image size allowed (in bytes), to prevent out of memory errors
     // Realtime database ref
-    private val databaseReference: DatabaseReference = Firebase.database.reference
+    private val databaseReference: DatabaseReference = dbRefs.databaseReference
     // Storage ref (for images)
-    private val storageReference: StorageReference = Firebase.storage.reference
+    private val storageReference: StorageReference = dbRefs.storageReference
     private val connectedReference = Firebase.database.getReference(".info/connected")
     private const val USERS_PATH = "users"
     private const val USER_PROFILE_PICTURE_METADATA = "profilePictureMetadata"

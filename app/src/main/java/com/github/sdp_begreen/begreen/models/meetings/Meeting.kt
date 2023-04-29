@@ -1,6 +1,7 @@
-package com.github.sdp_begreen.begreen.models
+package com.github.sdp_begreen.begreen.models.meetings
 
 import android.os.Parcelable
+import com.github.sdp_begreen.begreen.models.CustomLatLng
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -12,16 +13,15 @@ data class Meeting(
     var creator: String? = null,
     var title: String? = null,
     var description: String? = null,
-    var comments: List<Comment>? = null,
     var startDateTime: Long? = null,
     var endDateTime: Long? = null,
     var startCoordinates: CustomLatLng? = null,
     var endCoordinates: CustomLatLng? = null,
     var intermediaryCoordinates: List<CustomLatLng>? = null,
-    var participants: List<String>? = null,
-    var meetingPhotos: List<PhotoMetadata>? = null,
-    var itinerary: String? = null,
-): Parcelable {
+    // TODO add the itinerary to store the computed way
+    //  add it later when calculating the itinerary to see how to best store it
+    //var itinerary: String? = null,
+) : Parcelable {
 
 
     override fun toString(): String {

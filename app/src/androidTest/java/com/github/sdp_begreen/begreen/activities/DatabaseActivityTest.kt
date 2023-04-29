@@ -9,6 +9,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -34,6 +35,9 @@ class DatabaseActivityTest {
 
     @get:Rule
     val activityRule = ActivityScenarioRule(DatabaseActivity::class.java)
+
+    @get:Rule
+    val koinTestRule = KoinTestRule()
 
     @Test
     fun emailWrittenCorrectly() {

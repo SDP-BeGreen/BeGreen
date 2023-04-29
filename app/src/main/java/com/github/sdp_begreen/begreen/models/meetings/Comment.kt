@@ -1,4 +1,4 @@
-package com.github.sdp_begreen.begreen.models
+package com.github.sdp_begreen.begreen.models.meetings
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

@@ -18,4 +18,11 @@ class CustomLatLngTest {
         val newCustomLatLng = CustomLatLng(12.456, 64.156)
         assertThat(LatLng(12.456, 64.156), `is`(newCustomLatLng.toMapLatLng()))
     }
+
+    @Test
+    fun customLatLngFromMapLatLngReturnCorrectValue() {
+        val latLng = LatLng(12.456, 64.156)
+        val customLatLng = CustomLatLng(12.456, 64.156)
+        assertThat(CustomLatLng.fromMapLatLng(latLng), `is`(customLatLng))
+    }
 }
