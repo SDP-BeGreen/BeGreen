@@ -3,6 +3,7 @@ package com.github.sdp_begreen.begreen.firebase.meetingServices
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
+import com.github.sdp_begreen.begreen.matchers.ContainsWithSameOrder.Companion.inWithOrder
 import com.github.sdp_begreen.begreen.models.meetings.Comment
 import com.github.sdp_begreen.begreen.models.meetings.Meeting
 import com.github.sdp_begreen.begreen.rules.CoroutineTestRule
@@ -114,7 +115,11 @@ class MeetingCommentServiceTest {
                     meetingWithComments.meetingId!!,
                     comment
                 )
-            val commentWithId = comment.copy(commentId = addedComment.commentId)
+            val commentWithId = comment.copy(
+                commentId = addedComment.commentId,
+                writtenAt = addedComment.writtenAt,
+                modifiedAt = addedComment.modifiedAt
+            )
             assertThat(
                 addedComment,
                 `is`(equalTo(commentWithId))
@@ -268,10 +273,10 @@ class MeetingCommentServiceTest {
                 everyItem(`is`(`in`(channel.receive())))
             )
             // modify first elem
-            val modifiedComment1 = comment1.copy(
+            var modifiedComment1 = comment1.copy(
                 body = "Modified first comment body"
             )
-            MeetingCommentServiceImpl.modifyComment(
+            modifiedComment1 = MeetingCommentServiceImpl.modifyComment(
                 meetingWithComments.meetingId!!,
                 modifiedComment1.author!!,
                 modifiedComment1
@@ -282,10 +287,10 @@ class MeetingCommentServiceTest {
             )
 
             // modify second elem
-            val modifiedComment2 = comment2.copy(
+            var modifiedComment2 = comment2.copy(
                 body = "Modified second comment body"
             )
-            MeetingCommentServiceImpl.modifyComment(
+            modifiedComment2 = MeetingCommentServiceImpl.modifyComment(
                 meetingWithComments.meetingId!!,
                 modifiedComment2.author!!,
                 modifiedComment2
@@ -296,10 +301,10 @@ class MeetingCommentServiceTest {
             )
 
             // modify third elem
-            val modifiedComment3 = comment3.copy(
+            var modifiedComment3 = comment3.copy(
                 body = "Modified third comment body"
             )
-            MeetingCommentServiceImpl.modifyComment(
+            modifiedComment3 = MeetingCommentServiceImpl.modifyComment(
                 meetingWithComments.meetingId!!,
                 modifiedComment3.author!!,
                 modifiedComment3
@@ -323,6 +328,57 @@ class MeetingCommentServiceTest {
             assertThat(
                 modifiedComment2,
                 `is`(not(`in`(listComments)))
+            )
+        }
+    }
+
+    @Test
+    fun getAllCommentsShouldBeOrderedByModifiedDate() {
+        val comment1 = Comment(null, "author1", body = "This is author1's comment")
+        val comment2 = Comment(null, "author2", body = "This is author2's comment")
+        val comment3 = Comment(null, "author3", body = "This is author3's comment")
+
+        runTest {
+            val newComment3 =
+                MeetingCommentServiceImpl.addComment(meetingWithComments.meetingId!!, comment3)
+            val newComment2 =
+                MeetingCommentServiceImpl.addComment(meetingWithComments.meetingId!!, comment2)
+            val newComment1 =
+                MeetingCommentServiceImpl.addComment(meetingWithComments.meetingId!!, comment1)
+
+            val channel = Channel<List<Comment>>(1)
+            backgroundScope.launch {
+                MeetingCommentServiceImpl.getAllComments(meetingWithComments.meetingId!!)
+                    .collect {
+                        channel.send(it)
+                    }
+            }
+
+            assertThat(
+                listOf(newComment1, newComment2, newComment3),
+                `is`(inWithOrder(channel.receive()))
+            )
+
+            val modifiedComment2 = MeetingCommentServiceImpl.modifyComment(
+                meetingWithComments.meetingId!!,
+                newComment2.author!!,
+                newComment2.copy(body = "Modified comment2")
+            )
+
+            assertThat(
+                listOf(modifiedComment2, newComment1, newComment3),
+                `is`(inWithOrder(channel.receive()))
+            )
+
+            val modifiedComment3 = MeetingCommentServiceImpl.modifyComment(
+                meetingWithComments.meetingId!!,
+                newComment3.author!!,
+                newComment3.copy(body = "Modified comment3")
+            )
+
+            assertThat(
+                listOf(modifiedComment3, modifiedComment2, newComment1),
+                `is`(inWithOrder(channel.receive()))
             )
         }
     }

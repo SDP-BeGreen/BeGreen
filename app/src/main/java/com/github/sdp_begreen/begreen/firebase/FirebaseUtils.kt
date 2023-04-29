@@ -5,6 +5,7 @@ import com.github.sdp_begreen.begreen.exceptions.MeetingServiceException
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.channels.ProducerScope
@@ -73,7 +74,7 @@ object FirebaseUtils {
     /**
      * Function to get an object form the database
      *
-     * @param reference The reference from where to get the object
+     * @param query The query from where to get the object
      * @param valueType The type of value we are trying to get
      * @param errorMessage The error message to add to the thrown exception
      *
@@ -82,13 +83,13 @@ object FirebaseUtils {
      * @throws MeetingServiceException If an error occurred while getting the object from the database
      */
     suspend fun <T> getObjFromDb(
-        reference: DatabaseReference,
+        query: Query,
         valueType: Class<T>,
         errorMessage: String
     ): T {
         return try {
             Log.d("Passed Here in test", "Passed here")
-            reference.get().await().getValue(valueType)
+            query.get().await().getValue(valueType)
         } catch (e: Exception) {
             Log.d("Object retrieval failed", e.message.orEmpty())
             throw MeetingServiceException("$errorMessage ${e.message}")
@@ -155,21 +156,21 @@ object FirebaseUtils {
      * Function to get a flow of objects (i.e. list of object), by placing a listener
      * on a node in the database
      *
-     * @param reference The reference node on which to place the listener
+     * @param query The query on the node on which to place the listener
      * @param valueType The type of value we are reading on the node
      *
      * @return The flow of a list of objects, new value emitted upon changes in the listened node
      */
     suspend fun <T> getFlowOfObjects(
-        reference: DatabaseReference,
+        query: Query,
         valueType: Class<T>
     ): Flow<List<T>> = callbackFlow {
         val eventListener = createEventListenerListOfObjects(this, valueType)
-        reference.addValueEventListener(eventListener)
+        query.addValueEventListener(eventListener)
 
         // once done remove the listener
         awaitClose {
-            reference.removeEventListener(eventListener)
+            query.removeEventListener(eventListener)
         }
     }
 

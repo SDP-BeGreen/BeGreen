@@ -8,7 +8,9 @@ import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.setObjToDb
 import com.github.sdp_begreen.begreen.models.meetings.Comment
 import com.github.sdp_begreen.begreen.utils.checkArgument
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import org.koin.java.KoinJavaComponent
+import java.util.Calendar
 
 object MeetingCommentServiceImpl : MeetingCommentService {
 
@@ -28,7 +30,9 @@ object MeetingCommentServiceImpl : MeetingCommentService {
             COMMENTS_PATH
         )
         return commentReference.push().key?.let {
-            val commentWithId = comment.copy(commentId = it)
+            val currTime = Calendar.getInstance().timeInMillis
+            val commentWithId =
+                comment.copy(commentId = it, writtenAt = currTime, modifiedAt = currTime)
             setObjToDb(
                 commentReference.child(it),
                 commentWithId,
@@ -60,7 +64,7 @@ object MeetingCommentServiceImpl : MeetingCommentService {
             dbRef.child(MEETING_PATH).child(meetingId)
                 .child(COMMENTS_PATH)
                 .child(comment.commentId!!),
-            comment,
+            comment.copy(modifiedAt = Calendar.getInstance().timeInMillis),
             "Error while modifying the comment"
         )
     }
@@ -69,9 +73,9 @@ object MeetingCommentServiceImpl : MeetingCommentService {
         checkArgument(meetingId.isNotBlank(), "The meeting id should not be blank")
         return getFlowOfObjects(
             dbRef.child(MEETING_PATH).child(meetingId)
-                .child(COMMENTS_PATH),
+                .child(COMMENTS_PATH).orderByChild("modifiedAt"),
             Comment::class.java
-        )
+        ).map { it.reversed() }
     }
 
     override suspend fun removeComment(meetingId: String, comment: Comment, userId: String) {

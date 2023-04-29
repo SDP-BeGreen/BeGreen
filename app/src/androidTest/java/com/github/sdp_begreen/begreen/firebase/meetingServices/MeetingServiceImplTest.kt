@@ -4,6 +4,7 @@ import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.github.sdp_begreen.begreen.exceptions.MeetingServiceException
+import com.github.sdp_begreen.begreen.matchers.ContainsWithSameOrder.Companion.inWithOrder
 import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.models.meetings.Meeting
 import com.github.sdp_begreen.begreen.rules.CoroutineTestRule
@@ -21,6 +22,7 @@ import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.everyItem
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.Matchers.`in`
+import org.hamcrest.Matchers.not
 import org.junit.Assert.assertThrows
 import org.junit.ClassRule
 import org.junit.Rule
@@ -112,6 +114,17 @@ class MeetingServiceImplTest {
     }
 
     @Test
+    fun createMeetingNullStartDateShouldThrowIllegalArgumentException() {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            runTest {
+                MeetingServiceImpl.createMeeting(newMeeting.copy(startDateTime = null))
+            }
+        }
+
+        assertThat(exception.message, `is`(equalTo("The starting time cannot be null")))
+    }
+
+    @Test
     fun modifyMeetingBlankUserIdShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
@@ -182,11 +195,24 @@ class MeetingServiceImplTest {
 
     @Test
     fun getAllMeetingReturnCorrectListOfMeetingFromDB() {
+        // set date really fare in future so test won't break before 2050.
         val meetings = listOf(
-            Meeting("-NU2QlTB5mflQYthYViI", "123", "Meeting1", "This is meeting 1"),
-            Meeting("-NU2QlsU3bAsML6gJCeb", "234", "Meeting2", "This is meeting 2"),
-            Meeting("-NU2QlsbKgy9yLizwifN", "345", "Meeting3", "This is meeting 3"),
-            Meeting("-NU2Qlso32EooKdvCzUW", "456", "Meeting4", "This is meeting 4")
+            Meeting(
+                "-NU2QlTB5mflQYthYViI", "123", "Meeting1",
+                "This is meeting 1", startDateTime = 2524612200000
+            ),
+            Meeting(
+                "-NU2QlsU3bAsML6gJCeb", "234", "Meeting2",
+                "This is meeting 2", startDateTime = 2524612200000
+            ),
+            Meeting(
+                "-NU2QlsbKgy9yLizwifN", "345", "Meeting3",
+                "This is meeting 3", startDateTime = 2524612200000
+            ),
+            Meeting(
+                "-NU2Qlso32EooKdvCzUW", "456", "Meeting4",
+                "This is meeting 4", startDateTime = 2524612200000
+            )
         )
 
         runTest {
@@ -202,11 +228,20 @@ class MeetingServiceImplTest {
     @Test
     fun getAllMeetingReturnCorrectModifiedListUponModification() {
         val meeting1 =
-            Meeting("-NU3MWvfdMASrqPEDSUF", "1111", "first meeting", "Description first meeting")
+            Meeting(
+                "-NU3MWvfdMASrqPEDSUF", "1111", "first meeting",
+                "Description first meeting", startDateTime = 2524612200000
+            )
         val meeting2 =
-            Meeting("-NU3MXHX2qcQUZ1qM5Bf", "2222", "second meeting", "Description second meeting")
+            Meeting(
+                "-NU3MXHX2qcQUZ1qM5Bf", "2222", "second meeting",
+                "Description second meeting", startDateTime = 2524612200000
+            )
         val meeting3 =
-            Meeting("-NU3MXHeBN3Nedwl4Qc_", "3333", "third meeting", "Description third meeting")
+            Meeting(
+                "-NU3MXHeBN3Nedwl4Qc_", "3333", "third meeting",
+                "Description third meeting", startDateTime = 2524612200000
+            )
 
         runTest() {
             val channel = Channel<List<Meeting>>(1)
@@ -253,6 +288,44 @@ class MeetingServiceImplTest {
                 listOf(modifiedMeeting1, modifiedMeeting2, modifiedMeeting3),
                 everyItem(`is`(`in`(channel.receive())))
             )
+        }
+    }
+
+    @Test
+    fun getAllMeetingShouldBeOrderedByTheirStartingDate() {
+        val meeting1 = Meeting(
+            null,
+            "creator1",
+            "Collect meeting 1",
+            "some description for meeting 1",
+            Calendar.getInstance().timeInMillis.plus(1000)
+        )
+        val meeting2 = Meeting(
+            null,
+            "creator2",
+            "Collect meeting 2",
+            "some description for meeting 2",
+            Calendar.getInstance().timeInMillis.plus(2000)
+        )
+        val meeting3 = Meeting(
+            null,
+            "creator3",
+            "Collect meeting 3",
+            "some description for meeting 3",
+            Calendar.getInstance().timeInMillis.minus(1000)
+        )
+        runTest {
+            val newMeeting1 = MeetingServiceImpl.createMeeting(meeting1)
+            val newMeeting2 = MeetingServiceImpl.createMeeting(meeting2)
+            val newMeeting3 = MeetingServiceImpl.createMeeting(meeting3)
+
+            val meetings = MeetingServiceImpl.getAllMeetings().first()
+
+            // check that those two new meeting are in the correct order
+            assertThat(listOf(newMeeting1, newMeeting2), `is`(inWithOrder(meetings)))
+
+            // check that the third meting is not returned as it has already happened
+            assertThat(newMeeting3, `is`(not(`in`(meetings))))
         }
     }
 

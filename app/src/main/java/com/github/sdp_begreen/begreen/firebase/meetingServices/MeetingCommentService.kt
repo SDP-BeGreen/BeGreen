@@ -42,6 +42,9 @@ interface MeetingCommentService {
     /**
      * Get all the comments, retrieve the comment dynamically
      *
+     * The returned list of comments are ordered from most recent to oldest one based on
+     * when they have last been modified.
+     *
      * @param meetingId The id of the meeting from which to retrieve the list of comment
      *
      * @return a flow of all the comments for a particular meeting

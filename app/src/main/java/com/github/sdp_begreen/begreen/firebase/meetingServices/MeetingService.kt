@@ -47,6 +47,9 @@ interface MeetingService {
     /**
      * Get a meeting given its meetingId
      *
+     * The returned list of meetings only contains meetings that have not yet occurred,
+     * and they are ordered from soonest to latest.
+     *
      * @param meetingId The id of the meeting to get from the database
      *
      * @return The fetched meeting

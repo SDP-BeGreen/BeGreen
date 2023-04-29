@@ -10,6 +10,7 @@ import com.github.sdp_begreen.begreen.models.meetings.Meeting
 import com.github.sdp_begreen.begreen.utils.checkArgument
 import kotlinx.coroutines.flow.Flow
 import org.koin.java.KoinJavaComponent.inject
+import java.util.Calendar
 
 object MeetingServiceImpl : MeetingService {
 
@@ -20,6 +21,7 @@ object MeetingServiceImpl : MeetingService {
 
     override suspend fun createMeeting(meeting: Meeting): Meeting {
         checkArgument(!meeting.creator.isNullOrBlank(), "The creator cannot be blank or null")
+        checkArgument(meeting.startDateTime != null, "The starting time cannot be null")
         val meetingReference = dbRef.child(MEETING_PATH)
         return meetingReference.push().key?.let {
             val metingWithId = meeting.copy(meetingId = it)
@@ -44,7 +46,8 @@ object MeetingServiceImpl : MeetingService {
     }
 
     override suspend fun getAllMeetings(): Flow<List<Meeting>> = getFlowOfObjects(
-        dbRef.child(MEETING_PATH),
+        dbRef.child(MEETING_PATH).orderByChild("startDateTime")
+            .startAt(Calendar.getInstance().timeInMillis.toDouble()),
         Meeting::class.java
     )
 
