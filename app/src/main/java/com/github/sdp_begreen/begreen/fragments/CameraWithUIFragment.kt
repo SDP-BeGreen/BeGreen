@@ -140,10 +140,9 @@ class CameraWithUIFragment : Fragment() {
         val profileBtn = view?.findViewById<ImageView>(R.id.profile_cam)
         profileBtn?.setOnClickListener {
             // Create a transaction to replace the current fragment by the profile fragment
-            val transaction = childFragmentManager.beginTransaction()
-            //val transaction = requireActivity().supportFragmentManager.beginTransaction()
+            val transaction = requireActivity().supportFragmentManager.beginTransaction()
             runBlocking {
-                transaction.replace(R.id.mainCameraFragmentContainer, getProfile())
+                transaction.replace(R.id.mainFragmentContainer, getProfile())
             }
             transaction.addToBackStack(null)
             transaction.commit()

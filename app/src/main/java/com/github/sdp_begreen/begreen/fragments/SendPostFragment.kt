@@ -67,9 +67,8 @@ class SendPostFragment : Fragment() {
 
     private fun returnToCamera() {
         //return to camera fragment
-        val transaction = childFragmentManager.beginTransaction()
-        //val transaction = requireActivity().supportFragmentManager.beginTransaction()
-        transaction.detach(this).remove(this)
+        val transaction = requireActivity().supportFragmentManager.beginTransaction()
+        //transaction.detach(this).remove(this)
         runBlocking {
             transaction.replace(R.id.mainCameraFragmentContainer, CameraWithUIFragment.newInstance())
         }
