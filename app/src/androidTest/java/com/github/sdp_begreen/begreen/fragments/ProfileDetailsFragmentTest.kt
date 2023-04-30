@@ -56,19 +56,23 @@ class ProfileDetailsFragmentTest {
                 "Look at me cleaning!",
                 ParcelableDate(Date()),
                 "0",
-                "Déchet organique",
-                "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
+                "0",
             ),
+
             PhotoMetadata(
-                "1",
-                "title",
+                "erfs",
+                "Look at me cleaning!",
                 ParcelableDate(Date()),
                 "0",
-                "Gros vilain pas beau",
-                "desc"
-            ),
+                "0",
+            )
         )
-        private val userProfilePicturePhotoMetadata = PhotoMetadata("user1_profile_picture")
+        private val userProfilePicturePhotoMetadata = PhotoMetadata("user1_profile_picture",
+            null,
+            null,
+            null,
+            null)
+
         private const val userId1 = "1234"
         private val user1 = User(
             userId1,
@@ -521,7 +525,7 @@ class ProfileDetailsFragmentTest {
             displayName = "User Test 1",
             email = "user1@email.ch",
             phone = "1984z719848",
-            profilePictureMetadata = PhotoMetadata("VaRgQioAuiGtfDlv5uNuosNsACCJ_profile_picture")
+            profilePictureMetadata = PhotoMetadata("VaRgQioAuiGtfDlv5uNuosNsACCJ_profile_picture", null, null, null, null)
         )
 
         val bundle = Bundle().apply { putParcelable(ARG_USER, user) }

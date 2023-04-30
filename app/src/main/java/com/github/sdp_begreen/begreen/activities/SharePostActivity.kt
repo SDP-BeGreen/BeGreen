@@ -7,15 +7,23 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.fragments.CameraFragment
+import com.github.sdp_begreen.begreen.models.BinType
+import com.github.sdp_begreen.begreen.models.ParcelableDate
+import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.Post
+import java.util.Date
+import com.github.sdp_begreen.begreen.firebase.FirebaseAuth
+import com.github.sdp_begreen.begreen.firebase.FirebaseDB
+import kotlinx.coroutines.launch
 
 class SharePostActivity : AppCompatActivity() {
 
-    private lateinit var postImageView : ImageView;
-    private lateinit var postTitleEditText : EditText;
-    private lateinit var sharePostBtn : Button;
+    private lateinit var postImageView : ImageView
+    private lateinit var postTitleEditText : EditText
+    private lateinit var sharePostBtn : Button
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,16 +39,18 @@ class SharePostActivity : AppCompatActivity() {
     private fun setupUI() {
 
         // Bind all UIs
-        postTitleEditText = findViewById(R.id.postTitleEditText);
+        postTitleEditText = findViewById(R.id.postTitleEditText)
         sharePostBtn = findViewById(R.id.sharePostBtn)
-        postImageView = findViewById(R.id.postImageView);
+        postImageView = findViewById(R.id.postImageView)
 
         // Display the post image.
         displayPostImage()
 
         // Setup the share button action
         sharePostBtn.setOnClickListener {
-            sharePost()
+            lifecycleScope.launch {
+                sharePost()
+            }
         }
     }
 
@@ -85,27 +95,29 @@ class SharePostActivity : AppCompatActivity() {
     /**
      * Helper function to get the whole post instance
      */
-    private fun getPost() : Post? {
+    private fun getPost(): Post {
 
-        // "image" is non-null because we already checked it during the activity lauching. So we can force the casting.
+        // "image" is non-null because we already checked it during the activity launching. So we can force the casting.
         // In other words, (image == null) is an unreachable path
 
-        val title : String = getPostTitle()
-        val image : Bitmap = getPostImage()!!
+        val title: String = getPostTitle()
+        val image: Bitmap = getPostImage()!!
+        val date = ParcelableDate(Date())
+        val binTypeId: BinType = BinType.PLASTIC
+        val userId = FirebaseAuth().getConnectedUserId()
 
-        val post = Post(title, image)
+        val metadata = PhotoMetadata(null, title, date, userId, binTypeId.id)
 
-        return post
+        return Post(image, metadata)
     }
 
     /**
      * Share the post to the database
      */
-    private fun sharePost() {
+    private suspend fun sharePost() {
 
-        val post = getPost()
 
-        // TODO : Change it when the post will be shared to the database. Don't forget to change its test
+        FirebaseDB.addImage(getPost())
 
         finish()
     }

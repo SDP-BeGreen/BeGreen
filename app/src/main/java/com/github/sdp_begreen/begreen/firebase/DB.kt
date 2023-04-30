@@ -3,6 +3,7 @@ package com.github.sdp_begreen.begreen.firebase
 import android.graphics.Bitmap
 import com.github.sdp_begreen.begreen.exceptions.DatabaseTimeoutException
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.Post
 import com.github.sdp_begreen.begreen.models.User
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.database.DatabaseException
@@ -86,7 +87,7 @@ interface DB {
      * @param userId the ID of the user wanting to store a new image
      * @return a unique ID under which the image got stored, and null if the image couldn't get stored
      */
-    suspend fun addImage(image: Bitmap, userId: Int, metadata: PhotoMetadata): PhotoMetadata?
+    suspend fun addImage(post: Post): PhotoMetadata?
 
     /**
      * Test whether a [User] exists in the database for the given [userId]
@@ -146,6 +147,4 @@ interface DB {
      * @return the set of all advices
      */
     suspend fun getAdvices(): Set<String>
-
-
 }

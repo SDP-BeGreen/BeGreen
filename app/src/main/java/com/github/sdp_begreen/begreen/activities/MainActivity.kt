@@ -187,7 +187,7 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.bottomMenuFeed -> {
                 item.setIcon(R.drawable.ic_baseline_feed)
-                val photos = listOf(PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"))
+                val photos = listOf(PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "2"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "2"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "2"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "2"))
                 replaceFragInMainContainer(UserPhotoFragment.newInstance(1, photos, true))
             }
             R.id.bottomMenuMap -> {
@@ -219,7 +219,8 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.mainNavDrawProfile -> {
                 connectedUserViewModel.currentUser.value?.also {
-                    val photos = listOf(PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"))
+
+                    val photos = listOf(PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "2"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "2"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "2"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "2"))
                     replaceFragInMainContainer(ProfileDetailsFragment.newInstance(it, photos))
                 }
             }

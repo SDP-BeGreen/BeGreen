@@ -40,7 +40,7 @@
 
         <activity
             android:name=".activities.MainActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".activities.DatabaseActivity"
             android:exported="false">

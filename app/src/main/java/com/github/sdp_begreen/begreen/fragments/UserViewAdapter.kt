@@ -35,54 +35,46 @@ class UserViewAdapter(
 
     //TODO----------------FOR DEMO------------------------
     private val photos = listOf(
+
         PhotoMetadata(
             "erfs",
             "Look at me cleaning!",
             ParcelableDate(Date()),
             "0",
-            "Déchet organique",
-            "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
+            "0",
         ),
+
         PhotoMetadata(
             "erfs",
             "Look at me cleaning!",
             ParcelableDate(Date()),
             "0",
-            "Déchet organique",
-            "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
+            "0",
         ),
+
         PhotoMetadata(
             "erfs",
             "Look at me cleaning!",
             ParcelableDate(Date()),
             "0",
-            "Déchet organique",
-            "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
+            "0",
         ),
+
         PhotoMetadata(
             "erfs",
             "Look at me cleaning!",
             ParcelableDate(Date()),
             "0",
-            "Déchet organique",
-            "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
+            "0",
         ),
+
         PhotoMetadata(
             "erfs",
             "Look at me cleaning!",
             ParcelableDate(Date()),
             "0",
-            "Déchet organique",
-            "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
-        ),
-        PhotoMetadata(
-            "erfs",
-            "Look at me cleaning!",
-            ParcelableDate(Date()),
             "0",
-            "Déchet organique",
-            "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
-        ),
+        )
     )
 
     //----------------FOR DEMO-----------------------------

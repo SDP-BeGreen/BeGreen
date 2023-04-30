@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.Post
 import kotlinx.coroutines.launch
 
 /**
@@ -48,8 +49,10 @@ class DatabaseActivity : AppCompatActivity() {
             bitmap.eraseColor(Color.RED)
 
             lifecycleScope.launch {
-                imageId = FirebaseDB.addImage(bitmap, 3,
-                    PhotoMetadata(null, null, null, null,"Plastic bottle",null))
+                imageId = FirebaseDB.addImage(
+                    Post(bitmap,
+                        PhotoMetadata(null, "Hello", null, "Messi", null))
+                )
             }
         }
 

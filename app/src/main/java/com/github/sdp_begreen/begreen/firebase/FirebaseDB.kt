@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.util.Log
 import com.github.sdp_begreen.begreen.exceptions.DatabaseTimeoutException
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.Post
 import com.github.sdp_begreen.begreen.models.User
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
@@ -138,11 +139,11 @@ object FirebaseDB: DB {
                 USER_PROFILE_PICTURE_METADATA))
     }
 
-    override suspend fun addImage(image: Bitmap, userId: Int, metadata: PhotoMetadata): PhotoMetadata? {
+    override suspend fun addImage(post: Post): PhotoMetadata? {
 
-        return storePicture(image, null, metadata,
-            databaseReference.child("pictures").child(userId.toString()),
-            storageReference.child("userId").child(userId.toString()))
+        return storePicture(post.photo, null, post.metaData,
+            databaseReference.child("pictures").child(post.metaData.takenByUserId!!),
+            storageReference.child("userId").child(post.metaData.takenByUserId!!))
     }
 
     override suspend fun userExists(userId: String, timeout: Long): Boolean {

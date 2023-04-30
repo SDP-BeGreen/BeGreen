@@ -13,6 +13,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.recyclerview.widget.RecyclerView
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.databinding.FragmentUserPhotoBinding
+import com.github.sdp_begreen.begreen.models.BinType
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import java.net.URL
 
@@ -54,14 +55,16 @@ class UserPhotosViewAdapter(
         }
         //Set default value
         holder.titleView.text = photo?.title ?: "No title"
-        holder.subtitleView.text = (photo?.takenOn?.toString() ?: "Unknown date") + " | " + (photo?.category
+        holder.subtitleView.text = (photo?.takenOn?.toString() ?: "Unknown date") + " | " + (BinType.getBinTypeById(photo?.binTypeId!!)
             ?: "")
         //holder.photoView.setImageBitmap(photo.getPhotoFromDataBase())
         //TODO------------FOR DEMO -----------------
         val url = URL("https://picsum.photos/400")
         holder.photoView.setImageBitmap(BitmapFactory.decodeStream(url.openConnection().getInputStream()))
         //------------FOR DEMO -----------------
-        holder.descriptionView.text = photo?.description
+
+        // TODO : to because old
+        //holder.descriptionView.text = photo?.description
     }
 
     override fun getItemCount(): Int = photos?.size ?: 0

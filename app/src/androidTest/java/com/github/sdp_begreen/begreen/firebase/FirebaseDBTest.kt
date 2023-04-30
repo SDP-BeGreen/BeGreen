@@ -34,6 +34,8 @@ class FirebaseDBTest {
     @get:Rule
     val activityRule = ActivityScenarioRule(DatabaseActivity::class.java)
 
+    private val photoMetadata = PhotoMetadata(null, null, null, null, null)
+
     companion object {
         @BeforeClass @JvmStatic fun setup() {
             try {
@@ -75,7 +77,7 @@ class FirebaseDBTest {
     fun storeUserProfilePictureBlankUserIdThrowIllegalArgument() {
         assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
-                FirebaseDB.storeUserProfilePicture(Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888), " ", PhotoMetadata())
+                FirebaseDB.storeUserProfilePicture(Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888), " ", photoMetadata)
             }
         }
     }
@@ -93,7 +95,7 @@ class FirebaseDBTest {
     fun getUserProfilePictureBlankUserIdThrowIllegalArgument() {
         assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
-                FirebaseDB.getUserProfilePicture(PhotoMetadata(), " ")
+                FirebaseDB.getUserProfilePicture(photoMetadata, " ")
             }
         }
     }
@@ -118,7 +120,7 @@ class FirebaseDBTest {
         // to be able to access resources, need to be in an activity
         activityRule.scenario.onActivity { activity ->
             val img: Bitmap = BitmapFactory.decodeResource(activity.resources, R.drawable.marguerite_test_image)
-            val photoMetadata = PhotoMetadata()
+            val photoMetadata = photoMetadata
 
             runBlocking {
                 val pictureUID = FirebaseDB.storeUserProfilePicture(img, user.id, photoMetadata)
@@ -154,14 +156,14 @@ class FirebaseDBTest {
     @Test
     fun getImageWithEmptyPhotoIdReturnNull() {
         runBlocking {
-            assertThat(FirebaseDB.getImage(PhotoMetadata(), 1), nullValue())
+            assertThat(FirebaseDB.getImage(photoMetadata, 1), nullValue())
         }
     }
 
     @Test
     fun getProfilePictureEmptyPhotoIdReturnNull() {
         runBlocking {
-            assertThat(FirebaseDB.getImage(PhotoMetadata(), 1), nullValue())
+            assertThat(FirebaseDB.getImage(photoMetadata, 1), nullValue())
         }
     }
 
