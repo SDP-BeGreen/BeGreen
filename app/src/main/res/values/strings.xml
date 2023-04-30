@@ -1,8 +1,6 @@
 <resources>
     <string name="app_name">BeGreen</string>
     <string name="feed_fragment_text">Place where we can display a feed for this user%1$s%2$s</string>
-    <string name="map_fragment_text">Fragment where we can display the map%1$s%2$s</string>
-    <string name="advice_fragment_text">Fragment where we can display ecological advice to the user%1$s%2$s</string>
     <string name="settings_fragment_text">Fragment where we can display settings for the user%1$s%2$s</string>
     <string name="followers_fragment_text">Fragment where we can display the user\'s followers%1$s%2$s</string>
     <string name="user_details_level_text">%1$s\'s level</string>
@@ -55,5 +53,7 @@
     <string name="username">Username</string>
     <string name="search_user">Search user…</string>
     <string name="add_new_bin">Add new bin</string>
+    <string name="remove_bin">Remove bin</string>
     <string name="quotes_of_the_day">Quotes of the day</string>
+
 </resources>
