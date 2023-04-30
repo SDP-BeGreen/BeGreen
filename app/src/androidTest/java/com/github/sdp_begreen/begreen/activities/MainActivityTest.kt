@@ -61,7 +61,7 @@ class MainActivityTest {
             12,
             "User 1",
             5,
-            null, "user 1 description", "123456789",
+            "user 1 description", "123456789",
             "user1@email.com", profilePictureMetadata = userPhotoMetadata)
         private val user2 = User(
             userId2,

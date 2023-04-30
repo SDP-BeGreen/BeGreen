@@ -13,6 +13,7 @@ import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.activities.MainActivity
+import com.github.sdp_begreen.begreen.adapters.UserViewAdapter
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import junit.framework.TestCase.*
 import org.hamcrest.CoreMatchers

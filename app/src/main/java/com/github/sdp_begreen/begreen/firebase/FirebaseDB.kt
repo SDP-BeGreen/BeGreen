@@ -34,6 +34,7 @@ object FirebaseDB: DB {
     private val connectedReference = Firebase.database.getReference(".info/connected")
     private const val USERS_PATH = "users"
     private const val USER_PROFILE_PICTURE_METADATA = "profilePictureMetadata"
+    private const val USER_POSTS = "posts"
     private const val USER_ID_ATTRIBUTE = "id"
     private const val BIN_LOCATION_PATH = "bin"
     private const val ADVICES_LOCATION_PATH = "advices"
@@ -105,11 +106,11 @@ object FirebaseDB: DB {
                 USER_PROFILE_PICTURE_METADATA))
     }
 
-    override suspend fun addImage(image: Bitmap, userId: Int, metadata: PhotoMetadata): PhotoMetadata? {
-
-        return storePicture(image, null, metadata,
-            databaseReference.child("pictures").child(userId.toString()),
-            storageReference.child("userId").child(userId.toString()))
+    override suspend fun addImage(image: Bitmap, userId: String, metadata: PhotoMetadata): PhotoMetadata? {
+        val metadata2 = metadata.copy(pictureId = null)
+        return storePicture(image, USER_POSTS, metadata2,
+            databaseReference.child(USERS_PATH).child(userId).child(USER_POSTS),
+            storageReference.child(USERS_PATH).child(userId).child(USER_POSTS))
     }
 
     override suspend fun userExists(userId: String, timeout: Long): Boolean {
@@ -120,12 +121,12 @@ object FirebaseDB: DB {
         return getNode("$USERS_PATH/$userId/$USER_ID_ATTRIBUTE", timeout).exists()
     }
 
-    override suspend fun getImage(metadata: PhotoMetadata, userId: Int, timeout: Long): Bitmap? {
+    override suspend fun getImage(metadata: PhotoMetadata, userId: String, timeout: Long): Bitmap? {
         // Points to the node where we the image SHOULD be
         // The path will change when we will actually stores the real pictures
         return metadata.pictureId?.let {
             getPicture(storageReference.child("userId").child(
-                userId.toString()).child(it), timeout)
+                userId).child(it), timeout)
         }
     }
 

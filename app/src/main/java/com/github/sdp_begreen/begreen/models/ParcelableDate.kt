@@ -6,7 +6,7 @@ import android.os.Parcelable.Creator
 import java.util.*
 
 
-class ParcelableDate() : Parcelable {
+class ParcelableDate() : Parcelable, Comparable<ParcelableDate> {
     var date: Date? = null
 
     constructor(parcel: Parcel) : this() {
@@ -30,6 +30,10 @@ class ParcelableDate() : Parcelable {
         val dateStr = this.date.toString()
         //Take a substring of the date to remove the day, seconds and gmt part
         return dateStr.substring(4,16)
+    }
+
+    override fun compareTo(other: ParcelableDate): Int {
+        return date?.compareTo(other.date) ?: 0
     }
 
     companion object CREATOR : Creator<ParcelableDate> {

@@ -99,7 +99,7 @@ dependencies {
     // Koin for JUnit 4
     androidTestImplementation "io.insert-koin:koin-test-junit4:3.4.0"
 
-    // mockito
+    // Mockito
     testImplementation "org.mockito:mockito-core:5.2.0"
     testImplementation "org.mockito.kotlin:mockito-kotlin:4.1.0"
     androidTestImplementation 'org.mockito:mockito-android:5.2.0'
@@ -108,6 +108,13 @@ dependencies {
     // Googlemaps
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.android.gms:play-services-location:21.0.1'
+
+    // Paging
+    implementation("androidx.paging:paging-runtime:3.1.1")
+    testImplementation("androidx.paging:paging-common:3.1.1")
+
+    // Coil
+    implementation("io.coil-kt:coil:2.3.0")
 
 }
 

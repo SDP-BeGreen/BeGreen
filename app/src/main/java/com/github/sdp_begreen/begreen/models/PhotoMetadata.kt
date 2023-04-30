@@ -1,5 +1,6 @@
 package com.github.sdp_begreen.begreen.models
 
+import android.graphics.Bitmap
 import android.os.Parcel
 import android.os.Parcelable
 
@@ -30,6 +31,21 @@ data class PhotoMetadata(var pictureId: String? = null, val title: String? = nul
         return 0
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as PhotoMetadata
+
+        if (pictureId != other.pictureId) return false
+        if (title != other.title) return false
+        if (takenOn != other.takenOn) return false
+        if (takenBy != other.takenBy) return false
+        if (category != other.category) return false
+        if (description != other.description) return false
+
+        return true
+    }
 
 
     companion object CREATOR : Parcelable.Creator<PhotoMetadata> {
@@ -41,4 +57,7 @@ data class PhotoMetadata(var pictureId: String? = null, val title: String? = nul
             return arrayOfNulls(size)
         }
     }
+
+
+
 }

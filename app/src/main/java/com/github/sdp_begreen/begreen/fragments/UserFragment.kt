@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.adapters.UserViewAdapter
 import com.github.sdp_begreen.begreen.models.User
 
 

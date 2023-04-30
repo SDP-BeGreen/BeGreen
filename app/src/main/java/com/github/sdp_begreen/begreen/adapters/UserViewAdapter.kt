@@ -1,4 +1,4 @@
-package com.github.sdp_begreen.begreen.fragments
+package com.github.sdp_begreen.begreen.adapters
 
 import android.content.res.Resources
 import android.graphics.BitmapFactory
@@ -14,6 +14,7 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.databinding.FragmentUserBinding
 import com.github.sdp_begreen.begreen.firebase.DB
+import com.github.sdp_begreen.begreen.fragments.ProfileDetailsFragment
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import kotlinx.coroutines.launch
