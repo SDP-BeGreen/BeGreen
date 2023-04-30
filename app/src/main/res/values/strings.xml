@@ -56,4 +56,7 @@
     <string name="search_user">Search user…</string>
     <string name="add_new_bin">Add new bin</string>
     <string name="quotes_of_the_day">Quotes of the day</string>
+    <string name="meetings">Meetings</string>
+    <string name="meeting_list_join_button_join">Join</string>
+    <string name="meeting_list_join_button_withdraw">Withdraw</string>
 </resources>
