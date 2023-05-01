@@ -1,6 +1,7 @@
 package com.github.sdp_begreen.begreen.fragments
 
 import android.Manifest
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.fragment.app.viewModels
@@ -20,6 +21,7 @@ import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
+import com.google.android.material.internal.ContextUtils.getActivity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
@@ -36,6 +38,7 @@ import org.mockito.Mockito
 @LargeTest
 class CameraContainerTest {
     private lateinit var fragmentScenario: FragmentScenario<CameraContainer>
+    private lateinit var fragmentManager: FragmentManager
 
     //Companion object to mock the DB and Auth
     companion object {
@@ -94,6 +97,8 @@ class CameraContainerTest {
     @Before
     fun setup() {
         fragmentScenario = launchFragmentInContainer()
+
+
     }
 
     @Test
@@ -108,6 +113,13 @@ class CameraContainerTest {
         ViewMatchers.withId(R.layout.fragment_send_post).matches(ViewMatchers.isDisplayed())
         //onView(ViewMatchers.withId(R.id.cancel_post)).check(matches(ViewMatchers.isDisplayed()))
     }
+
+    //@Test
+    //fun test(){
+    //    fragmentScenario.onFragment{
+    //        it.parentFragmentManager.findFragmentById(R.id.camera_capture_button)
+    //    }
+    //}
 
     //Important to test but not working, if someone can help us to fix it
     //@Test
@@ -137,16 +149,16 @@ class CameraContainerTest {
     //    ViewMatchers.withId(R.layout.fragment_camera_with_ui).matches(ViewMatchers.isDisplayed())
     //}
 //
-    //@Test
-    //fun clickOnCancelPostReturnsOnCamera() {
-    //    fragmentScenario.onFragment {
-    //        val connectedUserViewModel
-    //                by it.viewModels<ConnectedUserViewModel>(ownerProducer = { it.requireActivity() })
-    //        connectedUserViewModel.setCurrentUser(user)
-    //    }
-    //    onView(ViewMatchers.withId(R.id.camera_capture_button)).perform(ViewActions.click())
-    //    onView(ViewMatchers.withId(R.id.cancel_post)).check(matches(ViewMatchers.isDisplayed()))
-    //    onView(ViewMatchers.withId(R.id.cancel_post)).perform(ViewActions.click())
-    //}
+    @Test
+    fun clickOnCancelPostReturnsOnCamera() {
+        fragmentScenario.onFragment {
+            val connectedUserViewModel
+                    by it.viewModels<ConnectedUserViewModel>(ownerProducer = { it.requireActivity() })
+            connectedUserViewModel.setCurrentUser(user)
+        }
+        onView(ViewMatchers.withId(R.id.camera_capture_button)).perform(ViewActions.click())
+        onView(ViewMatchers.withId(R.id.cancel_post)).check(matches(ViewMatchers.isDisplayed()))
+        onView(ViewMatchers.withId(R.id.cancel_post)).perform(ViewActions.click())
+    }
 
 }
