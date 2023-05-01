@@ -24,6 +24,7 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.espressoUtils.BaseRobot
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
+import com.github.sdp_begreen.begreen.fragments.SendPostFragment
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBitmap
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
@@ -434,6 +435,42 @@ class MainActivityTest {
         }
         onView(withId(R.id.profile_cam)).perform(click())
         BaseRobot().assertOnView(withId(R.id.fragment_profile_details), matches(isDisplayed()))
+
+    }
+
+    @Test
+    fun clickOnSendPostRedirectToPreviewCorrectly() {
+
+        activityRule.scenario.onActivity {
+            val connectedUserViewModel by it.viewModels<ConnectedUserViewModel>()
+            connectedUserViewModel.setCurrentUser(user1)
+
+
+
+            it.supportFragmentManager.beginTransaction()
+                .replace(R.id.cameraUIFragment, SendPostFragment())
+                .commit()
+        }
+        onView(withId(R.id.send_post)).perform(click())
+        withId(R.layout.fragment_camera_with_ui).matches(isDisplayed())
+
+    }
+
+    @Test
+    fun clickOnCancelPostRedirectToPreviewCorrectly() {
+
+        activityRule.scenario.onActivity {
+            val connectedUserViewModel by it.viewModels<ConnectedUserViewModel>()
+            connectedUserViewModel.setCurrentUser(user1)
+
+
+
+            it.supportFragmentManager.beginTransaction()
+                .replace(R.id.cameraUIFragment, SendPostFragment())
+                .commit()
+        }
+        onView(withId(R.id.cancel_post)).perform(click())
+        withId(R.layout.fragment_camera_with_ui).matches(isDisplayed())
 
     }
 }
