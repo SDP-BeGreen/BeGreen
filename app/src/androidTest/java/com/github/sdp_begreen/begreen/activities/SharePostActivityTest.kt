@@ -14,6 +14,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.fragments.CameraFragment
+import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
@@ -89,6 +90,7 @@ class SharePostActivityTest {
         activity.close()
     }
 
+    /*
     @Test
     fun sharePostFinishesActivity() {
 
@@ -99,18 +101,22 @@ class SharePostActivityTest {
 
         // Check that the activity has finished, so we go back to the previous
         assertThat(activity.state, equalTo(Lifecycle.State.DESTROYED))
-    }
+    }*/
 
-    /*
-
-    TODO once we implement the sharing process with the database
 
     @Test
-    fun sharePostSendsPostToDatabase() {
+    fun sharePostReceiveSuccessfulMessage() {
 
-        val activity = launchActivity<SharePostActivity>(intentWithCorrectExtra)
+        runBlocking {
 
-        activity.close()
+            val activity = launchActivity<SharePostActivity>(intentWithCorrectExtra)
+
+            onView(withId(R.id.sharePostBtn))
+                .perform(click())
+
+            assertThat(activity.state, equalTo(Lifecycle.State.DESTROYED))
+
+            //activity.close()
+        }
     }
-     */
 }

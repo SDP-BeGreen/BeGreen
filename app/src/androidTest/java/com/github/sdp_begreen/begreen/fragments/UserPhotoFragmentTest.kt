@@ -47,12 +47,11 @@ class UserPhotoFragmentTest {
     fun setup() {
         // Initialize test data
         val photos = listOf(
-            PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(
-                Date()
-            ), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),
-            PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),
-            PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),
-            PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!")
+            PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique"),
+            PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique"),
+            PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique"),
+            PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique"),
+            PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique")
         )
         photoList = photos
 

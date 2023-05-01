@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.fragments.CameraFragment
@@ -116,8 +117,16 @@ class SharePostActivity : AppCompatActivity() {
      */
     private suspend fun sharePost() {
 
-        FirebaseDB.addImage(getPost())
+        val post = getPost()
+        val hasBeenShared = (FirebaseDB.addImage(post) != null)
 
-        finish()
+        if (hasBeenShared) {
+            finish()
+
+        } else {
+            Toast.makeText(this, "Hello, World!", Toast.LENGTH_SHORT).show()
+        }
+
+
     }
 }
