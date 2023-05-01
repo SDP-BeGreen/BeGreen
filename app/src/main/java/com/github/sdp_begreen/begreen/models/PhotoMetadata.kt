@@ -8,7 +8,7 @@ data class PhotoMetadata(var pictureId: String? = null,
                          val caption: String? = null,
                          val takenOn: ParcelableDate? = null,
                          val takenByUserId: String? = null,
-                         val binTypeId: String?)
+                         val binTypeId: String? = null)
     : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),

@@ -10,9 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.Post
 import kotlinx.coroutines.launch
+import java.util.Date
 
 /**
  * This file will be deleted when Firebase realtime database gets merged in the project
@@ -51,7 +53,7 @@ class DatabaseActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 imageId = FirebaseDB.addImage(
                     Post(bitmap,
-                        PhotoMetadata(null, "Hello", null, "Messi", null))
+                        PhotoMetadata(null, "Hello", ParcelableDate(Date()), "Messi", "1"))
                 )
             }
         }

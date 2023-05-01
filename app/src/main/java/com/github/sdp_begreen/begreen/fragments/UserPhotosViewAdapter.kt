@@ -55,8 +55,7 @@ class UserPhotosViewAdapter(
         }
         //Set default value
         holder.titleView.text = photo?.caption ?: "No title"
-        holder.subtitleView.text = (photo?.takenOn?.toString() ?: "Unknown date") + " | " + (BinType.getBinTypeById(photo?.binTypeId!!)
-            ?: "")
+        holder.subtitleView.text = (photo?.takenOn?.toString() ?: "Unknown date") + " | " + "orga"
         //holder.photoView.setImageBitmap(photo.getPhotoFromDataBase())
         //TODO------------FOR DEMO -----------------
         val url = URL("https://picsum.photos/400")

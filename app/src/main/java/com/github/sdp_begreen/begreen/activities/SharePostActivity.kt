@@ -116,7 +116,6 @@ class SharePostActivity : AppCompatActivity() {
      */
     private suspend fun sharePost() {
 
-
         FirebaseDB.addImage(getPost())
 
         finish()
