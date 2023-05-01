@@ -202,6 +202,14 @@ class CameraWithUIFragment : Fragment() {
         // Create output options object which contains file + metadata
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
+        setupPictureListener(imageCapture, photoFile, outputOptions)
+
+    }
+
+    /**
+     * Setup the listener for the picture capture
+     */
+    private fun setupPictureListener(imageCapture: ImageCapture, photoFile: File, outputOptions: ImageCapture.OutputFileOptions){
         // Set up image capture listener, which is triggered after photo has
         // been taken
         imageCapture.takePicture(
@@ -226,6 +234,7 @@ class CameraWithUIFragment : Fragment() {
                     transaction.commit()
                 }
             })
+
     }
 
     /**
