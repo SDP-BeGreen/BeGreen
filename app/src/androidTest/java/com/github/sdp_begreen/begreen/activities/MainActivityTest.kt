@@ -76,6 +76,11 @@ class MainActivityTest {
         private val auth: Auth = Mockito.mock(Auth::class.java)
         // initially do as if no user were signed in
         private val authUserFlow = MutableStateFlow<String?>(null)
+        private val bins = listOf(
+            Bin("1", BinType.CLOTHES, 4.3, 2.8),
+            Bin("2", BinType.PAPER, 56.3, 22.3),
+            Bin("3", BinType.CLOTHES, 6.0, 9.0)
+        )
 
         @BeforeClass
         @JvmStatic
@@ -95,6 +100,8 @@ class MainActivityTest {
                     .thenReturn(authUserFlow.onEach { delay(10) })
 
                 `when`(db.getAllUsers()).thenReturn(listOf(user1))
+
+                `when`(db.getAllBins()).thenReturn(bins)
 
             }
         }
