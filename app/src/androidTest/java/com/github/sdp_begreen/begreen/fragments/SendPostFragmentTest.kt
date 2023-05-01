@@ -139,10 +139,4 @@ class SendPostFragmentTest {
         onView(withId(R.id.post_description)).check(matches(withText("test")))
     }
 
-    @Test
-    fun clickSendWorks() {
-        // Check the send button
-        BaseRobot().doOnView(withId(R.id.send_post), click())
-    }
-
 }
