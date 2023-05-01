@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.widget.ImageView
+import androidx.activity.viewModels
 import androidx.core.view.GravityCompat
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
@@ -20,12 +21,14 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.espressoUtils.BaseRobot
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBitmap
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
+import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.google.android.gms.tasks.Tasks
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -408,5 +411,29 @@ class MainActivityTest {
                 assertThat(image.bitmap, equalsBitmap(expected))
             }
         }
+    }
+
+    @Test
+    fun clickOnCapturePhotoDontThrowsError() {
+
+        activityRule.scenario.onActivity {
+            val connectedUserViewModel by it.viewModels<ConnectedUserViewModel>()
+            connectedUserViewModel.setCurrentUser(user1)
+        }
+        onView(withId(R.id.camera_capture_button)).perform(click())
+        //BaseRobot().assertOnView(withId(R.id.sendPostFragment), matches(isDisplayed()))
+
+    }
+
+    @Test
+    fun clickOnProfileDetailsCameraRedirectCorrectly() {
+
+        activityRule.scenario.onActivity {
+            val connectedUserViewModel by it.viewModels<ConnectedUserViewModel>()
+            connectedUserViewModel.setCurrentUser(user1)
+        }
+        onView(withId(R.id.profile_cam)).perform(click())
+        BaseRobot().assertOnView(withId(R.id.fragment_profile_details), matches(isDisplayed()))
+
     }
 }

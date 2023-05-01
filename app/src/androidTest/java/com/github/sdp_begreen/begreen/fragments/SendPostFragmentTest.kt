@@ -21,6 +21,7 @@ import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.activities.MainActivity
+import com.github.sdp_begreen.begreen.espressoUtils.BaseRobot
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.User
@@ -136,6 +137,12 @@ class SendPostFragmentTest {
         // Check the description input
         onView(withId(R.id.post_description)).perform(typeText("test"))
         onView(withId(R.id.post_description)).check(matches(withText("test")))
+    }
+
+    @Test
+    fun clickSendWorks() {
+        // Check the send button
+        BaseRobot().doOnView(withId(R.id.send_post), click())
     }
 
 }

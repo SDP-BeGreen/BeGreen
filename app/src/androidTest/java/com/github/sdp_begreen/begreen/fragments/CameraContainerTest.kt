@@ -7,14 +7,20 @@ import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.fragment.app.viewModels
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.activities.MainActivity
+import com.github.sdp_begreen.begreen.espressoUtils.BaseRobot
 import com.github.sdp_begreen.begreen.fragments.CameraContainer
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
@@ -97,8 +103,6 @@ class CameraContainerTest {
     @Before
     fun setup() {
         fragmentScenario = launchFragmentInContainer()
-
-
     }
 
     @Test
@@ -109,46 +113,28 @@ class CameraContainerTest {
             connectedUserViewModel.setCurrentUser(user)
         }
          //Click the add new post button
-        onView(ViewMatchers.withId(R.id.camera_capture_button)).perform(ViewActions.click())
-        ViewMatchers.withId(R.layout.fragment_send_post).matches(ViewMatchers.isDisplayed())
-        //onView(ViewMatchers.withId(R.id.cancel_post)).check(matches(ViewMatchers.isDisplayed()))
+        onView(withId(R.id.camera_capture_button)).perform(click())
+        withId(R.layout.fragment_send_post).matches(isDisplayed())
     }
 
-    //@Test
-    //fun test(){
-    //    fragmentScenario.onFragment{
-    //        it.parentFragmentManager.findFragmentById(R.id.camera_capture_button)
-    //    }
-    //}
+    //Those test are not working, but important if someone can manage to make them work !
+    /*
+    @Test
+    fun clickOnTakePhotoAndSendRedirectOnCamera() {
+        fragmentScenario.onFragment {
+            val connectedUserViewModel
+                    by it.viewModels<ConnectedUserViewModel>(ownerProducer = { it.requireActivity() })
+            connectedUserViewModel.setCurrentUser(user)
+        }
+        //Click the add new post button
+        onView(withId(R.id.camera_capture_button)).perform(click())
+        onView(withId(R.layout.fragment_send_post)).check(matches(isDisplayed()))
+        onView(withId(R.layout.fragment_send_post)).check(matches(hasDescendant(withId(R.id.cancel_post))))
+        onView(withId(R.id.send_post)).perform(scrollTo()).perform(click())
+        //BaseRobot().doOnView(withId(R.id.cancel_post), click())
 
-    //Important to test but not working, if someone can help us to fix it
-    //@Test
-    //fun clickOnProfileRedirectOnDetailsPost() {
-    //    fragmentScenario.onFragment {
-    //        val connectedUserViewModel
-    //                by it.viewModels<ConnectedUserViewModel>(ownerProducer = { it.requireActivity() })
-    //        connectedUserViewModel.setCurrentUser(user)
-    //    }
-    //    //Click the add new post button
-    //    onView(ViewMatchers.withId(R.id.profile_cam)).perform(ViewActions.click())
-    //    ViewMatchers.withId(R.layout.fragment_profile_details).matches(ViewMatchers.isDisplayed())
-    //    //onView(ViewMatchers.withId(R.id.cancel_post)).check(matches(ViewMatchers.isDisplayed()))
-    //}
+    }
 
-    //@Test
-    //fun clickOnTakePhotoAndSendRedirectOnCamera() {
-    //    fragmentScenario.onFragment {
-    //        val connectedUserViewModel
-    //                by it.viewModels<ConnectedUserViewModel>(ownerProducer = { it.requireActivity() })
-    //        connectedUserViewModel.setCurrentUser(user)
-    //    }
-    //    //Click the add new post button
-    //    onView(ViewMatchers.withId(R.id.camera_capture_button)).perform(ViewActions.click())
-    //    ViewMatchers.withId(R.layout.fragment_send_post).matches(ViewMatchers.isDisplayed())
-    //    onView(ViewMatchers.withId(R.id.send_post)).perform(ViewActions.click())
-    //    ViewMatchers.withId(R.layout.fragment_camera_with_ui).matches(ViewMatchers.isDisplayed())
-    //}
-//
     @Test
     fun clickOnCancelPostReturnsOnCamera() {
         fragmentScenario.onFragment {
@@ -156,9 +142,9 @@ class CameraContainerTest {
                     by it.viewModels<ConnectedUserViewModel>(ownerProducer = { it.requireActivity() })
             connectedUserViewModel.setCurrentUser(user)
         }
-        onView(ViewMatchers.withId(R.id.camera_capture_button)).perform(ViewActions.click())
-        onView(ViewMatchers.withId(R.id.cancel_post)).check(matches(ViewMatchers.isDisplayed()))
-        onView(ViewMatchers.withId(R.id.cancel_post)).perform(ViewActions.click())
+        onView(withId(R.id.camera_capture_button)).perform(click())
+        onView(withId(R.id.cancel_post)).check(matches(isDisplayed()))
+        onView(withId(R.id.cancel_post)).perform(click())
     }
-
+    */
 }

@@ -66,13 +66,15 @@ class SendPostFragment : Fragment() {
 
     private fun returnToCamera() {
         //return to camera fragment
-        val transaction = requireActivity().supportFragmentManager.beginTransaction()
+        var transaction = requireActivity().supportFragmentManager.beginTransaction()
         //transaction.detach(this).remove(this)
         runBlocking {
             transaction.replace(R.id.mainCameraFragmentContainer, CameraWithUIFragment.newInstance())
         }
         transaction.addToBackStack(null)
         transaction.commit()
+        transaction = parentFragmentManager.beginTransaction()
+        transaction.remove(this@SendPostFragment).commit()
     }
 
     private fun setUpShare(){
@@ -97,6 +99,7 @@ class SendPostFragment : Fragment() {
             //Post photo to firebase
             view?.findViewById<ImageView>(R.id.preview)?.drawable?.toBitmap()?.let { bitmap ->
                 lifecycleScope.launch {
+                    //TODO decomment this when my paging3 branch is merged
                     //metadata = metadata?.let { it1 -> db.addImage(bitmap,1, it1) }
                 }
             }
