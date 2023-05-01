@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.widget.ImageView
-import androidx.activity.viewModels
 import androidx.core.view.GravityCompat
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
@@ -24,7 +23,8 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.espressoUtils.BaseRobot
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
-import com.github.sdp_begreen.begreen.fragments.SendPostFragment
+import com.github.sdp_begreen.begreen.map.Bin
+import com.github.sdp_begreen.begreen.map.BinType
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBitmap
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
@@ -128,7 +128,7 @@ class MainActivityTest {
 
     @Test
     fun defaultDisplayedFragmentIsCamera() {
-        onView(withId(R.id.cameraUIFragment)).check(matches(isDisplayed()))
+        onView(withId(R.id.cameraFragment)).check(matches(isDisplayed()))
     }
 
     @Test
