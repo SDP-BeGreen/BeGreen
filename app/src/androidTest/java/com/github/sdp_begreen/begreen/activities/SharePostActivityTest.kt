@@ -22,6 +22,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.concurrent.thread
 
 
 @RunWith(AndroidJUnit4::class)
@@ -113,6 +114,8 @@ class SharePostActivityTest {
 
             onView(withId(R.id.sharePostBtn))
                 .perform(click())
+
+            Thread.sleep(5000)
 
             assertThat(activity.state, equalTo(Lifecycle.State.DESTROYED))
 
