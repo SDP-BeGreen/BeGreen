@@ -108,7 +108,7 @@ class SendPostFragmentTest {
     @Test
     fun categoryIsDisplayed() {
         // Check if the category input is displayed
-        onView(withId(R.id.post_category)).perform(scrollTo()).check(
+        onView(withId(R.id.post_category)).check(
             matches(
                 ViewMatchers.isDisplayed()
             )
