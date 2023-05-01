@@ -13,7 +13,6 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.recyclerview.widget.RecyclerView
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.databinding.FragmentUserPhotoBinding
-import com.github.sdp_begreen.begreen.models.BinType
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import java.net.URL
 

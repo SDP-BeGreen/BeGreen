@@ -8,14 +8,14 @@ data class PhotoMetadata(var pictureId: String? = null,
                          val caption: String? = null,
                          val takenOn: ParcelableDate? = null,
                          val takenByUserId: String? = null,
-                         val binTypeId: String? = null)
+                         val trashCategory: TrashCategory? = null)
     : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readString(),
         parcel.readParcelable(ParcelableDate::class.java.classLoader),
         parcel.readString(),
-        parcel.readString()
+        parcel.readParcelable(TrashCategory::class.java.classLoader)
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -23,7 +23,7 @@ data class PhotoMetadata(var pictureId: String? = null,
         parcel.writeString(caption)
         parcel.writeParcelable(takenOn, flags)
         parcel.writeString(takenByUserId)
-        parcel.writeString(binTypeId)
+        parcel.writeParcelable(trashCategory, flags)
     }
 
     override fun describeContents(): Int {

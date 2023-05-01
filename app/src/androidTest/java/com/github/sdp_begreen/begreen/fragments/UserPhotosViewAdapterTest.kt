@@ -31,8 +31,8 @@ class UserPhotosViewAdapterTest {
     val koinTestRule = KoinTestRule()
 
     private val photoList = listOf(
-        PhotoMetadata("1", "title", ParcelableDate(Date()), "0", "Gros vilain pas beau"),
-        PhotoMetadata("2", "title2", ParcelableDate(Date()), "0", "Gros vilain tout beau")
+        PhotoMetadata("1", "title", ParcelableDate.now, "0", "Gros vilain pas beau"),
+        PhotoMetadata("2", "title2", ParcelableDate.now, "0", "Gros vilain tout beau")
     )
     private var userPhotoViewAdapter = UserPhotosViewAdapter(photoList, true)
     private val appContext = InstrumentationRegistry.getInstrumentation().targetContext

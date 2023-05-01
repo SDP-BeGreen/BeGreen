@@ -57,4 +57,11 @@
     <string name="add_new_bin">Add new bin</string>
     <string name="quotes_of_the_day">Quotes of the day</string>
     <string name="post_cannot_be_shared_error">An error occurred. Please try again</string>
+    <string name="paper">Paper</string>
+    <string name="plastic">Plastic</string>
+    <string name="organic">Organic</string>
+    <string name="glass">Glass</string>
+    <string name="electronic">Electronic</string>
+    <string name="clothes">Clothes</string>
+    <string name="metal">Metal</string>
 </resources>

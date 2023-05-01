@@ -11,11 +11,10 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.fragments.CameraFragment
-import com.github.sdp_begreen.begreen.models.BinType
+import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.Post
-import java.util.Date
 import com.github.sdp_begreen.begreen.firebase.FirebaseAuth
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import kotlinx.coroutines.launch
@@ -103,11 +102,11 @@ class SharePostActivity : AppCompatActivity() {
 
         val title: String = getPostTitle()
         val image: Bitmap = getPostImage()!!
-        val date = ParcelableDate(Date())
-        val binTypeId: BinType = BinType.PLASTIC
+        val date = ParcelableDate.now
+        val trashCategory: TrashCategory = TrashCategory.PLASTIC
         val userId = FirebaseAuth().getConnectedUserId()
 
-        val metadata = PhotoMetadata(null, title, date, userId, binTypeId.id)
+        val metadata = PhotoMetadata(null, title, date, userId, trashCategory)
 
         return Post(image, metadata)
     }

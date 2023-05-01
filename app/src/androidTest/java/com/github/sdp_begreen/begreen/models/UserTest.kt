@@ -24,7 +24,7 @@ class UserTest {
         null)
 
         val photoMetadata: PhotoMetadata =
-        PhotoMetadata("1", "title", ParcelableDate(Date()), "0", "Gros vilain pas beau")
+        PhotoMetadata("1", "title", ParcelableDate.now, "0", "Gros vilain pas beau")
     var user1: User = User(
         "1",
         33,

@@ -13,6 +13,7 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.Post
+import com.github.sdp_begreen.begreen.models.TrashCategory
 import kotlinx.coroutines.launch
 import java.util.Date
 
@@ -53,7 +54,7 @@ class DatabaseActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 imageId = FirebaseDB.addImage(
                     Post(bitmap,
-                        PhotoMetadata(null, "Hello", ParcelableDate(Date()), "Messi", "1"))
+                        PhotoMetadata(null, "Hello", ParcelableDate.now, "Messi", TrashCategory.PLASTIC))
                 )
             }
         }

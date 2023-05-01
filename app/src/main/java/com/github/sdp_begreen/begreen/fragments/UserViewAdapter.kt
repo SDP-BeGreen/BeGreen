@@ -16,6 +16,7 @@ import com.github.sdp_begreen.begreen.databinding.FragmentUserBinding
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashCategory
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.inject
 import java.util.*
@@ -39,41 +40,41 @@ class UserViewAdapter(
         PhotoMetadata(
             "erfs",
             "Look at me cleaning!",
-            ParcelableDate(Date()),
+            ParcelableDate.now,
             "0",
-            "0",
+            TrashCategory.PLASTIC,
         ),
 
         PhotoMetadata(
             "erfs",
             "Look at me cleaning!",
-            ParcelableDate(Date()),
+            ParcelableDate.now,
             "0",
-            "0",
+            TrashCategory.PLASTIC,
         ),
 
         PhotoMetadata(
             "erfs",
             "Look at me cleaning!",
-            ParcelableDate(Date()),
+            ParcelableDate.now,
             "0",
-            "0",
+            TrashCategory.PLASTIC,
         ),
 
         PhotoMetadata(
             "erfs",
             "Look at me cleaning!",
-            ParcelableDate(Date()),
+            ParcelableDate.now,
             "0",
-            "0",
+            TrashCategory.PLASTIC,
         ),
 
         PhotoMetadata(
             "erfs",
             "Look at me cleaning!",
-            ParcelableDate(Date()),
+            ParcelableDate.now,
             "0",
-            "0",
+            TrashCategory.PLASTIC,
         )
     )
 

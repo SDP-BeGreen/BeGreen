@@ -372,7 +372,7 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
             lifecycleScope.launch {
                 val metadata = profileEditedValuesViewModel.profilePicture?.let {
                     db.storeUserProfilePicture(it, id,
-                        PhotoMetadata(null, null, ParcelableDate(Date()), id, "2")
+                        PhotoMetadata(null, null, ParcelableDate.now, id, "2")
                     )
                 }
                 // new user with

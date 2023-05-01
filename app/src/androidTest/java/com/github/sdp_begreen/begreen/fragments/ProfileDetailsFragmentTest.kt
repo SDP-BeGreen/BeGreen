@@ -54,7 +54,7 @@ class ProfileDetailsFragmentTest {
             PhotoMetadata(
                 "erfs",
                 "Look at me cleaning!",
-                ParcelableDate(Date()),
+                ParcelableDate.now,
                 "0",
                 "0",
             ),
@@ -62,7 +62,7 @@ class ProfileDetailsFragmentTest {
             PhotoMetadata(
                 "erfs",
                 "Look at me cleaning!",
-                ParcelableDate(Date()),
+                ParcelableDate.now,
                 "0",
                 "0",
             )

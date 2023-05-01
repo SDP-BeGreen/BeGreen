@@ -63,15 +63,15 @@ class PhotoMetadataTest {
 
     @Test
     fun photoGettersWorks(){
-        val date = ParcelableDate(Date())
+        val date = ParcelableDate.now
         val user = User("1",0, "test")
-        val photoMetadata = PhotoMetadata("key","title", date, user.id, "cat")
+        val photoMetadata = PhotoMetadata("key","title", date, user.id, TrashCategory.PLASTIC)
         assertThat(photoMetadata, allOf(
             hasProp("pictureId", equalTo("key")),
             hasProp("title", equalTo("title")),
             hasProp("takenOn", equalTo(date)),
             hasProp("takenByUserId", equalTo(user.id)),
-            hasProp("binTypeId", equalTo("cat"))
+            hasProp("trashCategory", equalTo(TrashCategory.PLASTIC))
             ))
     }
 }

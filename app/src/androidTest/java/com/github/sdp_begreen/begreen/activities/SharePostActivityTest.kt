@@ -91,20 +91,6 @@ class SharePostActivityTest {
         activity.close()
     }
 
-    /*
-    @Test
-    fun sharePostFinishesActivity() {
-
-        val activity = launchActivity<SharePostActivity>(intentWithCorrectExtra)
-
-        onView(withId(R.id.sharePostBtn))
-            .perform(click())
-
-        // Check that the activity has finished, so we go back to the previous
-        assertThat(activity.state, equalTo(Lifecycle.State.DESTROYED))
-    }*/
-
-
     @Test
     fun sharePostBtnClickFinishesActivity() {
 

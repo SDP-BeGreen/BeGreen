@@ -16,7 +16,7 @@ import androidx.fragment.app.Fragment
 import com.github.sdp_begreen.begreen.BinsFakeDatabase
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.models.Bin
-import com.github.sdp_begreen.begreen.models.BinType
+import com.github.sdp_begreen.begreen.models.TrashCategory
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -160,13 +160,11 @@ class MapFragment : Fragment() {
 
         for (bin in bins) {
 
-            val location = LatLng(bin.lat, bin.long)
-
             val marker = map.addMarker(
                 MarkerOptions()
-                    .position(location)
-                    .title(bin.type.toString())
-                    .icon(BitmapDescriptorFactory.defaultMarker(bin.type.markerColor))
+                    .position(bin.location)
+                    .title(bin.trashCategory.name)
+                    .icon(BitmapDescriptorFactory.defaultMarker(bin.trashCategory.color))
             )
 
             marker!!.tag = bin.id
@@ -206,7 +204,7 @@ class MapFragment : Fragment() {
 
         } else {
 
-            val bin = Bin(0, BinType.PLASTIC, userLocation!!.latitude, userLocation!!.longitude)
+            val bin = Bin(0, TrashCategory.PLASTIC, LatLng(userLocation!!.latitude, userLocation!!.longitude))
             BinsFakeDatabase.addBin(bin)
             displayBinsMarkers(BinsFakeDatabase.fakeBins)
         }
