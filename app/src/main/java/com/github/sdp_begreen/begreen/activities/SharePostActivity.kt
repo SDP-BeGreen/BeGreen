@@ -118,15 +118,15 @@ class SharePostActivity : AppCompatActivity() {
     private suspend fun sharePost() {
 
         val post = getPost()
+
+        // Check if the post has correctly been shared
         val hasBeenShared = (FirebaseDB.addImage(post) != null)
 
         if (hasBeenShared) {
             finish()
 
         } else {
-            Toast.makeText(this, "Hello, World!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.post_cannot_be_shared_error, Toast.LENGTH_SHORT).show()
         }
-
-
     }
 }

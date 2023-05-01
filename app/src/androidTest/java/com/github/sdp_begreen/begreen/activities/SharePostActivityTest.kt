@@ -106,7 +106,7 @@ class SharePostActivityTest {
 
 
     @Test
-    fun sharePostReceiveSuccessfulMessage() {
+    fun sharePostBtnClickFinishesActivity() {
 
         runBlocking {
 
@@ -115,11 +115,10 @@ class SharePostActivityTest {
             onView(withId(R.id.sharePostBtn))
                 .perform(click())
 
+            // Wait so the database performs the update. Can be cleaned afterward.
             Thread.sleep(5000)
 
             assertThat(activity.state, equalTo(Lifecycle.State.DESTROYED))
-
-            //activity.close()
         }
     }
 }

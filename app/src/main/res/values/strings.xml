@@ -56,4 +56,5 @@
     <string name="search_user">Search user…</string>
     <string name="add_new_bin">Add new bin</string>
     <string name="quotes_of_the_day">Quotes of the day</string>
+    <string name="post_cannot_be_shared_error">An error occurred. Please try again</string>
 </resources>
