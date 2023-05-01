@@ -5,7 +5,7 @@ import android.os.Parcelable
 
 
 data class PhotoMetadata(var pictureId: String? = null,
-                         val title: String? = null,
+                         val caption: String? = null,
                          val takenOn: ParcelableDate? = null,
                          val takenByUserId: String? = null,
                          val binTypeId: String?)
@@ -20,7 +20,7 @@ data class PhotoMetadata(var pictureId: String? = null,
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(pictureId)
-        parcel.writeString(title)
+        parcel.writeString(caption)
         parcel.writeParcelable(takenOn, flags)
         parcel.writeString(takenByUserId)
         parcel.writeString(binTypeId)

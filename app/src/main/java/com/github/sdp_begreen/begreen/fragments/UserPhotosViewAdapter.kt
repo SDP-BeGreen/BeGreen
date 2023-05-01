@@ -54,7 +54,7 @@ class UserPhotosViewAdapter(
             holder.avatarView.visibility = View.GONE
         }
         //Set default value
-        holder.titleView.text = photo?.title ?: "No title"
+        holder.titleView.text = photo?.caption ?: "No title"
         holder.subtitleView.text = (photo?.takenOn?.toString() ?: "Unknown date") + " | " + (BinType.getBinTypeById(photo?.binTypeId!!)
             ?: "")
         //holder.photoView.setImageBitmap(photo.getPhotoFromDataBase())
@@ -63,8 +63,8 @@ class UserPhotosViewAdapter(
         holder.photoView.setImageBitmap(BitmapFactory.decodeStream(url.openConnection().getInputStream()))
         //------------FOR DEMO -----------------
 
-        // TODO : to because old
-        //holder.descriptionView.text = photo?.description
+        // TODO : to change
+        holder.descriptionView.text = photo?.caption
     }
 
     override fun getItemCount(): Int = photos?.size ?: 0

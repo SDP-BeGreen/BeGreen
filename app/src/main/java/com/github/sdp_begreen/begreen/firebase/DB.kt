@@ -110,7 +110,7 @@ interface DB {
      * @throws DatabaseTimeoutException if the database could not be reached
      * @throws DatabaseException if the an exception occurred while retrieving the image
      */
-    suspend fun getImage(metadata: PhotoMetadata, userId: Int, timeout: Long = TIMEOUT): Bitmap?
+    suspend fun getImage(metadata: PhotoMetadata, timeout: Long = TIMEOUT): Bitmap?
 
     /**
      * Retrieves the profile image associated with the given [userId] and [metadata] from the database
