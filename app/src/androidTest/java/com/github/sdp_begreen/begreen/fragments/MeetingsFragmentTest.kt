@@ -29,6 +29,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.`is`
@@ -306,39 +307,53 @@ class MeetingsFragmentTest {
             CustomLatLng(46.806832, 7.156354),
             CustomLatLng(46.806832, 7.156354)
         )
-        meetingsFlow.tryEmit(meetings + newMeeting)
 
-        onView(withId(R.id.fragment_meeting_list))
-            .check(
-                atPositionTextViewWithText(
-                    4,
-                    R.id.fragment_meeting_elem_title,
-                    newMeeting.title
+        runTest {
+            val channel = Channel<List<Meeting>>(1)
+            backgroundScope.launch {
+                meetingsFlow.collect {
+                    channel.send(it)
+                }
+            }
+
+            meetingsFlow.emit(meetings + newMeeting)
+
+            // Add this to ensure that the flow has been updated before testing the view
+            // so that we ensure it has receive the new meeting list
+            assertThat(channel.receive(), `is`(equalTo(meetings + newMeeting)))
+
+            onView(withId(R.id.fragment_meeting_list))
+                .check(
+                    atPositionTextViewWithText(
+                        4,
+                        R.id.fragment_meeting_elem_title,
+                        newMeeting.title
+                    )
                 )
-            )
-            .check(
-                atPositionTextViewWithText(
-                    4,
-                    R.id.fragment_meeting_elem_date,
-                    DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
-                        .format(Calendar.getInstance().apply {
-                            timeInMillis = newMeeting.startDateTime!!
-                        }.time)
+                .check(
+                    atPositionTextViewWithText(
+                        4,
+                        R.id.fragment_meeting_elem_date,
+                        DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
+                            .format(Calendar.getInstance().apply {
+                                timeInMillis = newMeeting.startDateTime!!
+                            }.time)
+                    )
                 )
-            )
-            .check(
-                atPositionTextViewWithText(
-                    4,
-                    R.id.fragment_meeting_elem_location,
-                    "Lausanne"
+                .check(
+                    atPositionTextViewWithText(
+                        4,
+                        R.id.fragment_meeting_elem_location,
+                        "Lausanne"
+                    )
                 )
-            )
-            .check(
-                atPositionButtonWithText(
-                    4,
-                    R.id.fragment_meeting_elem_join_button,
-                    "Join"
+                .check(
+                    atPositionButtonWithText(
+                        4,
+                        R.id.fragment_meeting_elem_join_button,
+                        "Join"
+                    )
                 )
-            )
+        }
     }
 }
