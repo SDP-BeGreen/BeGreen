@@ -15,7 +15,55 @@
       },
       "oauth_client": [
         {
-          "client_id": "761636298592-0h1thef98bbaib6cou2sscia11huro82.apps.googleusercontent.com",
+          "client_id": "761636298592-2v7336giikl19ra3s1eh8fn46l3hi6i1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.github.sdp_begreen.begreen",
+            "certificate_hash": "475f4ee10a8a50072ce6caa70198375fe777eb12"
+          }
+        },
+        {
+          "client_id": "761636298592-b0akr99t1p300gdnnsfpbd4nnguovi5o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.github.sdp_begreen.begreen",
+            "certificate_hash": "e20a8ac0ef22599770796f3fc99aa561b94d7061"
+          }
+        },
+        {
+          "client_id": "761636298592-edo4gfahg3ub64edip2mj872o2334420.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.github.sdp_begreen.begreen",
+            "certificate_hash": "3187a8f3aad86e41cf03da14545aca1ed350a680"
+          }
+        },
+        {
+          "client_id": "761636298592-jvmtjoh168v71uhq3otipvs147srmrak.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.github.sdp_begreen.begreen",
+            "certificate_hash": "0649aeaead69cfe420cd3642a8291f1fe728d483"
+          }
+        },
+        {
+          "client_id": "761636298592-lhhl4gvbgfrcpkmsc9p55dabol879r3l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.github.sdp_begreen.begreen",
+            "certificate_hash": "3cb161adf9e75bfe40724b4c478ced5072af4f00"
+          }
+        },
+        {
+          "client_id": "761636298592-ptivspdrlc534bptfi7713ej271k7lnu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.github.sdp_begreen.begreen",
+            "certificate_hash": "a6f95614e053b768b2b1e63d2b9967fb52394a86"
+          }
+        },
+        {
+          "client_id": "761636298592-psfijegcv6vg6kk8h7drhoml7e8ekg1e.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

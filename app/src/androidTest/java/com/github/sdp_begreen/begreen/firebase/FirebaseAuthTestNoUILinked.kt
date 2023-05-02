@@ -4,10 +4,9 @@ import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.github.sdp_begreen.begreen.rules.CoroutineTestRule
+import com.github.sdp_begreen.begreen.rules.FirebaseEmulatorRule
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.drop
@@ -18,7 +17,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.Matchers.contains
-import org.junit.BeforeClass
+import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -36,14 +35,9 @@ import org.junit.runner.RunWith
 class FirebaseAuthTestNoUILinked {
     companion object {
         private val firebaseAuth = FirebaseAuth()
-        @BeforeClass
-        @JvmStatic fun setup() {
-            try {
-                Firebase.database.useEmulator("10.0.2.2", 9000)
-                Firebase.storage.useEmulator("10.0.2.2", 9199)
-                Firebase.auth.useEmulator("10.0.2.2", 9099)
-            } catch (_:java.lang.IllegalStateException){}
-        }
+        @get:ClassRule
+        @JvmStatic
+        val firebaseEmulatorRule = FirebaseEmulatorRule()
     }
 
     @get:Rule
