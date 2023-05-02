@@ -21,6 +21,7 @@ import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.activities.SharePostActivity
+import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
@@ -38,11 +39,13 @@ import org.mockito.Mockito.`when`
 class CameraFragmentTest {
 
     private val db: DB = Mockito.mock(DB::class.java)
+    private val auth: Auth = Mockito.mock(Auth::class.java)
 
     @get:Rule
     val koinTestRule = KoinTestRule(
         modules = listOf(module {
             single {db}
+            single {auth}
         })
     )
 
