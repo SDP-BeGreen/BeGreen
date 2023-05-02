@@ -162,5 +162,26 @@ interface DB {
      */
     suspend fun getAdvices(timeout: Long = TIMEOUT): Set<String>
 
+    /**
+     * Store in the database that the given User follows the other given User
+     *
+     * @param followerId the userId of the User that starts following the other User
+     * @param followedId the userId of the User that starts being followed by the other User
+     * @param timeout the maximum time we wait for the database to respond
+     * @throws DatabaseTimeoutException if the database could not be reached
+     * @throws DatabaseException if an exception occurred while retrieving the data
+     */
+    suspend fun follow(followerId: String, followedId: String, timeout: Long = TIMEOUT)
+
+    /**
+     * Store in the database that the given User stops following the other given User
+     *
+     * @param followerId the userId of the User that stops following the other User
+     * @param followedId the userId of the User that stops being followed by the other User
+     * @param timeout the maximum time we wait for the database to respond
+     * @throws DatabaseTimeoutException if the database could not be reached
+     * @throws DatabaseException if an exception occurred while retrieving the data
+     */
+    suspend fun unfollow(followerId: String, followedId: String, timeout: Long = TIMEOUT)
 
 }

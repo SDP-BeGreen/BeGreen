@@ -173,6 +173,14 @@ object FirebaseDB: DB {
         }.toSet()
     }
 
+    override suspend fun follow(followerId: String, followedId: String, timeout: Long) {
+        // TODO("Not yet implemented")
+    }
+
+    override suspend fun unfollow(followerId: String, followedId: String, timeout: Long) {
+        // TODO("Not yet implemented")
+    }
+
     /**
      * Helper function to perform the actual call to the database to retrieve the image
      *

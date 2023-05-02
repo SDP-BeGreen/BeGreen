@@ -18,9 +18,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.activities.SharePostActivity
+import com.github.sdp_begreen.begreen.adapters.FollowingArrayAdapter
+import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+
 
 /**
  * A simple [Fragment] subclass.
@@ -30,8 +33,9 @@ import org.koin.android.ext.android.inject
 class CameraFragment : Fragment() {
 
 
-    // Get the db instance
+    // Get the db and auth instances
     private val db by inject<DB>()
+    private val auth by inject<Auth>()
 
     private lateinit var addNewPostBtn : Button
     private lateinit var cameraActivityLauncher : ActivityResultLauncher<Void?>
@@ -89,7 +93,10 @@ class CameraFragment : Fragment() {
     private suspend fun setUpSearchBar(view: View) {
 
         val users = db.getAllUsers()
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, users)
+
+        // TODO: initialize "following" list with real values fetched from the database
+        val adapter = FollowingArrayAdapter(requireContext(),
+            android.R.layout.select_dialog_item, users, db, auth, lifecycleScope)
 
         //Getting the instance of AutoCompleteTextView
         val autoCompleteTV = view.findViewById<AutoCompleteTextView>(R.id.userSearch)
