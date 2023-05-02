@@ -5,7 +5,7 @@ import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.google.android.material.button.MaterialButton
 
 /**
- * Interface to implement to help the [MeetingsRecyclerViewAdapter] to properly display
+ * Interface to implement to help the [MeetingsListAdapter] to properly display
  * each element in its view. And setup the button listeners.
  */
 interface MeetingDataAdapterListeners {

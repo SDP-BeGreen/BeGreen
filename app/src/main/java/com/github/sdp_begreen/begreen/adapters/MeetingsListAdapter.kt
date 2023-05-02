@@ -16,9 +16,9 @@ import java.util.Calendar
  * @param meetingDataAdapterListeners An implementation of the interface [MeetingDataAdapterListeners]
  * that provide the required method for this adapter to correctly display the [Meeting] elements
  */
-class MeetingsRecyclerViewAdapter(
+class MeetingsListAdapter(
     private val meetingDataAdapterListeners: MeetingDataAdapterListeners
-) : ListAdapter<Meeting, MeetingsRecyclerViewAdapter.ViewHolder>(DiffMeeting) {
+) : ListAdapter<Meeting, MeetingsListAdapter.ViewHolder>(DiffMeeting) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -65,10 +65,6 @@ class MeetingsRecyclerViewAdapter(
         val dateView = binding.fragmentMeetingElemDate
         val locationView = binding.fragmentMeetingElemLocation
         val joinButton = binding.fragmentMeetingElemJoinButton
-
-        override fun toString(): String {
-            return super.toString() + " '" + titleView.text + "'"
-        }
     }
 
     /**

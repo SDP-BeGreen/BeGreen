@@ -1,6 +1,5 @@
 package com.github.sdp_begreen.begreen.fragments
 
-import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,14 +13,16 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.sdp_begreen.begreen.GeocodingAPI
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.adapters.MeetingDataAdapterListeners
-import com.github.sdp_begreen.begreen.adapters.MeetingsRecyclerViewAdapter
+import com.github.sdp_begreen.begreen.adapters.MeetingsListAdapter
 import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.github.sdp_begreen.begreen.viewModels.MeetingFragmentViewModel
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import java.io.IOException
 
 /**
@@ -36,7 +37,9 @@ class MeetingsFragment : Fragment() {
         MeetingFragmentViewModel.factory(connectedUserViewModel.currentUser)
     }
 
-    private lateinit var geocoder: Geocoder
+    private val geocodingApi by inject<GeocodingAPI>()
+
+    //private lateinit var geocoder: Geocoder
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,16 +51,16 @@ class MeetingsFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_meetings_list, container, false)
 
-        container?.also {
-            geocoder = Geocoder(it.context)
-        }
+        //container?.also {
+        //    geocoder = Geocoder(it.context)
+        //}
 
         // Set the adapter
         if (view is RecyclerView) {
             with(view) {
                 layoutManager = LinearLayoutManager(context)
 
-                adapter = MeetingsRecyclerViewAdapter(MeetingDataAdapterListenersImpl()).apply {
+                adapter = MeetingsListAdapter(MeetingDataAdapterListenersImpl()).apply {
                     lifecycleScope.launch {
                         meetingFragmentViewModel
                             .allMeetings
@@ -81,7 +84,7 @@ class MeetingsFragment : Fragment() {
 
     /**
      * Inner class that implement [MeetingDataAdapterListeners] to pass the the
-     * [MeetingsRecyclerViewAdapter]
+     * [MeetingsListAdapter]
      */
     private inner class MeetingDataAdapterListenersImpl : MeetingDataAdapterListeners {
         // We have to use the synchronous `getFromLocation` as we support older API,
@@ -91,21 +94,31 @@ class MeetingsFragment : Fragment() {
             textView: TextView
         ) {
             lifecycleScope.launch {
-                coordinates.latitude?.also { lat ->
-                    coordinates.longitude?.also { lon ->
-                        try {
-                            val addresses = geocoder.getFromLocation(lat, lon, 1)
-                            textView.text = addresses?.first()?.locality
-
-                        } catch (ioException: IOException) {
-                            Log.d(
-                                "Meetings Recycler view",
-                                "Error while trying to find the address form location " +
-                                        ioException.message.orEmpty()
-                            )
-                        }
-                    }
+                try {
+                    val addresses = geocodingApi.getAddresses(coordinates, 1)
+                    textView.text = addresses?.first()?.locality
+                } catch (ioException: IOException) {
+                    Log.d(
+                        "Meetings Recycler view",
+                        "Error while trying to find the address form location " +
+                                ioException.message.orEmpty()
+                    )
                 }
+                //coordinates.latitude?.also { lat ->
+                //    coordinates.longitude?.also { lon ->
+                //        try {
+                //            val addresses = geocoder.getFromLocation(lat, lon, 1)
+                //            textView.text = addresses?.first()?.locality
+//
+                //        } catch (ioException: IOException) {
+                //            Log.d(
+                //                "Meetings Recycler view",
+                //                "Error while trying to find the address form location " +
+                //                        ioException.message.orEmpty()
+                //            )
+                //        }
+                //    }
+                //}
             }
         }
 
