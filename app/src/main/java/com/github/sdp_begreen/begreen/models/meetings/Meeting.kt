@@ -5,7 +5,7 @@ import com.github.sdp_begreen.begreen.models.CustomLatLng
 import kotlinx.parcelize.Parcelize
 
 /**
- * Class that represents a waist collection meeting
+ * Class that represents a waste collection meeting
  */
 @Parcelize
 data class Meeting(

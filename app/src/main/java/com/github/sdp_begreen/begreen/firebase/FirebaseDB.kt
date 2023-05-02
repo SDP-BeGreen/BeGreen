@@ -8,17 +8,18 @@ import com.github.sdp_begreen.begreen.exceptions.DatabaseTimeoutException
 import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
-import com.google.firebase.database.*
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseException
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
-import java.io.ByteArrayOutputStream
-import com.google.android.gms.maps.model.LatLng
 import org.koin.java.KoinJavaComponent.inject
+import java.io.ByteArrayOutputStream
 
 
 /**
@@ -35,7 +36,7 @@ object FirebaseDB: DB {
     private val databaseReference: DatabaseReference = dbRefs.databaseReference
     // Storage ref (for images)
     private val storageReference: StorageReference = dbRefs.storageReference
-    private val connectedReference = Firebase.database.getReference(".info/connected")
+    private val connectedReference = dbRefs.database.getReference(".info/connected")
     private const val USERS_PATH = "users"
     private const val USER_PROFILE_PICTURE_METADATA = "profilePictureMetadata"
     private const val USER_ID_ATTRIBUTE = "id"

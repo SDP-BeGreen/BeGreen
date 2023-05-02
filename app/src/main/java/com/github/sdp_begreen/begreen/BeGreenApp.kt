@@ -14,6 +14,7 @@ import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingPhotoServi
 import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingService
 import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingServiceImpl
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
@@ -28,7 +29,8 @@ import org.koin.dsl.module
  * to firebase
  */
 object FirebaseRef {
-    val databaseReference: DatabaseReference = Firebase.database.reference
+    val database: FirebaseDatabase = Firebase.database
+    val databaseReference: DatabaseReference = database.reference
     val storageReference: StorageReference = Firebase.storage.reference
 }
 

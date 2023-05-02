@@ -26,7 +26,6 @@ object FirebaseUtils {
      *
      * @param reference The reference where to store the object
      * @param obj The object to store
-     * the outer coroutine
      * @param errorMessage The error message to add to the thrown exception
      *
      * @return The object that has been saved
@@ -72,7 +71,7 @@ object FirebaseUtils {
     }
 
     /**
-     * Function to get an object form the database
+     * Function to get an object from the database
      *
      * @param query The query from where to get the object
      * @param valueType The type of value we are trying to get
@@ -97,7 +96,7 @@ object FirebaseUtils {
     }
 
     /**
-     * Function to get the bytes fro the storage
+     * Function to get the bytes from the storage
      *
      * @param reference The reference from where to get the object
      * @param errorMessage The error message to add to the thrown exception

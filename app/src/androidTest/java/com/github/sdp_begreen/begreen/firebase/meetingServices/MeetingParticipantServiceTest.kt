@@ -11,9 +11,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.everyItem
+import org.hamcrest.Matchers.`in`
 import org.hamcrest.Matchers.`is`
 import org.junit.Assert.assertThrows
 import org.junit.ClassRule
@@ -149,7 +149,7 @@ class MeetingParticipantServiceTest {
             // check initial meetings
             assertThat(
                 listOf(participant1, participant2, participant3),
-                everyItem(`is`(Matchers.`in`(channel.receive())))
+                everyItem(`is`(`in`(channel.receive())))
             )
 
             MeetingParticipantServiceImpl.removeParticipant(
@@ -158,7 +158,7 @@ class MeetingParticipantServiceTest {
             )
             assertThat(
                 listOf(participant1, participant3),
-                everyItem(`is`(Matchers.`in`(channel.receive())))
+                everyItem(`is`(`in`(channel.receive())))
             )
 
             MeetingParticipantServiceImpl.addParticipant(
@@ -167,7 +167,7 @@ class MeetingParticipantServiceTest {
             )
             assertThat(
                 listOf(participant1, participant3, participant4),
-                everyItem(`is`(Matchers.`in`(channel.receive())))
+                everyItem(`is`(`in`(channel.receive())))
             )
 
         }

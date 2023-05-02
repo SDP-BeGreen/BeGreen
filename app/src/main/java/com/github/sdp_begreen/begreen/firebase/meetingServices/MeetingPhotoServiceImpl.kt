@@ -67,9 +67,7 @@ object MeetingPhotoServiceImpl : MeetingPhotoService {
         )
 
         val compressedPhoto = getBytesFromStorage(
-            storageRef.child(MEETING_PATH).child(meetingId).child(
-                PHOTOS_PATH
-            )
+            storageRef.child(MEETING_PATH).child(meetingId).child(PHOTOS_PATH)
                 .child(photoMetadata.pictureId!!),
             "Error while getting picture bytes from storage"
         )
