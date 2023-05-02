@@ -1,9 +1,11 @@
 package com.github.sdp_begreen.begreen.fragments
 
 import android.location.Address
+import android.util.Log
 import android.widget.TextView
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -13,6 +15,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.adapters.MeetingsListAdapter
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingParticipantService
@@ -29,6 +32,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.`is`
@@ -44,6 +48,7 @@ import java.io.IOException
 import java.text.DateFormat
 import java.util.Calendar
 import java.util.Locale
+import kotlin.test.assertTrue
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -295,6 +300,50 @@ class MeetingsFragmentTest {
     }
 
     /*@Test
+    fun test() {
+        val newMeeting = Meeting(
+            "m5",
+            "Alex",
+            "Forest Cleanup",
+            "Let's meet up and clean up the local forest",
+            1731139200000,
+            1731150000000,
+            CustomLatLng(46.806832, 7.156354),
+            CustomLatLng(46.806832, 7.156354)
+        )
+
+        fragmentScenario.onFragment {
+            val recyclerView = it.view as RecyclerView
+            val adapter = recyclerView.adapter as ListAdapter<*, *>
+
+            // assert initial list
+            assertThat(adapter.currentList, `is`(equalTo(meetings)))
+
+            adapter.registerAdapterDataObserver(object: RecyclerView.AdapterDataObserver() {
+                override fun onItemRangeChanged(positionStart: Int, itemCount: Int) {
+                    Log.d("Try to observe to see if something change", "on change called")
+                }
+            })
+
+            //adapter.submitList(meetings + newMeeting)
+        }
+
+        meetingsFlow.tryEmit(meetings + newMeeting)
+
+        //Thread.sleep(10000)
+
+        fragmentScenario.onFragment {
+            val recyclerView = it.view as RecyclerView
+            val adapter = recyclerView.adapter as ListAdapter<*, *>
+
+            // assert initial list
+            assertThat(adapter.currentList, `is`(equalTo(meetings + newMeeting)))
+
+        }
+
+    }*/
+
+    @Test
     fun addNewMeetingCorrectlyDisplayIt() {
         val newMeeting = Meeting(
             "m5",
@@ -309,19 +358,27 @@ class MeetingsFragmentTest {
 
         runTest {
 
+            // update the list
             meetingsFlow.emit(meetings + newMeeting)
 
             // add that to ensure that before we try to assert the view, the element has been
             // added to the list in the ListAdapter
-            lateinit var recyclerView: RecyclerView
-            do {
-                fragmentScenario.onFragment {
-                    recyclerView = it.view as RecyclerView
-                    //val test = recyclerView.adapter as androidx.recyclerview.widget.ListAdapter<*,*>
-                    //Log.d("Test meeting fragment", test.currentList.toString())
-                }
-            } while (recyclerView.childCount != 5)
 
+            val channel = Channel<Boolean>(1)
+            backgroundScope.launch {
+                lateinit var recyclerView: RecyclerView
+                do {
+                    fragmentScenario.onFragment {
+                        recyclerView = it.view as RecyclerView
+                    }
+                } while (recyclerView.childCount != 5)
+                channel.send(true)
+            }
+
+            // wait that value is emitted
+            assertTrue(channel.receive())
+
+            // assert the newly added element
             onView(withId(R.id.fragment_meeting_list))
                 .check(
                     atPositionTextViewWithText(
@@ -355,5 +412,5 @@ class MeetingsFragmentTest {
                     )
                 )
         }
-    }*/
+    }
 }
