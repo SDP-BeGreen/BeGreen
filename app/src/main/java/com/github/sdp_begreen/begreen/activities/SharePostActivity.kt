@@ -14,9 +14,9 @@ import com.github.sdp_begreen.begreen.fragments.CameraFragment
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
-import com.github.sdp_begreen.begreen.models.Post
 import com.github.sdp_begreen.begreen.firebase.FirebaseAuth
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import kotlinx.coroutines.launch
 
 class SharePostActivity : AppCompatActivity() {
@@ -93,33 +93,23 @@ class SharePostActivity : AppCompatActivity() {
     }
 
     /**
-     * Helper function to get the whole post instance
+     * Share the post to the database
      */
-    private fun getPost(): Post {
+    private suspend fun sharePost() {
 
         // "image" is non-null because we already checked it during the activity launching. So we can force the casting.
         // In other words, (image == null) is an unreachable path
 
         val title: String = getPostTitle()
-        val image: Bitmap = getPostImage()!!
         val date = ParcelableDate.now
         val trashCategory: TrashCategory = TrashCategory.PLASTIC
         val userId = FirebaseAuth().getConnectedUserId()
 
-        val metadata = PhotoMetadata(null, title, date, userId, trashCategory)
-
-        return Post(image, metadata)
-    }
-
-    /**
-     * Share the post to the database
-     */
-    private suspend fun sharePost() {
-
-        val post = getPost()
+        val image: Bitmap = getPostImage()!!
+        val photoMetadata = TrashPhotoMetadata(null, date, userId, title, trashCategory)
 
         // Check if the post has correctly been shared
-        val hasBeenShared = (FirebaseDB.addImage(post) != null)
+        val hasBeenShared = (FirebaseDB.addImage(image, photoMetadata) != null)
 
         if (hasBeenShared) {
             finish()

@@ -10,6 +10,10 @@ import java.util.*
 
 //Need to be in Android Test to use Parcel
 class UserTest {
+
+    val profilePhotoMetadata =
+        ProfilePhotoMetadata("1", ParcelableDate.now, "0")
+
     var user: User = User(
         "1",
         0,
@@ -23,14 +27,12 @@ class UserTest {
         null,
         null)
 
-        val photoMetadata: PhotoMetadata =
-        PhotoMetadata("1", "title", ParcelableDate.now, "0", "Gros vilain pas beau")
     var user1: User = User(
         "1",
         33,
         "Alice",
         1,
-        photoMetadata,
+        profilePhotoMetadata,
         "Description poutou poutou",
         "cc@gmail.com",
         "08920939459802",

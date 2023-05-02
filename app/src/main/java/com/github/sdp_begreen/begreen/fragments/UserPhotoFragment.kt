@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import kotlin.collections.ArrayList
 
 /**
@@ -18,7 +19,7 @@ import kotlin.collections.ArrayList
 class UserPhotoFragment : Fragment() {
 
     private var columnCount = 1
-    private var photoList: List<PhotoMetadata>? = null
+    private var photoList: List<TrashPhotoMetadata>? = null
     private var isFeed: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {

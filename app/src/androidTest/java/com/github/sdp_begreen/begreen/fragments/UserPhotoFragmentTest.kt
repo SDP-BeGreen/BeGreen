@@ -16,6 +16,8 @@ import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.activities.MainActivity
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashCategory
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import junit.framework.TestCase.*
 import org.hamcrest.CoreMatchers
@@ -47,11 +49,11 @@ class UserPhotoFragmentTest {
     fun setup() {
         // Initialize test data
         val photos = listOf(
-            PhotoMetadata("1","Look at me cleaning!", ParcelableDate.now, "0", "Organique"),
-            PhotoMetadata("1","Look at me cleaning!", ParcelableDate.now, "0", "Organique"),
-            PhotoMetadata("1","Look at me cleaning!", ParcelableDate.now, "0", "Organique"),
-            PhotoMetadata("1","Look at me cleaning!", ParcelableDate.now, "0", "Organique"),
-            PhotoMetadata("1","Look at me cleaning!", ParcelableDate.now, "0", "Organique")
+            TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
+            TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
+            TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
+            TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
+            TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC)
         )
         photoList = photos
 

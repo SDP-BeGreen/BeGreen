@@ -23,7 +23,7 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBitmap
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.google.android.gms.tasks.Tasks
@@ -49,7 +49,7 @@ class MainActivityTest {
      * Initialize some constant to use in tests
      */
     companion object {
-        private val userPhotoMetadata = PhotoMetadata("user1_profile_picture")
+        private val userPhotoMetadata = ProfilePhotoMetadata("user1_profile_picture", null, null)
         private const val userId1 = "1234"
         private const val userId2 = "1235"
         private const val userId3 = "1236"

@@ -10,7 +10,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.activities.DatabaseActivity
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.ktx.auth
@@ -34,7 +34,7 @@ class FirebaseDBTest {
     @get:Rule
     val activityRule = ActivityScenarioRule(DatabaseActivity::class.java)
 
-    private val photoMetadataTest = PhotoMetadata(null, null, null, null, null)
+    private val profilePhotoMetaData = ProfilePhotoMetadata(null, null, null)
 
     companion object {
         @BeforeClass @JvmStatic fun setup() {
@@ -77,7 +77,7 @@ class FirebaseDBTest {
     fun storeUserProfilePictureBlankUserIdThrowIllegalArgument() {
         assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
-                FirebaseDB.storeUserProfilePicture(Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888), " ", photoMetadataTest)
+                FirebaseDB.storeUserProfilePicture(Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888), " ", profilePhotoMetaData)
             }
         }
     }
@@ -95,7 +95,7 @@ class FirebaseDBTest {
     fun getUserProfilePictureBlankUserIdThrowIllegalArgument() {
         assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
-                FirebaseDB.getUserProfilePicture(photoMetadataTest, " ")
+                FirebaseDB.getUserProfilePicture(profilePhotoMetaData, " ")
             }
         }
     }
@@ -120,7 +120,7 @@ class FirebaseDBTest {
         // to be able to access resources, need to be in an activity
         activityRule.scenario.onActivity { activity ->
             val img: Bitmap = BitmapFactory.decodeResource(activity.resources, R.drawable.marguerite_test_image)
-            val photoMetadata = photoMetadataTest
+            val photoMetadata = profilePhotoMetaData
 
             runBlocking {
                 val pictureUID = FirebaseDB.storeUserProfilePicture(img, user.id, photoMetadata)
@@ -156,14 +156,14 @@ class FirebaseDBTest {
     @Test
     fun getImageWithEmptyPhotoIdReturnNull() {
         runBlocking {
-            assertThat(FirebaseDB.getImage(photoMetadataTest, 1), nullValue())
+            assertThat(FirebaseDB.getImage(profilePhotoMetaData, 1), nullValue())
         }
     }
 
     @Test
     fun getProfilePictureEmptyPhotoIdReturnNull() {
         runBlocking {
-            assertThat(FirebaseDB.getImage(photoMetadataTest, 1), nullValue())
+            assertThat(FirebaseDB.getImage(profilePhotoMetaData, 1), nullValue())
         }
     }
 

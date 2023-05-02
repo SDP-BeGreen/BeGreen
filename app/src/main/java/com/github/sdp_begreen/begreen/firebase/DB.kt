@@ -3,7 +3,8 @@ package com.github.sdp_begreen.begreen.firebase
 import android.graphics.Bitmap
 import com.github.sdp_begreen.begreen.exceptions.DatabaseTimeoutException
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
-import com.github.sdp_begreen.begreen.models.Post
+import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.database.DatabaseException
@@ -78,7 +79,7 @@ interface DB {
      *
      * @throws IllegalArgumentException if the [userId] was blank or empty
      */
-    suspend fun storeUserProfilePicture(image: Bitmap, userId: String, metadata: PhotoMetadata): PhotoMetadata?
+    suspend fun storeUserProfilePicture(image: Bitmap, userId: String, metadata: PhotoMetadata): ProfilePhotoMetadata?
 
     /**
      * Adds and [image] for the user [userId] in the database
@@ -87,7 +88,7 @@ interface DB {
      * @param userId the ID of the user wanting to store a new image
      * @return the PhotoMetadata under which the image got stored, and null if the image couldn't get stored
      */
-    suspend fun addImage(post: Post): PhotoMetadata?
+    suspend fun addImage(image : Bitmap, photoMetadata: PhotoMetadata): TrashPhotoMetadata?
 
     /**
      * Test whether a [User] exists in the database for the given [userId]

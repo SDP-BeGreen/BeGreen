@@ -5,7 +5,8 @@ import android.graphics.BitmapFactory
 import android.util.Log
 import com.github.sdp_begreen.begreen.exceptions.DatabaseTimeoutException
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
-import com.github.sdp_begreen.begreen.models.Post
+import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
@@ -128,7 +129,7 @@ object FirebaseDB: DB {
         }
     }
 
-    override suspend fun storeUserProfilePicture(image: Bitmap, userId: String, metadata: PhotoMetadata): PhotoMetadata? {
+    override suspend fun storeUserProfilePicture(image: Bitmap, userId: String, metadata: PhotoMetadata): ProfilePhotoMetadata? {
         if (userId.isBlank())
             throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
 
@@ -137,15 +138,15 @@ object FirebaseDB: DB {
         return storePicture(image, USER_PROFILE_PICTURE_METADATA, metadata,
             databaseReference.child(USERS_PATH).child(userId),
             storageReference.child(USERS_PATH).child(userId).child(
-                USER_PROFILE_PICTURE_METADATA))
+                USER_PROFILE_PICTURE_METADATA)) as ProfilePhotoMetadata
     }
 
-    override suspend fun addImage(post: Post): PhotoMetadata? {
+    override suspend fun addImage(image : Bitmap, photoMetadata: PhotoMetadata): TrashPhotoMetadata? {
 
-        val metadataCopy = post.metaData.copy(pictureId = null)
-        return storePicture(post.photo, USER_POSTS, metadataCopy,
-            databaseReference.child(USERS_PATH).child(metadataCopy.takenByUserId!!).child(USER_POSTS),
-            storageReference.child(USERS_PATH).child(metadataCopy.takenByUserId!!).child(USER_POSTS))
+        photoMetadata.pictureId = null
+        return storePicture(image, USER_POSTS, photoMetadata,
+            databaseReference.child(USERS_PATH).child(photoMetadata.takenByUserId!!).child(USER_POSTS),
+            storageReference.child(USERS_PATH).child(photoMetadata.takenByUserId!!).child(USER_POSTS)) as TrashPhotoMetadata
     }
 
     override suspend fun userExists(userId: String, timeout: Long): Boolean {

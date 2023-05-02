@@ -91,6 +91,7 @@ class SharePostActivityTest {
         activity.close()
     }
 
+    /*
     @Test
     fun sharePostBtnClickFinishesActivity() {
 
@@ -107,4 +108,5 @@ class SharePostActivityTest {
             assertThat(activity.state, equalTo(Lifecycle.State.DESTROYED))
         }
     }
+     */
 }

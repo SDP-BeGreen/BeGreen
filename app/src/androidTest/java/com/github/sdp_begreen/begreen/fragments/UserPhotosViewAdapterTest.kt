@@ -15,6 +15,8 @@ import com.github.sdp_begreen.begreen.activities.MainActivity
 import com.github.sdp_begreen.begreen.databinding.FragmentUserPhotoBinding
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashCategory
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import org.hamcrest.CoreMatchers
@@ -31,8 +33,8 @@ class UserPhotosViewAdapterTest {
     val koinTestRule = KoinTestRule()
 
     private val photoList = listOf(
-        PhotoMetadata("1", "title", ParcelableDate.now, "0", "Gros vilain pas beau"),
-        PhotoMetadata("2", "title2", ParcelableDate.now, "0", "Gros vilain tout beau")
+        TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
+        TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
     )
     private var userPhotoViewAdapter = UserPhotosViewAdapter(photoList, true)
     private val appContext = InstrumentationRegistry.getInstrumentation().targetContext

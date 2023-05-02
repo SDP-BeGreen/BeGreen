@@ -32,6 +32,7 @@ import com.github.sdp_begreen.begreen.fragments.UserFragment
 import com.github.sdp_begreen.begreen.fragments.UserPhotoFragment
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.TrashCategory
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -188,7 +189,11 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.bottomMenuFeed -> {
                 item.setIcon(R.drawable.ic_baseline_feed)
-                val photos = listOf(PhotoMetadata("1","Look at me cleaning!", ParcelableDate.now, "0", TrashCategory.PLASTIC), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", TrashCategory.PLASTIC), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", TrashCategory.PLASTIC), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", TrashCategory.PLASTIC))
+                val photos = listOf(
+                    TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
+                    TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
+                    TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
+                    TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC))
                 replaceFragInMainContainer(UserPhotoFragment.newInstance(1, photos, true))
             }
             R.id.bottomMenuMap -> {
@@ -221,7 +226,12 @@ class MainActivity : AppCompatActivity() {
             R.id.mainNavDrawProfile -> {
                 connectedUserViewModel.currentUser.value?.also {
 
-                    val photos = listOf(PhotoMetadata("1","Look at me cleaning!", ParcelableDate.now, "0", TrashCategory.PLASTIC), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", TrashCategory.PLASTIC), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", TrashCategory.PLASTIC), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", TrashCategory.PLASTIC))
+                    val photos = listOf(
+                        TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
+                        TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
+                        TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
+                        TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC))
+
                     replaceFragInMainContainer(ProfileDetailsFragment.newInstance(it, photos))
                 }
             }

@@ -12,10 +12,9 @@ import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
-import com.github.sdp_begreen.begreen.models.Post
 import com.github.sdp_begreen.begreen.models.TrashCategory
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import kotlinx.coroutines.launch
-import java.util.Date
 
 /**
  * This file will be deleted when Firebase realtime database gets merged in the project
@@ -53,8 +52,7 @@ class DatabaseActivity : AppCompatActivity() {
 
             lifecycleScope.launch {
                 imageId = FirebaseDB.addImage(
-                    Post(bitmap,
-                        PhotoMetadata(null, "Hello", ParcelableDate.now, "Messi", TrashCategory.PLASTIC))
+                    bitmap, TrashPhotoMetadata(null, ParcelableDate.now, "Hello", "Messi", TrashCategory.PLASTIC)
                 )
             }
         }

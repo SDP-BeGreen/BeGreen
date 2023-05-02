@@ -11,7 +11,7 @@ enum class TrashCategory(val id : String, val title : Int, val color : Float) : 
     // of Capitalizing the toString() value.
 
     // The id is unique (stored in the database). We preferred to store a category by its "id" instead of its "value"
-    // (i.e PLASTIC) because the value could be changed afterward.
+    // name (i.e PLASTIC) because the value name could be changed afterward.
 
     PAPER("0", R.string.paper, BitmapDescriptorFactory.HUE_RED),
     PLASTIC("1", R.string.plastic, BitmapDescriptorFactory.HUE_AZURE),
@@ -21,15 +21,6 @@ enum class TrashCategory(val id : String, val title : Int, val color : Float) : 
     CLOTHES("5", R.string.clothes, BitmapDescriptorFactory.HUE_VIOLET),
     METAL("6", R.string.metal, BitmapDescriptorFactory.HUE_YELLOW);
 
-    /*
-    constructor(parcel: Parcel) : this(
-        parcel.readString()!!,
-        0,
-        0.0f
-    ) {
-
-        return getCategoryById(id)
-    }*/
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(id)

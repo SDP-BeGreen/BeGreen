@@ -25,6 +25,8 @@ import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
@@ -51,27 +53,19 @@ import java.util.*
 class ProfileDetailsFragmentTest {
     companion object {
         val photos = arrayListOf(
-            PhotoMetadata(
+            ProfilePhotoMetadata(
                 "erfs",
-                "Look at me cleaning!",
                 ParcelableDate.now,
-                "0",
-                "0",
+                "0"
             ),
 
-            PhotoMetadata(
+            ProfilePhotoMetadata(
                 "erfs",
-                "Look at me cleaning!",
                 ParcelableDate.now,
-                "0",
-                "0",
+                "0"
             )
         )
-        private val userProfilePicturePhotoMetadata = PhotoMetadata("user1_profile_picture",
-            null,
-            null,
-            null,
-            null)
+        private val userProfilePicturePhotoMetadata = ProfilePhotoMetadata("user1_profile_picture", null, null)
 
         private const val userId1 = "1234"
         private val user1 = User(
@@ -525,7 +519,7 @@ class ProfileDetailsFragmentTest {
             displayName = "User Test 1",
             email = "user1@email.ch",
             phone = "1984z719848",
-            profilePictureMetadata = PhotoMetadata("VaRgQioAuiGtfDlv5uNuosNsACCJ_profile_picture", null, null, null, null)
+            profilePictureMetadata = ProfilePhotoMetadata("VaRgQioAuiGtfDlv5uNuosNsACCJ_profile_picture", null, null)
         )
 
         val bundle = Bundle().apply { putParcelable(ARG_USER, user) }

@@ -35,14 +35,13 @@ import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.Actions
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
-import com.github.sdp_begreen.begreen.models.TrashCategory
+import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.utils.BitmapsUtils
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.github.sdp_begreen.begreen.viewModels.ProfileEditedValuesViewModel
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
-import java.util.Date
 
 
 /**
@@ -371,9 +370,9 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
             }
 
             lifecycleScope.launch {
-                val metadata = profileEditedValuesViewModel.profilePicture?.let {
+                val metadata : ProfilePhotoMetadata? = profileEditedValuesViewModel.profilePicture?.let {
                     db.storeUserProfilePicture(it, id,
-                        PhotoMetadata(null, null, ParcelableDate.now, id, TrashCategory.PLASTIC)
+                        ProfilePhotoMetadata(null, ParcelableDate.now, id)
                     )
                 }
                 // new user with

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.databinding.FragmentUserPhotoBinding
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import java.net.URL
 
 
@@ -21,7 +22,8 @@ import java.net.URL
  * [RecyclerView.Adapter] that can display a [Photo].
  */
 class UserPhotosViewAdapter(
-    val photos: List<PhotoMetadata>?, private val isFeed: Boolean
+    val photos: List<TrashPhotoMetadata>?,
+    private val isFeed: Boolean
 ) : RecyclerView.Adapter<UserPhotosViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

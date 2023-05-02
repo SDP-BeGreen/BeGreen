@@ -17,6 +17,7 @@ import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashCategory
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.inject
 import java.util.*
@@ -37,45 +38,45 @@ class UserViewAdapter(
     //TODO----------------FOR DEMO------------------------
     private val photos = listOf(
 
-        PhotoMetadata(
+        TrashPhotoMetadata(
             "erfs",
-            "Look at me cleaning!",
             ParcelableDate.now,
             "0",
+            "Look at me cleaning!",
             TrashCategory.PLASTIC,
         ),
 
-        PhotoMetadata(
+        TrashPhotoMetadata(
             "erfs",
-            "Look at me cleaning!",
             ParcelableDate.now,
             "0",
+            "Look at me cleaning!",
             TrashCategory.PLASTIC,
         ),
 
-        PhotoMetadata(
+        TrashPhotoMetadata(
             "erfs",
-            "Look at me cleaning!",
             ParcelableDate.now,
             "0",
+            "Look at me cleaning!",
             TrashCategory.PLASTIC,
         ),
 
-        PhotoMetadata(
+        TrashPhotoMetadata(
             "erfs",
-            "Look at me cleaning!",
             ParcelableDate.now,
             "0",
+            "Look at me cleaning!",
             TrashCategory.PLASTIC,
         ),
 
-        PhotoMetadata(
+        TrashPhotoMetadata(
             "erfs",
-            "Look at me cleaning!",
             ParcelableDate.now,
             "0",
+            "Look at me cleaning!",
             TrashCategory.PLASTIC,
-        )
+        ),
     )
 
     //----------------FOR DEMO-----------------------------
