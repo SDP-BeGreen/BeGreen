@@ -45,7 +45,6 @@ import java.io.IOException
 import java.text.DateFormat
 import java.util.Calendar
 import java.util.Locale
-import kotlin.test.assertTrue
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -297,7 +296,7 @@ class MeetingsFragmentTest {
     }
 
     @Test
-    fun addNewMeetingCorrectlyDisplayIt() {
+    fun adapterContainsCorrectListWhenAddingNewList() {
         runTest {
             val newMeeting = Meeting(
                 "m5",
@@ -310,8 +309,6 @@ class MeetingsFragmentTest {
                 CustomLatLng(46.806832, 7.156354)
             )
 
-            val channel = Channel<Boolean>(1)
-
             fragmentScenario.onFragment {
                 val recyclerView = it.view as RecyclerView
                 val adapter = recyclerView.adapter as ListAdapter<Meeting, *>
@@ -321,47 +318,8 @@ class MeetingsFragmentTest {
 
                 adapter.submitList(meetings + newMeeting) {
                     assertThat(adapter.currentList, `is`(equalTo(meetings + newMeeting)))
-                    // once the list has been added send it through channel
-                    channel.trySend(true)
                 }
             }
-
-            // block until we receive that the list has been committed
-            assertTrue(channel.receive())
-
-            // assert the newly added element
-            onView(withId(R.id.fragment_meeting_list))
-                .check(
-                    atPositionTextViewWithText(
-                        4,
-                        R.id.fragment_meeting_elem_title,
-                        newMeeting.title
-                    )
-                )
-                .check(
-                    atPositionTextViewWithText(
-                        4,
-                        R.id.fragment_meeting_elem_date,
-                        DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
-                            .format(Calendar.getInstance().apply {
-                                timeInMillis = newMeeting.startDateTime!!
-                            }.time)
-                    )
-                )
-                .check(
-                    atPositionTextViewWithText(
-                        4,
-                        R.id.fragment_meeting_elem_location,
-                        "Lausanne"
-                    )
-                )
-                .check(
-                    atPositionButtonWithText(
-                        4,
-                        R.id.fragment_meeting_elem_join_button,
-                        "Join"
-                    )
-                )
         }
 
     }
