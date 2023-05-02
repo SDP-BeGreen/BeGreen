@@ -49,28 +49,34 @@ class FollowingArrayAdapter(context: Context,
         return view
     }
 
+
+
     // Sets up the actions to make when the user clicks on the follow/unfollow button
     private fun followButtonClickListener(view: View, position: Int){
         val button = view.findViewById<MaterialButton>(R.id.item_button)
 
         button.setOnClickListener {
-
             auth.getConnectedUserId()?.let {curUserId ->
                 getItem(position)?.let { user ->
-
-                    if (followingUsers[position]) {
-                        // If the current user already follows this user, unfollow it
-                        button.icon = ContextCompat.getDrawable(context, R.drawable.baseline_person_add_24)
-                        lifeCycle.launch { db.unfollow(curUserId, user.id) }
-                    } else {
-                        // If the current user does not already follow this user, follow it
-                        button.icon = ContextCompat.getDrawable(context, R.drawable.baseline_person_add_disabled_24)
-                        lifeCycle.launch { db.follow(curUserId, user.id) }
-                    }
+                    switchButtonIconAndSendToDB(button, followingUsers[position], curUserId, user.id)
                     followingUsers[position] = !followingUsers[position]
                 }
             }
 
+        }
+    }
+
+    // Changes the icon of the button and commits changes to the db
+    private fun switchButtonIconAndSendToDB(button: MaterialButton, isFollowing: Boolean,
+                                            followerId: String, followedId: String){
+        if (isFollowing) {
+            // If the current user already follows this user, unfollow it
+            button.icon = ContextCompat.getDrawable(context, R.drawable.baseline_person_add_24)
+            lifeCycle.launch { db.unfollow(followerId, followedId) }
+        } else {
+            // If the current user does not already follow this user, follow it
+            button.icon = ContextCompat.getDrawable(context, R.drawable.baseline_person_add_disabled_24)
+            lifeCycle.launch { db.follow(followerId, followedId) }
         }
     }
 }
