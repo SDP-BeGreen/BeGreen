@@ -21,6 +21,7 @@ enum class TrashCategory(val id : String, val title : Int, val color : Float) : 
     CLOTHES("5", R.string.clothes, BitmapDescriptorFactory.HUE_VIOLET),
     METAL("6", R.string.metal, BitmapDescriptorFactory.HUE_YELLOW);
 
+    /*
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
         0,
@@ -28,7 +29,7 @@ enum class TrashCategory(val id : String, val title : Int, val color : Float) : 
     ) {
 
         return getCategoryById(id)
-    }
+    }*/
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(id)

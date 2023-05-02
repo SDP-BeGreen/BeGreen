@@ -35,6 +35,7 @@ import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.Actions
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.utils.BitmapsUtils
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
@@ -372,7 +373,7 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
             lifecycleScope.launch {
                 val metadata = profileEditedValuesViewModel.profilePicture?.let {
                     db.storeUserProfilePicture(it, id,
-                        PhotoMetadata(null, null, ParcelableDate.now, id, "2")
+                        PhotoMetadata(null, null, ParcelableDate.now, id, TrashCategory.PLASTIC)
                     )
                 }
                 // new user with
