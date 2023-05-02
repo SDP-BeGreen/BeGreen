@@ -29,7 +29,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.`is`
@@ -45,6 +44,7 @@ import java.io.IOException
 import java.text.DateFormat
 import java.util.Calendar
 import java.util.Locale
+import kotlin.test.assertTrue
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -309,18 +309,21 @@ class MeetingsFragmentTest {
         )
 
         runTest {
-            val channel = Channel<List<Meeting>>(1)
-            backgroundScope.launch {
-                meetingsFlow.collect {
-                    channel.send(it)
+
+            val channel = Channel<Boolean>(1)
+
+            fragmentScenario.onFragment {
+                val recyclerView = it.view as RecyclerView
+                recyclerView.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+                    channel.trySend(true)
                 }
             }
 
             meetingsFlow.emit(meetings + newMeeting)
 
-            // Add this to ensure that the flow has been updated before testing the view
-            // so that we ensure it has receive the new meeting list
-            assertThat(channel.receive(), `is`(equalTo(meetings + newMeeting)))
+            // add that to try to ensure that the layout has been modified before we try to
+            // assert the view
+            assertTrue(channel.receive())
 
             onView(withId(R.id.fragment_meeting_list))
                 .check(
