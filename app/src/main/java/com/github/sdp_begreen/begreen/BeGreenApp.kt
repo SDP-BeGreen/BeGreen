@@ -1,10 +1,6 @@
 package com.github.sdp_begreen.begreen
 
 import android.app.Application
-import android.content.Context
-import android.location.Address
-import android.location.Geocoder
-import android.util.Log
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.FirebaseAuth
@@ -17,7 +13,8 @@ import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingPhotoServi
 import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingPhotoServiceImpl
 import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingService
 import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingServiceImpl
-import com.github.sdp_begreen.begreen.models.CustomLatLng
+import com.github.sdp_begreen.begreen.services.GeocodingService
+import com.github.sdp_begreen.begreen.services.GeocodingServiceImpl
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
@@ -27,7 +24,6 @@ import com.google.firebase.storage.ktx.storage
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
-import java.io.IOException
 
 /**
  * To properly works with emulators, we can only have one instance of the base reference to firebase
@@ -61,7 +57,7 @@ class BeGreenApp : Application() {
         super.onCreate()
 
         val geocoderModule = module {
-            single<GeocodingAPI> { GeocodingApiImpl(androidContext()) }
+            single<GeocodingService> { GeocodingServiceImpl(androidContext()) }
         }
 
         //
@@ -71,31 +67,4 @@ class BeGreenApp : Application() {
         }
 
     }
-}
-
-// TODO if it works extract it in a custom interface
-
-class GeocodingApiImpl(context: Context) : GeocodingAPI {
-
-    private val geocoder: Geocoder
-
-    init {
-        geocoder = Geocoder(context)
-    }
-
-    override suspend fun getAddresses(latLng: CustomLatLng, maxResult: Int): MutableList<Address>? {
-        latLng.latitude?.also { lat ->
-            latLng.longitude?.also { lon ->
-                return geocoder.getFromLocation(lat, lon, maxResult)
-                //textView.text = addresses?.first()?.locality
-            }
-        }
-
-        return mutableListOf()
-    }
-}
-
-interface GeocodingAPI {
-    @Throws(IOException::class)
-    suspend fun getAddresses(latLng: CustomLatLng, maxResult: Int): MutableList<Address>?
 }

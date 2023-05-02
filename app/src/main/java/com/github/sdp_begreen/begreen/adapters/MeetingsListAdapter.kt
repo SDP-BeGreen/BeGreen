@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.github.sdp_begreen.begreen.databinding.FragmentMeetingElemBinding
-import com.github.sdp_begreen.begreen.models.meetings.Meeting
+import com.github.sdp_begreen.begreen.models.Meeting
 import java.text.DateFormat
 import java.util.Calendar
 

@@ -12,7 +12,6 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import com.github.sdp_begreen.begreen.GeocodingAPI
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
@@ -22,9 +21,10 @@ import com.github.sdp_begreen.begreen.matchers.ButtonAssertionView.Companion.atP
 import com.github.sdp_begreen.begreen.matchers.ButtonClickAction.Companion.clickButtonIdAtPosition
 import com.github.sdp_begreen.begreen.matchers.TextViewAssertionView.Companion.atPositionTextViewWithText
 import com.github.sdp_begreen.begreen.models.CustomLatLng
+import com.github.sdp_begreen.begreen.models.Meeting
 import com.github.sdp_begreen.begreen.models.User
-import com.github.sdp_begreen.begreen.models.meetings.Meeting
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
+import com.github.sdp_begreen.begreen.services.GeocodingService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -55,7 +55,7 @@ class MeetingsFragmentTest {
         private val meetingService: MeetingService = mock(MeetingService::class.java)
         private val participantService: MeetingParticipantService =
             mock(MeetingParticipantService::class.java)
-        private val geocoderApi: GeocodingAPI = mock(GeocodingAPI::class.java)
+        private val geocoderApi: GeocodingService = mock(GeocodingService::class.java)
         private val db: DB = mock(DB::class.java)
         private val auth: Auth = mock(Auth::class.java)
 

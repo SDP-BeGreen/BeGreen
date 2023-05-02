@@ -13,14 +13,16 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.github.sdp_begreen.begreen.GeocodingAPI
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.adapters.MeetingDataAdapterListeners
 import com.github.sdp_begreen.begreen.adapters.MeetingsListAdapter
 import com.github.sdp_begreen.begreen.models.CustomLatLng
+import com.github.sdp_begreen.begreen.services.GeocodingService
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.github.sdp_begreen.begreen.viewModels.MeetingFragmentViewModel
 import com.google.android.material.button.MaterialButton
+import kotlinx.coroutines.flow.dropWhile
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import java.io.IOException
@@ -32,28 +34,16 @@ class MeetingsFragment : Fragment() {
 
     private val connectedUserViewModel:
             ConnectedUserViewModel by viewModels(ownerProducer = { requireActivity() })
-
     private val meetingFragmentViewModel by viewModels<MeetingFragmentViewModel> {
         MeetingFragmentViewModel.factory(connectedUserViewModel.currentUser)
     }
-
-    private val geocodingApi by inject<GeocodingAPI>()
-
-    //private lateinit var geocoder: Geocoder
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private val geocodingApi by inject<GeocodingService>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_meetings_list, container, false)
-
-        //container?.also {
-        //    geocoder = Geocoder(it.context)
-        //}
 
         // Set the adapter
         if (view is RecyclerView) {
@@ -104,21 +94,6 @@ class MeetingsFragment : Fragment() {
                                 ioException.message.orEmpty()
                     )
                 }
-                //coordinates.latitude?.also { lat ->
-                //    coordinates.longitude?.also { lon ->
-                //        try {
-                //            val addresses = geocoder.getFromLocation(lat, lon, 1)
-                //            textView.text = addresses?.first()?.locality
-//
-                //        } catch (ioException: IOException) {
-                //            Log.d(
-                //                "Meetings Recycler view",
-                //                "Error while trying to find the address form location " +
-                //                        ioException.message.orEmpty()
-                //            )
-                //        }
-                //    }
-                //}
             }
         }
 
@@ -138,12 +113,20 @@ class MeetingsFragment : Fragment() {
 
         override fun setJoinButtonText(button: MaterialButton, meetingId: String) {
             Log.d("Print test participation view model", "set text for button: $meetingId")
-            button.text =
-                if (meetingFragmentViewModel.participationMap.value[meetingId] == true) {
-                    getString(R.string.meeting_list_join_button_withdraw)
-                } else {
-                    getString(R.string.meeting_list_join_button_join)
-                }
+
+            lifecycleScope.launch {
+                // wait until the map has been retrieved to assign text
+                val map = meetingFragmentViewModel.participationMap.dropWhile {
+                    it.isEmpty() && meetingFragmentViewModel.allMeetings.value.isNotEmpty()
+                }.first()
+
+                button.text =
+                    if (map[meetingId] == true) {
+                        getString(R.string.meeting_list_join_button_withdraw)
+                    } else {
+                        getString(R.string.meeting_list_join_button_join)
+                    }
+            }
         }
     }
 }
