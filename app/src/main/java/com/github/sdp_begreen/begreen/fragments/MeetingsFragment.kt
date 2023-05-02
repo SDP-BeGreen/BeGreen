@@ -55,10 +55,8 @@ class MeetingsFragment : Fragment() {
                         meetingFragmentViewModel
                             .allMeetings
                             .flowWithLifecycle(
-                                viewLifecycleOwner.lifecycle,
-                                Lifecycle.State.STARTED
-                            )
-                            .collect {
+                                viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED
+                            ).collect {
                                 Log.d(
                                     "Print test participation view model",
                                     "collect new list of meetings"
