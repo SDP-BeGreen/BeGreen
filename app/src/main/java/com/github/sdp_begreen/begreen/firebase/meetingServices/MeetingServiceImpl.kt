@@ -6,7 +6,7 @@ import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.getFlowOfObjects
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.getObjFromDb
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.removeObjFromDb
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.setObjToDb
-import com.github.sdp_begreen.begreen.models.meetings.Meeting
+import com.github.sdp_begreen.begreen.models.Meeting
 import com.github.sdp_begreen.begreen.utils.checkArgument
 import kotlinx.coroutines.flow.Flow
 import org.koin.java.KoinJavaComponent.inject

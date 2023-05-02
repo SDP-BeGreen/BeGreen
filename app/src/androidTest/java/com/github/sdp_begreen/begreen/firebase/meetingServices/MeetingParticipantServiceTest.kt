@@ -3,7 +3,7 @@ package com.github.sdp_begreen.begreen.firebase.meetingServices
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
-import com.github.sdp_begreen.begreen.models.meetings.Meeting
+import com.github.sdp_begreen.begreen.models.Meeting
 import com.github.sdp_begreen.begreen.rules.CoroutineTestRule
 import com.github.sdp_begreen.begreen.rules.FirebaseEmulatorRule
 import com.github.sdp_begreen.begreen.rules.KoinTestRule

@@ -1,7 +1,7 @@
 package com.github.sdp_begreen.begreen.firebase.meetingServices
 
 import com.github.sdp_begreen.begreen.exceptions.MeetingServiceException
-import com.github.sdp_begreen.begreen.models.meetings.Comment
+import com.github.sdp_begreen.begreen.models.Comment
 import kotlinx.coroutines.flow.Flow
 
 /**

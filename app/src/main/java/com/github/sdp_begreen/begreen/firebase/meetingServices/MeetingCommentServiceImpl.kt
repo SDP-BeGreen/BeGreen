@@ -5,7 +5,7 @@ import com.github.sdp_begreen.begreen.exceptions.MeetingServiceException
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.getFlowOfObjects
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.removeObjFromDb
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.setObjToDb
-import com.github.sdp_begreen.begreen.models.meetings.Comment
+import com.github.sdp_begreen.begreen.models.Comment
 import com.github.sdp_begreen.begreen.utils.checkArgument
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

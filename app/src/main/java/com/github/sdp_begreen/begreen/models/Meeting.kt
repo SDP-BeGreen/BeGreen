@@ -1,4 +1,4 @@
-package com.github.sdp_begreen.begreen.models.meetings
+package com.github.sdp_begreen.begreen.models
 
 import android.os.Parcelable
 import com.github.sdp_begreen.begreen.models.CustomLatLng

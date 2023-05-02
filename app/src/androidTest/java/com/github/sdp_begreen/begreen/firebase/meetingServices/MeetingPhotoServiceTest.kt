@@ -7,7 +7,7 @@ import androidx.test.filters.MediumTest
 import com.github.sdp_begreen.begreen.exceptions.MeetingServiceException
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
-import com.github.sdp_begreen.begreen.models.meetings.Meeting
+import com.github.sdp_begreen.begreen.models.Meeting
 import com.github.sdp_begreen.begreen.rules.CoroutineTestRule
 import com.github.sdp_begreen.begreen.rules.FirebaseEmulatorRule
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
