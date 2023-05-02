@@ -44,7 +44,6 @@ import java.io.IOException
 import java.text.DateFormat
 import java.util.Calendar
 import java.util.Locale
-import kotlin.test.assertTrue
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -146,7 +145,7 @@ class MeetingsFragmentTest {
                     }))
                 `when`(geocoderApi.getAddresses(CustomLatLng(0.0, 0.0), 1))
                     .thenThrow(IOException()) // check that if exception thrown then empty string should be displayed
-                `when`(geocoderApi.getAddresses(CustomLatLng(46.806832, 7.156354),1))
+                `when`(geocoderApi.getAddresses(CustomLatLng(46.806832, 7.156354), 1))
                     .thenReturn(mutableListOf(Address(Locale.FRENCH).apply {
                         locality = "Lausanne"
                     }))
@@ -310,20 +309,16 @@ class MeetingsFragmentTest {
 
         runTest {
 
-            val channel = Channel<Boolean>(1)
-
-            fragmentScenario.onFragment {
-                val recyclerView = it.view as RecyclerView
-                recyclerView.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-                    channel.trySend(true)
-                }
-            }
-
             meetingsFlow.emit(meetings + newMeeting)
 
-            // add that to try to ensure that the layout has been modified before we try to
-            // assert the view
-            assertTrue(channel.receive())
+            // add that to ensure that before we try to assert the view, the element has been
+            // added to the list in the ListAdapter
+            lateinit var recyclerView: RecyclerView
+            do {
+                fragmentScenario.onFragment {
+                    recyclerView = it.view as RecyclerView
+                }
+            } while (recyclerView.childCount != 5)
 
             onView(withId(R.id.fragment_meeting_list))
                 .check(
