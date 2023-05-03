@@ -73,9 +73,6 @@ class CameraWithUIFragmentTest {
         }
     }
 
-    //Setup the activity rule
-    @get:Rule
-    val activityRule = ActivityScenarioRule(MainActivity::class.java)
 
     //Setup the koin test rule
     @get:Rule
@@ -101,6 +98,14 @@ class CameraWithUIFragmentTest {
     @Test
     fun clickOnSwitchRedirectOnCamera() {
         // Click the switch cam
+        onView(ViewMatchers.withId(R.id.img_switch_camera)).perform(ViewActions.click())
+        onView(ViewMatchers.withId(R.id.camera_capture_button)).check(matches(ViewMatchers.isDisplayed()))
+    }
+
+    @Test
+    fun clickOnSwitchTwoRedirectOnCamera() {
+        // Click the switch cam
+        onView(ViewMatchers.withId(R.id.img_switch_camera)).perform(ViewActions.click())
         onView(ViewMatchers.withId(R.id.img_switch_camera)).perform(ViewActions.click())
         onView(ViewMatchers.withId(R.id.camera_capture_button)).check(matches(ViewMatchers.isDisplayed()))
     }

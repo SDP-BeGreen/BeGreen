@@ -1,36 +1,28 @@
 package com.github.sdp_begreen.begreen.fragments
 
 import android.Manifest
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.fragment.app.viewModels
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.scrollTo
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
+import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.activities.MainActivity
-import com.github.sdp_begreen.begreen.espressoUtils.BaseRobot
-import com.github.sdp_begreen.begreen.fragments.CameraContainer
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
-import com.google.android.material.internal.ContextUtils.getActivity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.notNullValue
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
@@ -44,7 +36,6 @@ import org.mockito.Mockito
 @LargeTest
 class CameraContainerTest {
     private lateinit var fragmentScenario: FragmentScenario<CameraContainer>
-    private lateinit var fragmentManager: FragmentManager
 
     //Companion object to mock the DB and Auth
     companion object {
@@ -81,9 +72,7 @@ class CameraContainerTest {
         }
     }
 
-    //Setup the activity rule
-    @get:Rule
-    val activityRule = ActivityScenarioRule(MainActivity::class.java)
+
 
     //Setup the koin test rule
     @get:Rule
@@ -115,6 +104,12 @@ class CameraContainerTest {
          //Click the add new post button
         onView(withId(R.id.camera_capture_button)).perform(click())
         withId(R.layout.fragment_send_post).matches(isDisplayed())
+    }
+
+    @Test
+    fun companionInstanciationIsNotNull() {
+        val cameraContainer = CameraContainer()
+        assertThat(cameraContainer, `is`(notNullValue()))
     }
 
     //Those test are not working, but important if someone can manage to make them work !

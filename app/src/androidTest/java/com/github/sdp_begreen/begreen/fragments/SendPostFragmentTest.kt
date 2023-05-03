@@ -5,14 +5,9 @@ import android.os.Bundle
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.ViewAction
-import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.isRoot
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
@@ -21,7 +16,6 @@ import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.activities.MainActivity
-import com.github.sdp_begreen.begreen.espressoUtils.BaseRobot
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.User
@@ -78,9 +72,6 @@ class SendPostFragmentTest {
         }
     }
 
-    //Setup the activity rule
-    @get:Rule
-    val activityRule = ActivityScenarioRule(MainActivity::class.java)
 
     //Setup the koin test rule
     @get:Rule
@@ -111,7 +102,7 @@ class SendPostFragmentTest {
         // Check if the category input is displayed
         onView(withId(R.id.post_category)).check(
             matches(
-                ViewMatchers.isDisplayed()
+                isDisplayed()
             )
         )
     }
@@ -121,7 +112,7 @@ class SendPostFragmentTest {
         // Check if the description input is displayed
         onView(withId(R.id.post_description)).check(
             matches(
-                ViewMatchers.isDisplayed()
+                isDisplayed()
             )
         )
     }
