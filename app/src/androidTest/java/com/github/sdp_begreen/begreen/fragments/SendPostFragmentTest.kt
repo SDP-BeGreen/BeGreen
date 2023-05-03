@@ -28,6 +28,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.dsl.module
 import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
@@ -56,16 +57,16 @@ class SendPostFragmentTest {
         fun setUp() {
             runTest {
                 // setup basic get user and getProfilePicture use in multiple tests
-                Mockito.`when`(db.getUser(user.id))
+                `when`(db.getUser(user.id))
                     .thenReturn(user)
                 // add a small delay, just to be sure that it is triggered after initialization
                 // and arrive second, after the initial null value
                 // user between tests, by simply pushing a new userId
-                Mockito.`when`(auth.getFlowUserIds())
+                `when`(auth.getFlowUserIds())
                     .thenReturn(MutableStateFlow(user.id))
-                Mockito.`when`(auth.getConnectedUserId())
+                `when`(auth.getConnectedUserId())
                     .thenReturn(user.id)
-                Mockito.`when`(db.getAllUsers()).thenReturn(users)
+                `when`(db.getAllUsers()).thenReturn(users)
             }
         }
     }
@@ -116,13 +117,13 @@ class SendPostFragmentTest {
     }
 
     @Test
-    fun clickCategoryWorks() {
+    fun typeInCategoryWorks() {
         // Check the category input
         onView(withId(R.id.post_category)).perform(typeText("test"))
         onView(withId(R.id.post_category)).check(matches(withText("test")))
     }
     @Test
-    fun clickDescriptionWorks() {
+    fun typeInDescriptionWorks() {
         // Check the description input
         onView(withId(R.id.post_description)).perform(typeText("test"))
         onView(withId(R.id.post_description)).check(matches(withText("test")))

@@ -4,11 +4,15 @@ import android.Manifest
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.clearText
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
@@ -29,6 +33,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.dsl.module
 import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
@@ -57,16 +62,16 @@ class CameraWithUIFragmentTest {
         fun setUp() {
             runTest {
                 // setup basic get user and getProfilePicture use in multiple tests
-                Mockito.`when`(db.getUser(user.id))
+                `when`(db.getUser(user.id))
                     .thenReturn(user)
                 // add a small delay, just to be sure that it is triggered after initialization
                 // and arrive second, after the initial null value
                 // user between tests, by simply pushing a new userId
-                Mockito.`when`(auth.getFlowUserIds())
+                `when`(auth.getFlowUserIds())
                     .thenReturn(MutableStateFlow(user.id))
-                Mockito.`when`(auth.getConnectedUserId())
+                `when`(auth.getConnectedUserId())
                     .thenReturn(user.id)
-                Mockito.`when`(db.getAllUsers()).thenReturn(users)
+                `when`(db.getAllUsers()).thenReturn(users)
             }
         }
     }
@@ -96,26 +101,26 @@ class CameraWithUIFragmentTest {
     @Test
     fun clickOnSwitchRedirectOnCamera() {
         // Click the switch cam
-        onView(ViewMatchers.withId(R.id.img_switch_camera)).perform(ViewActions.click())
-        onView(ViewMatchers.withId(R.id.camera_capture_button)).check(matches(ViewMatchers.isDisplayed()))
+        onView(withId(R.id.img_switch_camera)).perform(click())
+        onView(withId(R.id.camera_capture_button)).check(matches(isDisplayed()))
     }
 
     @Test
     fun clickOnSwitchTwoRedirectOnCamera() {
         // Click the switch cam
-        onView(ViewMatchers.withId(R.id.img_switch_camera)).perform(ViewActions.click())
-        onView(ViewMatchers.withId(R.id.img_switch_camera)).perform(ViewActions.click())
-        onView(ViewMatchers.withId(R.id.camera_capture_button)).check(matches(ViewMatchers.isDisplayed()))
+        onView(withId(R.id.img_switch_camera)).perform(click())
+        onView(withId(R.id.img_switch_camera)).perform(click())
+        onView(withId(R.id.camera_capture_button)).check(matches(isDisplayed()))
     }
 
 
     @Test
     fun clickOnMagnifyOpenTheTextSearch() {
         // Click the search btn
-        onView(ViewMatchers.withId(R.id.search_cam)).perform(ViewActions.click())
+        onView(withId(R.id.search_cam)).perform(click())
 
         // Check that the text search is displayed
-        onView(ViewMatchers.withId(R.id.userSearch)).check(matches(ViewMatchers.isDisplayed()))
+        onView(withId(R.id.userSearch)).check(matches(isDisplayed()))
     }
 
     @Test
@@ -124,18 +129,18 @@ class CameraWithUIFragmentTest {
             Mockito.`when`(db.getAllUsers()).thenReturn(users)
             val expectedResults = listOf("Alice", "Alain Berset", "Mister Alix")
             for (name in expectedResults){
-                onView(ViewMatchers.withId(R.id.search_cam)).perform(ViewActions.click())
+                onView(withId(R.id.search_cam)).perform(click())
                 // Type in the search bar
-                onView(ViewMatchers.withId(R.id.userSearch))
-                    .perform(ViewActions.clearText(), ViewActions.typeText("al"))
+                onView(withId(R.id.userSearch))
+                    .perform(clearText(), typeText("al"))
 
                 // Wait for the dropdown list to be displayed and select the first item
-                onView(ViewMatchers.withText(name))
-                    .inRoot(RootMatchers.isPlatformPopup()).perform(ViewActions.click())
+                onView(withText(name))
+                    .inRoot(RootMatchers.isPlatformPopup()).perform(click())
                 // Verify that the AutoCompleteTextView now contains the selected item
-                onView(ViewMatchers.withId(R.id.userSearch))
-                    .check(matches(ViewMatchers.withText(name)))
-                onView(ViewMatchers.withId(R.id.search_cam)).perform(ViewActions.click())
+                onView(withId(R.id.userSearch))
+                    .check(matches(withText(name)))
+                onView(withId(R.id.search_cam)).perform(click())
             }
         }
     }
@@ -145,13 +150,13 @@ class CameraWithUIFragmentTest {
         runBlocking{
 
             // Click the search btn
-            onView(ViewMatchers.withId(R.id.search_cam)).perform(ViewActions.click())
+            onView(withId(R.id.search_cam)).perform(click())
 
             // Type in the search bar
-            onView(ViewMatchers.withId(R.id.userSearch))
-                .perform(ViewActions.typeText("blabla!"))            // Verify that the AutoCompleteTextView now contains the selected item
-            onView(ViewMatchers.withId(R.id.userSearch))
-                .check(matches(ViewMatchers.withText("blabla!")))
+            onView(withId(R.id.userSearch))
+                .perform(typeText("blabla!"))            // Verify that the AutoCompleteTextView now contains the selected item
+            onView(withId(R.id.userSearch))
+                .check(matches(withText("blabla!")))
         }
     }
 
