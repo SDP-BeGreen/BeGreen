@@ -5,7 +5,7 @@ import android.os.Parcelable
 import com.github.sdp_begreen.begreen.R
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 
-enum class TrashCategory(val id : String, val title : Int, val color : Float) : Parcelable {
+enum class TrashCategory(val id : String, val title : String, val color : Float) : Parcelable {
 
     // The title will be displayed in the screen to the user, so we prefer to define it in the strings.xml instead
     // of Capitalizing the toString() value.
@@ -13,15 +13,16 @@ enum class TrashCategory(val id : String, val title : Int, val color : Float) : 
     // The id is unique (stored in the database). We preferred to store a category by its "id" instead of its "value"
     // name (i.e PLASTIC) because the value name could be changed afterward.
 
-    // TODO : use the getString because now it's wrong (it displays its id)
+    // TODO : use the strings.xml file for the title field. Since the class is a model class, it doesn't recognize this file.
+    // TODO : Update it also in the action Action class, as well as in their tests.
 
-    PAPER("0", R.string.paper, BitmapDescriptorFactory.HUE_RED),
-    PLASTIC("1", R.string.plastic, BitmapDescriptorFactory.HUE_AZURE),
-    ORGANIC("2", R.string.organic, BitmapDescriptorFactory.HUE_GREEN),
-    GLASS("3", R.string.glass, BitmapDescriptorFactory.HUE_MAGENTA),
-    ELECTRONIC("4", R.string.electronic, BitmapDescriptorFactory.HUE_ROSE),
-    CLOTHES("5", R.string.clothes, BitmapDescriptorFactory.HUE_VIOLET),
-    METAL("6", R.string.metal, BitmapDescriptorFactory.HUE_YELLOW);
+    PAPER("0", "Paper", BitmapDescriptorFactory.HUE_RED),
+    PLASTIC("1", "Plastic", BitmapDescriptorFactory.HUE_AZURE),
+    ORGANIC("2", "Organic", BitmapDescriptorFactory.HUE_GREEN),
+    GLASS("3", "Glass", BitmapDescriptorFactory.HUE_MAGENTA),
+    ELECTRONIC("4", "Electronic", BitmapDescriptorFactory.HUE_ROSE),
+    CLOTHES("5", "Clothes", BitmapDescriptorFactory.HUE_VIOLET),
+    METAL("6", "Metal", BitmapDescriptorFactory.HUE_YELLOW);
 
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

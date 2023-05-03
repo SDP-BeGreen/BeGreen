@@ -22,7 +22,7 @@ class TrashCategoryTest {
         // class
 
         MatcherAssert.assertThat(trashCategoryTest.id, CoreMatchers.equalTo("5"))
-        MatcherAssert.assertThat(trashCategoryTest.title, CoreMatchers.equalTo(R.string.clothes))
+        MatcherAssert.assertThat(trashCategoryTest.title, CoreMatchers.equalTo("Clothes"))
         MatcherAssert.assertThat(trashCategoryTest.color, CoreMatchers.equalTo(BitmapDescriptorFactory.HUE_VIOLET))
     }
 
