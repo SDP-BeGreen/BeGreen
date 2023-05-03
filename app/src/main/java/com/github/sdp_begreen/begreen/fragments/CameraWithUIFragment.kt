@@ -226,14 +226,12 @@ class CameraWithUIFragment : Fragment() {
                     val msg = "Photo capture successfully"
                     Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                     // Create a transaction to replace the current fragment by the send post fragment
-                    var transaction = requireActivity().supportFragmentManager.beginTransaction()
-                    runBlocking {
-                        transaction.replace(R.id.mainCameraFragmentContainer, SendPostFragment.newInstance(savedUri.toString()))
+                   lifecycleScope.launch {
+                        parentFragmentManager.commit {
+                            setReorderingAllowed(true)
+                            replace(R.id.mainCameraFragmentContainer, SendPostFragment.newInstance(savedUri.toString()))
+                        }
                     }
-                    transaction.addToBackStack(null)
-                    transaction.commit()
-                    transaction = parentFragmentManager.beginTransaction()
-                    transaction.remove(this@CameraWithUIFragment).commit()
                 }
             })
 
