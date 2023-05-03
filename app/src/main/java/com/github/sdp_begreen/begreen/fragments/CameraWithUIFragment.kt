@@ -49,7 +49,7 @@ class CameraWithUIFragment : Fragment() {
     private val auth by inject<Auth>()
     private val connectedUserViewModel: ConnectedUserViewModel by viewModels(ownerProducer = { requireActivity() })
     private lateinit var outputDirectory: File
-    private var viewFinder = view?.findViewById<PreviewView>(R.id.viewFinder)
+    private var viewFinder = view?.findViewById<PreviewView>(R.id.previewView)
     private var imageCapture: ImageCapture? = null
     private lateinit var cameraExecutor: ExecutorService
     private var lensFacing = CameraSelector.DEFAULT_FRONT_CAMERA
@@ -65,7 +65,7 @@ class CameraWithUIFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewFinder = view.findViewById(R.id.viewFinder)
+        viewFinder = view.findViewById(R.id.previewView)
         initView()
     }
 
@@ -311,7 +311,6 @@ class CameraWithUIFragment : Fragment() {
                     "Permissions not granted by the user.",
                     Toast.LENGTH_SHORT
                 ).show()
-                requireActivity().finish()
             }
         }
     }

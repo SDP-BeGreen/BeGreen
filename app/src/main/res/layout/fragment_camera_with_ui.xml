@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="fragments.CameraFragment"
+    tools:context="fragments.CameraContainer"
     android:id="@+id/cameraUIFragment"
     android:theme="@style/Theme.BeGreen">
 
@@ -63,19 +63,18 @@
 
 
     <androidx.camera.view.PreviewView
-        android:id="@+id/viewFinder"
+        android:id="@+id/previewView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
     </androidx.camera.view.PreviewView>
 
-    <!--android:background="@drawable/back"-->
     <AutoCompleteTextView
         android:id="@+id/userSearch"
         android:layout_width="190dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="25dp"
         android:ems="10"
         android:hint="@string/search_user"
         android:textColor="@color/white"
