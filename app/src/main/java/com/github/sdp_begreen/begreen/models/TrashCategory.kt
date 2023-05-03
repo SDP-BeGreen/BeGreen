@@ -13,6 +13,8 @@ enum class TrashCategory(val id : String, val title : Int, val color : Float) : 
     // The id is unique (stored in the database). We preferred to store a category by its "id" instead of its "value"
     // name (i.e PLASTIC) because the value name could be changed afterward.
 
+    // TODO : use the getString because now it's wrong (it displays its id)
+
     PAPER("0", R.string.paper, BitmapDescriptorFactory.HUE_RED),
     PLASTIC("1", R.string.plastic, BitmapDescriptorFactory.HUE_AZURE),
     ORGANIC("2", R.string.organic, BitmapDescriptorFactory.HUE_GREEN),

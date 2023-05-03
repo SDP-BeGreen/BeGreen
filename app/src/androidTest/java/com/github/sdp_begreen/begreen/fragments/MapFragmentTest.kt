@@ -9,14 +9,63 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.firebase.DB
+import com.github.sdp_begreen.begreen.map.Bin
+import com.github.sdp_begreen.begreen.models.TrashCategory
+import com.github.sdp_begreen.begreen.rules.KoinTestRule
+import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.runBlocking
+import org.hamcrest.Matchers.*
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.dsl.module
+import org.mockito.Mockito
+import org.mockito.ArgumentMatchers.*
 
+
+
+//@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class MapFragmentTest {
-    
+
+    /**
+     * Initialize some constant to use in tests
+     */
+    companion object {
+
+        private val db: DB = Mockito.mock(DB::class.java)
+
+        private val bins = mutableListOf(
+            Bin("1", TrashCategory.CLOTHES, LatLng(4.3, 2.8)),
+            Bin("2", TrashCategory.PAPER, LatLng(56.3, 22.3)),
+            Bin("3", TrashCategory.CLOTHES, LatLng(6.0, 9.0))
+        )
+
+
+        /*
+        @BeforeClass
+        @JvmStatic
+        fun setUp() {
+            runTest {
+
+                Mockito.`when`(db.removeBin(anyString())).then {
+                    bins.filter { bin -> bin.id?.equals(it.arguments[0])?.not() ?: true }
+                }
+                Mockito.`when`(db.addBin(any(Bin::class.java) )).thenReturn(true)
+                Mockito.`when`(db.getAllBins()).thenReturn(bins)
+            }
+        } Doesnt work, for strange reasons */
+    }
+
+    @get:Rule
+    val koinTestRule = KoinTestRule(
+        modules = listOf(module {
+            single {db}
+        })
+    )
+
     @get:Rule
     val fineLocationPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION)
 
@@ -37,10 +86,16 @@ class MapFragmentTest {
         Therefore, we advise you to write as much as possible code that is independent from map components, and that you can easily test.
         */
 
-        launchFragmentInContainer { fragment }
 
-        // Wait until the map fragment is displayed
-        onView(withId(R.id.mapFragment)).check(matches(isDisplayed()))
+        runBlocking {
+
+            Mockito.`when`(db.getAllBins()).thenReturn(bins)
+
+            launchFragmentInContainer { fragment }
+
+            // Wait until the map fragment is displayed
+            onView(withId(R.id.mapFragment)).check(matches(isDisplayed()))
+        }
     }
 
     /*

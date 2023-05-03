@@ -3,22 +3,25 @@ package com.github.sdp_begreen.begreen.firebase
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
+import com.github.sdp_begreen.begreen.FirebaseRef
 import com.github.sdp_begreen.begreen.exceptions.DatabaseTimeoutException
+import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
-import com.google.firebase.database.*
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseException
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
+import org.koin.java.KoinJavaComponent.inject
 import java.io.ByteArrayOutputStream
-import com.google.android.gms.maps.model.LatLng
 
 
 /**
@@ -26,14 +29,16 @@ import com.google.android.gms.maps.model.LatLng
  */
 object FirebaseDB: DB {
 
+    private val dbRefs by inject<FirebaseRef>(FirebaseRef::class.java)
+
     private const val TAG: String = "Firebase Database"
 
     private const val ONE_MEGABYTE: Long = 1024 * 1024 // Maximal image size allowed (in bytes), to prevent out of memory errors
     // Realtime database ref
-    private val databaseReference: DatabaseReference = Firebase.database.reference
+    private val databaseReference: DatabaseReference = dbRefs.databaseReference
     // Storage ref (for images)
-    private val storageReference: StorageReference = Firebase.storage.reference
-    private val connectedReference = Firebase.database.getReference(".info/connected")
+    private val storageReference: StorageReference = dbRefs.storageReference
+    private val connectedReference = dbRefs.database.getReference(".info/connected")
     private const val USERS_PATH = "users"
     private const val USER_PROFILE_PICTURE_METADATA = "profilePictureMetadata"
     private const val USER_POSTS = "posts"
@@ -62,19 +67,8 @@ object FirebaseDB: DB {
 
     override suspend fun get(key: String, timeout: Long): String? {
 
-        return try {
-            // Cancel the query and throw exception after [timeout] ms
-            withTimeout(timeout) {
-                val data = databaseReference.child(key).get().await()
-                data.value?.let { it as? String }
-            }
-        } catch (timeOutEx: TimeoutCancellationException) {
-            Log.d(TAG, "Timeout, cant connect with database")
-            throw DatabaseTimeoutException("Timeout, cant connect with database")
-        }
-        catch (databaseEx: DatabaseException) {
-            Log.d(TAG, "Failed with error message: ${databaseEx.message}")
-            throw databaseEx
+        return getNode(key, timeout).value?.let {
+            it as? String
         }
     }
 
@@ -93,39 +87,17 @@ object FirebaseDB: DB {
     }
 
     override suspend fun getUser(userId: String, timeout: Long): User? {
-        return try {
-            withTimeout(timeout) {
-                if (userId.isBlank())
-                    throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
 
-                val data = databaseReference.child(USERS_PATH).child(userId).get().await()
-                data.getValue(User::class.java)
-            }
-        } catch (timeoutEx: TimeoutCancellationException) {
-            Log.d(TAG, "Timeout, can't connect with database")
-            throw DatabaseTimeoutException("Timeout, cant connect with database")
-        }
-        catch (databaseEx: DatabaseException) {
-            Log.d(TAG, "Failed with error message: ${databaseEx.message}")
-            throw databaseEx
-        }
+        if (userId.isBlank())
+            throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
+
+        return getNode("$USERS_PATH/$userId", timeout).getValue(User::class.java)
     }
 
     override suspend fun getAllUsers(timeout: Long): List<User> {
-        return try {
-            withTimeout(timeout) {
-                val data = databaseReference.child(USERS_PATH).get().await()
-                data.children.map {
-                    it.getValue(User::class.java)!!
-                }
-            }
-        } catch (timeoutEx: TimeoutCancellationException) {
-            Log.d(TAG, "Timeout, can't connect with database")
-            throw DatabaseTimeoutException("Timeout, cant connect with database")
-        }
-        catch (databaseEx: DatabaseException) {
-            Log.d(TAG, "Failed with error message: ${databaseEx.message}")
-            throw databaseEx
+
+        return getNode(USERS_PATH, timeout).children.mapNotNull {
+            it.getValue(User::class.java)
         }
     }
 
@@ -150,25 +122,11 @@ object FirebaseDB: DB {
     }
 
     override suspend fun userExists(userId: String, timeout: Long): Boolean {
-        return try {
-            withTimeout(timeout) {
-                if (userId.isBlank())
-                    throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
 
-                val data = databaseReference
-                    .child(USERS_PATH)
-                    .child(userId)
-                    .child(USER_ID_ATTRIBUTE).get().await()
-                data.exists()
-            }
-        } catch (timeoutEx: TimeoutCancellationException) {
-            Log.d(TAG, "Timeout, can't connect with database")
-            throw DatabaseTimeoutException("Timeout, cant connect with database")
-        }
-        catch (databaseEx: DatabaseException) {
-            Log.d(TAG, "Failed with error message: ${databaseEx.message}")
-            throw databaseEx
-        }
+        if (userId.isBlank())
+            throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
+
+        return getNode("$USERS_PATH/$userId/$USER_ID_ATTRIBUTE", timeout).exists()
     }
 
     override suspend fun getImage(metadata: PhotoMetadata, timeout: Long): Bitmap? {
@@ -190,36 +148,33 @@ object FirebaseDB: DB {
         }
     }
 
-    override suspend fun storeBinLocation(location: LatLng): Boolean {
+    override suspend fun addBin(bin: Bin): Boolean {
+
+        if (bin.id != null)
+            throw java.lang.IllegalArgumentException("Bin should not have an ID before being stored")
+
         val freshId = databaseReference.child(BIN_LOCATION_PATH).push().key ?: return false
-        databaseReference.child(BIN_LOCATION_PATH).child(freshId).setValue(location).await()
+        bin.id = freshId
+
+        databaseReference.child(BIN_LOCATION_PATH).child(freshId).setValue(bin).await()
         return true
     }
 
-    override suspend fun getAllBinLocations(): Set<LatLng>? {
-        // Looks like manually deleting the unchecked cast is the only way to remove the warnings
-        @Suppress("UNCHECKED_CAST")
-        val childrens = databaseReference.child(BIN_LOCATION_PATH).get().await().value
-                as? Map<String, Any> ?: return null
-
-        val locations = mutableSetOf<LatLng>()
-        for (child in childrens.values) {
-            // Converts the Map back to a LatLng. If some child does not have the correct format, skip it
-            @Suppress("UNCHECKED_CAST")
-            val location = child as? HashMap<String, Double>? ?: child as? HashMap<String, Long>? ?: continue
-            val lat = location["latitude"] ?: continue
-            val lng = location["longitude"] ?: continue
-            locations.add(LatLng(lat.toDouble(), lng.toDouble()))
-        }
-        return locations
+    override suspend fun removeBin(binId: String) {
+        databaseReference.child(BIN_LOCATION_PATH).child(binId).removeValue().await()
     }
 
-    override suspend fun getAdvices(): Set<String> {
+    override suspend fun getAllBins(timeout: Long): List<Bin> {
 
-        val childrens = databaseReference.child(ADVICES_LOCATION_PATH).get().await().children
-        return childrens.mapNotNull {
-            val advice = it.value as? String
-            advice
+        return getNode(BIN_LOCATION_PATH, timeout).children.mapNotNull {
+            it.getValue(Bin::class.java)
+        }
+    }
+
+    override suspend fun getAdvices(timeout: Long): Set<String> {
+
+        return getNode(ADVICES_LOCATION_PATH, timeout).children.mapNotNull {
+            it.value as? String
         }.toSet()
     }
 
@@ -274,6 +229,21 @@ object FirebaseDB: DB {
             return photoMetadata
         } catch (e: Error) {
             null
+        }
+    }
+
+    // Returns the node in the database at the given [path], and timeouts after [timeout] ms
+    private suspend fun getNode(path: String, timeout: Long): DataSnapshot{
+        return try {
+            withTimeout(timeout){
+                databaseReference.child(path).get().await()
+            }
+        } catch (timeoutEx: TimeoutCancellationException) {
+            Log.d(TAG, "Timeout, can't connect with database")
+            throw DatabaseTimeoutException("Timeout, cant connect with database")
+        } catch (databaseEx: DatabaseException) {
+            Log.d(TAG, "Failed with error message: ${databaseEx.message}")
+            throw databaseEx
         }
     }
 }

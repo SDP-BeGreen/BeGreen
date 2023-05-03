@@ -10,40 +10,39 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.activities.DatabaseActivity
+import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.rules.FirebaseEmulatorRule
+import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.*
 import org.junit.*
-import org.junit.Assert.assertThrows
-import org.junit.Assert.assertTrue
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class FirebaseDBTest {
 
+    private val profilePhotoMetaData = ProfilePhotoMetadata(null, null, null)
+
     // For some reason to perform the write in the database, an activity has to be started
     @get:Rule
     val activityRule = ActivityScenarioRule(DatabaseActivity::class.java)
 
-    private val profilePhotoMetaData = ProfilePhotoMetadata(null, null, null)
+    @get:Rule
+    val koinTestRule = KoinTestRule()
 
     companion object {
-        @BeforeClass @JvmStatic fun setup() {
-            try {
-                Firebase.database.useEmulator("10.0.2.2", 9000)
-                Firebase.storage.useEmulator("10.0.2.2", 9199)
-                Firebase.auth.useEmulator("10.0.2.2", 9099)
-            } catch (_:java.lang.IllegalStateException){}
-        }
+        @get:ClassRule
+        @JvmStatic
+        val firebaseEmulatorRule = FirebaseEmulatorRule()
     }
 
     @Test
@@ -167,41 +166,82 @@ class FirebaseDBTest {
         }
     }
 
+    // TODO: update tests with new implementation
+
     @Test
-    fun storeBinLocationReturnsTrue() {
+    fun addBinThrowsIllegalArgumentExceptionWhenBinIdIsNotNull() {
+        assertThrows(IllegalArgumentException::class.java) {
+            runBlocking {
+                val bin = Bin("Not null ID", TrashCategory.ELECTRONIC, LatLng(4.3, 2.1))
+                assertTrue(FirebaseDB.addBin(bin))
+            }
+        }
+    }
+    @Test
+    fun addBinReturnsTrueWhenStoreSucceeds() {
         runBlocking {
-            assertTrue(FirebaseDB.storeBinLocation(LatLng(1.1, -2.2)))
+            val bin = Bin(TrashCategory.ELECTRONIC, LatLng(4.3, 2.1))
+            assertTrue(FirebaseDB.addBin(bin))
         }
     }
 
     @Test
-    fun storeBinLocationCorrectlyUpdatesDatabase() {
-
-        val binLocation = LatLng(12.3, -43.0)
-
+    fun addBinUpdatesBinIdWhenStoreSucceeds() {
         runBlocking {
-
-            assertTrue(FirebaseDB.storeBinLocation(binLocation))
-
-            val binLocations = FirebaseDB.getAllBinLocations()
-            assertNotNull(binLocations)
-            // Checks that the location got correctly added
-            assertThat(binLocations, hasItem(binLocation))
+            val bin = Bin(TrashCategory.ELECTRONIC, LatLng(4.3, 2.1))
+            assertTrue(FirebaseDB.addBin(bin))
+            assertNotNull(bin.id)
         }
-
     }
 
     @Test
-    fun getAllBinLocationsReturnsPreviouslyAddedLocations() {
+    fun addBinCorrectlyUpdatesDatabase() {
+
+        val bin = Bin(TrashCategory.PAPER, LatLng(10.2, -4.2))
 
         runBlocking {
 
-            val binLocations = FirebaseDB.getAllBinLocations()
-            assertNotNull(binLocations)
+            FirebaseDB.addBin(bin)
+
+            val bins = FirebaseDB.getAllBins()
+            // Checks that the bin got correctly added
+            assertThat(bins, hasItem(bin))
+        }
+    }
+
+    @Test
+    fun removeBinCorrectlyUpdatesDatabase() {
+
+        val bin = Bin(TrashCategory.ORGANIC, LatLng(0.1, 89.9))
+
+        runBlocking {
+
+            FirebaseDB.addBin(bin)
+
+            var bins = FirebaseDB.getAllBins()
+            // Checks that the bin got correctly added
+            assertThat(bins, hasItem(bin))
+
+            FirebaseDB.removeBin(bin.id!!)
+
+            bins = FirebaseDB.getAllBins()
+            // Checks that the bin got removed
+            assertThat(bins, not(hasItem(bin)))
+
+        }
+    }
+
+    @Test
+    fun getAllBinsReturnsPreviouslyAddedLocations() {
+
+        runBlocking {
+
+            val binLocations = FirebaseDB.getAllBins()
+
             // Checks that the location got correctly added
             assertThat(binLocations, hasItems(
-                LatLng(69.6969, 420.42),
-                LatLng(123.456, 654.321)
+                Bin("123", TrashCategory.PAPER, LatLng(69.6969,420.42)),
+                Bin("456", TrashCategory.METAL, LatLng(123.456,654.321))
             ))
         }
     }

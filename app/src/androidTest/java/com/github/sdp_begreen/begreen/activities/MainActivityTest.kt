@@ -22,10 +22,13 @@ import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
+import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBitmap
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.tasks.Tasks
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -72,6 +75,11 @@ class MainActivityTest {
         private val auth: Auth = Mockito.mock(Auth::class.java)
         // initially do as if no user were signed in
         private val authUserFlow = MutableStateFlow<String?>(null)
+        private val bins = listOf(
+            Bin("1", TrashCategory.CLOTHES, LatLng(4.3, 2.8)),
+            Bin("2", TrashCategory.PAPER, LatLng(56.3, 22.3)),
+            Bin("3", TrashCategory.CLOTHES, LatLng(6.0, 9.0))
+        )
 
         @BeforeClass
         @JvmStatic
@@ -91,7 +99,7 @@ class MainActivityTest {
                     .thenReturn(authUserFlow.onEach { delay(10) })
 
                 `when`(db.getAllUsers()).thenReturn(listOf(user1))
-
+                `when`(db.getAllBins()).thenReturn(bins)
             }
         }
     }
