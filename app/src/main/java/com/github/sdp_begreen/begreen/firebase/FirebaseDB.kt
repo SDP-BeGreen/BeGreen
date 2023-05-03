@@ -3,19 +3,22 @@ package com.github.sdp_begreen.begreen.firebase
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
+import com.github.sdp_begreen.begreen.FirebaseRef
 import com.github.sdp_begreen.begreen.exceptions.DatabaseTimeoutException
 import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
-import com.google.firebase.database.*
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseException
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
+import org.koin.java.KoinJavaComponent.inject
 import java.io.ByteArrayOutputStream
 
 
@@ -24,14 +27,16 @@ import java.io.ByteArrayOutputStream
  */
 object FirebaseDB: DB {
 
+    private val dbRefs by inject<FirebaseRef>(FirebaseRef::class.java)
+
     private const val TAG: String = "Firebase Database"
 
     private const val ONE_MEGABYTE: Long = 1024 * 1024 // Maximal image size allowed (in bytes), to prevent out of memory errors
     // Realtime database ref
-    private val databaseReference: DatabaseReference = Firebase.database.reference
+    private val databaseReference: DatabaseReference = dbRefs.databaseReference
     // Storage ref (for images)
-    private val storageReference: StorageReference = Firebase.storage.reference
-    private val connectedReference = Firebase.database.getReference(".info/connected")
+    private val storageReference: StorageReference = dbRefs.storageReference
+    private val connectedReference = dbRefs.database.getReference(".info/connected")
     private const val USERS_PATH = "users"
     private const val USER_PROFILE_PICTURE_METADATA = "profilePictureMetadata"
     private const val USER_ID_ATTRIBUTE = "id"
@@ -176,7 +181,6 @@ object FirebaseDB: DB {
      * @return the retrieved [Bitmap] or null if an error occured
      */
     private suspend fun getPicture(storageNode: StorageReference, timeout: Long): Bitmap? {
-
         return try {
             withTimeout(timeout) {
                 val compressedImage = storageNode.getBytes(ONE_MEGABYTE).await()

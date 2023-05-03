@@ -20,7 +20,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/white_background"
+        android:background="@drawable/rectangular_background"
         android:orientation="vertical"
         android:padding="3dp"
         app:layout_constraintBottom_toBottomOf="@+id/mapFragment"
@@ -37,8 +37,10 @@
             android:id="@+id/binTypeSelector"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:spinnerMode="dropdown"
-            android:dropDownVerticalOffset="-100dp" />
+            android:contentDescription="@string/change_bin_type"
+            android:dropDownVerticalOffset="-100dp"
+            android:minHeight="36dp"
+            android:spinnerMode="dropdown" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

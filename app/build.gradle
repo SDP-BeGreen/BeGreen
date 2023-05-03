@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'jacoco'
     id 'com.google.gms.google-services'
+    id 'kotlin-parcelize'
 }
 
 android {

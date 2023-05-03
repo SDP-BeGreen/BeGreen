@@ -14,18 +14,16 @@ import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.map.BinType
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.rules.FirebaseEmulatorRule
+import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.*
 import org.junit.*
-import org.junit.Assert.assertThrows
-import org.junit.Assert.assertTrue
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
@@ -36,14 +34,13 @@ class FirebaseDBTest {
     @get:Rule
     val activityRule = ActivityScenarioRule(DatabaseActivity::class.java)
 
+    @get:Rule
+    val koinTestRule = KoinTestRule()
+
     companion object {
-        @BeforeClass @JvmStatic fun setup() {
-            try {
-                Firebase.database.useEmulator("10.0.2.2", 9000)
-                Firebase.storage.useEmulator("10.0.2.2", 9199)
-                Firebase.auth.useEmulator("10.0.2.2", 9099)
-            } catch (_:java.lang.IllegalStateException){}
-        }
+        @get:ClassRule
+        @JvmStatic
+        val firebaseEmulatorRule = FirebaseEmulatorRule()
     }
 
     @Test
