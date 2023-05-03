@@ -241,6 +241,19 @@ class MainActivityTest {
     }
 
     @Test
+    fun pressDrawerMenuFollowersDisplayFollowersFragmentWithNoAuthenticatedUser() {
+
+        `when`(auth.getConnectedUserId()).thenReturn(null)
+
+        onView(withId(R.id.mainDrawerLayout)).perform(DrawerActions.open(GravityCompat.END))
+
+        onView(withId(R.id.mainNavDrawFollowers))
+            .perform(scrollTo())
+            .check(matches(isDisplayed()))
+            .perform(click())
+    }
+
+    @Test
     fun pressDrawerMenuUsersDisplayUserFragment() {
         onView(withId(R.id.mainDrawerLayout)).perform(DrawerActions.open(GravityCompat.END))
 

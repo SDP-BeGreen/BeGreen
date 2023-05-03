@@ -38,7 +38,7 @@ class FollowingArrayAdapter(context: Context,
         return createViewFromResource(position, convertView, parent)
     }
 
-    private fun createViewFromResource(position: Int, convertView: View?, parent: ViewGroup?): View{
+    private fun createViewFromResource(position: Int, convertView: View?, parent: ViewGroup): View{
 
         val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.user_search_bar, parent, false)
         val textView = view.findViewById<TextView>(R.id.item_text)
