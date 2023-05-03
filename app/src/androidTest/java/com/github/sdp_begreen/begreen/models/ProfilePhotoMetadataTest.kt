@@ -42,7 +42,7 @@ class ProfilePhotoMetadataTest {
     @Test
     fun photoCreatorIsNotNull() {
 
-        MatcherAssert.assertThat(ProfilePhotoMetadata, CoreMatchers.notNullValue())
+        MatcherAssert.assertThat(ProfilePhotoMetadata.CREATOR, CoreMatchers.notNullValue())
     }
 
     @Test

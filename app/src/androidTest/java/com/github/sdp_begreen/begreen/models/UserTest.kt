@@ -11,7 +11,7 @@ import java.util.*
 //Need to be in Android Test to use Parcel
 class UserTest {
 
-    val profilePhotoMetadata =
+    private val profilePhotoMetadata =
         ProfilePhotoMetadata("1", ParcelableDate.now, "0")
 
     var user: User = User(

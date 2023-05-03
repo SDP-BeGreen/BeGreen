@@ -4,9 +4,9 @@ import android.os.Parcel
 import android.os.Parcelable
 
 class ProfilePhotoMetadata(
-    pictureId: String?,
-    takenOn: ParcelableDate?,
-    takenByUserId: String?,
+    pictureId: String? = null,
+    takenOn: ParcelableDate? = null,
+    takenByUserId: String? = null,
 
     ) : PhotoMetadata(pictureId, takenOn, takenByUserId) {
 

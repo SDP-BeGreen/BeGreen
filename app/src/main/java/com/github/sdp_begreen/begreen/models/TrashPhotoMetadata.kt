@@ -4,11 +4,11 @@ import android.os.Parcel
 import android.os.Parcelable
 
 class TrashPhotoMetadata(
-    pictureId: String?,
-    takenOn: ParcelableDate?,
-    takenByUserId: String?,
-    val caption: String?,
-    val trashCategory: TrashCategory?
+    pictureId: String? = null,
+    takenOn: ParcelableDate? = null,
+    takenByUserId: String? = null,
+    val caption: String? = null,
+    val trashCategory: TrashCategory? = null
 
 ) : PhotoMetadata(pictureId, takenOn, takenByUserId) {
 
