@@ -4,7 +4,7 @@ import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 
 /**
- * This class adapts the class User such that it can be stored to Firebase
+ * This class adapts the class User such that it can be effectively stored to Firebase
  */
 data class FirebaseUser (var id: String, var score: Int, val displayName: String? = null, var rating: Int = 0,
                          var img: PhotoMetadata? = null, var description: String? = null, var phone: String? = null,

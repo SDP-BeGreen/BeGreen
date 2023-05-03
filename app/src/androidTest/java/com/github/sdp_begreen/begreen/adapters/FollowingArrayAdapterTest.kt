@@ -13,13 +13,9 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.User
-import com.google.android.material.button.MaterialButton
-import kotlinx.coroutines.runBlocking
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.verify
-import org.mockito.kotlin.whenever
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
