@@ -23,7 +23,7 @@ class BinTest {
     @Test
     fun constructorWithLatlngAssignsExpectedLatitudeAndLongitude() {
         val location = LatLng(23.32, 34.43)
-        val bin = Bin(TrashCategory.ELECTRONIC, location)
+        val bin = Bin(TrashCategory.ELECTRONIC, CustomLatLng(location.latitude, location.longitude))
         assertEquals(location.latitude, bin.location.toMapLatLng().latitude, 0.0001)
         assertEquals(location.longitude, bin.location.toMapLatLng().longitude, 0.0001)
     }
