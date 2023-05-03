@@ -24,6 +24,9 @@ enum class TrashCategory(val id : String, val title : String, val color : Float)
     CLOTHES("5", "Clothes", BitmapDescriptorFactory.HUE_VIOLET),
     METAL("6", "Metal", BitmapDescriptorFactory.HUE_YELLOW);
 
+    override fun toString(): String {
+        return title
+    }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(id)

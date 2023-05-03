@@ -34,8 +34,8 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.Actions
 import com.github.sdp_begreen.begreen.models.ParcelableDate
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.utils.BitmapsUtils
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
@@ -52,7 +52,7 @@ import org.koin.android.ext.android.inject
 class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultRegistry? = null)
     : Fragment() {
     private var user: User? = null
-    private var recentPosts: List<PhotoMetadata>? = null
+    private var recentPosts: List<TrashPhotoMetadata>? = null
 
     private val connectedUserViewModel:
             ConnectedUserViewModel by viewModels(ownerProducer = { requireActivity() })
@@ -64,7 +64,7 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         arguments?.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 user = it.getParcelable(ARG_USER, User::class.java)
-                recentPosts = it.getParcelableArrayList(ARG_RECENT_POSTS, PhotoMetadata::class.java)
+                recentPosts = it.getParcelableArrayList(ARG_RECENT_POSTS, TrashPhotoMetadata::class.java)
             } else {
                 user = it.getParcelable(ARG_USER)
                 recentPosts = it.getParcelableArrayList(ARG_RECENT_POSTS)
@@ -518,7 +518,7 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
          * @return A new instance of fragment ProfileDetailsFragment.
          */
         @JvmStatic
-        fun newInstance(user: User, photos: List<PhotoMetadata>) =
+        fun newInstance(user: User, photos: List<TrashPhotoMetadata>) =
             ProfileDetailsFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_USER, user)

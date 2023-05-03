@@ -6,7 +6,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.github.sdp_begreen.begreen.exceptions.MeetingServiceException
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.Meeting
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.TrashCategory
@@ -171,7 +170,7 @@ class MeetingPhotoServiceTest {
         )
 
         runTest {
-            val channel = Channel<List<PhotoMetadata>>(1)
+            val channel = Channel<List<TrashPhotoMetadata>>(1)
             backgroundScope.launch {
                 MeetingPhotoServiceImpl.getAllPhotosMetadata(meetingWithPhotos.meetingId!!)
                     .collect {
@@ -262,7 +261,7 @@ class MeetingPhotoServiceTest {
                 MeetingPhotoServiceImpl.addMeetingsPhoto(
                     meetingWithPhotos.meetingId!!,
                     TrashPhotoMetadata(
-                        null,
+                        "not null",
                         ParcelableDate.now,
                         "Bin",
                         "1234567890",

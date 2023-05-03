@@ -13,7 +13,6 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.fragments.CameraFragment
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.ParcelableDate
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.firebase.FirebaseAuth
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata

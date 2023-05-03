@@ -24,9 +24,7 @@ import com.github.sdp_begreen.begreen.*
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
-import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
@@ -466,7 +464,6 @@ class ProfileDetailsFragmentTest {
             phone = "114123",
             email = "My new email address"
         )
-
 
         editUserValues(newUser)
 

@@ -12,10 +12,8 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.activities.MainActivity
 import com.github.sdp_begreen.begreen.models.ParcelableDate
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
@@ -39,7 +37,7 @@ class UserPhotoFragmentTest {
     val koinTestRule = KoinTestRule()
 
     private lateinit var fragment: UserPhotoFragment
-    private lateinit var photoList: List<PhotoMetadata>
+    private lateinit var photoList: List<TrashPhotoMetadata>
 
     private val ARG_COLUMN_COUNT = "column-count"
     private val ARG_PHOTO_LIST = "photo-list"

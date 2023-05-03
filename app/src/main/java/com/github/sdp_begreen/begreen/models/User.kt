@@ -5,7 +5,7 @@ import android.os.Parcelable
 
 //Need to be Parcelable to be passed as an argument to a fragment
 data class User (var id: String, var score: Int, val displayName: String? = null, var rating: Int = 0,
-                 var img: PhotoMetadata? = null, var description: String? = null, var phone: String? = null,
+                 var img: ProfilePhotoMetadata? = null, var description: String? = null, var phone: String? = null,
                  var email: String? = null, var progression: Int = 0, var followers: List<User>? = null,
                  var following: List<User>? = null, var profilePictureMetadata: ProfilePhotoMetadata? = null) : Parcelable, Comparable<User> {
 
