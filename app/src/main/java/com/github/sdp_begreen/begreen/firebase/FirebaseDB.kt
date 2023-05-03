@@ -202,6 +202,20 @@ object FirebaseDB: DB {
         }
     }
 
+    override suspend fun getFollowerIds(userId: String, timeout: Long): List<String> {
+        if (!userExists(userId)) return listOf()
+
+        return getNode("$USERS_PATH/$userId/$FOLLOWERS_PATH", timeout).children.mapNotNull {
+            it.key as String
+        }
+    }
+
+    override suspend fun getFollowers(userId: String, timeout: Long): List<User> {
+        val users = getAllUsers(timeout)
+        val followerIds = getFollowerIds(userId, timeout)
+        return users.filter { followerIds.contains(it.id) }
+    }
+
     /**
      * Helper function to perform the actual call to the database to retrieve the image
      *

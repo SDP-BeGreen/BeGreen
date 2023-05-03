@@ -194,4 +194,24 @@ interface DB {
      */
     suspend fun getFollowedIds(userId: String, timeout: Long = TIMEOUT): List<String>
 
+    /**
+     * Returns the list of UserIds that follow the given [userId]
+     *
+     * @param userId the userId for which we want to get the list of userIds that follow this User
+     * @param timeout the maximum time we wait for the database to respond
+     * @throws DatabaseTimeoutException if the database could not be reached
+     * @throws DatabaseException if an exception occurred while retrieving the data
+     */
+    suspend fun getFollowerIds(userId: String, timeout: Long = TIMEOUT): List<String>
+
+    /**
+     * Returns the list of Users that follow the User with the given [userId]
+     *
+     * @param userId the userId for which we want to get the list of Users that follow this User
+     * @param timeout the maximum time we wait for the database to respond
+     * @throws DatabaseTimeoutException if the database could not be reached
+     * @throws DatabaseException if an exception occurred while retrieving the data
+     */
+    suspend fun getFollowers(userId: String, timeout: Long = TIMEOUT): List<User>
+
 }

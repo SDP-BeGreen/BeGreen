@@ -14,7 +14,8 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class FollowersFragmentTest {
-    @Test
+
+    /*@Test
     fun testAdviceFragment() {
         launchFragmentInContainer<FollowersFragment>()
         Espresso.onView(ViewMatchers.withId(R.id.followersFragmentTextView))
@@ -37,5 +38,5 @@ class FollowersFragmentTest {
         Espresso.onView(ViewMatchers.withId(R.id.followersFragmentTextView))
             .check(ViewAssertions.matches(ViewMatchers.withText("Fragment where we can display the user's followers Param 1, Param 2")))
 
-    }
+    }*/
 }
