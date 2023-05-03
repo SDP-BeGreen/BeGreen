@@ -23,6 +23,9 @@
 
     </group>
     <item
+        android:id="@+id/mainNavDrawContact"
+        android:title="@string/contact_us"/>
+    <item
         android:id="@+id/mainNavDrawLogout"
         android:title="@string/logout"/>
 </menu>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bottomsheet_bg"
+    android:padding="18dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:textStyle="bold"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:text="@string/SendInquiry"/>
+
+
+    <TextView
+        android:id="@+id/date_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:text="@string/date_today_s_date"/>
+
+    <EditText
+        android:id="@+id/message_edittext"
+        android:padding="12dp"
+        android:background="@drawable/user_list_border"
+        android:minHeight="150dp"
+        android:gravity="top"
+        android:textColorHint="@color/grey"
+        android:textColor="@color/black"
+        android:layout_marginVertical="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/enter_your_message_here"
+        android:autofillHints="Enter your message" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="12dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/cancel_button"
+            android:layout_width="0dp"
+            android:layout_marginHorizontal="12dp"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/black"
+            android:layout_weight="1"
+            android:text="@string/cancel"
+            style="?android:attr/buttonBarButtonStyle" />
+
+        <Button
+            android:id="@+id/send_button"
+            android:layout_width="0dp"
+            android:layout_marginHorizontal="12dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/send"
+            style="?android:attr/buttonBarButtonStyle" />
+
+    </LinearLayout>
+
+</LinearLayout>
