@@ -30,7 +30,6 @@ class UserFragmentTest {
     @get:Rule
     val koinTestRule = KoinTestRule()
 
-    private lateinit var fragment: UserFragment
     private lateinit var userList: List<User>
 
     val ARG_COLUMN_COUNT = "column-count"
@@ -45,8 +44,6 @@ class UserFragmentTest {
             User("1", 20, "Bob"),
             User("2", 15, "Charlie")
         )
-        // Create a new instance of the fragment with test arguments.
-        fragment = UserFragment.newInstance(2, listOf(User("0", 10, "John"), User("1", 8, "Jane")), true)
     }
 
     @Test

@@ -66,8 +66,8 @@ class FollowersFragment : Fragment() {
     companion object {
 
         // The names of the parameters in the Fragment arguments.
-        private const val ARG_COLUMN_COUNT = "column-count"
-        private const val ARG_USER_LIST = "user-list"
+        const val ARG_COLUMN_COUNT = "column-count"
+        const val ARG_USER_LIST = "user-list"
 
         @JvmStatic
         fun newInstance(columnCount: Int, followers: List<User>?) =
