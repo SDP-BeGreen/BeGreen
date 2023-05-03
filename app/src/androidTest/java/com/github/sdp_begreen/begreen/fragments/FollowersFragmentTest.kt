@@ -15,6 +15,9 @@ import org.junit.runner.RunWith
 @LargeTest
 class FollowersFragmentTest {
 
+    @Test
+    fun toRemove() {}
+
     /*@Test
     fun testAdviceFragment() {
         launchFragmentInContainer<FollowersFragment>()
