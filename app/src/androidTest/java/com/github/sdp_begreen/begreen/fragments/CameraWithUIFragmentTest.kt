@@ -158,7 +158,7 @@ class CameraWithUIFragmentTest {
     }
 
     @Test
-    fun newInstanceInstanciateTheFragment() {
+    fun newInstanceInstantiateTheFragment() {
         val fragment = CameraWithUIFragment.newInstance()
         assertThat(fragment, instanceOf(CameraWithUIFragment::class.java))
     }
