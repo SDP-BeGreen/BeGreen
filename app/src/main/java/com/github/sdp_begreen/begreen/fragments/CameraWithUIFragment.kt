@@ -14,6 +14,7 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -78,20 +79,18 @@ class CameraWithUIFragment : Fragment() {
         // Request camera permissions
         if (allPermissionsGranted()) {
             startCamera()
+            setupCameraViewInteractions()
         } else {
-            ActivityCompat.requestPermissions(
-                requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
-            )
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+               if(it) {
+                   startCamera()
+                   setupCameraViewInteractions()
+               } else {
+                   Toast.makeText(requireContext(), "Permissions not granted by the user.", Toast.LENGTH_SHORT).show()
+               }
+            }.launch(Manifest.permission.CAMERA)
+
         }
-        // Set up the listener for take photo button
-        view?.findViewById<Button>(R.id.camera_capture_button).also {
-            it?.setOnClickListener {
-                takePhoto()
-            }
-        }
-        outputDirectory = getOutputDirectory()
-        cameraExecutor = Executors.newSingleThreadExecutor()
-        setUpSwitch()
         setUpProfileBtn()
         lifecycleScope.launch { setUpSearchBar() }
     }
@@ -284,6 +283,22 @@ class CameraWithUIFragment : Fragment() {
     }
 
     /**
+     * Setup the camera view interactions
+     */
+    private fun setupCameraViewInteractions() {
+        view?.findViewById<Button>(R.id.camera_capture_button).also {
+            it?.setOnClickListener {
+                takePhoto()
+            }
+        }
+
+        setUpSwitch()
+        // Set up the listener for take photo button
+        outputDirectory = getOutputDirectory()
+        cameraExecutor = Executors.newSingleThreadExecutor()
+    }
+
+    /**
      * Check if all permissions are granted
      */
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
@@ -296,23 +311,6 @@ class CameraWithUIFragment : Fragment() {
         super.onDestroy()
         cameraExecutor.shutdown()
     }
-    @Deprecated("Deprecated in Java")
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>, grantResults:
-        IntArray
-    ) {
-        if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (allPermissionsGranted()) {
-                startCamera()
-            } else {
-                Toast.makeText(
-                    requireContext(),
-                    "Permissions not granted by the user.",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-    }
 
     /**
      * Companion object to create the fragment
@@ -320,8 +318,7 @@ class CameraWithUIFragment : Fragment() {
     companion object {
         private const val TAG = "CameraXBasic"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
-        private const val REQUEST_CODE_PERMISSIONS = 10
-        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
+        private val REQUIRED_PERMISSIONS = listOf(Manifest.permission.CAMERA)
 
         @JvmStatic
         fun newInstance() = CameraWithUIFragment()
