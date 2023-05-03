@@ -43,46 +43,4 @@ class FollowingArrayAdapterTest {
 
         assertThat("Alain Berset", `is`(textView.text))
     }
-
-    /*
-    @Test
-    fun testFollowButtonClickListener() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        val db = mock(DB::class.java)
-        val auth = mock(Auth::class.java)
-        whenever(auth.getConnectedUserId()).thenReturn("currentUserId")
-
-        val adapter = FollowingArrayAdapter(context, R.layout.user_search_bar, listOf(
-            User("user1", 1, "Alain Berset"),
-            User("user2", 2, "Bob le bricoleur")
-        ),
-            db,
-            auth,
-            mock(LifecycleCoroutineScope::class.java),
-            listOf(false, false)
-        )
-
-        val view = adapter.getView(0, null, LinearLayout(context))
-        val button = view.findViewById<MaterialButton>(R.id.item_button)
-
-        // Simulate a click on the follow button
-        button.performClick()
-
-        // Verify that the DB method was called with the correct arguments
-        runBlocking {
-            verify(db).follow("currentUserId", "user1")
-        }
-
-        // Simulate another click on the button
-        button.performClick()
-
-        // Verify that the DB method was called with the correct arguments
-        runBlocking {
-            verify(db).unfollow("currentUserId", "user1")
-        }
-    }*/
-
-
-
-
 }
