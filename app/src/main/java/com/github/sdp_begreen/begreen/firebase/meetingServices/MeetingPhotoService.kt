@@ -2,7 +2,7 @@ package com.github.sdp_begreen.begreen.firebase.meetingServices
 
 import android.graphics.Bitmap
 import com.github.sdp_begreen.begreen.exceptions.MeetingServiceException
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -25,9 +25,9 @@ interface MeetingPhotoService {
      */
     suspend fun addMeetingsPhoto(
         meetingId: String,
-        photoMetadata: PhotoMetadata,
+        photoMetadata: TrashPhotoMetadata,
         photo: Bitmap
-    ): PhotoMetadata
+    ): TrashPhotoMetadata
 
     /**
      * Get all the comments, retrieve the comment dynamically
@@ -38,7 +38,7 @@ interface MeetingPhotoService {
      *
      * @throws IllegalArgumentException Throw if the meting id is blank
      */
-    suspend fun getAllPhotosMetadata(meetingId: String): Flow<List<PhotoMetadata>>
+    suspend fun getAllPhotosMetadata(meetingId: String): Flow<List<TrashPhotoMetadata>>
 
     /**
      * Get a photo given its metadata
@@ -51,7 +51,7 @@ interface MeetingPhotoService {
      * @throws IllegalArgumentException Throw if one of the arguments does not match the requirement
      * @throws MeetingServiceException Throw if an error occurred while retrieving the photo
      */
-    suspend fun getPhoto(meetingId: String, photoMetadata: PhotoMetadata): Bitmap?
+    suspend fun getPhoto(meetingId: String, photoMetadata: TrashPhotoMetadata): Bitmap?
 
     /**
      * Remove a photo from the meeting
@@ -62,5 +62,5 @@ interface MeetingPhotoService {
      * @throws IllegalArgumentException Throw if one of the arguments does not match the requirement
      * @throws MeetingServiceException Throw if an error occurred while removing the comment
      */
-    suspend fun removeMeetingPhoto(meetingId: String, photoMetadata: PhotoMetadata)
+    suspend fun removeMeetingPhoto(meetingId: String, photoMetadata: TrashPhotoMetadata)
 }

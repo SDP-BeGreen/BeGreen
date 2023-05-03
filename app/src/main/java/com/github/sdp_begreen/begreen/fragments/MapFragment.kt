@@ -20,6 +20,7 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.map.Bin
+import com.github.sdp_begreen.begreen.models.CustomLatLng
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -249,7 +250,7 @@ class MapFragment : Fragment() {
 
             userLocation?.apply {
                 // Add a bin of type "binType" at the user current location
-                Bin(trashCategory, LatLng(latitude, longitude))
+                Bin(trashCategory, CustomLatLng(latitude, longitude))
                     .let {bin ->
                         lifecycleScope.launch {
                             // Add the new bin to the database
@@ -272,7 +273,7 @@ class MapFragment : Fragment() {
     private fun addMarker(bin: Bin){
         map.addMarker(
             MarkerOptions()
-                .position(bin.location)
+                .position(bin.location.toMapLatLng())
                 .title(bin.type.toString())
                 .icon(BitmapDescriptorFactory.defaultMarker(bin.type.color))
         )?.apply {

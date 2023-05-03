@@ -24,6 +24,7 @@ import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBitmap
+import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.User
@@ -76,9 +77,9 @@ class MainActivityTest {
         // initially do as if no user were signed in
         private val authUserFlow = MutableStateFlow<String?>(null)
         private val bins = listOf(
-            Bin("1", TrashCategory.CLOTHES, LatLng(4.3, 2.8)),
-            Bin("2", TrashCategory.PAPER, LatLng(56.3, 22.3)),
-            Bin("3", TrashCategory.CLOTHES, LatLng(6.0, 9.0))
+            Bin("1", TrashCategory.CLOTHES, CustomLatLng(4.3, 2.8)),
+            Bin("2", TrashCategory.PAPER, CustomLatLng(56.3, 22.3)),
+            Bin("3", TrashCategory.CLOTHES, CustomLatLng(6.0, 9.0))
         )
 
         @BeforeClass

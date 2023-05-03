@@ -7,7 +7,7 @@ import com.github.sdp_begreen.begreen.exceptions.MeetingServiceException
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.getBytesFromStorage
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.putBytesToStorage
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.utils.checkArgument
 import kotlinx.coroutines.flow.Flow
 import org.koin.java.KoinJavaComponent
@@ -24,9 +24,9 @@ object MeetingPhotoServiceImpl : MeetingPhotoService {
 
     override suspend fun addMeetingsPhoto(
         meetingId: String,
-        photoMetadata: PhotoMetadata,
+        photoMetadata: TrashPhotoMetadata,
         photo: Bitmap
-    ): PhotoMetadata {
+    ): TrashPhotoMetadata {
         checkArgument(meetingId.isNotBlank(), "The meeting id cannot be blank")
         checkArgument(
             !photoMetadata.takenByUserId.isNullOrBlank(),
@@ -50,16 +50,16 @@ object MeetingPhotoServiceImpl : MeetingPhotoService {
         } ?: throw MeetingServiceException("Error while generating new key for photo entry")
     }
 
-    override suspend fun getAllPhotosMetadata(meetingId: String): Flow<List<PhotoMetadata>> {
+    override suspend fun getAllPhotosMetadata(meetingId: String): Flow<List<TrashPhotoMetadata>> {
         checkArgument(meetingId.isNotBlank(), "The meeting id cannot be blank")
         return FirebaseUtils.getFlowOfObjects(
             dbRef.child(MEETING_PATH).child(meetingId)
                 .child(PHOTOS_PATH),
-            PhotoMetadata::class.java
+            TrashPhotoMetadata::class.java
         )
     }
 
-    override suspend fun getPhoto(meetingId: String, photoMetadata: PhotoMetadata): Bitmap? {
+    override suspend fun getPhoto(meetingId: String, photoMetadata: TrashPhotoMetadata): Bitmap? {
         checkArgument(meetingId.isNotBlank(), "The meeting id cannot be blank")
         checkArgument(
             !photoMetadata.pictureId.isNullOrBlank(),
@@ -74,7 +74,7 @@ object MeetingPhotoServiceImpl : MeetingPhotoService {
         return BitmapFactory.decodeByteArray(compressedPhoto, 0, compressedPhoto.size)
     }
 
-    override suspend fun removeMeetingPhoto(meetingId: String, photoMetadata: PhotoMetadata) {
+    override suspend fun removeMeetingPhoto(meetingId: String, photoMetadata: TrashPhotoMetadata) {
         checkArgument(meetingId.isNotBlank(), "The meeting id cannot be blank")
         checkArgument(
             !photoMetadata.pictureId.isNullOrBlank(),
