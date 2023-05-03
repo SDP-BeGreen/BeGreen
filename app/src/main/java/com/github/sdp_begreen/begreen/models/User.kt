@@ -9,9 +9,6 @@ data class User (var id: String, var score: Int, val displayName: String? = null
                  var email: String? = null, var progression: Int = 0, var followers: List<String>? = null,
                  var following: List<String>? = null, var profilePictureMetadata: PhotoMetadata? = null) : Parcelable, Comparable<User> {
 
-    // Default constructor required to deserialized object retrieved from firebase
-    constructor() : this("1",  1)
-
     constructor(parcel: Parcel) :this(
         parcel.readString().toString(),
         parcel.readInt(),

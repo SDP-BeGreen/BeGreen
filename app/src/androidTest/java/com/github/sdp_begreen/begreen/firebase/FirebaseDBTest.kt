@@ -253,4 +253,192 @@ class FirebaseDBTest {
         }
     }
 
+    @Test
+    fun followThrowsIllegalArgumentExceptionWhenGivenBlankUserIdAsFirstArg() {
+        assertThrows(IllegalArgumentException::class.java) {
+            runBlocking {
+                FirebaseDB.follow("", "Non existent ID")
+            }
+        }
+    }
+
+    @Test
+    fun followDoesNothingWhenGivenNonExistentUserId() {
+        runBlocking {
+            FirebaseDB.follow("Non existent ID", "Non existent ID")
+        }
+    }
+
+    @Test
+    fun followCorrectlyAddsFollowerIdToFollowedUserAndFollowedIdToFollowerUser() {
+        val user1 = User("user1 id", 5)
+        val user2 = User("user2 id", 3)
+
+        // Add both users to the DB
+        runBlocking {
+            FirebaseDB.addUser(user1, user1.id)
+            FirebaseDB.addUser(user2, user2.id)
+        }
+
+        // Check that both users have no followers and following users
+        assertThat(user1.followers, nullValue())
+        assertThat(user1.following, nullValue())
+        assertThat(user2.followers, nullValue())
+        assertThat(user1.following, nullValue())
+
+        runBlocking {
+            FirebaseDB.follow(user1.id, user2.id)
+
+            val user1_modified = FirebaseDB.getUser(user1.id)!!
+            val user2_modified = FirebaseDB.getUser(user2.id)!!
+
+            // Check that the ids got added in the correct fields
+            assertThat(user1_modified.followers, nullValue())
+            assertThat(user1_modified.following, containsInAnyOrder(user2.id))
+            assertThat(user2_modified.followers, containsInAnyOrder(user1.id))
+            assertThat(user2_modified.following, nullValue())
+        }
+    }
+
+    @Test
+    fun unfollowThrowsIllegalArgumentExceptionWhenGivenBlankUserIdAsFirstArg() {
+        assertThrows(IllegalArgumentException::class.java) {
+            runBlocking {
+                FirebaseDB.unfollow("", "Non existent ID")
+            }
+        }
+    }
+
+    @Test
+    fun unfollowDoesNothingWhenGivenNonExistentUserId() {
+        runBlocking {
+            FirebaseDB.unfollow("Non existent ID", "Non existent ID")
+        }
+    }
+
+    @Test
+    fun unfollowCorrectlyRemovesFollowerIdFromFollowedUserAndFollowedIdFromFollowerUser() {
+        // user1 and user3 follow each other, user2 follows user1 and user3
+        var user1 = User("id1", 5,
+            followers = listOf("id2", "id3"), following = listOf("id3"))
+        var user2 = User("id2", 3,
+            followers = null, following = listOf("id1", "id3"))
+        var user3 = User("id3", 0,
+            followers = listOf("id1", "id2"), following = listOf("id1"))
+
+        // Add all users to the DB
+        runBlocking {
+            FirebaseDB.addUser(user1, user1.id)
+            FirebaseDB.addUser(user2, user2.id)
+            FirebaseDB.addUser(user3, user3.id)
+
+            // user1 starts following user2
+            FirebaseDB.follow(user1.id, user2.id)
+
+            user1 = FirebaseDB.getUser(user1.id)!!
+            user2 = FirebaseDB.getUser(user2.id)!!
+
+            // Check that the ids got added in the correct fields
+            assertThat(user1.followers, containsInAnyOrder("id2", "id3"))
+            assertThat(user1.following, containsInAnyOrder("id2", "id3"))
+            assertThat(user2.followers, containsInAnyOrder("id1"))
+            assertThat(user2.following, containsInAnyOrder("id1", "id3"))
+
+            // user3 unfollows user1
+            FirebaseDB.unfollow(user3.id, user1.id)
+
+            user1 = FirebaseDB.getUser(user1.id)!!
+            user3 = FirebaseDB.getUser(user3.id)!!
+
+            // Check that the ids got removed in the correct fields
+            assertThat(user1.followers, containsInAnyOrder("id2"))
+            assertThat(user1.following, containsInAnyOrder("id2", "id3"))
+            assertThat(user3.followers, containsInAnyOrder("id1", "id2"))
+            // user3 does not follow anyone anymore
+            assertThat(user3.following, nullValue())
+        }
+    }
+
+    @Test
+    fun getFollowedIdsThrowsIllegalArgumentExceptionWhenGivenBlankUserId() {
+        assertThrows(IllegalArgumentException::class.java) {
+            runBlocking {
+                FirebaseDB.getFollowedIds("")
+            }
+        }
+    }
+
+    @Test
+    fun getFollowedIdsThrowsReturnsEmptyListForNonExistingUser() {
+        runBlocking{
+            assertThat(FirebaseDB.getFollowedIds("Non existing User"), empty())
+        }
+    }
+
+    @Test
+    fun getFollowedIdsReturnsExpectedListOfUserIds() {
+
+        val user = User("valid ID", 5,
+            followers = listOf("abcd", "efgh"), following = listOf("ijkl", "mnop", "qrst"))
+
+        runBlocking{
+            FirebaseDB.addUser(user, user.id)
+            assertThat(FirebaseDB.getFollowedIds(user.id),
+                containsInAnyOrder("ijkl", "mnop", "qrst"))
+        }
+    }
+
+    @Test
+    fun getFollowerIdsThrowsIllegalArgumentExceptionWhenGivenBlankUserId() {
+        assertThrows(IllegalArgumentException::class.java) {
+            runBlocking {
+                FirebaseDB.getFollowerIds("")
+            }
+        }
+    }
+
+    @Test
+    fun getFollowerIdsThrowsReturnsEmptyListForNonExistingUser() {
+        runBlocking{
+            assertThat(FirebaseDB.getFollowerIds("Non existing User"), empty())
+        }
+    }
+
+    @Test
+    fun getFollowerIdsReturnsExpectedListOfUserIds() {
+
+        val user = User("valid ID 2", 5,
+            followers = listOf("abcd", "efgh"), following = listOf("ijkl", "mnop", "qrst"))
+
+        runBlocking{
+            FirebaseDB.addUser(user, user.id)
+            assertThat(FirebaseDB.getFollowerIds(user.id),
+                containsInAnyOrder("abcd", "efgh"))
+        }
+    }
+
+    @Test
+    fun getFollowersReturnsExpectedListOfUsers() {
+
+        // user1 and user3 follow each other, user2 follows user1 and user3
+        val user1 = User("ID1", 5, "user1",
+            followers = listOf("ID2", "ID3"), following = listOf("ID3"))
+        val user2 = User("ID2", 3, "user2",
+            followers = null, following = listOf("ID1", "ID3"))
+        val user3 = User("ID3", 0, "user3",
+            followers = listOf("ID2", "ID1"), following = listOf("ID1"))
+
+
+        runBlocking{
+
+            FirebaseDB.addUser(user1, user1.id)
+            FirebaseDB.addUser(user2, user2.id)
+            FirebaseDB.addUser(user3, user3.id)
+
+            val user1Followers = FirebaseDB.getFollowers(user1.id)
+            assertThat(user1.followers!!.size, `is`(2))
+            assertThat(user1Followers, containsInAnyOrder(user2, user3))
+        }
+    }
+
 }
