@@ -27,6 +27,7 @@
         app:icon="@drawable/baseline_person_add_24"
         app:iconGravity="textStart"
         app:iconPadding="0dp"
-        app:shapeAppearanceOverlay="@style/Circular" />
+        app:shapeAppearanceOverlay="@style/Circular"
+        android:theme="@style/Theme.MaterialComponents.Light" />
 
 </RelativeLayout>

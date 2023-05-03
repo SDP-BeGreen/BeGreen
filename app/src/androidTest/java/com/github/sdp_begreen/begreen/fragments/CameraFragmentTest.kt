@@ -39,8 +39,9 @@ import org.junit.*
 import org.junit.runner.RunWith
 import org.koin.dsl.module
 import org.mockito.Mockito
-import org.mockito.Mockito.`when`
+import org.mockito.Mockito.*
 import java.util.*
+import kotlin.math.exp
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -60,14 +61,17 @@ class CameraFragmentTest {
 
     companion object {
 
-        private val db: DB = Mockito.mock(DB::class.java)
-        private val auth: Auth = Mockito.mock(Auth::class.java)
+        private val db: DB = mock(DB::class.java)
+        private val auth: Auth = mock(Auth::class.java)
 
         @BeforeClass
         @JvmStatic
         fun setUpMockito() {
             runTest {
                 `when`(db.getAllUsers()).thenReturn(listOf())
+                `when`(db.getFollowedIds("current user")).thenReturn(listOf())
+
+                `when`(auth.getConnectedUserId()).thenReturn("current user")
             }
         }
     }
@@ -220,39 +224,44 @@ class CameraFragmentTest {
             `when`(db.getAllUsers()).thenReturn(listOf())
             launchFragmentInContainer { fragment }
 
-            onView(withId(R.id.userSearch)).perform(typeText("blabla!"))            // Verify that the AutoCompleteTextView now contains the selected item
+            // Verify that the AutoCompleteTextView now contains the selected item
+            onView(withId(R.id.userSearch)).perform(typeText("blabla!"))
             onView(withId(R.id.userSearch)).check(matches(withText("blabla!")))
         }
     }
 
-    /* TODO: rewrite this test, since the search bar changed
+    /* Cant manage to make Mockito work with functions that take arguments, idk why
     @Test fun searchBarDisplaysExpectedUsers() {
         runBlocking {
 
-            val users = listOf<User>(
-                User("1", 123, "Alice"),
-                User("2", 0, "Bob Zeu bricoleur"),
-                User("3", 14, "Charlie Chaplin"),
-                User("4", 23, "David Pujadas"),
-                User("5", 10492, "Euler"),
-                User("6", 1234, "Alain Berset"),
-                User("7", 1235, "Mister Alix")
-            )
+            val user1 = User("1", 123, "Alice")
+            val user2 = User("2", 0, "Bob Zeu bricoleur")
+            val user3 = User("3", 14, "Charlie Chaplin")
+            val user4 = User("4", 23, "David Pujadas")
+            val user5 = User("5", 10492, "Euler")
+            val user6 = User("6", 1234, "Alain Berset")
+            val user7 = User("7", 1235, "Mister Alix")
+
+            val users = listOf(user1, user2, user3, user4, user5, user6, user7)
+
             `when`(db.getAllUsers()).thenReturn(users)
 
             launchFragmentInContainer { fragment }
 
-            val expectedResults = listOf("Alice", "Alain Berset", "Mister Alix")
-            for (name in expectedResults){
+            val expectedResults = listOf(user1, user6, user7)
+            for (user in expectedResults)
+                `when`(db.follow("current user", user.id)).then{}
+            for (user in expectedResults){
 
                 // Type in the search bar
                 onView(withId(R.id.userSearch))
                     .perform(clearText(), typeText("al"))
 
                 // Wait for the dropdown list to be displayed and select the first item
-                onView(withText(name)).inRoot(RootMatchers.isPlatformPopup()).perform(click())
+                onView(allOf(withText(user.displayName), withId(R.id.item_button))).inRoot(RootMatchers.isPlatformPopup()).perform(click())
                 // Verify that the AutoCompleteTextView now contains the selected item
-                onView(withId(R.id.userSearch)).check(matches(withText(name)))
+                //verify(db).follow("current user", user.id)
+
             }
         }
     }*/
