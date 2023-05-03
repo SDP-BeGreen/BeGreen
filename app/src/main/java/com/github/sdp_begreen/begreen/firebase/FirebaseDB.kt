@@ -186,12 +186,20 @@ object FirebaseDB: DB {
     }
 
     override suspend fun unfollow(followerId: String, followedId: String, timeout: Long) {
-        if (!userExists(followerId) || !userExists(followedId)) return
+        if (!userExists(followerId, timeout) || !userExists(followedId, timeout)) return
 
         // Add the "followed" user to the list of followed users of the follower
         databaseReference.child(USERS_PATH).child(followerId).child(FOLLOWING_PATH).child(followedId).removeValue().await()
         // Add the "follower" user to the list of following users of the user being followed
         databaseReference.child(USERS_PATH).child(followedId).child(FOLLOWERS_PATH).child(followerId).removeValue().await()
+    }
+
+    override suspend fun getFollowedIds(userId: String, timeout: Long): List<String> {
+        if (!userExists(userId)) return listOf()
+
+        return getNode("$USERS_PATH/$userId/$FOLLOWING_PATH", timeout).children.mapNotNull {
+            it.key as String
+        }
     }
 
     /**

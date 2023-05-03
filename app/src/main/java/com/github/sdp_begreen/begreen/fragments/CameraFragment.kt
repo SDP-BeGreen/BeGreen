@@ -92,11 +92,21 @@ class CameraFragment : Fragment() {
      */
     private suspend fun setUpSearchBar(view: View) {
 
-        val users = db.getAllUsers()
+        // Get all users and remove currently logged user
+        val users = db.getAllUsers().filter { it.id != auth.getConnectedUserId() }
 
-        // TODO: initialize "following" list with real values fetched from the database
+        val following = MutableList(users.size) { false }
+        auth.getConnectedUserId()?.let{
+            val followingIds = db.getFollowedIds(it)
+            // Set to true every user that the current user already follows
+            for (i in users.indices){
+                if (followingIds.contains(users[i].id))
+                    following[i] = true
+            }
+        }
+
         val adapter = FollowingArrayAdapter(requireContext(),
-            android.R.layout.select_dialog_item, users, db, auth, lifecycleScope)
+            android.R.layout.select_dialog_item, users, db, auth, lifecycleScope, following)
 
         //Getting the instance of AutoCompleteTextView
         val autoCompleteTV = view.findViewById<AutoCompleteTextView>(R.id.userSearch)

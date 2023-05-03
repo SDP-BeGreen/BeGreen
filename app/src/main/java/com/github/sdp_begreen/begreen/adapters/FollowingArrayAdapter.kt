@@ -20,11 +20,11 @@ import kotlinx.coroutines.launch
 // This adapter also lets User follow other users by clicking the follow button
 class FollowingArrayAdapter(context: Context,
                             @LayoutRes private val resource: Int,
-                            users: List<User>,
+                            private val users: List<User>,
                             private val db: DB,
                             private val auth: Auth,
                             private val lifeCycle: LifecycleCoroutineScope,
-                            following: List<Boolean> = List(users.size) { false })
+                            following: List<Boolean>)
     : ArrayAdapter<User>(context, resource, users) {
 
     // The boolean at index i is "true" <=> the current user follows user at index i in [users]
@@ -42,9 +42,10 @@ class FollowingArrayAdapter(context: Context,
 
         val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.user_search_bar, parent, false)
         val textView = view.findViewById<TextView>(R.id.item_text)
-        textView.text = getItem(position).toString()
+        val user = getItem(position)
+        textView.text = user.toString()
 
-        followButtonClickListener(view, position)
+        followButtonClickListener(view, users.indexOf(user))
 
         return view
     }
@@ -52,12 +53,18 @@ class FollowingArrayAdapter(context: Context,
 
 
     // Sets up the actions to make when the user clicks on the follow/unfollow button
+    // and initializes the icon of the button
     private fun followButtonClickListener(view: View, position: Int){
+
         val button = view.findViewById<MaterialButton>(R.id.item_button)
+        // Change the icon if the logged in user already follows this user
+        val icon = if (followingUsers[position]) R.drawable.baseline_person_add_disabled_24
+                   else R.drawable.baseline_person_add_24
+        button.icon = ContextCompat.getDrawable(context, icon)
 
         button.setOnClickListener {
             auth.getConnectedUserId()?.let {curUserId ->
-                getItem(position)?.let { user ->
+                users[position].let { user ->
                     switchButtonIconAndSendToDB(button, followingUsers[position], curUserId, user.id)
                     followingUsers[position] = !followingUsers[position]
                 }
