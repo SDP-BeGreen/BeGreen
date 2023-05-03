@@ -108,7 +108,7 @@ class SendPostFragmentTest {
     }
 
     @Test
-    fun DescriptionIsDisplayed() {
+    fun descriptionIsDisplayed() {
         // Check if the description input is displayed
         onView(withId(R.id.post_description)).check(
             matches(
