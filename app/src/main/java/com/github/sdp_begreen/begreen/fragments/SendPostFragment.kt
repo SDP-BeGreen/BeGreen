@@ -66,7 +66,7 @@ class SendPostFragment : Fragment() {
 
     private fun returnToCamera() {
         //return to camera fragment
-lifecycleScope.launch { 
+    lifecycleScope.launch {
             parentFragmentManager.commit { 
                 setReorderingAllowed(true)
                 replace(R.id.mainCameraFragmentContainer, CameraWithUIFragment.newInstance())
