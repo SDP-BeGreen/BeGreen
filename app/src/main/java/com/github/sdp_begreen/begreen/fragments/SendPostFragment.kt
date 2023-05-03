@@ -66,15 +66,12 @@ class SendPostFragment : Fragment() {
 
     private fun returnToCamera() {
         //return to camera fragment
-        var transaction = requireActivity().supportFragmentManager.beginTransaction()
-        //transaction.detach(this).remove(this)
-        runBlocking {
-            transaction.replace(R.id.mainCameraFragmentContainer, CameraWithUIFragment.newInstance())
+lifecycleScope.launch { 
+            parentFragmentManager.commit { 
+                setReorderingAllowed(true)
+                replace(R.id.mainCameraFragmentContainer, CameraWithUIFragment.newInstance())
+            }
         }
-        transaction.addToBackStack(null)
-        transaction.commit()
-        transaction = parentFragmentManager.beginTransaction()
-        transaction.remove(this@SendPostFragment).commit()
     }
 
     private fun setUpShare(){
