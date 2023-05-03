@@ -58,7 +58,7 @@
 
     <string name="category">Category</string>
     <string name="enter_description_here">Enter Description here</string>
-    <string name="profile_button">profile_button</string>
+    <string name="profile_button">profile button</string>
     <string name="serch_a_user_button">serch a user button</string>
     <string name="switch_camera_button">switch camera button</string>
     <string name="here_is_the_photo_that_was_taken">Here is the photo that was taken</string>
