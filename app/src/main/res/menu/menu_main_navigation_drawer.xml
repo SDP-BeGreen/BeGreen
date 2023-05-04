@@ -10,6 +10,10 @@
             android:id="@+id/mainNavDrawFollowers"
             android:title="@string/followers"/>
         <item
+            android:id="@+id/mainNavDrawMeetings"
+            android:title="@string/meetings"
+            />
+        <item
             android:id="@+id/mainNavDrawUserList"
             android:title="@string/users"/>
     </group>
