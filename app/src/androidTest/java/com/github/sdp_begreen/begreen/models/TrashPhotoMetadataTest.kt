@@ -73,7 +73,7 @@ class TrashPhotoMetadataTest {
         assertThat(trashPhotoMetadata, allOf(
             hasProp("pictureId", equalTo("key")),
             hasProp("takenOn", equalTo(date)),
-            hasProp("takenByUserId", equalTo(user.id)),
+            hasProp("takenBy", equalTo(user.id)),
             hasProp("caption", equalTo("title")),
             hasProp("trashCategory", equalTo(TrashCategory.PLASTIC))
             ))

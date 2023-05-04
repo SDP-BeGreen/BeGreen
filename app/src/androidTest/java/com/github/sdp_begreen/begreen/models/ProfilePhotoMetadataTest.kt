@@ -71,7 +71,7 @@ class ProfilePhotoMetadataTest {
             profilePhotoMetadata, CoreMatchers.allOf(
                 ContainsPropertyMatcher.hasProp("pictureId", CoreMatchers.equalTo("key")),
                 ContainsPropertyMatcher.hasProp("takenOn", CoreMatchers.equalTo(date)),
-                ContainsPropertyMatcher.hasProp("takenByUserId", CoreMatchers.equalTo(user.id))
+                ContainsPropertyMatcher.hasProp("takenBy", CoreMatchers.equalTo(user.id))
             )
         )
     }
