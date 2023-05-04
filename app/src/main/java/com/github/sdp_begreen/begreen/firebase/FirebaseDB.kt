@@ -221,7 +221,6 @@ object FirebaseDB: DB {
 
         photoMetadata.pictureId = pictureId
 
-
         val compressedImage = ByteArrayOutputStream()
         image.compress(Bitmap.CompressFormat.JPEG, 100, compressedImage)
 

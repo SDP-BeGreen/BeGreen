@@ -28,6 +28,7 @@ import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.isNotNull
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -124,10 +125,17 @@ class MeetingPhotoServiceTest {
             )
 
 
-            // TODO : ca n'a pas de sens
-            metadata = metadata.copy(pictureId = metadataWithId.pictureId)
+            // If we compare the metadata == metadataWithId, we will have "false" since the comparison is made
+            // with the pictureID which is null for metadata.
+            // So we manually compare all fields, excluding the pictureId
 
-            assertThat(metadataWithId, `is`(equalTo(metadata)))
+            assertThat(metadataWithId.caption, `is`(equalTo(metadata.caption)))
+            assertThat(metadataWithId.trashCategory, `is`(equalTo(metadata.trashCategory)))
+            assertThat(metadataWithId.takenByUserId, `is`(equalTo(metadata.takenByUserId)))
+            assertThat(metadataWithId.takenOn, `is`(equalTo(metadata.takenOn)))
+
+            // And finally we check that metadataWithId has indeed a non-null id
+            assertThat(metadataWithId.pictureId, isNotNull())
         }
     }
 

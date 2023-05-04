@@ -5,7 +5,7 @@ import android.os.Parcelable
 
 
 abstract class PhotoMetadata(
-    open val pictureId: String? = null,
+    open var pictureId: String? = null,
     open val takenOn: ParcelableDate? = null,
     open val takenByUserId: String? = null
 ) : Parcelable {

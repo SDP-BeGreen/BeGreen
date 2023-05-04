@@ -31,6 +31,6 @@ class BinTest {
     @Test
     fun locationReturnsTheRightLocation() {
         val bin = Bin("id1", TrashCategory.ORGANIC, CustomLatLng(4.32, 3.25))
-        assertEquals(bin.location, LatLng(4.32, 3.25))
+        assertEquals(bin.location, CustomLatLng(4.32, 3.25))
     }
 }
