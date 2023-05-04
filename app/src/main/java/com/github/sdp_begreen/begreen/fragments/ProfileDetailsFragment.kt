@@ -34,6 +34,7 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.Actions
 import com.github.sdp_begreen.begreen.models.ParcelableDate
+import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
@@ -42,6 +43,7 @@ import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.github.sdp_begreen.begreen.viewModels.ProfileEditedValuesViewModel
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import java.util.Date
 
 
 /**
@@ -370,9 +372,9 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
             }
 
             lifecycleScope.launch {
-                val metadata : ProfilePhotoMetadata? = profileEditedValuesViewModel.profilePicture?.let {
+                val metadata = profileEditedValuesViewModel.profilePicture?.let {
                     db.storeUserProfilePicture(it, id,
-                        ProfilePhotoMetadata(null, ParcelableDate.now, id)
+                        ProfilePhotoMetadata(takenByUserId = id, takenOn = ParcelableDate(Date()))
                     )
                 }
                 // new user with
@@ -459,7 +461,7 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         button.setOnClickListener {
             if (ContextCompat.checkSelfPermission(
                     requireContext(), Manifest.permission.CAMERA
-            ) == PackageManager.PERMISSION_GRANTED) {
+                ) == PackageManager.PERMISSION_GRANTED) {
                 takePicture.launch()
             } else {
                 requestPermissionLauncher.launch(Manifest.permission.CAMERA)
@@ -518,7 +520,7 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
          * @return A new instance of fragment ProfileDetailsFragment.
          */
         @JvmStatic
-        fun newInstance(user: User, photos: List<TrashPhotoMetadata>) =
+        fun newInstance(user: User, photos: List<PhotoMetadata>) =
             ProfileDetailsFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_USER, user)

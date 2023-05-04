@@ -13,6 +13,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.recyclerview.widget.RecyclerView
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.databinding.FragmentUserPhotoBinding
+import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import java.net.URL
 
@@ -21,7 +22,7 @@ import java.net.URL
  * [RecyclerView.Adapter] that can display a [Photo].
  */
 class UserPhotosViewAdapter(
-    val photos: List<TrashPhotoMetadata>?,
+    val photos: List<PhotoMetadata>?,
     private val isFeed: Boolean
 ) : RecyclerView.Adapter<UserPhotosViewAdapter.ViewHolder>() {
 
@@ -42,29 +43,43 @@ class UserPhotosViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
         val photo = photos?.get(position)
+
         if(isFeed) {
-            //Display avatar if on feed
+
+            // Display avatar if on feed
             val drawable = ContextCompat.getDrawable(holder.avatarView.context, R.drawable.ic_baseline_person)
             val defaultAvatar = drawable?.toBitmap()
-            //holder.avatarView.setImageBitmap(getFromDB(photo) ?: defaultAvatar)
+            // holder.avatarView.setImageBitmap(getFromDB(photo) ?: defaultAvatar)
             holder.avatarView.setImageBitmap( defaultAvatar)
+
         }else{
-            //Donot display avatar if not on feed
+            // Do not display avatar if not on feed
             holder.avatarView.visibility = View.GONE
         }
-        //Set default value
-        holder.titleView.text = photo?.caption ?: "No title"
-        holder.subtitleView.text = (photo?.takenOn?.toString() ?: "Unknown date") + " | " + (photo?.trashCategory?.title
-            ?: "No category")
-        //holder.photoView.setImageBitmap(photo.getPhotoFromDataBase())
-        //TODO------------FOR DEMO -----------------
-        val url = URL("https://picsum.photos/400")
-        holder.photoView.setImageBitmap(BitmapFactory.decodeStream(url.openConnection().getInputStream()))
-        //------------FOR DEMO -----------------
 
-        // TODO : to change
-        holder.descriptionView.text = photo?.caption
+        if (photo is TrashPhotoMetadata) {
+            // use the photo variable as a TrashPhotoMetadata instance
+
+            //Set default value
+            holder.titleView.text = photo?.caption ?: "No title"
+            holder.subtitleView.text = (photo?.takenOn?.toString()
+                ?: "Unknown date") + " | " + (photo?.trashCategory?.title
+                ?: "No category")
+            //holder.photoView.setImageBitmap(photo.getPhotoFromDataBase())
+            //TODO------------FOR DEMO -----------------
+            val url = URL("https://picsum.photos/400")
+            holder.photoView.setImageBitmap(
+                BitmapFactory.decodeStream(
+                    url.openConnection().getInputStream()
+                )
+            )
+            //------------FOR DEMO -----------------
+
+            // TODO : to change
+            holder.descriptionView.text = photo?.caption
+        }
     }
 
     override fun getItemCount(): Int = photos?.size ?: 0

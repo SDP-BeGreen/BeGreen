@@ -115,12 +115,7 @@ object FirebaseDB: DB {
 
     override suspend fun addImage(image : Bitmap, photoMetadata: TrashPhotoMetadata): TrashPhotoMetadata? {
 
-        var newPhotoMetadata = TrashPhotoMetadata(
-            null,
-            photoMetadata.takenOn,
-            photoMetadata.takenByUserId,
-            photoMetadata.caption,
-            photoMetadata.trashCategory)
+        var newPhotoMetadata = photoMetadata.copy(pictureId = null)
 
         return storePicture(image, USER_POSTS, newPhotoMetadata,
             databaseReference.child(USERS_PATH).child(newPhotoMetadata.takenByUserId!!).child(USER_POSTS),
