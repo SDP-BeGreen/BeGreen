@@ -126,22 +126,7 @@ class CameraWithUIFragment : Fragment() {
             it?.visibility = View.INVISIBLE
         }
 
-        searchBtn?.setOnClickListener {
-            val searchBar = view?.findViewById<AutoCompleteTextView>(R.id.userSearch)
-            searchBar.also { search ->
-                val imm = getSystemService(requireContext(), InputMethodManager::class.java)
-                if(search?.visibility == View.VISIBLE) {
-                    search.visibility = View.GONE
-                    view?.clearFocus()
-                    imm?.hideSoftInputFromWindow(search.windowToken, InputMethodManager.SHOW_IMPLICIT)
-                } else {
-                    search?.visibility = View.VISIBLE
-                    hideKeyboard()
-                    search?.requestFocus()
-                    imm?.showSoftInput(search, InputMethodManager.SHOW_IMPLICIT)
-                }
-            }
-        }
+        searchBtn?.let { setUpSearchBtnOnClickListener(it) }
     }
 
     /**
@@ -150,6 +135,32 @@ class CameraWithUIFragment : Fragment() {
     private fun hideKeyboard() {
         val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(requireView().windowToken, 0)
+    }
+
+    /**
+     * Helper function to set up search button on click actions
+     */
+    private fun setUpSearchBtnOnClickListener(btn: ImageView){
+
+        btn.setOnClickListener {
+            val searchBar = view?.findViewById<AutoCompleteTextView>(R.id.userSearch)
+            searchBar.also { search ->
+                val imm = getSystemService(requireContext(), InputMethodManager::class.java)
+                if (search?.visibility == View.VISIBLE) {
+                    search.visibility = View.GONE
+                    view?.clearFocus()
+                    imm?.hideSoftInputFromWindow(
+                        search.windowToken,
+                        InputMethodManager.SHOW_IMPLICIT
+                    )
+                } else {
+                    search?.visibility = View.VISIBLE
+                    hideKeyboard()
+                    search?.requestFocus()
+                    imm?.showSoftInput(search, InputMethodManager.SHOW_IMPLICIT)
+                }
+            }
+        }
     }
 
     /**
