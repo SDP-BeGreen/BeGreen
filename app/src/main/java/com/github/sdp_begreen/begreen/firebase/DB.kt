@@ -162,5 +162,56 @@ interface DB {
      */
     suspend fun getAdvices(timeout: Long = TIMEOUT): Set<String>
 
+    /**
+     * Store in the database that the given User follows the other given User
+     *
+     * @param followerId the userId of the User that starts following the other User
+     * @param followedId the userId of the User that starts being followed by the other User
+     * @param timeout the maximum time we wait for the database to respond
+     * @throws DatabaseTimeoutException if the database could not be reached
+     * @throws DatabaseException if an exception occurred while retrieving the data
+     */
+    suspend fun follow(followerId: String, followedId: String, timeout: Long = TIMEOUT)
+
+    /**
+     * Store in the database that the given User stops following the other given User
+     *
+     * @param followerId the userId of the User that stops following the other User
+     * @param followedId the userId of the User that stops being followed by the other User
+     * @param timeout the maximum time we wait for the database to respond
+     * @throws DatabaseTimeoutException if the database could not be reached
+     * @throws DatabaseException if an exception occurred while retrieving the data
+     */
+    suspend fun unfollow(followerId: String, followedId: String, timeout: Long = TIMEOUT)
+
+    /**
+     * Returns the list of UserIds that the given [userId] follows
+     *
+     * @param userId the userId of the User we want to retrieve the followed users
+     * @param timeout the maximum time we wait for the database to respond
+     * @throws DatabaseTimeoutException if the database could not be reached
+     * @throws DatabaseException if an exception occurred while retrieving the data
+     */
+    suspend fun getFollowedIds(userId: String, timeout: Long = TIMEOUT): List<String>
+
+    /**
+     * Returns the list of UserIds that follow the given [userId]
+     *
+     * @param userId the userId for which we want to get the list of userIds that follow this User
+     * @param timeout the maximum time we wait for the database to respond
+     * @throws DatabaseTimeoutException if the database could not be reached
+     * @throws DatabaseException if an exception occurred while retrieving the data
+     */
+    suspend fun getFollowerIds(userId: String, timeout: Long = TIMEOUT): List<String>
+
+    /**
+     * Returns the list of Users that follow the User with the given [userId]
+     *
+     * @param userId the userId for which we want to get the list of Users that follow this User
+     * @param timeout the maximum time we wait for the database to respond
+     * @throws DatabaseTimeoutException if the database could not be reached
+     * @throws DatabaseException if an exception occurred while retrieving the data
+     */
+    suspend fun getFollowers(userId: String, timeout: Long = TIMEOUT): List<User>
 
 }
