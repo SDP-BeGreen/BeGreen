@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/bottom_sheet_contact_us"
     android:background="@drawable/bottomsheet_bg"
     android:padding="18dp"
     android:orientation="vertical">
@@ -34,7 +35,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/enter_your_message_here"
-        android:autofillHints="Enter your message" />
+        android:autofillHints="Enter your message"
+        android:inputType="text"/>
 
     <LinearLayout
         android:layout_width="match_parent"
