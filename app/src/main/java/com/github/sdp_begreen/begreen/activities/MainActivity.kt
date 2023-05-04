@@ -5,9 +5,7 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -35,13 +33,17 @@ import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Date
 import kotlin.collections.ArrayList
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -49,6 +51,8 @@ class MainActivity : AppCompatActivity() {
     private val auth by inject<Auth>()
     //TODO remove after demo
     private val db by inject<DB>()
+
+    val firebaseDatabase = FirebaseDatabase.getInstance().reference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -244,6 +248,10 @@ class MainActivity : AppCompatActivity() {
             R.id.mainNavDrawSettings -> {
                 replaceFragInMainContainer(SettingsFragment())
             }
+            R.id.mainNavDrawContact -> {
+
+                showContactUsBottomSheet()
+            }
             // handle the "Logout" button in the navigation drawer of the app responsible for
             // logging out a user who has signed in with Google Sign-In
             R.id.mainNavDrawLogout -> {
@@ -261,5 +269,46 @@ class MainActivity : AppCompatActivity() {
                     }
             }
         }
+    }
+
+    private fun showContactUsBottomSheet() {
+
+        val bottomSheetDialog = BottomSheetDialog(this, R.style.SheetDialog)
+        bottomSheetDialog.setContentView(R.layout.bottom_sheet_contact_us)
+        val btnExit = bottomSheetDialog.findViewById<Button>(R.id.cancel_button)
+        val btnSend = bottomSheetDialog.findViewById<Button>(R.id.send_button)
+
+        val tvDate = bottomSheetDialog.findViewById<TextView>(R.id.date_textview)
+        val etMessage = bottomSheetDialog.findViewById<EditText>(R.id.message_edittext)
+
+        val date = Date() // Get the current date and time
+        val dateFormat = SimpleDateFormat("dd MMM yyyy HH:mm:ss", Locale.getDefault())
+        val formattedDate = dateFormat.format(date)
+
+        tvDate?.text = formattedDate
+
+        btnExit!!.setOnClickListener {
+            bottomSheetDialog.dismiss()
+        }
+
+        btnSend!!.setOnClickListener {
+            val msg = etMessage?.text.toString()
+            if (msg.isEmpty()) {
+                etMessage?.error = "Enter a message"
+            }
+            else {
+                firebaseDatabase.child("contact_us").child(com.google.firebase.auth.FirebaseAuth.getInstance().uid!!)
+                    .child(formattedDate).setValue(msg).addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            Toast.makeText(this, R.string.message_sent_success, Toast.LENGTH_SHORT).show()
+                            bottomSheetDialog.dismiss()
+                        }
+                        else {
+                            Toast.makeText(this, R.string.message_sent_error, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+            }
+        }
+        bottomSheetDialog.show()
     }
 }

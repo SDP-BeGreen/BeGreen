@@ -55,7 +55,15 @@
     <string name="add_new_bin">Add new bin</string>
     <string name="remove_bin">Remove bin</string>
     <string name="quotes_of_the_day">Quotes of the day</string>
+    <string name="contact_us">Contact us</string>
+    <string name="SendInquiry">Send us your inquiry</string>
+    <string name="date_today_s_date">Date: Today\'s date</string>
+    <string name="enter_your_message_here">Enter your message here</string>
+    <string name="cancel">Cancel</string>
+    <string name="send">Send</string>
     <string name="change_bin_type">Change bin type</string>
+    <string name="message_sent_success">Message sent successfully</string>
+    <string name="message_sent_error">Something went wrong</string>
     <string name="meetings">Meetings</string>
     <string name="meeting_list_join_button_join">Join</string>
     <string name="meeting_list_join_button_withdraw">Withdraw</string>
