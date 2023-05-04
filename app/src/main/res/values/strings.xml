@@ -62,4 +62,6 @@
     <string name="cancel">Cancel</string>
     <string name="send">Send</string>
     <string name="change_bin_type">Change bin type</string>
+    <string name="message_sent_success">Message sent successfully</string>
+    <string name="message_sent_error">Something went wrong</string>
 </resources>

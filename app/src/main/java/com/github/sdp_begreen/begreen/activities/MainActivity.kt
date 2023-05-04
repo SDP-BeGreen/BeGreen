@@ -292,11 +292,11 @@ class MainActivity : AppCompatActivity() {
                 firebaseDatabase.child("contact_us").child(com.google.firebase.auth.FirebaseAuth.getInstance().uid!!)
                     .child(formattedDate).setValue(msg).addOnCompleteListener {
                         if (it.isSuccessful) {
-                            Toast.makeText(this, "Message sent successfully", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, R.string.message_sent_success, Toast.LENGTH_SHORT).show()
                             bottomSheetDialog.dismiss()
                         }
                         else {
-                            Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, R.string.message_sent_error, Toast.LENGTH_SHORT).show()
                         }
                     }
             }
