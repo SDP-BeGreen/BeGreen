@@ -41,6 +41,7 @@ import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 import java.util.*
 import java.util.Date
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
@@ -225,7 +226,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             R.id.mainNavDrawFollowers -> {
-                replaceFragInMainContainer(FollowersFragment())
+                val followers = auth.getConnectedUserId()?.let {
+                    runBlocking { db.getFollowers(it) }
+                } ?: listOf()
+                replaceFragInMainContainer(FollowersFragment.newInstance(1, ArrayList(followers)))
             }
             //------------------------FOR DEMO PURPOSES ONLY------------------------
             //TODO Remove this when demo will be over

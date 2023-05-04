@@ -30,6 +30,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.dsl.module
 import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 
 
 @RunWith(AndroidJUnit4::class)
@@ -39,7 +40,8 @@ class CameraContainerTest {
 
     //Companion object to mock the DB and Auth
     companion object {
-        val user = User("test", 2, "test", 5, null, "test", "test", "test", 15)
+        val user = User("test", 2, "test", 5, null, "test",
+            "test", "test", 15, listOf("1", "3", "6"), listOf("2", "4"))
         private val db: DB = Mockito.mock(DB::class.java)
         private val auth: Auth = Mockito.mock(Auth::class.java)
         val users = listOf<User>(
@@ -58,16 +60,19 @@ class CameraContainerTest {
         fun setUp() {
             runTest {
                 // setup basic get user and getProfilePicture use in multiple tests
-                Mockito.`when`(db.getUser(user.id))
+                `when`(db.getUser(user.id))
                     .thenReturn(user)
                 // add a small delay, just to be sure that it is triggered after initialization
                 // and arrive second, after the initial null value
                 // user between tests, by simply pushing a new userId
-                Mockito.`when`(auth.getFlowUserIds())
+                `when`(auth.getFlowUserIds())
                     .thenReturn(MutableStateFlow(user.id))
-                Mockito.`when`(auth.getConnectedUserId())
+                `when`(auth.getConnectedUserId())
                     .thenReturn(user.id)
-                Mockito.`when`(db.getAllUsers()).thenReturn(users)
+                `when`(db.getAllUsers())
+                    .thenReturn(users)
+                `when`(db.getFollowedIds(user.id))
+                    .thenReturn(user.following)
             }
         }
     }
