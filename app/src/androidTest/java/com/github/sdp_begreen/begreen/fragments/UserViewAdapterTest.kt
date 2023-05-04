@@ -3,22 +3,24 @@ package com.github.sdp_begreen.begreen.fragments
 import android.widget.LinearLayout
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.testing.TestLifecycleOwner
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
-import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
-import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.activities.MainActivity
+import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Rule
 import org.junit.Test
-import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.rules.KoinTestRule
-import androidx.lifecycle.testing.TestLifecycleOwner
 
 class UserViewAdapterTest {
     @get:Rule
@@ -53,19 +55,19 @@ class UserViewAdapterTest {
     )
     @Test
     fun userViewAdapterGetItemCountWorksOnTrivialList() {
-        assertThat(userViewAdapter.getItemCount(), equalTo(2))
+        assertThat(userViewAdapter.itemCount, equalTo(2))
     }
 
     @Test
     fun userViewAdapterGetItemCountWorksOnEmptyList() {
         userViewAdapter = UserViewAdapter(listOf(), userViewAdapter.parentFragmentManager, TestLifecycleOwner().lifecycleScope, InstrumentationRegistry.getInstrumentation().targetContext.resources)
-        assertThat(userViewAdapter.getItemCount(), equalTo(0))
+        assertThat(userViewAdapter.itemCount, equalTo(0))
     }
 
     @Test
     fun userViewAdapterGetItemCountWorksOnNullList() {
         userViewAdapter = UserViewAdapter(null, userViewAdapter.parentFragmentManager, TestLifecycleOwner().lifecycleScope, InstrumentationRegistry.getInstrumentation().targetContext.resources)
-        assertThat(userViewAdapter.getItemCount(), equalTo(0))
+        assertThat(userViewAdapter.itemCount, equalTo(0))
     }
 
     @Test
