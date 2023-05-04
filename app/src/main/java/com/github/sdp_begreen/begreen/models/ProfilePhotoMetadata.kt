@@ -6,9 +6,9 @@ import android.os.Parcelable
 data class ProfilePhotoMetadata(
     override var pictureId: String? = null,
     override val takenOn: ParcelableDate? = null,
-    override val takenByUserId: String? = null,
+    override val takenBy: String? = null,
 
-    ) : PhotoMetadata(pictureId, takenOn, takenByUserId) {
+    ) : PhotoMetadata(pictureId, takenOn, takenBy) {
 
     constructor(parcel: Parcel) : this(
         parcel.readString(),

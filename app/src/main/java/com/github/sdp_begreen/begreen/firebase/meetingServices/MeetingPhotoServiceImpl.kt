@@ -7,7 +7,6 @@ import com.github.sdp_begreen.begreen.exceptions.MeetingServiceException
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.getBytesFromStorage
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.putBytesToStorage
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.utils.checkArgument
 import kotlinx.coroutines.flow.Flow
@@ -30,7 +29,7 @@ object MeetingPhotoServiceImpl : MeetingPhotoService {
     ): TrashPhotoMetadata {
         checkArgument(meetingId.isNotBlank(), "The meeting id cannot be blank")
         checkArgument(
-            !photoMetadata.takenByUserId.isNullOrBlank(),
+            !photoMetadata.takenBy.isNullOrBlank(),
             "The user that took the photo cannot be blank or null"
         )
         val photoRef = dbRef.child(MEETING_PATH).child(meetingId).child(PHOTOS_PATH)

@@ -118,8 +118,8 @@ object FirebaseDB: DB {
         var newPhotoMetadata = photoMetadata.copy(pictureId = null)
 
         return storePicture(image, USER_POSTS, newPhotoMetadata,
-            databaseReference.child(USERS_PATH).child(newPhotoMetadata.takenByUserId!!).child(USER_POSTS),
-            storageReference.child(USERS_PATH).child(newPhotoMetadata.takenByUserId!!).child(USER_POSTS)) as TrashPhotoMetadata
+            databaseReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_POSTS),
+            storageReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_POSTS)) as TrashPhotoMetadata
     }
 
     override suspend fun userExists(userId: String, timeout: Long): Boolean {
@@ -136,7 +136,7 @@ object FirebaseDB: DB {
         // The path will change when we will actually stores the real pictures
         return metadata.pictureId?.let {
             getPicture(storageReference.child("userId").child(
-                metadata.takenByUserId!!).child(it), timeout)
+                metadata.takenBy!!).child(it), timeout)
         }
     }
 

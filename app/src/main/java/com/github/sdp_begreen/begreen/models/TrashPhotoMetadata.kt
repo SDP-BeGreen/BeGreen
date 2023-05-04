@@ -6,11 +6,11 @@ import android.os.Parcelable
 data class TrashPhotoMetadata(
     override var pictureId: String? = null,
     override val takenOn: ParcelableDate? = null,
-    override val takenByUserId: String? = null,
+    override val takenBy: String? = null,
     val caption: String? = null,
     val trashCategory: TrashCategory? = null
 
-) : PhotoMetadata(pictureId, takenOn, takenByUserId) {
+) : PhotoMetadata(pictureId, takenOn, takenBy) {
 
     constructor(parcel: Parcel) : this(
         parcel.readString(),
@@ -23,7 +23,7 @@ data class TrashPhotoMetadata(
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(pictureId)
         parcel.writeParcelable(takenOn, flags)
-        parcel.writeString(takenByUserId)
+        parcel.writeString(takenBy)
         parcel.writeString(caption)
         parcel.writeParcelable(trashCategory, flags)
     }
