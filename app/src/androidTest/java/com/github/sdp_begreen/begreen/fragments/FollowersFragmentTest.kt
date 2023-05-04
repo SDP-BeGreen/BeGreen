@@ -12,9 +12,8 @@ import com.github.sdp_begreen.begreen.fragments.FollowersFragment.Companion.ARG_
 import com.github.sdp_begreen.begreen.fragments.FollowersFragment.Companion.ARG_USER_LIST
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
-import junit.framework.TestCase
 import org.hamcrest.CoreMatchers
-import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
@@ -59,8 +58,8 @@ class FollowersFragmentTest {
         // Wait for the fragment to be created
         scenario.onFragment { fragment ->
             val recyclerView = fragment.view
-            TestCase.assertNotNull(recyclerView)
-            TestCase.assertTrue(recyclerView is RecyclerView)
+            assertThat(recyclerView, notNullValue())
+            assertThat(recyclerView, instanceOf(RecyclerView::class.java))
         }
         scenario.close()
     }

@@ -43,9 +43,10 @@ class FollowingArrayAdapter(context: Context,
         val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.user_search_bar, parent, false)
         val textView = view.findViewById<TextView>(R.id.item_text)
         val user = getItem(position)
-        textView.text = user.toString()
-
-        followButtonClickListener(view, users.indexOf(user))
+        user?.let {
+            textView.text = it.toString()
+            followButtonClickListener(view, users.indexOf(it))
+        }
 
         return view
     }

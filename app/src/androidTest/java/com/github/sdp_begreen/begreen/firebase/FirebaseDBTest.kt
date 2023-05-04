@@ -25,6 +25,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.runner.RunWith
+import kotlin.test.junit.JUnitAsserter.fail
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
@@ -263,9 +264,13 @@ class FirebaseDBTest {
     }
 
     @Test
-    fun followDoesNothingWhenGivenNonExistentUserId() {
+    fun followDoesNotThrowExceptionWhenGivenNonExistentUserId() {
         runBlocking {
-            FirebaseDB.follow("Non existent ID", "Non existent ID")
+            try{
+                FirebaseDB.follow("Non existent ID", "Non existent ID")
+            } catch (_: Exception){
+                fail("follow should not throw an exception with non blank user IDs")
+            }
         }
     }
 
@@ -284,7 +289,7 @@ class FirebaseDBTest {
         assertThat(user1.followers, nullValue())
         assertThat(user1.following, nullValue())
         assertThat(user2.followers, nullValue())
-        assertThat(user1.following, nullValue())
+        assertThat(user2.following, nullValue())
 
         runBlocking {
             FirebaseDB.follow(user1.id, user2.id)
@@ -310,9 +315,13 @@ class FirebaseDBTest {
     }
 
     @Test
-    fun unfollowDoesNothingWhenGivenNonExistentUserId() {
+    fun unfollowDoesNotThrowExceptionWhenGivenNonExistentUserId() {
         runBlocking {
-            FirebaseDB.unfollow("Non existent ID", "Non existent ID")
+            try{
+                FirebaseDB.unfollow("Non existent ID", "Non existent ID")
+            } catch (_: Exception){
+                fail("unfollow should not throw an exception with non blank user IDs")
+            }
         }
     }
 

@@ -6,7 +6,7 @@ import com.github.sdp_begreen.begreen.models.User
 /**
  * This class adapts the class User such that it can be effectively stored to Firebase
  */
-data class FirebaseUser (var id: String, var score: Int, val displayName: String? = null, var rating: Int = 0,
+data class FirebaseUser (val id: String, var score: Int, val displayName: String? = null, var rating: Int = 0,
                          var img: PhotoMetadata? = null, var description: String? = null, var phone: String? = null,
                          var email: String? = null, var progression: Int = 0, var followers: Map<String, Boolean>? = null,
                          var following: Map<String, Boolean>? = null, var profilePictureMetadata: PhotoMetadata? = null){
