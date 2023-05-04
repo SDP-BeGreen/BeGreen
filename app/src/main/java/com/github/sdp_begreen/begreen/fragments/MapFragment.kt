@@ -250,7 +250,7 @@ class MapFragment : Fragment() {
 
             userLocation?.apply {
                 // Add a bin of type "binType" at the user current location
-                Bin(trashCategory, CustomLatLng(latitude, longitude))
+                Bin(trashCategory, LatLng(latitude, longitude))
                     .let {bin ->
                         lifecycleScope.launch {
                             // Add the new bin to the database
@@ -273,7 +273,7 @@ class MapFragment : Fragment() {
     private fun addMarker(bin: Bin){
         map.addMarker(
             MarkerOptions()
-                .position(bin.location.toMapLatLng())
+                .position(bin.location)
                 .title(bin.type.toString())
                 .icon(BitmapDescriptorFactory.defaultMarker(bin.type.color))
         )?.apply {

@@ -172,7 +172,7 @@ class FirebaseDBTest {
     fun addBinThrowsIllegalArgumentExceptionWhenBinIdIsNotNull() {
         assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
-                val bin = Bin("Not null ID", TrashCategory.ELECTRONIC, CustomLatLng(4.3, 2.1))
+                val bin = Bin("Not null ID", TrashCategory.ELECTRONIC, LatLng(4.3, 2.1))
                 assertTrue(FirebaseDB.addBin(bin))
             }
         }
@@ -180,7 +180,7 @@ class FirebaseDBTest {
     @Test
     fun addBinReturnsTrueWhenStoreSucceeds() {
         runBlocking {
-            val bin = Bin(TrashCategory.ELECTRONIC, CustomLatLng(4.3, 2.1))
+            val bin = Bin(TrashCategory.ELECTRONIC, LatLng(4.3, 2.1))
             assertTrue(FirebaseDB.addBin(bin))
         }
     }
@@ -188,7 +188,7 @@ class FirebaseDBTest {
     @Test
     fun addBinUpdatesBinIdWhenStoreSucceeds() {
         runBlocking {
-            val bin = Bin(TrashCategory.ELECTRONIC, CustomLatLng(4.3, 2.1))
+            val bin = Bin(TrashCategory.ELECTRONIC, LatLng(4.3, 2.1))
             assertTrue(FirebaseDB.addBin(bin))
             assertNotNull(bin.id)
         }
@@ -197,7 +197,7 @@ class FirebaseDBTest {
     @Test
     fun addBinCorrectlyUpdatesDatabase() {
 
-        val bin = Bin(TrashCategory.PAPER, CustomLatLng(10.2, -4.2))
+        val bin = Bin(TrashCategory.PAPER, LatLng(10.2, -4.2))
 
         runBlocking {
 
@@ -212,7 +212,7 @@ class FirebaseDBTest {
     @Test
     fun removeBinCorrectlyUpdatesDatabase() {
 
-        val bin = Bin(TrashCategory.ORGANIC, CustomLatLng(0.1, 89.9))
+        val bin = Bin(TrashCategory.ORGANIC, LatLng(0.1, 89.9))
 
         runBlocking {
 
@@ -240,8 +240,8 @@ class FirebaseDBTest {
 
             // Checks that the location got correctly added
             assertThat(binLocations, hasItems(
-                Bin("123", TrashCategory.PAPER, CustomLatLng(69.6969,420.42)),
-                Bin("456", TrashCategory.METAL, CustomLatLng(123.456,654.321))
+                Bin("123", TrashCategory.PAPER, LatLng(69.6969,420.42)),
+                Bin("456", TrashCategory.METAL, LatLng(123.456,654.321))
             ))
         }
     }
