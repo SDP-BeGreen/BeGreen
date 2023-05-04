@@ -29,6 +29,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.isNotNull
+import kotlin.test.assertNotNull
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -135,7 +136,7 @@ class MeetingPhotoServiceTest {
             assertThat(metadataWithId.takenOn, `is`(equalTo(metadata.takenOn)))
 
             // And finally we check that metadataWithId has indeed a non-null id
-            assertThat(metadataWithId.pictureId, isNotNull())
+            assertNotNull(metadataWithId.pictureId)
         }
     }
 
