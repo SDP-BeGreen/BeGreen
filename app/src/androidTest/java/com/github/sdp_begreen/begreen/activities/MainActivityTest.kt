@@ -267,10 +267,9 @@ class MainActivityTest {
             onView(withId(R.id.message_edittext)).check(matches(withText("Test message")))
 
             // Scroll to the Send button
-            onView(withId(R.id.send_button)).perform(scrollTo())
-
-            // Click the Send button
-            onView(withId(R.id.send_button)).perform(click())
+            onView(withId(R.id.send_button))
+                .check(matches(isDisplayed()))
+                .perform(click())
 
         }
     }
@@ -296,10 +295,9 @@ class MainActivityTest {
             onView(withId(R.id.message_edittext)).check(matches(withText("Test message")))
 
             // Scroll to the Send button
-            onView(withId(R.id.send_button)).perform(scrollTo())
-
-            // Click the Send button
-            onView(withId(R.id.send_button)).perform(click())
+            onView(withId(R.id.send_button))
+                .check(matches(isDisplayed()))
+                .perform(click())
 
             // Check that the Bottom Sheet Dialog was dismissed
             onView(withId(R.id.bottom_sheet_contact_us)).check(doesNotExist())
