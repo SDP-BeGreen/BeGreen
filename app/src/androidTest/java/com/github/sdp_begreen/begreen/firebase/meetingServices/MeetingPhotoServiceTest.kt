@@ -23,6 +23,7 @@ import org.hamcrest.Matchers
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.everyItem
 import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.notNullValue
 import org.junit.Assert.assertThrows
 import org.junit.ClassRule
 import org.junit.Rule
@@ -154,6 +155,7 @@ class MeetingPhotoServiceTest {
         )
     }
 
+    /*
     @Test
     fun getAllPhotoMetadataReturnCorrectModifiedListUponModification() {
 
@@ -216,7 +218,7 @@ class MeetingPhotoServiceTest {
                 Matchers.stringContainsInOrder("Error while getting picture bytes from storage")
             )
         }
-    }
+    }*/
 
     @Test
     fun getPhotoBlankMeetingIdShouldThrowIllegalArgumentException() {

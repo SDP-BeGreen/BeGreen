@@ -11,6 +11,16 @@ import org.junit.Test
 class TrashPhotoMetadataTest {
 
     @Test
+    fun photoEqualsComparesOnlyPictureId() {
+
+        // A PhotoMetaData is uniquely defined by its id.
+
+        val trashPhotoMetadata1 = TrashPhotoMetadata("123", ParcelableDate.now, "aaa", "hello", TrashCategory.PLASTIC)
+        val trashPhotoMetadata2 = TrashPhotoMetadata("123", ParcelableDate.now, "aaa", "hello", TrashCategory.PLASTIC)
+        assertThat(trashPhotoMetadata1, equalTo(trashPhotoMetadata2))
+    }
+
+    @Test
     fun photoParcelConstructorNotNull() {
         val trashPhotoMetadata = TrashPhotoMetadata(Parcel.obtain())
         assertThat(trashPhotoMetadata, notNullValue())
