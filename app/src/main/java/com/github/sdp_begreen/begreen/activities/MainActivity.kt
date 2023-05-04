@@ -26,6 +26,7 @@ import com.github.sdp_begreen.begreen.fragments.AdviceFragment
 import com.github.sdp_begreen.begreen.fragments.CameraContainer
 import com.github.sdp_begreen.begreen.fragments.FollowersFragment
 import com.github.sdp_begreen.begreen.fragments.MapFragment
+import com.github.sdp_begreen.begreen.fragments.MeetingsFragment
 import com.github.sdp_begreen.begreen.fragments.ProfileDetailsFragment
 import com.github.sdp_begreen.begreen.fragments.SettingsFragment
 import com.github.sdp_begreen.begreen.fragments.UserFragment
@@ -235,6 +236,9 @@ class MainActivity : AppCompatActivity() {
             R.id.mainNavDrawUserList -> {
                 val userList = runBlocking { db.getAllUsers() }
                 replaceFragInMainContainer(UserFragment.newInstance(1, userList.toCollection(ArrayList()), true))
+            }
+            R.id.mainNavDrawMeetings -> {
+                replaceFragInMainContainer(MeetingsFragment())
             }
             //----------------------------------------------------------------------
             R.id.mainNavDrawSettings -> {

@@ -13,6 +13,8 @@ import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingPhotoServi
 import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingPhotoServiceImpl
 import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingService
 import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingServiceImpl
+import com.github.sdp_begreen.begreen.services.GeocodingService
+import com.github.sdp_begreen.begreen.services.GeocodingServiceImpl
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
@@ -54,10 +56,14 @@ class BeGreenApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        val geocoderModule = module {
+            single<GeocodingService> { GeocodingServiceImpl(androidContext()) }
+        }
+
         //
         startKoin {
             androidContext(this@BeGreenApp)
-            modules(productionDbModule)
+            modules(productionDbModule, geocoderModule)
         }
 
     }

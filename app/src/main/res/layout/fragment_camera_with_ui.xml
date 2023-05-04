@@ -33,7 +33,7 @@
         app:layout_constraintStart_toEndOf="@+id/profile_cam"
         app:layout_constraintTop_toTopOf="@+id/profile_cam"
         app:layout_constraintVertical_bias="0.0"
-        android:contentDescription="@string/serch_a_user_button" />
+        android:contentDescription="@string/search_a_user_button" />
 
 
 
