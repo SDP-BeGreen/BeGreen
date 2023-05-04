@@ -4,13 +4,10 @@ import android.os.Parcel
 import android.os.Parcelable
 
 //Need to be Parcelable to be passed as an argument to a fragment
-data class User (var id: String, var score: Int, val displayName: String? = null, var rating: Int = 0,
+data class User (val id: String, var score: Int, val displayName: String? = null, var rating: Int = 0,
                  var img: PhotoMetadata? = null, var description: String? = null, var phone: String? = null,
-                 var email: String? = null, var progression: Int = 0, var followers: List<User>? = null,
-                 var following: List<User>? = null, var profilePictureMetadata: PhotoMetadata? = null) : Parcelable, Comparable<User> {
-
-    // Default constructor required to deserialized object retrieved from firebase
-    constructor() : this("1",  1)
+                 var email: String? = null, var progression: Int = 0, var followers: List<String>? = null,
+                 var following: List<String>? = null, var profilePictureMetadata: PhotoMetadata? = null) : Parcelable, Comparable<User> {
 
     constructor(parcel: Parcel) :this(
         parcel.readString().toString(),
@@ -22,8 +19,8 @@ data class User (var id: String, var score: Int, val displayName: String? = null
         parcel.readString(),
         parcel.readString(),
         parcel.readInt(),
-        parcel.readArrayList(User::class.java.classLoader) as List<User>?,
-        parcel.readArrayList(User::class.java.classLoader) as List<User>?,
+        parcel.readArrayList(User::class.java.classLoader) as List<String>?,
+        parcel.readArrayList(User::class.java.classLoader) as List<String>?,
         parcel.readParcelable(PhotoMetadata::class.java.classLoader)
     )
 

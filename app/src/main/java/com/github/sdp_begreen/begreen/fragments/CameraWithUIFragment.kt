@@ -1,6 +1,7 @@
 package com.github.sdp_begreen.begreen.fragments
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -9,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.ImageView
@@ -21,7 +21,6 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
@@ -29,18 +28,17 @@ import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.adapters.FollowingArrayAdapter
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -101,8 +99,22 @@ class CameraWithUIFragment : Fragment() {
      */
     private suspend fun setUpSearchBar() {
 
-        val users = db.getAllUsers()
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, users)
+        // Get all users and remove currently logged user
+        val users = db.getAllUsers().filter { it.id != auth.getConnectedUserId() }
+
+        val following = MutableList(users.size) { false }
+        auth.getConnectedUserId()?.let{
+            val followingIds = db.getFollowedIds(it)
+            // Set to true every user that the current user already follows
+            for (i in users.indices){
+                if (followingIds.contains(users[i].id))
+                    following[i] = true
+            }
+        }
+
+        val adapter = FollowingArrayAdapter(requireContext(),
+            android.R.layout.select_dialog_item, users, db, auth, lifecycleScope, following)
+
         val searchBtn = view?.findViewById<ImageView>(R.id.search_cam)
 
         //Getting the instance of AutoCompleteTextView
@@ -114,16 +126,36 @@ class CameraWithUIFragment : Fragment() {
             it?.visibility = View.INVISIBLE
         }
 
-        searchBtn?.setOnClickListener {
+        searchBtn?.let { setUpSearchBtnOnClickListener(it) }
+    }
+
+    /**
+     * Helper function to hide the soft keyboard
+     */
+    private fun hideKeyboard() {
+        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(requireView().windowToken, 0)
+    }
+
+    /**
+     * Helper function to set up search button on click actions
+     */
+    private fun setUpSearchBtnOnClickListener(btn: ImageView){
+
+        btn.setOnClickListener {
             val searchBar = view?.findViewById<AutoCompleteTextView>(R.id.userSearch)
             searchBar.also { search ->
                 val imm = getSystemService(requireContext(), InputMethodManager::class.java)
-                if(search?.visibility == View.VISIBLE) {
+                if (search?.visibility == View.VISIBLE) {
                     search.visibility = View.GONE
                     view?.clearFocus()
-                    imm?.hideSoftInputFromWindow(search.windowToken, InputMethodManager.SHOW_IMPLICIT)
+                    imm?.hideSoftInputFromWindow(
+                        search.windowToken,
+                        InputMethodManager.SHOW_IMPLICIT
+                    )
                 } else {
                     search?.visibility = View.VISIBLE
+                    hideKeyboard()
                     search?.requestFocus()
                     imm?.showSoftInput(search, InputMethodManager.SHOW_IMPLICIT)
                 }
