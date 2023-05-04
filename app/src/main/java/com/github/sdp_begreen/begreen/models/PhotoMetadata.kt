@@ -19,8 +19,4 @@ abstract class PhotoMetadata(
     override fun describeContents(): Int {
         return 0
     }
-
-    // The equals() and hashcode() methods should be overrided by concrete class and use only the pictureId.
-    // Since the concrete classes are data classes, they must override all field of this (parent) class.
-    // It implies that overriding the equals() and hashcode() in this abstract class doesn't affect the subclasses.
 }

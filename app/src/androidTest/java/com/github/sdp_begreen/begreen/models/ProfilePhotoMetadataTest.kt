@@ -9,16 +9,6 @@ import org.junit.Test
 class ProfilePhotoMetadataTest {
 
     @Test
-    fun photoEqualsComparesOnlyPictureId() {
-
-        // A PhotoMetaData is uniquely defined by its id.
-
-        val profilePhotoMetadata1 = ProfilePhotoMetadata("123", ParcelableDate.now, "aaa")
-        val profilePhotoMetadata2 = ProfilePhotoMetadata("123", ParcelableDate.now, "bbb")
-        MatcherAssert.assertThat(profilePhotoMetadata1, CoreMatchers.equalTo(profilePhotoMetadata2))
-    }
-
-    @Test
     fun photoParcelConstructorNotNull() {
         val profilePhotoMetadata = ProfilePhotoMetadata(Parcel.obtain())
         MatcherAssert.assertThat(profilePhotoMetadata, CoreMatchers.notNullValue())
