@@ -1,0 +1,84 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="fragments.CameraContainer"
+    android:id="@+id/cameraUIFragment"
+    android:theme="@style/Theme.BeGreen">
+
+
+    <ImageView
+        android:id="@+id/profile_cam"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="25dp"
+        android:elevation="2dp"
+        android:src="@drawable/ic_profile"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/profile_button" />
+
+    <ImageView
+        android:id="@+id/search_cam"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="10dp"
+        android:elevation="2dp"
+        android:src="@drawable/ic_search"
+        app:layout_constraintBottom_toBottomOf="@+id/profile_cam"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/profile_cam"
+        app:layout_constraintTop_toTopOf="@+id/profile_cam"
+        app:layout_constraintVertical_bias="0.0"
+        android:contentDescription="@string/serch_a_user_button" />
+
+
+
+    <ImageView
+        android:id="@+id/img_switch_camera"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="25dp"
+        android:elevation="2dp"
+        android:src="@drawable/ic_switch_cam"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/switch_camera_button" />
+
+    <Button
+        android:id="@+id/camera_capture_button"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/ic_take_photo"
+        android:elevation="2dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/previewView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </androidx.camera.view.PreviewView>
+
+    <AutoCompleteTextView
+        android:id="@+id/userSearch"
+        android:layout_width="190dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:ems="10"
+        android:hint="@string/search_user"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toStartOf="@+id/img_switch_camera"
+        app:layout_constraintStart_toEndOf="@+id/search_cam"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

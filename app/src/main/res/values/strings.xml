@@ -56,4 +56,12 @@
     <string name="remove_bin">Remove bin</string>
     <string name="quotes_of_the_day">Quotes of the day</string>
     <string name="change_bin_type">Change bin type</string>
+    <string name="category">Category</string>
+    <string name="enter_description_here">Enter description here</string>
+    <string name="profile_button">profile button</string>
+    <string name="serch_a_user_button">serch a user button</string>
+    <string name="switch_camera_button">switch camera button</string>
+    <string name="here_is_the_photo_that_was_taken">Here is the photo that was taken</string>
+    <string name="button_to_send_the_post_online">button to send the post online</string>
+    <string name="cross_button_to_come_back_to_camera">cross button to come back to camera</string>
 </resources>
