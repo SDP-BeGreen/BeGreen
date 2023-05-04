@@ -140,7 +140,7 @@ class CameraWithUIFragment : Fragment() {
         profileBtn?.setOnClickListener {
             // Create a transaction to replace the current fragment by the profile fragment
             lifecycleScope.launch {
-                parentFragmentManager.commit {
+                requireActivity().supportFragmentManager.commit {
                     setReorderingAllowed(true)
                     replace(R.id.mainFragmentContainer, getProfile())
                 }
