@@ -29,7 +29,7 @@ class UserPhotosViewAdapterTest {
 
     private val photoList = listOf(
         TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
-        TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
+        TrashPhotoMetadata("2", ParcelableDate.now, "1", "Helloooo", TrashCategory.PLASTIC),
     )
     private var userPhotoViewAdapter = UserPhotosViewAdapter(photoList, true)
     private val appContext = InstrumentationRegistry.getInstrumentation().targetContext
@@ -53,11 +53,12 @@ class UserPhotosViewAdapterTest {
 
     @Test
     fun userPhotosViewAdapterOnBindViewHolderWorksOnTrivialList() {
+
         val viweHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
         userPhotoViewAdapter.onBindViewHolder(viweHolder, 0)
-        MatcherAssert.assertThat(viweHolder.titleView.text, CoreMatchers.equalTo("title"))
+        MatcherAssert.assertThat(viweHolder.titleView.text, CoreMatchers.equalTo("Look at me cleaning!"))
         MatcherAssert.assertThat(viweHolder.subtitleView, CoreMatchers.notNullValue())
-        MatcherAssert.assertThat(viweHolder.subtitleView.text.subSequence(15,35), CoreMatchers.equalTo("Gros vilain pas beau"))
+        MatcherAssert.assertThat(viweHolder.subtitleView.text.toString(), CoreMatchers.containsString(TrashCategory.PLASTIC.title))
     }
 
     @Test

@@ -34,7 +34,14 @@ object MeetingPhotoServiceImpl : MeetingPhotoService {
         )
         val photoRef = dbRef.child(MEETING_PATH).child(meetingId).child(PHOTOS_PATH)
         return photoRef.push().key?.let {
-            photoMetadata.pictureId = null
+
+            var newPhotoMetadata = TrashPhotoMetadata(
+                it,
+                photoMetadata.takenOn,
+                photoMetadata.takenByUserId,
+                photoMetadata.caption,
+                photoMetadata.trashCategory)
+
             val compressedImage = ByteArrayOutputStream()
             photo.compress(Bitmap.CompressFormat.JPEG, 100, compressedImage)
             putBytesToStorage(
@@ -44,7 +51,7 @@ object MeetingPhotoServiceImpl : MeetingPhotoService {
             )
             FirebaseUtils.setObjToDb(
                 photoRef.child(it),
-                photoMetadata,
+                newPhotoMetadata,
                 "Error while adding the metadata for the photo"
             )
         } ?: throw MeetingServiceException("Error while generating new key for photo entry")

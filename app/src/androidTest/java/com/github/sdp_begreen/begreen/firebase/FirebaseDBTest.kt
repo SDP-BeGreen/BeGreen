@@ -120,10 +120,9 @@ class FirebaseDBTest {
         // to be able to access resources, need to be in an activity
         activityRule.scenario.onActivity { activity ->
             val img: Bitmap = BitmapFactory.decodeResource(activity.resources, R.drawable.marguerite_test_image)
-            val photoMetadata = profilePhotoMetaData
 
             runBlocking {
-                val pictureUID = FirebaseDB.storeUserProfilePicture(img, user.id, photoMetadata)
+                val pictureUID = FirebaseDB.storeUserProfilePicture(img, user.id, profilePhotoMetaData)
 
                 assertThat(pictureUID, notNullValue())
 

@@ -101,7 +101,7 @@ object FirebaseDB: DB {
         }
     }
 
-    override suspend fun storeUserProfilePicture(image: Bitmap, userId: String, metadata: PhotoMetadata): ProfilePhotoMetadata? {
+    override suspend fun storeUserProfilePicture(image: Bitmap, userId: String, metadata: ProfilePhotoMetadata): ProfilePhotoMetadata? {
         if (userId.isBlank())
             throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
 
@@ -113,12 +113,18 @@ object FirebaseDB: DB {
                 USER_PROFILE_PICTURE_METADATA)) as ProfilePhotoMetadata
     }
 
-    override suspend fun addImage(image : Bitmap, photoMetadata: PhotoMetadata): TrashPhotoMetadata? {
+    override suspend fun addImage(image : Bitmap, photoMetadata: TrashPhotoMetadata): TrashPhotoMetadata? {
 
-        photoMetadata.pictureId = null
-        return storePicture(image, USER_POSTS, photoMetadata,
-            databaseReference.child(USERS_PATH).child(photoMetadata.takenByUserId!!).child(USER_POSTS),
-            storageReference.child(USERS_PATH).child(photoMetadata.takenByUserId!!).child(USER_POSTS)) as TrashPhotoMetadata
+        var newPhotoMetadata = TrashPhotoMetadata(
+            null,
+            photoMetadata.takenOn,
+            photoMetadata.takenByUserId,
+            photoMetadata.caption,
+            photoMetadata.trashCategory)
+
+        return storePicture(image, USER_POSTS, newPhotoMetadata,
+            databaseReference.child(USERS_PATH).child(newPhotoMetadata.takenByUserId!!).child(USER_POSTS),
+            storageReference.child(USERS_PATH).child(newPhotoMetadata.takenByUserId!!).child(USER_POSTS)) as TrashPhotoMetadata
     }
 
     override suspend fun userExists(userId: String, timeout: Long): Boolean {
@@ -139,7 +145,7 @@ object FirebaseDB: DB {
         }
     }
 
-    override suspend fun getUserProfilePicture(metadata: PhotoMetadata, userId: String, timeout: Long): Bitmap? {
+    override suspend fun getUserProfilePicture(metadata: ProfilePhotoMetadata, userId: String, timeout: Long): Bitmap? {
         if (userId.isBlank())
             throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
         return metadata.pictureId?.let {

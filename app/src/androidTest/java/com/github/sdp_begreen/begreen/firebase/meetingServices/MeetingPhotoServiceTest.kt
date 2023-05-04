@@ -261,10 +261,10 @@ class MeetingPhotoServiceTest {
                 MeetingPhotoServiceImpl.addMeetingsPhoto(
                     meetingWithPhotos.meetingId!!,
                     TrashPhotoMetadata(
-                        "not null",
+                        null,
                         ParcelableDate.now,
-                        "Bin",
                         "1234567890",
+                        "Bin",
                         TrashCategory.PLASTIC
                     ),
                     bitmap

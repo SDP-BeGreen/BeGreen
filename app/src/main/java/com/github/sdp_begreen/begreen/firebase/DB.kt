@@ -79,7 +79,7 @@ interface DB {
      *
      * @throws IllegalArgumentException if the [userId] was blank or empty
      */
-    suspend fun storeUserProfilePicture(image: Bitmap, userId: String, metadata: PhotoMetadata): ProfilePhotoMetadata?
+    suspend fun storeUserProfilePicture(image: Bitmap, userId: String, metadata: ProfilePhotoMetadata): ProfilePhotoMetadata?
 
     /**
      * Adds and [image] for the user [userId] in the database
@@ -88,7 +88,7 @@ interface DB {
      * @param userId the ID of the user wanting to store a new image
      * @return the PhotoMetadata under which the image got stored, and null if the image couldn't get stored
      */
-    suspend fun addImage(image : Bitmap, photoMetadata: PhotoMetadata): TrashPhotoMetadata?
+    suspend fun addImage(image : Bitmap, photoMetadata: TrashPhotoMetadata): TrashPhotoMetadata?
 
     /**
      * Test whether a [User] exists in the database for the given [userId]
@@ -124,7 +124,7 @@ interface DB {
      * @throws DatabaseTimeoutException if the database could not be reached
      * @throws DatabaseException if an exception occurred while retrieving the image
      */
-    suspend fun getUserProfilePicture(metadata: PhotoMetadata, userId: String, timeout: Long = TIMEOUT): Bitmap?
+    suspend fun getUserProfilePicture(metadata: ProfilePhotoMetadata, userId: String, timeout: Long = TIMEOUT): Bitmap?
 
     /**
      * Store the given [bin] in the database and assigns a fresh id to the bin

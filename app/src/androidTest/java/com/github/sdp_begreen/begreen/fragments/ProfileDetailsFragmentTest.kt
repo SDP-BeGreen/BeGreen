@@ -465,7 +465,11 @@ class ProfileDetailsFragmentTest {
             email = "My new email address"
         )
 
+
+
         editUserValues(newUser)
+
+
 
         // cancel modifications
         onView(withId(R.id.fragment_profile_details_cancel_modification))
@@ -477,6 +481,7 @@ class ProfileDetailsFragmentTest {
         onView(withId(R.id.fragment_profile_details_edit_profile))
             .check(matches(isDisplayed()))
             .perform(click())
+
 
         checkViewsContainsText(listOf(
             R.id.fragment_profile_details_profile_name_edit to user1.displayName,
