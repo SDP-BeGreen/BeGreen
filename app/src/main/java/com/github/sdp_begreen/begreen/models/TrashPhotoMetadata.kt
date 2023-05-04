@@ -37,4 +37,15 @@ data class TrashPhotoMetadata(
             return arrayOfNulls(size)
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is TrashPhotoMetadata) return false
+
+        return pictureId == other.pictureId
+    }
+
+    override fun hashCode(): Int {
+        return pictureId?.hashCode() ?: 0
+    }
 }
