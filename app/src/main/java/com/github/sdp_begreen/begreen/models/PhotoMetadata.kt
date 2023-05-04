@@ -5,15 +5,15 @@ import android.os.Parcelable
 
 
 abstract class PhotoMetadata(
-    var pictureId: String? = null,
-    val takenOn: ParcelableDate? = null,
-    val takenByUserId: String? = null
+    var pictureId_: String? = null,
+    val takenOn_: ParcelableDate? = null,
+    val takenByUserId_: String? = null
 ) : Parcelable {
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(pictureId)
-        parcel.writeParcelable(takenOn, flags)
-        parcel.writeString(takenByUserId)
+        parcel.writeString(pictureId_)
+        parcel.writeParcelable(takenOn_, flags)
+        parcel.writeString(takenByUserId_)
     }
 
     override fun describeContents(): Int {

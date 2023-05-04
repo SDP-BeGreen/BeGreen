@@ -7,6 +7,7 @@ import com.github.sdp_begreen.begreen.exceptions.MeetingServiceException
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.getBytesFromStorage
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.putBytesToStorage
+import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.utils.checkArgument
 import kotlinx.coroutines.flow.Flow
@@ -34,14 +35,7 @@ object MeetingPhotoServiceImpl : MeetingPhotoService {
         )
         val photoRef = dbRef.child(MEETING_PATH).child(meetingId).child(PHOTOS_PATH)
         return photoRef.push().key?.let {
-
-            var newPhotoMetadata = TrashPhotoMetadata(
-                it,
-                photoMetadata.takenOn,
-                photoMetadata.takenByUserId,
-                photoMetadata.caption,
-                photoMetadata.trashCategory)
-
+            val newPhotoMetadata = photoMetadata.copy(pictureId = it)
             val compressedImage = ByteArrayOutputStream()
             photo.compress(Bitmap.CompressFormat.JPEG, 100, compressedImage)
             putBytesToStorage(
