@@ -270,16 +270,12 @@ class MainActivity : AppCompatActivity() {
         val btnExit = bottomSheetDialog.findViewById<Button>(R.id.cancel_button)
         val btnSend = bottomSheetDialog.findViewById<Button>(R.id.send_button)
 
-
         val tvDate = bottomSheetDialog.findViewById<TextView>(R.id.date_textview)
         val etMessage = bottomSheetDialog.findViewById<EditText>(R.id.message_edittext)
-
 
         val date = Date() // Get the current date and time
         val dateFormat = SimpleDateFormat("dd MMM yyyy HH:mm:ss", Locale.getDefault())
         val formattedDate = dateFormat.format(date)
-
-
 
         tvDate?.text = formattedDate
 
@@ -288,30 +284,22 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnSend!!.setOnClickListener {
-
             val msg = etMessage?.text.toString()
             if (msg.isEmpty()) {
-
                 etMessage?.error = "Enter a message"
             }
             else {
-
                 firebaseDatabase.child("contact_us").child(com.google.firebase.auth.FirebaseAuth.getInstance().uid!!)
                     .child(formattedDate).setValue(msg).addOnCompleteListener {
-
                         if (it.isSuccessful) {
-
                             Toast.makeText(this, "Message sent successfully", Toast.LENGTH_SHORT).show()
                             bottomSheetDialog.dismiss()
                         }
                         else {
-
                             Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
-
                         }
                     }
             }
-
         }
         bottomSheetDialog.show()
     }
