@@ -77,9 +77,9 @@ class MainActivityTest {
         // initially do as if no user were signed in
         private val authUserFlow = MutableStateFlow<String?>(null)
         private val bins = listOf(
-            Bin("1", TrashCategory.CLOTHES, LatLng(4.3, 2.8)),
-            Bin("2", TrashCategory.PAPER, LatLng(56.3, 22.3)),
-            Bin("3", TrashCategory.CLOTHES, LatLng(6.0, 9.0))
+            Bin("1", TrashCategory.CLOTHES, 4.3, 2.8),
+            Bin("2", TrashCategory.PAPER, 56.3, 22.3),
+            Bin("3", TrashCategory.CLOTHES, 6.0, 9.0)
         )
 
         @BeforeClass

@@ -172,7 +172,7 @@ class FirebaseDBTest {
     fun addBinThrowsIllegalArgumentExceptionWhenBinIdIsNotNull() {
         assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
-                val bin = Bin("Not null ID", TrashCategory.ELECTRONIC, LatLng(4.3, 2.1))
+                val bin = Bin("Not null ID", TrashCategory.ELECTRONIC, 4.3, 2.1)
                 assertTrue(FirebaseDB.addBin(bin))
             }
         }
@@ -240,8 +240,8 @@ class FirebaseDBTest {
 
             // Checks that the location got correctly added
             assertThat(binLocations, hasItems(
-                Bin("123", TrashCategory.PAPER, LatLng(69.6969,420.42)),
-                Bin("456", TrashCategory.METAL, LatLng(123.456,654.321))
+                Bin("123", TrashCategory.PAPER, 69.6969,420.42),
+                Bin("456", TrashCategory.METAL,123.456,654.321)
             ))
         }
     }

@@ -39,9 +39,9 @@ class MapFragmentTest {
         private val db: DB = Mockito.mock(DB::class.java)
 
         private val bins = mutableListOf(
-            Bin("1", TrashCategory.CLOTHES, LatLng(4.3, 2.8)),
-            Bin("2", TrashCategory.PAPER, LatLng(56.3, 22.3)),
-            Bin("3", TrashCategory.CLOTHES, LatLng(6.0, 9.0))
+            Bin("1", TrashCategory.CLOTHES, 4.3, 2.8),
+            Bin("2", TrashCategory.PAPER,56.3, 22.3),
+            Bin("3", TrashCategory.CLOTHES,6.0, 9.0)
         )
 
 

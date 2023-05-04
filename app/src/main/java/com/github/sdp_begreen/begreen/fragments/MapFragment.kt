@@ -273,7 +273,7 @@ class MapFragment : Fragment() {
     private fun addMarker(bin: Bin){
         map.addMarker(
             MarkerOptions()
-                .position(bin.location)
+                .position(bin.location())
                 .title(bin.type.toString())
                 .icon(BitmapDescriptorFactory.defaultMarker(bin.type.color))
         )?.apply {
