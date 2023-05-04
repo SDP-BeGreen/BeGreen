@@ -475,7 +475,7 @@ class MainActivityTest {
 
 
             it.supportFragmentManager.beginTransaction()
-                .replace(R.id.cameraUIFragment, SendPostFragment())
+                .replace(R.id.mainCameraFragmentContainer, SendPostFragment())
                 .commit()
         }
         onView(withId(R.id.cancel_post)).perform(click())
