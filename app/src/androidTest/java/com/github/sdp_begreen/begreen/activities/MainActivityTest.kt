@@ -263,6 +263,12 @@ class MainActivityTest {
             // Enter a message into the message EditText
             onView(withId(R.id.message_edittext)).perform(typeText("Test message"), closeSoftKeyboard())
 
+            // Check if the message EditText has the correct text
+            onView(withId(R.id.message_edittext)).check(matches(withText("Test message")))
+
+            // Scroll to the Send button
+            onView(withId(R.id.send_button)).perform(scrollTo())
+
             // Click the Send button
             onView(withId(R.id.send_button)).perform(click())
 
@@ -285,6 +291,12 @@ class MainActivityTest {
 
             // Enter a message into the message EditText
             onView(withId(R.id.message_edittext)).perform(typeText("Test message"), closeSoftKeyboard())
+
+            // Check if the message EditText has the correct text
+            onView(withId(R.id.message_edittext)).check(matches(withText("Test message")))
+
+            // Scroll to the Send button
+            onView(withId(R.id.send_button)).perform(scrollTo())
 
             // Click the Send button
             onView(withId(R.id.send_button)).perform(click())
