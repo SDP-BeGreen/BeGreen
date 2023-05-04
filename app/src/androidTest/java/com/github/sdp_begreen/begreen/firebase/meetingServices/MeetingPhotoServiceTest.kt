@@ -110,7 +110,7 @@ class MeetingPhotoServiceTest {
     @Test
     fun addMeetingPhotoCorrectlyAddPhotoToMeetingInDB() {
         runTest {
-            val metadata = TrashPhotoMetadata(
+            var metadata = TrashPhotoMetadata(
                 null,
                 ParcelableDate.now,
                 "aaaaaa",
@@ -123,7 +123,9 @@ class MeetingPhotoServiceTest {
                 Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
             )
 
-            metadata.pictureId = metadataWithId.pictureId
+
+            // TODO : ca n'a pas de sens
+            metadata = metadata.copy(pictureId = metadataWithId.pictureId)
 
             assertThat(metadataWithId, `is`(equalTo(metadata)))
         }

@@ -4,9 +4,9 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class ProfilePhotoMetadata(
-    var pictureId: String? = null,
-    val takenOn: ParcelableDate? = null,
-    val takenByUserId: String? = null,
+    override var pictureId: String? = null,
+    override val takenOn: ParcelableDate? = null,
+    override val takenByUserId: String? = null,
 
     ) : PhotoMetadata(pictureId, takenOn, takenByUserId) {
 
@@ -30,7 +30,7 @@ data class ProfilePhotoMetadata(
         if (this === other) return true
         if (other !is ProfilePhotoMetadata) return false
 
-        // ProfilePhotoMetadata is uniquely defined by the picture id because if we compare all fields, some of them
+        // Bin is uniquely defined by the "id" because if we compare all fields, some of them
         // are obsolete in the database. Actually this was the case in our case.
 
         return pictureId == other.pictureId

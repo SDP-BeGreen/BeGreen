@@ -105,9 +105,9 @@ object FirebaseDB: DB {
         if (userId.isBlank())
             throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
 
-        metadata.pictureId_ = "${userId}_profile_picture"
+        val newMetadata = metadata.copy(pictureId = "${userId}_profile_picture")
 
-        return storePicture(image, USER_PROFILE_PICTURE_METADATA, metadata,
+        return storePicture(image, USER_PROFILE_PICTURE_METADATA, newMetadata,
             databaseReference.child(USERS_PATH).child(userId),
             storageReference.child(USERS_PATH).child(userId).child(
                 USER_PROFILE_PICTURE_METADATA)) as ProfilePhotoMetadata
@@ -134,16 +134,16 @@ object FirebaseDB: DB {
 
         // Points to the node where we the image SHOULD be
         // The path will change when we will actually stores the real pictures
-        return metadata.pictureId_?.let {
+        return metadata.pictureId?.let {
             getPicture(storageReference.child("userId").child(
-                metadata.takenByUserId_!!).child(it), timeout)
+                metadata.takenByUserId!!).child(it), timeout)
         }
     }
 
     override suspend fun getUserProfilePicture(metadata: ProfilePhotoMetadata, userId: String, timeout: Long): Bitmap? {
         if (userId.isBlank())
             throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
-        return metadata.pictureId_?.let {
+        return metadata.pictureId?.let {
             getPicture(storageReference.child(USERS_PATH).child(userId).child(
                 USER_PROFILE_PICTURE_METADATA).child(it), timeout)
         }
@@ -217,9 +217,10 @@ object FirebaseDB: DB {
     private suspend fun storePicture(image: Bitmap, parentNode: String?, photoMetadata: PhotoMetadata,
                                      dbNode: DatabaseReference, storageNode: StorageReference): PhotoMetadata? {
         // if the url is not yet contained in the metadata, then generate a new uid by calling push
-        val pictureId = photoMetadata.pictureId_ ?: dbNode.push().key ?: return null
+        val pictureId = photoMetadata.pictureId ?: dbNode.push().key ?: return null
 
-        photoMetadata.pictureId_ = pictureId
+        photoMetadata.pictureId = pictureId
+
 
         val compressedImage = ByteArrayOutputStream()
         image.compress(Bitmap.CompressFormat.JPEG, 100, compressedImage)
