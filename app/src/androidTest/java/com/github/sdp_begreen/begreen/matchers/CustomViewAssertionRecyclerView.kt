@@ -21,7 +21,7 @@ class TextViewAssertionView(
 ) : ViewAssertion {
     override fun check(view: View?, noViewFoundException: NoMatchingViewException?) {
         if (view !is RecyclerView)
-            fail("The view is not a recycler view")
+            fail("The view ${view?.toString()}, is not a recycler view")
 
         val elemView = view.findViewHolderForAdapterPosition(position)?.itemView
             ?: fail("No view found at position: $position")
@@ -49,7 +49,7 @@ class ButtonAssertionView(
 ) : ViewAssertion {
     override fun check(view: View?, noViewFoundException: NoMatchingViewException?) {
         if (view !is RecyclerView)
-            fail("The view is not a recycler view")
+            fail("The view ${view?.toString()} is not a recycler view")
 
         val elemView = view.findViewHolderForAdapterPosition(position)?.itemView
             ?: fail("No view found at position: $position")

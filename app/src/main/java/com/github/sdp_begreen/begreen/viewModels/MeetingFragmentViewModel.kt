@@ -1,6 +1,5 @@
 package com.github.sdp_begreen.begreen.viewModels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -63,13 +62,11 @@ class MeetingFragmentViewModel(private val currentUser: StateFlow<User?>) : View
     fun participate(meetingId: String): String? {
         currentUser.value?.also {
             viewModelScope.launch {
-                Log.d("Print test participation view model", "participate: ${it.id}")
                 participantService.addParticipant(meetingId, it.id)
             }
             mutableParticipationMap.tryEmit(mutableParticipationMap.value + (meetingId to true))
             return meetingId
         }
-        Log.d("Meeting Fragment View Model", "Error while adding participant (No connectedUser)")
         return null
     }
 
@@ -88,7 +85,6 @@ class MeetingFragmentViewModel(private val currentUser: StateFlow<User?>) : View
             mutableParticipationMap.tryEmit(mutableParticipationMap.value + (meetingId to false))
             return meetingId
         }
-        Log.d("Meeting Fragment View Model", "Error while removing participant (No connectedUser)")
         return null
     }
 

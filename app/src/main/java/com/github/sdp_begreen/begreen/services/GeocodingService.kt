@@ -20,5 +20,5 @@ interface GeocodingService {
      * @throws IOException Throws if an error occurred while geocoding the coordinates
      */
     @Throws(IOException::class)
-    suspend fun getAddresses(latLng: CustomLatLng, maxResult: Int): MutableList<Address>?
+    suspend fun getAddresses(latLng: CustomLatLng, maxResult: Int): List<Address>?
 }

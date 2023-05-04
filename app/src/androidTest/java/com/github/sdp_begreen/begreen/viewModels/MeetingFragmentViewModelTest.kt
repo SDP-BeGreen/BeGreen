@@ -76,6 +76,8 @@ class MeetingFragmentViewModelTest {
 
         private val meetingsFlow = MutableStateFlow(meetings)
 
+        // supposed to represent a Channel where both add participant and
+        // remove participant can be send through
         val addRemoveParticipantChannel = Channel<String>(1)
 
         @BeforeClass
@@ -134,10 +136,10 @@ class MeetingFragmentViewModelTest {
         // reset user meetings and user
         meetingsFlow.tryEmit(meetings)
         currentUser.tryEmit(initiallyConnectedUser)
-        vm = MeetingFragmentViewModel(currentUser)
+        meetingFragmentViewModel = MeetingFragmentViewModel(currentUser)
     }
 
-    private lateinit var vm: MeetingFragmentViewModel
+    private lateinit var meetingFragmentViewModel: MeetingFragmentViewModel
 
 
     @Test
@@ -145,7 +147,7 @@ class MeetingFragmentViewModelTest {
         runTest {
             val channel = Channel<List<Meeting>>(1)
             backgroundScope.launch {
-                vm.allMeetings.collect {
+                meetingFragmentViewModel.allMeetings.collect {
                     channel.send(it)
                 }
             }
@@ -170,12 +172,12 @@ class MeetingFragmentViewModelTest {
         runTest {
             val channel = Channel<Map<String, Boolean>>(1)
             backgroundScope.launch {
-                vm.participationMap.collect {
+                meetingFragmentViewModel.participationMap.collect {
                     channel.send(it)
                 }
             }
 
-            // assert that initially should be
+            // assert that it should initially be
             val initialMap = mapOf(
                 meetings[0].meetingId!! to false,
                 meetings[1].meetingId!! to false,
@@ -218,7 +220,7 @@ class MeetingFragmentViewModelTest {
 
         val newMeeting2 = newMeeting1 - meetings[2]
 
-        val vm = MeetingFragmentViewModel(currentUser)
+        val meetingFragmentViewModel = MeetingFragmentViewModel(currentUser)
 
         runTest {
             // mock new meeting
@@ -230,12 +232,12 @@ class MeetingFragmentViewModelTest {
 
             val channel = Channel<Map<String, Boolean>>(1)
             backgroundScope.launch {
-                vm.participationMap.collect {
+                meetingFragmentViewModel.participationMap.collect {
                     channel.send(it)
                 }
             }
 
-            // assert that initially should be
+            // assert that it should initially be
             val initialMap = mapOf(
                 meetings[0].meetingId!! to false,
                 meetings[1].meetingId!! to false,
@@ -270,13 +272,13 @@ class MeetingFragmentViewModelTest {
             val channel = Channel<Map<String, Boolean>>(1)
 
             backgroundScope.launch {
-                vm.participationMap.collect {
+                meetingFragmentViewModel.participationMap.collect {
                     channel.send(it)
                 }
             }
 
             assertThat(
-                vm.participate(meetings[1].meetingId!!),
+                meetingFragmentViewModel.participate(meetings[1].meetingId!!),
                 `is`(equalTo(meetings[1].meetingId!!))
             )
 
@@ -302,12 +304,12 @@ class MeetingFragmentViewModelTest {
             val channel = Channel<Map<String, Boolean>>(1)
 
             backgroundScope.launch {
-                vm.participationMap.collect {
+                meetingFragmentViewModel.participationMap.collect {
                     channel.send(it)
                 }
             }
 
-            assertThat(vm.withdraw(meetings[2].meetingId!!), `is`(equalTo(meetings[2].meetingId!!)))
+            assertThat(meetingFragmentViewModel.withdraw(meetings[2].meetingId!!), `is`(equalTo(meetings[2].meetingId!!)))
 
             assertThat(
                 addRemoveParticipantChannel.receive(),
@@ -329,7 +331,7 @@ class MeetingFragmentViewModelTest {
         runTest {
 
             currentUser.emit(null) // simulate no connected user
-            assertThat(vm.participate(meetings[1].meetingId!!), `is`(nullValue()))
+            assertThat(meetingFragmentViewModel.participate(meetings[1].meetingId!!), `is`(nullValue()))
         }
     }
 
@@ -338,8 +340,12 @@ class MeetingFragmentViewModelTest {
         runTest {
 
             currentUser.emit(null) // simulate no connected user
-            assertThat(vm.withdraw(meetings[1].meetingId!!), `is`(nullValue()))
+            assertThat(meetingFragmentViewModel.withdraw(meetings[1].meetingId!!), `is`(nullValue()))
         }
+    }
+
+    private fun registerCallbackAndSendThroughChannelWhenReceiveNewValue() {
+        // TODO continue
     }
 
 }

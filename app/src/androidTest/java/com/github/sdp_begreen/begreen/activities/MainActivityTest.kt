@@ -1,6 +1,8 @@
 package com.github.sdp_begreen.begreen.activities
 
-import android.Manifest
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.Manifest.permission.CAMERA
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
@@ -131,15 +133,15 @@ class MainActivityTest {
 
     // Need permission for camera when testing launching profile fragment
     @get:Rule
-    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
+    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(CAMERA)
 
     @get:Rule
     val fineLocationPermissionRule: GrantPermissionRule =
-        GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION)
+        GrantPermissionRule.grant(ACCESS_FINE_LOCATION)
 
     @get:Rule
     val coarseLocationPermissionRule: GrantPermissionRule =
-        GrantPermissionRule.grant(Manifest.permission.ACCESS_COARSE_LOCATION)
+        GrantPermissionRule.grant(ACCESS_COARSE_LOCATION)
 
     @Test
     fun bottomNavigationBarVisible() {

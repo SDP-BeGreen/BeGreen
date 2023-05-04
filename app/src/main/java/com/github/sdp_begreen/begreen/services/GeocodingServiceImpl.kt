@@ -18,11 +18,10 @@ class GeocodingServiceImpl(context: Context) : GeocodingService {
         geocoder = Geocoder(context)
     }
 
-    override suspend fun getAddresses(latLng: CustomLatLng, maxResult: Int): MutableList<Address>? {
+    override suspend fun getAddresses(latLng: CustomLatLng, maxResult: Int): List<Address>? {
         latLng.latitude?.also { lat ->
             latLng.longitude?.also { lon ->
                 return geocoder.getFromLocation(lat, lon, maxResult)
-                //textView.text = addresses?.first()?.locality
             }
         }
 

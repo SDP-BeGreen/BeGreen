@@ -62,6 +62,13 @@ class MeetingsFragmentTest {
 
         private val initiallyConnectedUser = User("123456", 10, "User 1")
 
+        private val latLngMeeting1 = CustomLatLng(37.7749, -122.4194)
+        private val latLngMeeting2 = CustomLatLng(37.7739, -122.4312)
+        private val latLngMeeting3 = CustomLatLng(46.517355, 6.628854)
+        private val latLngMeeting4 = CustomLatLng(0.0, 0.0)
+        private val latLngNewMeeting = CustomLatLng(46.806832, 7.156354)
+
+
         private val meetings = listOf(
             Meeting(
                 "m1",
@@ -70,8 +77,8 @@ class MeetingsFragmentTest {
                 "Let's meet up and clean up the downtown area",
                 1718445600000,
                 1718467200000,
-                CustomLatLng(37.7749, -122.4194),
-                CustomLatLng(37.7749, -122.4194)
+                latLngMeeting1,
+                latLngMeeting1
             ),
             Meeting(
                 "m2",
@@ -80,8 +87,8 @@ class MeetingsFragmentTest {
                 "Let's meet up and clean up the local park",
                 1718186400000,
                 1718208000000,
-                CustomLatLng(37.7739, -122.4312),
-                CustomLatLng(37.7739, -122.4312)
+                latLngMeeting2,
+                latLngMeeting2
             ),
             Meeting(
                 "m3",
@@ -90,8 +97,8 @@ class MeetingsFragmentTest {
                 "Let's meet up and clean up the local beach",
                 1710237600000,
                 1710252000000,
-                CustomLatLng(46.517355, 6.628854),
-                CustomLatLng(46.517355, 6.628854)
+                latLngMeeting3,
+                latLngMeeting3
             ),
             Meeting(
                 "m4",
@@ -100,14 +107,16 @@ class MeetingsFragmentTest {
                 "Let's meet up and clean up the local school",
                 1710237600000,
                 1710238600000,
-                CustomLatLng(0.0, 0.0),
-                CustomLatLng(0.0, 0.0),
+                latLngMeeting4,
+                latLngMeeting4
             )
         )
 
         private val meetingsFlow = MutableStateFlow(meetings)
         private val localities = listOf("Paris", "Berlin", "London", "")
 
+        // supposed to represent a Channel where both add participant and
+        // remove participant can be send through
         val addRemoveParticipantChannel = Channel<String>(1)
 
         @BeforeClass
@@ -132,21 +141,21 @@ class MeetingsFragmentTest {
                     .thenReturn(flowOf(listOf("jjjjjj")))
 
                 // setup geocoding
-                `when`(geocoderApi.getAddresses(CustomLatLng(37.7749, -122.4194), 1))
+                `when`(geocoderApi.getAddresses(latLngMeeting1, 1))
                     .thenReturn(mutableListOf(Address(Locale.FRENCH).apply {
                         locality = localities[0]
                     }))
-                `when`(geocoderApi.getAddresses(CustomLatLng(37.7739, -122.4312), 1))
+                `when`(geocoderApi.getAddresses(latLngMeeting2, 1))
                     .thenReturn(mutableListOf(Address(Locale.FRENCH).apply {
                         locality = localities[1]
                     }))
-                `when`(geocoderApi.getAddresses(CustomLatLng(46.517355, 6.628854), 1))
+                `when`(geocoderApi.getAddresses(latLngMeeting3, 1))
                     .thenReturn(mutableListOf(Address(Locale.FRENCH).apply {
                         locality = localities[2]
                     }))
-                `when`(geocoderApi.getAddresses(CustomLatLng(0.0, 0.0), 1))
+                `when`(geocoderApi.getAddresses(latLngMeeting4, 1))
                     .thenThrow(IOException()) // check that if exception thrown then empty string should be displayed
-                `when`(geocoderApi.getAddresses(CustomLatLng(46.806832, 7.156354), 1))
+                `when`(geocoderApi.getAddresses(latLngNewMeeting, 1))
                     .thenReturn(mutableListOf(Address(Locale.FRENCH).apply {
                         locality = "Lausanne"
                     }))
@@ -208,9 +217,9 @@ class MeetingsFragmentTest {
     fun checkMeetingListCorrectlyDisplayedInRecycler() {
 
         fragmentScenario.onFragment {
-            val view = it.requireView().findViewById<RecyclerView>(R.id.fragment_meeting_list)
-            val v = view.findViewHolderForAdapterPosition(0)?.itemView
-            val title = v?.findViewById<TextView>(R.id.fragment_meeting_elem_title)
+            val recyclerView = it.requireView().findViewById<RecyclerView>(R.id.fragment_meeting_list)
+            val itemView = recyclerView.findViewHolderForAdapterPosition(0)?.itemView
+            val title = itemView?.findViewById<TextView>(R.id.fragment_meeting_elem_title)
             assertThat(title?.text, `is`(equalTo(meetings[0].title)))
         }
 
@@ -305,8 +314,8 @@ class MeetingsFragmentTest {
                 "Let's meet up and clean up the local forest",
                 1731139200000,
                 1731150000000,
-                CustomLatLng(46.806832, 7.156354),
-                CustomLatLng(46.806832, 7.156354)
+                latLngNewMeeting,
+                latLngNewMeeting
             )
 
             fragmentScenario.onFragment {
