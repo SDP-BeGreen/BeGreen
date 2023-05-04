@@ -8,15 +8,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.github.sdp_begreen.begreen.BinsFakeDatabase
+import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.models.Bin
-import com.github.sdp_begreen.begreen.models.BinType
+import com.github.sdp_begreen.begreen.firebase.DB
+import com.github.sdp_begreen.begreen.map.Bin
+import com.github.sdp_begreen.begreen.map.BinType
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -27,7 +30,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 
 /**
@@ -37,6 +43,9 @@ import com.google.android.gms.maps.model.MarkerOptions
  */
 class MapFragment : Fragment() {
 
+    // Get the db instance
+    private val db by inject<DB>()
+
     companion object {
         private const val MAP_DEFAULT_ZOOM = 12f
     }
@@ -45,9 +54,10 @@ class MapFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var lastLocation: Location
 
-    private lateinit var addNewBinBtn : Button
-
     private var userLocation : Location? = null
+
+    // Currently selected marker on the map, or null if no marker selected
+    private var selectedMarker: Marker? = null
 
     private val mapReadyCallback = OnMapReadyCallback { googleMap ->
         /**
@@ -61,8 +71,18 @@ class MapFragment : Fragment() {
 
         checkUserLocationPermissions()
 
-        displayBinsMarkers(BinsFakeDatabase.fakeBins)
-        setupAddBinBtn()
+        // Displays the markers (fetched from the database) on the map
+        lifecycleScope.launch {
+            displayBinsMarkers(db.getAllBins())
+        }
+
+        // Setup the marker and map clicks listener action
+        setupMarkerAndMapClicks()
+
+        setupAddBinBtnAndSelector()
+
+
+
     }
 
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -92,14 +112,53 @@ class MapFragment : Fragment() {
     }
 
     /**
-     * Helper function to setup the behavior of the "Add new post" button
+     * Helper function to setup the behavior of the "Add new post" button and its type selector
      */
-    private fun setupAddBinBtn() {
+    private fun setupAddBinBtnAndSelector() {
 
-        // If the user clicks on the "Add new bin" button it will add a new bin with its marker
-        addNewBinBtn = requireView().findViewById(R.id.addNewBinBtn)
-        addNewBinBtn.setOnClickListener {
-            addNewBin()
+        // Type selector
+        val binTypeSelector: Spinner = requireView().findViewById(R.id.binTypeSelector)
+        val adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            BinType.values()
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item)
+        binTypeSelector.adapter = adapter
+
+        // Button
+        val binBtn: Button = requireView().findViewById(R.id.binBtn)
+        setUpBinButtonClick(binBtn, binTypeSelector)
+    }
+
+    /**
+     * Helper function that sets up button click events listeners
+     */
+    private fun setUpBinButtonClick(binBtn: Button, binTypeSelector: Spinner) {
+        binBtn.setOnClickListener {
+            // If no marker is currently selected, add a new one at the current location
+            if (selectedMarker == null) {
+                // Get the BinType from the selector
+                val binType: BinType = BinType.values()[binTypeSelector.selectedItemPosition]
+                addNewBin(binType)
+            } else {
+                // Remove the bin from the database
+                lifecycleScope.launch {
+                    // We always add the bin in the tag after the bin has been added to the database,
+                    // hence the id is always valid and the "!!" is safe
+                    db.removeBin((selectedMarker!!.tag as Bin).id!!)
+                }
+
+                // Remove the marker from the map
+                selectedMarker!!.remove()
+                selectedMarker = null
+
+                binBtn.text = getString(R.string.add_new_bin)
+                // Informs the user that his action took place
+                Toast.makeText(requireContext(), "Bin removed",
+                    Toast.LENGTH_SHORT).show()
+            }
+
         }
     }
 
@@ -151,51 +210,34 @@ class MapFragment : Fragment() {
     }
 
     /**
-     * Helper functions that displays bins markers on the map
+     * Helper functions that displays bins markers on the map, and sets up click events
+     * Only called once when the view is created
      */
-    private fun displayBinsMarkers(bins: Set<Bin>) {
+    private fun displayBinsMarkers(bins: List<Bin>) = bins.forEach{ addMarker(it) }
 
-        // Clear old bins so we don't display removed or duplicates bins
-        map.clear()
-
-        for (bin in bins) {
-
-            val location = LatLng(bin.lat, bin.long)
-
-            val marker = map.addMarker(
-                MarkerOptions()
-                    .position(location)
-                    .title(bin.type.toString())
-                    .icon(BitmapDescriptorFactory.defaultMarker(bin.type.markerColor))
-            )
-
-            marker!!.tag = bin.id
-        }
-
-        // Setup the markers click listener action
-        setupMarkersClick()
-    }
 
     /**
-     * Helper function that setups a marker click listener action
+     * Helper function that setups marker and map click listener actions
      */
-    private fun setupMarkersClick() {
+    private fun setupMarkerAndMapClicks() {
 
-        // Delete a bin when the user clicks on the associated marker
-        map.setOnMarkerClickListener { marker ->
+        val addNewBinBtn: Button = requireView().findViewById(R.id.binBtn)
 
-            // Remove the bin associated to this marker
-            BinsFakeDatabase.removeBin(marker.tag as Int)
-            displayBinsMarkers(BinsFakeDatabase.fakeBins)
-
-            true // Return true to indicate that the event has been handled
+        map.setOnMarkerClickListener {
+            selectedMarker = it
+            addNewBinBtn.text = getString(R.string.remove_bin)
+            false
+        }
+        map.setOnMapClickListener {
+            selectedMarker = null
+            addNewBinBtn.text = getString(R.string.add_new_bin)
         }
     }
 
     /**
-     * Helper function that add a bin marker to the user current location
+     * Helper function that add a bin marker to the user current location, with the given binType
      */
-    private fun addNewBin() {
+    private fun addNewBin(binType: BinType) {
 
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -206,9 +248,36 @@ class MapFragment : Fragment() {
 
         } else {
 
-            val bin = Bin(0, BinType.PLASTIC, userLocation!!.latitude, userLocation!!.longitude)
-            BinsFakeDatabase.addBin(bin)
-            displayBinsMarkers(BinsFakeDatabase.fakeBins)
+            userLocation?.apply {
+                // Add a bin of type "binType" at the user current location
+                Bin(binType, LatLng(latitude, longitude))
+                    .let {bin ->
+                        lifecycleScope.launch {
+                            // Add the new bin to the database
+                            if (db.addBin(bin)) {
+                                // Display the marker on the map
+                                addMarker(bin)
+                                // Informs the user that his action took place
+                                Toast.makeText(requireContext(), "Bin added",
+                                    Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+            }
+        }
+    }
+
+    /**
+     * Helper function to add a marker on the map and set its tag with the bin infos
+     */
+    private fun addMarker(bin: Bin){
+        map.addMarker(
+            MarkerOptions()
+                .position(bin.location())
+                .title(bin.type.toString())
+                .icon(BitmapDescriptorFactory.defaultMarker(bin.type.markerColor))
+        )?.apply {
+            tag = bin
         }
     }
 }
