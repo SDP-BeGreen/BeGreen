@@ -25,4 +25,18 @@ data class ProfilePhotoMetadata(
             return arrayOfNulls(size)
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ProfilePhotoMetadata) return false
+
+        // ProfilePhotoMetadata is uniquely defined by the picture id because if we compare all fields, some of them
+        // are obsolete in the database. Actually this was the case in our case.
+
+        return pictureId == other.pictureId
+    }
+
+    override fun hashCode(): Int {
+        return pictureId?.hashCode() ?: 0
+    }
 }

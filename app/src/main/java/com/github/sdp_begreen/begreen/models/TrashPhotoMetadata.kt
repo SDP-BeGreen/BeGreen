@@ -42,6 +42,9 @@ data class TrashPhotoMetadata(
         if (this === other) return true
         if (other !is TrashPhotoMetadata) return false
 
+        // ProfilePhotoMetadata is uniquely defined by the picture id because if we compare all fields, some of them
+        // are obsolete in the database. Actually this was the case in our case.
+
         return pictureId == other.pictureId
     }
 
