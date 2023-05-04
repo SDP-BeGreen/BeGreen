@@ -44,24 +44,22 @@
         android:layout_marginVertical="12dp"
         android:orientation="horizontal">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/cancel_button"
-            android:layout_width="0dp"
-            android:layout_marginHorizontal="12dp"
-            android:textColor="@color/white"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
             android:backgroundTint="@color/black"
-            android:layout_weight="1"
-            android:text="@string/cancel"/>
+            android:text="@string/cancel"
+            android:textColor="@color/white" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/send_button"
-            android:layout_width="0dp"
-            android:layout_marginHorizontal="12dp"
-            android:textColor="@color/black"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/send"/>
+            android:layout_marginHorizontal="12dp"
+            android:text="@string/send"
+            android:textColor="@color/black" />
 
     </LinearLayout>
 
