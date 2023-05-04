@@ -18,4 +18,10 @@ data class Bin(var id: String? = null, val type: TrashCategory, val location : L
         type,
         location
     )
+
+    constructor(type: TrashCategory, location: CustomLatLng) :this(
+        null,
+        type,
+        LatLng(location.toMapLatLng().latitude, location.toMapLatLng().longitude)
+    )
 }
