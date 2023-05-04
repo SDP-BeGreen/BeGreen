@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.util.Log
 import com.github.sdp_begreen.begreen.FirebaseRef
 import com.github.sdp_begreen.begreen.exceptions.DatabaseTimeoutException
+import com.github.sdp_begreen.begreen.firebase.models.FirebaseUser
 import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
@@ -42,6 +43,8 @@ object FirebaseDB: DB {
     private const val USER_ID_ATTRIBUTE = "id"
     private const val BIN_LOCATION_PATH = "bin"
     private const val ADVICES_LOCATION_PATH = "advices"
+    private const val FOLLOWERS_PATH = "followers"
+    private const val FOLLOWING_PATH = "following"
 
     // Logs (in the console) the connections and disconnections with the Firebase database
     // We might want to provide a new constructor that takes code to execute on connections/disconnections
@@ -80,7 +83,7 @@ object FirebaseDB: DB {
         if (userId.isBlank())
             throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
 
-        databaseReference.child(USERS_PATH).child(userId).setValue(user).await()
+        databaseReference.child(USERS_PATH).child(userId).setValue(FirebaseUser(user)).await()
     }
 
     override suspend fun getUser(userId: String, timeout: Long): User? {
@@ -88,13 +91,13 @@ object FirebaseDB: DB {
         if (userId.isBlank())
             throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
 
-        return getNode("$USERS_PATH/$userId", timeout).getValue(User::class.java)
+        return getNode("$USERS_PATH/$userId", timeout).getValue(FirebaseUser::class.java)?.toUser()
     }
 
     override suspend fun getAllUsers(timeout: Long): List<User> {
 
         return getNode(USERS_PATH, timeout).children.mapNotNull {
-            it.getValue(User::class.java)
+            it.getValue(FirebaseUser::class.java)?.toUser()
         }
     }
 
@@ -171,6 +174,46 @@ object FirebaseDB: DB {
         return getNode(ADVICES_LOCATION_PATH, timeout).children.mapNotNull {
             it.value as? String
         }.toSet()
+    }
+
+    override suspend fun follow(followerId: String, followedId: String, timeout: Long) {
+        if (!userExists(followerId) || !userExists(followedId)) return
+
+        // Add the "followed" user to the list of followed users of the follower
+        databaseReference.child(USERS_PATH).child(followerId).child(FOLLOWING_PATH).child(followedId).setValue(true).await()
+        // Add the "follower" user to the list of following users of the user being followed
+        databaseReference.child(USERS_PATH).child(followedId).child(FOLLOWERS_PATH).child(followerId).setValue(true).await()
+    }
+
+    override suspend fun unfollow(followerId: String, followedId: String, timeout: Long) {
+        if (!userExists(followerId, timeout) || !userExists(followedId, timeout)) return
+
+        // Add the "followed" user to the list of followed users of the follower
+        databaseReference.child(USERS_PATH).child(followerId).child(FOLLOWING_PATH).child(followedId).removeValue().await()
+        // Add the "follower" user to the list of following users of the user being followed
+        databaseReference.child(USERS_PATH).child(followedId).child(FOLLOWERS_PATH).child(followerId).removeValue().await()
+    }
+
+    override suspend fun getFollowedIds(userId: String, timeout: Long): List<String> {
+        if (!userExists(userId)) return listOf()
+
+        return getNode("$USERS_PATH/$userId/$FOLLOWING_PATH", timeout).children.mapNotNull {
+            it.key as String
+        }
+    }
+
+    override suspend fun getFollowerIds(userId: String, timeout: Long): List<String> {
+        if (!userExists(userId)) return listOf()
+
+        return getNode("$USERS_PATH/$userId/$FOLLOWERS_PATH", timeout).children.mapNotNull {
+            it.key as String
+        }
+    }
+
+    override suspend fun getFollowers(userId: String, timeout: Long): List<User> {
+        val users = getAllUsers(timeout)
+        val followerIds = getFollowerIds(userId, timeout)
+        return users.filter { followerIds.contains(it.id) }
     }
 
     /**

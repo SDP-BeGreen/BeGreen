@@ -1,21 +1,21 @@
 package com.github.sdp_begreen.begreen.fragments
 import android.os.Bundle
 import androidx.fragment.app.testing.FragmentScenario
-import androidx.recyclerview.widget.LinearLayoutManager
-import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.MatcherAssert.assertThat
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.activities.MainActivity
+import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import junit.framework.TestCase.*
 import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -30,7 +30,6 @@ class UserFragmentTest {
     @get:Rule
     val koinTestRule = KoinTestRule()
 
-    private lateinit var fragment: UserFragment
     private lateinit var userList: List<User>
 
     val ARG_COLUMN_COUNT = "column-count"
@@ -45,8 +44,6 @@ class UserFragmentTest {
             User("1", 20, "Bob"),
             User("2", 15, "Charlie")
         )
-        // Create a new instance of the fragment with test arguments.
-        fragment = UserFragment.newInstance(2, listOf(User("0", 10, "John"), User("1", 8, "Jane")), true)
     }
 
     @Test

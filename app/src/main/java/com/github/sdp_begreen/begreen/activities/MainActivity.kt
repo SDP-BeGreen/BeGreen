@@ -21,7 +21,7 @@ import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.fragments.AdviceFragment
-import com.github.sdp_begreen.begreen.fragments.CameraFragment
+import com.github.sdp_begreen.begreen.fragments.CameraContainer
 import com.github.sdp_begreen.begreen.fragments.FollowersFragment
 import com.github.sdp_begreen.begreen.fragments.MapFragment
 import com.github.sdp_begreen.begreen.fragments.ProfileDetailsFragment
@@ -41,6 +41,7 @@ import org.koin.android.ext.android.inject
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Date
+import kotlin.collections.ArrayList
 
 
 
@@ -63,7 +64,7 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
                 setReorderingAllowed(true)
-                add<CameraFragment>(R.id.mainFragmentContainer)
+                add<CameraContainer>(R.id.mainFragmentContainer)
             }
         }
 
@@ -200,7 +201,7 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.bottomMenuCamera -> {
                 item.setIcon(R.drawable.ic_baseline_photo_camera)
-                replaceFragInMainContainer(CameraFragment())
+                replaceFragInMainContainer(CameraContainer())
             }
             R.id.bottomMenuAdvice -> {
                 item.setIcon(R.drawable.ic_baseline_lightbulb)
@@ -228,7 +229,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             R.id.mainNavDrawFollowers -> {
-                replaceFragInMainContainer(FollowersFragment())
+                val followers = auth.getConnectedUserId()?.let {
+                    runBlocking { db.getFollowers(it) }
+                } ?: listOf()
+                replaceFragInMainContainer(FollowersFragment.newInstance(1, ArrayList(followers)))
             }
             //------------------------FOR DEMO PURPOSES ONLY------------------------
             //TODO Remove this when demo will be over
