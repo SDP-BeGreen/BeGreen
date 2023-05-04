@@ -256,6 +256,7 @@ class MainActivityTest {
                 .perform(DrawerActions.open(GravityCompat.END))
 
             onView(withId(R.id.mainNavDrawContact))
+                .perform(scrollTo())
                 .check(matches(isDisplayed()))
                 .perform(click())
 
