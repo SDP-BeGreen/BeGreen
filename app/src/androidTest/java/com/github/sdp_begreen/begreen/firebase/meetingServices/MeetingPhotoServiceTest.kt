@@ -155,7 +155,7 @@ class MeetingPhotoServiceTest {
         )
     }
 
-    /*
+
     @Test
     fun getAllPhotoMetadataReturnCorrectModifiedListUponModification() {
 
@@ -218,7 +218,7 @@ class MeetingPhotoServiceTest {
                 Matchers.stringContainsInOrder("Error while getting picture bytes from storage")
             )
         }
-    }*/
+    }
 
     @Test
     fun getPhotoBlankMeetingIdShouldThrowIllegalArgumentException() {

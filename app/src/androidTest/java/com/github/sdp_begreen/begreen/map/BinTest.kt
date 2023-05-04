@@ -9,7 +9,10 @@ import org.junit.Test
 class BinTest {
 
     @Test
-    fun equalsOnBinsOnlyComparesFields() {
+    fun equalsOnBinsOnlyComparesId() {
+
+        // A bin is uniquely defined by its id.
+
         val bin1 = Bin("id", TrashCategory.PAPER, CustomLatLng(69.69, 4.20))
         val bin2 = Bin("id", TrashCategory.PAPER, CustomLatLng(69.69, 4.20))
         assertEquals(bin1, bin2)

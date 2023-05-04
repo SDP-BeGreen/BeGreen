@@ -20,19 +20,7 @@ abstract class PhotoMetadata(
         return 0
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is PhotoMetadata) return false
-
-        // A PhotoMetadata is uniquely defined by the pictureId because if we compare all fields, some of them
-        // are obsolete in the database. Actually we encountered this issue during the testing, because the PhotoMetadata
-        // constructor has been a bit modified, so the class didn't match the stored one in the database
-        // even if the pictureId was the same.
-
-        return pictureId == other.pictureId
-    }
-
-    override fun hashCode(): Int {
-        return pictureId?.hashCode() ?: 0
-    }
+    // The equals() and hashcode() methods should be overrided by concrete class and use only the pictureId.
+    // Since the concrete classes are data classes, they must override all field of this (parent) class.
+    // It implies that overriding the equals() and hashcode() in this abstract class doesn't affect the subclasses.
 }

@@ -16,7 +16,7 @@ class TrashPhotoMetadataTest {
         // A PhotoMetaData is uniquely defined by its id.
 
         val trashPhotoMetadata1 = TrashPhotoMetadata("123", ParcelableDate.now, "aaa", "hello", TrashCategory.PLASTIC)
-        val trashPhotoMetadata2 = TrashPhotoMetadata("123", ParcelableDate.now, "aaa", "hello", TrashCategory.PLASTIC)
+        val trashPhotoMetadata2 = TrashPhotoMetadata("123", ParcelableDate.now, "bbb", "world", TrashCategory.CLOTHES)
         assertThat(trashPhotoMetadata1, equalTo(trashPhotoMetadata2))
     }
 

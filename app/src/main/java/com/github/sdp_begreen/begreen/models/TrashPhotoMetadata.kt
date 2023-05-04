@@ -37,4 +37,20 @@ data class TrashPhotoMetadata(
             return arrayOfNulls(size)
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is TrashPhotoMetadata) return false
+
+        // A PhotoMetadata is uniquely defined by the pictureId because if we compare all fields, some of them
+        // are obsolete in the database. Actually we encountered this issue during the testing, because the PhotoMetadata
+        // constructor has been a bit modified, so the class didn't match the stored one in the database
+        // even if the pictureId was the same.
+
+        return pictureId == other.pictureId
+    }
+
+    override fun hashCode(): Int {
+        return pictureId?.hashCode() ?: 0
+    }
 }
