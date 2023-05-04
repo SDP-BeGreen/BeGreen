@@ -1,6 +1,8 @@
 package com.github.sdp_begreen.begreen.activities
 
-import android.Manifest
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.Manifest.permission.CAMERA
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
@@ -24,6 +26,8 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.espressoUtils.BaseRobot
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
+import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingParticipantService
+import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingService
 import com.github.sdp_begreen.begreen.fragments.SendPostFragment
 import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBitmap
@@ -45,7 +49,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.dsl.module
-import org.mockito.Mockito
+import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -68,16 +72,22 @@ class MainActivityTest {
             "User 1",
             5,
             null, "user 1 description", "123456789",
-            "user1@email.com", profilePictureMetadata = userPhotoMetadata)
+            "user1@email.com", profilePictureMetadata = userPhotoMetadata
+        )
         private val user2 = User(
             userId2,
             12,
             "User 2",
-            description = "user 2 description")
+            description = "user 2 description"
+        )
         private val user3 = User(userId3, 10)
         private val fakePicture1 = Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888)
-        private val db: DB = Mockito.mock(DB::class.java)
-        private val auth: Auth = Mockito.mock(Auth::class.java)
+        private val db: DB = mock(DB::class.java)
+        private val auth: Auth = mock(Auth::class.java)
+        private val meetingService: MeetingService = mock(MeetingService::class.java)
+        private val participantService: MeetingParticipantService =
+            mock(MeetingParticipantService::class.java)
+
         // initially do as if no user were signed in
         private val authUserFlow = MutableStateFlow<String?>(null)
         private val bins = listOf(
@@ -102,11 +112,14 @@ class MainActivityTest {
                 // user between tests, by simply pushing a new userId
                 `when`(auth.getFlowUserIds())
                     .thenReturn(authUserFlow.onEach { delay(10) })
+                `when`(auth.getConnectedUserId())
+                    .thenReturn("current user id")
 
                 `when`(db.getAllUsers()).thenReturn(listOf(user1))
-
                 `when`(db.getAllBins()).thenReturn(bins)
-
+                `when`(meetingService.getAllMeetings()).thenReturn(flowOf())
+                `when`(db.getFollowers("current user id")).thenReturn(listOf())
+                `when`(db.getFollowedIds("current user id")).thenReturn(listOf())
             }
         }
     }
@@ -119,18 +132,22 @@ class MainActivityTest {
         modules = listOf(module {
             single { db }
             single { auth }
+            single { meetingService }
+            single { participantService }
         })
     )
 
     // Need permission for camera when testing launching profile fragment
     @get:Rule
-    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
+    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(CAMERA)
 
     @get:Rule
-    val fineLocationPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION)
+    val fineLocationPermissionRule: GrantPermissionRule =
+        GrantPermissionRule.grant(ACCESS_FINE_LOCATION)
 
     @get:Rule
-    val coarseLocationPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_COARSE_LOCATION)
+    val coarseLocationPermissionRule: GrantPermissionRule =
+        GrantPermissionRule.grant(ACCESS_COARSE_LOCATION)
 
     @Test
     fun bottomNavigationBarVisible() {
@@ -245,6 +262,19 @@ class MainActivityTest {
     }
 
     @Test
+    fun pressDrawerMenuFollowersDisplayFollowersFragmentWithNoAuthenticatedUser() {
+
+        `when`(auth.getConnectedUserId()).thenReturn(null)
+
+        onView(withId(R.id.mainDrawerLayout)).perform(DrawerActions.open(GravityCompat.END))
+
+        onView(withId(R.id.mainNavDrawFollowers))
+            .perform(scrollTo())
+            .check(matches(isDisplayed()))
+            .perform(click())
+    }
+
+    @Test
     fun pressDrawerMenuUsersDisplayUserFragment() {
         onView(withId(R.id.mainDrawerLayout)).perform(DrawerActions.open(GravityCompat.END))
 
@@ -254,6 +284,19 @@ class MainActivityTest {
             .perform(click())
 
         onView(withId(R.id.user_fragment))
+            .check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun pressDrawerMenuMeetingsDisplayMeetingFragment() {
+        onView(withId(R.id.mainDrawerLayout)).perform(DrawerActions.open(GravityCompat.END))
+
+        onView(withId(R.id.mainNavDrawMeetings))
+            .perform(scrollTo())
+            .check(matches(isDisplayed()))
+            .perform(click())
+
+        onView(withId(R.id.fragment_meeting_list))
             .check(matches(isDisplayed()))
     }
 

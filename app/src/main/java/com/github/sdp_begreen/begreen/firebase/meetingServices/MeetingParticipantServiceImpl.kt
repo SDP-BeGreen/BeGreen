@@ -21,9 +21,7 @@ object MeetingParticipantServiceImpl : MeetingParticipantService {
         checkArgument(participantId.isNotBlank(), "The participant id cannot be blank")
 
         return setObjToDb(
-            dbRef.child(MEETING_PATH).child(meetingId).child(
-                PARTICIPANTS_PATH
-            )
+            dbRef.child(MEETING_PATH).child(meetingId).child(PARTICIPANTS_PATH)
                 .child(participantId),
             participantId,
             "Error while adding a participant"
@@ -33,9 +31,7 @@ object MeetingParticipantServiceImpl : MeetingParticipantService {
     override suspend fun getAllParticipants(meetingId: String): Flow<List<String>> {
         checkArgument(meetingId.isNotBlank(), "The meeting id cannot be blank")
         return getFlowOfObjects(
-            dbRef.child(MEETING_PATH).child(meetingId).child(
-                PARTICIPANTS_PATH
-            ),
+            dbRef.child(MEETING_PATH).child(meetingId).child(PARTICIPANTS_PATH),
             String::class.java
         )
     }

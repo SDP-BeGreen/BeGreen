@@ -64,6 +64,9 @@
     <string name="electronic">Electronic</string>
     <string name="clothes">Clothes</string>
     <string name="metal">Metal</string>
+    <string name="meetings">Meetings</string>
+    <string name="meeting_list_join_button_join">Join</string>
+    <string name="meeting_list_join_button_withdraw">Withdraw</string>
     <string name="category">Category</string>
     <string name="enter_description_here">Enter description here</string>
     <string name="profile_button">profile button</string>

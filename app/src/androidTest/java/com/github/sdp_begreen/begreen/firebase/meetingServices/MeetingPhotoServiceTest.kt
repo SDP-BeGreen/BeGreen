@@ -106,33 +106,32 @@ class MeetingPhotoServiceTest {
         )
     }
 
-/*
 
     // TODO : Didn't manage to make this tests pass. I will work on it later.
 
     @Test
     fun addMeetingPhotoCorrectlyAddPhotoToMeetingInDB() {
         runTest {
-            val metadata1 = TrashPhotoMetadata(
-                "-NU8AMWCpNWmjCRlNU7x",
+
+            val metadata = TrashPhotoMetadata(
+                null,
                 null,
                 "aaaaaa",
                 "Hello",
                 null
             )
+
             val metadataWithId = MeetingPhotoServiceImpl.addMeetingsPhoto(
                 meetingWithPhotos.meetingId!!,
                 metadata,
                 Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
             )
 
-            metadata = metadata.copy(pictureId = metadataWithId.pictureId)
+            metadata.pictureId = metadataWithId.pictureId
 
             assertThat(metadataWithId, `is`(equalTo(metadata)))
         }
     }
-
- */
 
     @Test
     fun getAllPhotoMetadataBlankMeetingIdShouldThrowIllegalArgumentException() {
@@ -148,9 +147,6 @@ class MeetingPhotoServiceTest {
         )
     }
 
-/*
-
-    // TODO : Didn't manage to make this tests pass. I will work on it later.
 
     @Test
     fun getAllPhotoMetadataReturnCorrectModifiedListUponModification() {
@@ -215,7 +211,6 @@ class MeetingPhotoServiceTest {
             )
         }
     }
-    */
 
     @Test
     fun getPhotoBlankMeetingIdShouldThrowIllegalArgumentException() {

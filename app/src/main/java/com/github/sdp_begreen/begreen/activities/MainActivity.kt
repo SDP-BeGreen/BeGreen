@@ -25,6 +25,7 @@ import com.github.sdp_begreen.begreen.fragments.AdviceFragment
 import com.github.sdp_begreen.begreen.fragments.CameraContainer
 import com.github.sdp_begreen.begreen.fragments.FollowersFragment
 import com.github.sdp_begreen.begreen.fragments.MapFragment
+import com.github.sdp_begreen.begreen.fragments.MeetingsFragment
 import com.github.sdp_begreen.begreen.fragments.ProfileDetailsFragment
 import com.github.sdp_begreen.begreen.fragments.SettingsFragment
 import com.github.sdp_begreen.begreen.fragments.UserFragment
@@ -41,6 +42,7 @@ import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 import java.util.*
 import java.util.Date
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
@@ -235,13 +237,19 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             R.id.mainNavDrawFollowers -> {
-                replaceFragInMainContainer(FollowersFragment())
+                val followers = auth.getConnectedUserId()?.let {
+                    runBlocking { db.getFollowers(it) }
+                } ?: listOf()
+                replaceFragInMainContainer(FollowersFragment.newInstance(1, ArrayList(followers)))
             }
             //------------------------FOR DEMO PURPOSES ONLY------------------------
             //TODO Remove this when demo will be over
             R.id.mainNavDrawUserList -> {
                 val userList = runBlocking { db.getAllUsers() }
                 replaceFragInMainContainer(UserFragment.newInstance(1, userList.toCollection(ArrayList()), true))
+            }
+            R.id.mainNavDrawMeetings -> {
+                replaceFragInMainContainer(MeetingsFragment())
             }
             //----------------------------------------------------------------------
             R.id.mainNavDrawSettings -> {

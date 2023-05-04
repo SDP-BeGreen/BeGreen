@@ -37,8 +37,8 @@ class UserTest {
         "cc@gmail.com",
         "08920939459802",
         67,
-        listOf(user),
-        listOf(user)
+        listOf(user.id),
+        listOf(user.id)
     )
 
     @Before
@@ -117,16 +117,16 @@ class UserTest {
         user.description = "test"
         user.phone = "test"
         user.email = "test"
-        user.followers = listOf(user)
-        user.following = listOf(user)
+        user.followers = listOf(user.id)
+        user.following = listOf(user.id)
         user.rating = 1
         user.progression = 1
         assertThat(
             user, allOf(
                 hasProp("description", equalTo("test")),
                 hasProp("phone", equalTo("test")),
-                hasProp("followers", equalTo(listOf(user))),
-                hasProp("following", equalTo(listOf(user))),
+                hasProp("followers", equalTo(listOf(user.id))),
+                hasProp("following", equalTo(listOf(user.id))),
                 hasProp("rating", equalTo(1)),
                 hasProp("progression", equalTo(1))
             )
