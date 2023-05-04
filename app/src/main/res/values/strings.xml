@@ -64,10 +64,13 @@
     <string name="change_bin_type">Change bin type</string>
     <string name="message_sent_success">Message sent successfully</string>
     <string name="message_sent_error">Something went wrong</string>
+    <string name="meetings">Meetings</string>
+    <string name="meeting_list_join_button_join">Join</string>
+    <string name="meeting_list_join_button_withdraw">Withdraw</string>
     <string name="category">Category</string>
     <string name="enter_description_here">Enter description here</string>
     <string name="profile_button">profile button</string>
-    <string name="serch_a_user_button">serch a user button</string>
+    <string name="search_a_user_button">search a user button</string>
     <string name="switch_camera_button">switch camera button</string>
     <string name="here_is_the_photo_that_was_taken">Here is the photo that was taken</string>
     <string name="button_to_send_the_post_online">button to send the post online</string>
