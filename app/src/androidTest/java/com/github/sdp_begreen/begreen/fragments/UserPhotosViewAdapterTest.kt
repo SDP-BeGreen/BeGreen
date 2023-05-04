@@ -2,12 +2,6 @@ package com.github.sdp_begreen.begreen.fragments
 
 import android.widget.LinearLayout
 import androidx.fragment.app.commit
-import androidx.test.espresso.Espresso
-import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.assertion.ViewAssertions
-import androidx.test.espresso.contrib.RecyclerViewActions
-import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.sdp_begreen.begreen.R
@@ -17,6 +11,7 @@ import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert
 import org.junit.Rule
 import org.junit.Test
@@ -36,19 +31,19 @@ class UserPhotosViewAdapterTest {
 
     @Test
     fun userViewAdapterGetItemCountWorksOnTrivialList() {
-        MatcherAssert.assertThat(userPhotoViewAdapter.getItemCount(), CoreMatchers.equalTo(2))
+        MatcherAssert.assertThat(userPhotoViewAdapter.itemCount, equalTo(2))
     }
 
     @Test
     fun userViewAdapterGetItemCountWorksOnEmptyList() {
         userPhotoViewAdapter = UserPhotosViewAdapter(listOf(), true)
-        MatcherAssert.assertThat(userPhotoViewAdapter.getItemCount(), CoreMatchers.equalTo(0))
+        MatcherAssert.assertThat(userPhotoViewAdapter.itemCount, equalTo(0))
     }
 
     @Test
     fun userPhotosViewAdapterGetItemCountWorksOnNullList() {
         userPhotoViewAdapter = UserPhotosViewAdapter(null, true)
-        MatcherAssert.assertThat(userPhotoViewAdapter.getItemCount(), CoreMatchers.equalTo(0))
+        MatcherAssert.assertThat(userPhotoViewAdapter.itemCount, equalTo(0))
     }
 
     @Test
@@ -56,6 +51,7 @@ class UserPhotosViewAdapterTest {
 
         val viweHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
         userPhotoViewAdapter.onBindViewHolder(viweHolder, 0)
+
         MatcherAssert.assertThat(viweHolder.titleView.text, CoreMatchers.equalTo("Look at me cleaning!"))
         MatcherAssert.assertThat(viweHolder.subtitleView, CoreMatchers.notNullValue())
         MatcherAssert.assertThat(viweHolder.subtitleView.text.toString(), CoreMatchers.containsString(TrashCategory.PLASTIC.title))

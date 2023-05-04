@@ -11,6 +11,8 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.models.Group
 import com.github.sdp_begreen.begreen.models.Item
 
+const val NBQUOTES = 1
+
 // This adapter is responsible for displaying expandable lists with groups and their respective items.
 class ExpandableListAdapter(
     private val context: Context,
@@ -22,12 +24,12 @@ class ExpandableListAdapter(
         return groups.size
     }
 
-    // Returns the number of children (items) in a particular group.
+    // Returns the number of children (items) we would like to show in a group.
     override fun getChildrenCount(groupPosition: Int): Int {
         if (groupPosition < 0 || groupPosition >= groups.size) {
             throw IllegalArgumentException()
         }
-        return groups[groupPosition].items.size
+        return NBQUOTES
     }
 
 
@@ -39,12 +41,16 @@ class ExpandableListAdapter(
         return groups[groupPosition]
     }
 
-    // Returns the child (item) object in the specified group and child position.
+    // Returns the randomly chosen child (item) object in the specified group.
     override fun getChild(groupPosition: Int, childPosition: Int): Any {
         if (groupPosition < 0 || groupPosition >= groups.size || childPosition < 0 || childPosition >= groups[groupPosition].items.size) {
             throw IllegalArgumentException()
         }
-        return groups[groupPosition].items[childPosition]
+
+        // generated random
+        val rnds = (0..groups[groupPosition].items.size-1).random()
+
+        return groups[groupPosition].items[rnds]
     }
 
     // Returns a unique identifier for a group.

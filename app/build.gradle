@@ -75,7 +75,6 @@ dependencies {
     implementation "androidx.fragment:fragment-ktx:1.5.7"
     debugImplementation "androidx.fragment:fragment-testing:1.5.7"
     androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
-
     // Real time DB + storage + google authenticator (check the following link to add any other dependency:
     // https://firebase.google.com/docs/android/setup#available-libraries
     implementation platform('com.google.firebase:firebase-bom:31.5.0')
@@ -109,6 +108,24 @@ dependencies {
     // Googlemaps
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.android.gms:play-services-location:21.0.1'
+
+    // Camera X
+
+    def camerax_version = "1.2.2"
+    // The following line is optional, as the core library is included indirectly by camera-camera2
+    implementation("androidx.camera:camera-core:${camerax_version}")
+    implementation("androidx.camera:camera-camera2:${camerax_version}")
+    // If you want to additionally use the CameraX Lifecycle library
+    implementation("androidx.camera:camera-lifecycle:${camerax_version}")
+    // If you want to additionally use the CameraX VideoCapture library
+    implementation("androidx.camera:camera-video:${camerax_version}")
+    // If you want to additionally use the CameraX View class
+    implementation("androidx.camera:camera-view:${camerax_version}")
+    // If you want to additionally use the CameraX Extensions library
+    implementation("androidx.camera:camera-extensions:${camerax_version}")
+
+    // Picasso
+    implementation("com.squareup.picasso:picasso:2.8")
 
 }
 

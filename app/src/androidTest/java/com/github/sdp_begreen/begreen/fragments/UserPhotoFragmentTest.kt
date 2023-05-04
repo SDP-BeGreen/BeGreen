@@ -2,10 +2,8 @@ package com.github.sdp_begreen.begreen.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.testing.FragmentScenario
-import androidx.recyclerview.widget.LinearLayoutManager
-import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.MatcherAssert.assertThat
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.rules.ActivityScenarioRule
@@ -19,13 +17,14 @@ import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import junit.framework.TestCase.*
 import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.instanceOf
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.*
-import kotlin.collections.ArrayList
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
