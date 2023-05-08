@@ -4,11 +4,11 @@ import android.os.Parcel
 import android.os.Parcelable
 
 
-abstract class PhotoMetadata(
-    open var pictureId: String? = null,
-    open val takenOn: ParcelableDate? = null,
-    open val takenBy: String? = null
-) : Parcelable {
+abstract class PhotoMetadata: Parcelable {
+
+    abstract var pictureId: String?
+    abstract val takenOn: ParcelableDate?
+    abstract val takenBy: String?
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(pictureId)

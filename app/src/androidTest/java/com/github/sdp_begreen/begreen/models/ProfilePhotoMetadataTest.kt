@@ -14,14 +14,6 @@ class ProfilePhotoMetadataTest {
         MatcherAssert.assertThat(profilePhotoMetadata, CoreMatchers.notNullValue())
     }
 
-    /*
-    @Test
-    fun photoGetFromDatabaseGetBitmap() {
-        val profilePhotoMetadata = ProfilePhotoMetadata(Parcel.obtain())
-        assertThat(profilePhotoMetadata.getPhotoFromDataBase()!!::class.java, equalTo(Bitmap::class.java))
-    }
-    */
-
     @Test
     fun photoWriteToParcelWorks() {
 

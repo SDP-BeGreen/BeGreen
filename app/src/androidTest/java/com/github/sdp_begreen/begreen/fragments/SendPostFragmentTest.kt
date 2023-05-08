@@ -37,7 +37,7 @@ class SendPostFragmentTest {
 
     //Companion object to mock the DB and Auth
     companion object {
-        val user = User("test", 2, "test", 5, null, "test", "test", "test", 15)
+        val user = User("test", 2, "test", 5, "test", "test", "test", 15)
         private val db: DB = Mockito.mock(DB::class.java)
         private val auth: Auth = Mockito.mock(Auth::class.java)
         val users = listOf<User>(

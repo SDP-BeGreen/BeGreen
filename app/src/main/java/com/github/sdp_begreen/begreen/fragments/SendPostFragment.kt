@@ -1,6 +1,5 @@
 package com.github.sdp_begreen.begreen.fragments
 
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,9 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.DB
-import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
@@ -24,7 +21,6 @@ import com.google.android.material.textfield.TextInputEditText
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
-import java.util.Date
 
 //argument constant
 private const val ARG_URI = "uri"
@@ -81,8 +77,13 @@ class SendPostFragment : Fragment() {
     private fun setUpShare(){
         val shareBtn = view?.findViewById<ImageView>(R.id.send_post)
         shareBtn?.setOnClickListener {
+
+            // fetch current user. He is necessarily not null
+            val user = connectedUserViewModel.currentUser.value!!
+
             //create a metadata file
-            var metadata : TrashPhotoMetadata?
+            var metadata : TrashPhotoMetadata? = null
+
             //fetch description on UI
             view?.findViewById<TextInputEditText>(R.id.post_description).also {
 
@@ -97,41 +98,38 @@ class SendPostFragment : Fragment() {
                     category = cat.text.toString()
                 }*/
 
-                // fetch current user
-                val user = connectedUserViewModel.currentUser.value
-
                 metadata = TrashPhotoMetadata(null, ParcelableDate.now, user?.id, caption, category)
 
             }
 
-            // Post photo to firebase
-            view?.findViewById<ImageView>(R.id.preview)?.drawable?.toBitmap()?.let { bitmap ->
-                lifecycleScope.launch {
+            // Post picture to firebase
+            lifecycleScope.launch {
+                view?.findViewById<ImageView>(R.id.preview)?.drawable?.toBitmap()?.let { bitmap ->
+                    // Get the stored metadata
+                    val storedMetadata = metadata?.let {
 
-                    if (metadata != null) {
-                        sharePhoto(bitmap, metadata!!)
+                        //sharePhoto(bitmap, it)
+                        db.addTrashPhoto(bitmap, it)
+                    }
+
+                    if (storedMetadata != null) {
+
+                        // new user with
+                        user.addPhotoMetadata(storedMetadata)
+
+                        // store the new User in firebase
+                        db.addUser(user, user.id)
+
+                        // once stored, set again the new user along with his metadata in current
+                        // user, for consistency
+                        connectedUserViewModel.setCurrentUser(user, true)
+
+                        // Display toast
+                        Toast.makeText(requireContext(), R.string.photo_shared_success, Toast.LENGTH_SHORT).show()
                     }
                 }
-            }
 
-            returnToCamera()
-        }
-    }
-
-    /**
-     * Helper function to share a post with the database
-     */
-    private suspend fun sharePhoto(image: Bitmap, photoMetadata: TrashPhotoMetadata) {
-
-        lifecycleScope.launch {
-
-            // If the photo has correctly been shared, the FirebaseDB returned a non null metadata.
-            val hasBeenShared = (FirebaseDB.addImage(image, photoMetadata) != null)
-
-            if (hasBeenShared) {
-
-                // Display toast
-                Toast.makeText(requireContext(), R.string.photo_shared_success, Toast.LENGTH_SHORT).show()
+                returnToCamera()
             }
         }
     }

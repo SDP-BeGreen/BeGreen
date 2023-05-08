@@ -8,7 +8,7 @@ data class ProfilePhotoMetadata(
     override val takenOn: ParcelableDate? = null,
     override val takenBy: String? = null,
 
-    ) : PhotoMetadata(pictureId, takenOn, takenBy) {
+    ) : PhotoMetadata() {
 
     constructor(parcel: Parcel) : this(
         parcel.readString(),

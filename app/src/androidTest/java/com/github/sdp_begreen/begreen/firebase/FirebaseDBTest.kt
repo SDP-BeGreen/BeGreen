@@ -32,7 +32,7 @@ import kotlin.test.junit.JUnitAsserter.fail
 @LargeTest
 class FirebaseDBTest {
 
-    private val profilePhotoMetaData = ProfilePhotoMetadata(null, null, null)
+    private val profilePhotoMetaData = ProfilePhotoMetadata()
 
     // For some reason to perform the write in the database, an activity has to be started
     @get:Rule
@@ -103,7 +103,7 @@ class FirebaseDBTest {
 
     @Test
     fun retrieveUserAfterSetShouldMatch() {
-        val user = User("1",  100, "User Test", 10, null, "description", "0076286372", "test@email.com", 1, null, null)
+        val user = User("1",  100, "User Test", 10, "description", "0076286372", "test@email.com", 1, null, null)
 
         runBlocking {
             FirebaseDB.addUser(user, user.id)

@@ -81,6 +81,7 @@ interface DB {
      */
     suspend fun storeUserProfilePicture(image: Bitmap, userId: String, metadata: ProfilePhotoMetadata): ProfilePhotoMetadata?
 
+
     /**
      * Adds and [image] for the user [userId] in the database
      *
@@ -88,7 +89,7 @@ interface DB {
      * @param userId the ID of the user wanting to store a new image
      * @return the PhotoMetadata under which the image got stored, and null if the image couldn't get stored
      */
-    suspend fun addImage(image : Bitmap, photoMetadata: TrashPhotoMetadata): TrashPhotoMetadata?
+    suspend fun addTrashPhoto(image : Bitmap, photoMetadata: TrashPhotoMetadata): TrashPhotoMetadata?
 
     /**
      * Test whether a [User] exists in the database for the given [userId]

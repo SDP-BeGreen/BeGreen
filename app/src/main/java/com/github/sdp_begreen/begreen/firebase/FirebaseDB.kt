@@ -11,6 +11,7 @@ import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.utils.checkArgument
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseException
@@ -42,6 +43,7 @@ object FirebaseDB: DB {
     private val connectedReference = dbRefs.database.getReference(".info/connected")
     private const val USERS_PATH = "users"
     private const val USER_PROFILE_PICTURE_METADATA = "profilePictureMetadata"
+    private const val USER_TRASH_PICTURE_METADATA = "trashPictureMetadata"
     private const val USER_POSTS = "posts"
     private const val USER_ID_ATTRIBUTE = "id"
     private const val BIN_LOCATION_PATH = "bin"
@@ -108,18 +110,29 @@ object FirebaseDB: DB {
         if (userId.isBlank())
             throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
 
-        val newMetadata = metadata.copy(pictureId = "${userId}_profile_picture")
+        metadata.pictureId = "${userId}_profile_picture"
 
-        return storePicture(image, USER_PROFILE_PICTURE_METADATA, newMetadata,
+        return storePicture(image, USER_PROFILE_PICTURE_METADATA, metadata,
             databaseReference.child(USERS_PATH).child(userId),
             storageReference.child(USERS_PATH).child(userId).child(
                 USER_PROFILE_PICTURE_METADATA)) as ProfilePhotoMetadata
     }
 
-    override suspend fun addImage(image : Bitmap, photoMetadata: TrashPhotoMetadata): TrashPhotoMetadata? {
+    override suspend fun addTrashPhoto(image : Bitmap, photoMetadata: TrashPhotoMetadata): TrashPhotoMetadata? {
+
+        checkArgument(
+            !photoMetadata.takenBy.isNullOrBlank(),
+            "The user that took the photo cannot be blank or null"
+        )
+
+        checkArgument(
+            userExists(photoMetadata.takenBy!!),
+            "The user doesn't exist in the database"
+        )
 
         var newPhotoMetadata = photoMetadata.copy(pictureId = null)
 
+        // TODO Generic
         return storePicture(image, USER_POSTS, newPhotoMetadata,
             databaseReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_POSTS),
             storageReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_POSTS)) as TrashPhotoMetadata
@@ -257,8 +270,9 @@ object FirebaseDB: DB {
      *
      * @return The image metadata updated with the actual picture Id under witch the image has been stored
      */
-    private suspend fun storePicture(image: Bitmap, parentNode: String?, photoMetadata: PhotoMetadata,
-                                     dbNode: DatabaseReference, storageNode: StorageReference): PhotoMetadata? {
+    private suspend fun <T : PhotoMetadata> storePicture(image: Bitmap, parentNode: String?, photoMetadata: T,
+                                     dbNode: DatabaseReference, storageNode: StorageReference): T? {
+
         // if the url is not yet contained in the metadata, then generate a new uid by calling push
         val pictureId = photoMetadata.pictureId ?: dbNode.push().key ?: return null
 

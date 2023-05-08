@@ -17,14 +17,6 @@ class TrashPhotoMetadataTest {
         assertThat(trashPhotoMetadata, notNullValue())
     }
 
-    /*
-    @Test
-    fun photoGetFromDatabaseGetBitmap() {
-        val trashPhotoMetadata = TrashPhotoMetadata(Parcel.obtain())
-        assertThat(trashPhotoMetadata.getPhotoFromDataBase()!!::class.java, equalTo(Bitmap::class.java))
-    }
-    */
-
     @Test
     fun photoWriteToParcelWorks() {
 

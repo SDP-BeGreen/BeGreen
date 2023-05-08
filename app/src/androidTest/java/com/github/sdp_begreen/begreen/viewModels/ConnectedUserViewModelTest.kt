@@ -41,8 +41,8 @@ class ConnectedUserViewModelTest: KoinTest {
     companion object {
         private val db: DB = mock(DB::class.java)
         private val auth: Auth = mock(Auth::class.java)
-        private val userPhotoMetadata = ProfilePhotoMetadata("user1_profile_picture", null, null)
-        private val userPhotoMetadata2 = ProfilePhotoMetadata("user3_profile_picture", null, null)
+        private val userPhotoMetadata = ProfilePhotoMetadata("user1_profile_picture")
+        private val userPhotoMetadata2 = ProfilePhotoMetadata("user3_profile_picture")
         private const val userId1 = "1234"
         private const val userId2 = "1235"
         private const val userId3 = "1236"

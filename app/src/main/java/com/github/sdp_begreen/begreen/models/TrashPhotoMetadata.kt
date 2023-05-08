@@ -10,7 +10,7 @@ data class TrashPhotoMetadata(
     val caption: String? = null,
     val trashCategory: TrashCategory? = null
 
-) : PhotoMetadata(pictureId, takenOn, takenBy) {
+) : PhotoMetadata() {
 
     constructor(parcel: Parcel) : this(
         parcel.readString(),

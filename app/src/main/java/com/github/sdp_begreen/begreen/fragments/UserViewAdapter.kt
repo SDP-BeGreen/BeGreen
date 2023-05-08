@@ -34,7 +34,7 @@ class UserViewAdapter(
     private val db by inject<DB>(DB::class.java)
 
     //TODO----------------FOR DEMO------------------------
-    private val photos = listOf(
+    private val photos = List(5) {
 
         TrashPhotoMetadata(
             "erfs",
@@ -42,40 +42,7 @@ class UserViewAdapter(
             "0",
             "Look at me cleaning!",
             TrashCategory.PLASTIC,
-        ),
-
-        TrashPhotoMetadata(
-            "erfs",
-            ParcelableDate.now,
-            "0",
-            "Look at me cleaning!",
-            TrashCategory.PLASTIC,
-        ),
-
-        TrashPhotoMetadata(
-            "erfs",
-            ParcelableDate.now,
-            "0",
-            "Look at me cleaning!",
-            TrashCategory.PLASTIC,
-        ),
-
-        TrashPhotoMetadata(
-            "erfs",
-            ParcelableDate.now,
-            "0",
-            "Look at me cleaning!",
-            TrashCategory.PLASTIC,
-        ),
-
-        TrashPhotoMetadata(
-            "erfs",
-            ParcelableDate.now,
-            "0",
-            "Look at me cleaning!",
-            TrashCategory.PLASTIC,
-        ),
-    )
+        )}
 
     //----------------FOR DEMO-----------------------------
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
