@@ -83,10 +83,10 @@ interface DB {
 
 
     /**
-     * Adds and [image] for the user [userId] in the database
+     * Adds and [image] of the trash to store in the database
      *
      * @param image the image we want to add to the database
-     * @param userId the ID of the user wanting to store a new image
+     * @param photoMetadata the photoMetadata associated to this trash
      * @return the PhotoMetadata under which the image got stored, and null if the image couldn't get stored
      */
     suspend fun addTrashPhoto(image : Bitmap, photoMetadata: TrashPhotoMetadata): TrashPhotoMetadata?
