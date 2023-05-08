@@ -118,21 +118,21 @@ object FirebaseDB: DB {
                 USER_PROFILE_PICTURE_METADATA)) as ProfilePhotoMetadata
     }
 
-    override suspend fun addTrashPhoto(image : Bitmap, photoMetadata: TrashPhotoMetadata): TrashPhotoMetadata? {
+    override suspend fun addTrashPhoto(image : Bitmap, trashPhotoMetadata: TrashPhotoMetadata): TrashPhotoMetadata? {
 
         checkArgument(
-            !photoMetadata.takenBy.isNullOrBlank(),
+            !trashPhotoMetadata.takenBy.isNullOrBlank(),
             "The user that took the photo cannot be blank or null"
         )
 
         checkArgument(
-            userExists(photoMetadata.takenBy!!),
+            userExists(trashPhotoMetadata.takenBy!!),
             "The user doesn't exist in the database"
         )
 
-        var newPhotoMetadata = photoMetadata.copy(pictureId = null)
+        var newPhotoMetadata = trashPhotoMetadata.copy(pictureId = null)
 
-        // TODO Generic
+
         return storePicture(image, USER_POSTS, newPhotoMetadata,
             databaseReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_POSTS),
             storageReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_POSTS)) as TrashPhotoMetadata

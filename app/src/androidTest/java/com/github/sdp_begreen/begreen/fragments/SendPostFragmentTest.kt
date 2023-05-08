@@ -1,10 +1,12 @@
 package com.github.sdp_begreen.begreen.fragments
 
 import android.Manifest
+import android.graphics.Bitmap
 import android.os.Bundle
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -16,6 +18,7 @@ import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -40,6 +43,8 @@ class SendPostFragmentTest {
         val user = User("test", 2, "test", 5, "test", "test", "test", 15)
         private val db: DB = Mockito.mock(DB::class.java)
         private val auth: Auth = Mockito.mock(Auth::class.java)
+        private val bitmap = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
+        private val trashPhotoMetadata = TrashPhotoMetadata("1")
         val users = listOf<User>(
             User("1", 123, "Alice"),
             User("2", 0, "Bob Zeu bricoleur"),
@@ -67,6 +72,8 @@ class SendPostFragmentTest {
                 `when`(auth.getConnectedUserId())
                     .thenReturn(user.id)
                 `when`(db.getAllUsers()).thenReturn(users)
+
+                `when`(db.addTrashPhoto(bitmap, trashPhotoMetadata)).thenReturn(trashPhotoMetadata)
             }
         }
     }
@@ -117,6 +124,16 @@ class SendPostFragmentTest {
     }
 
     @Test
+    fun sendPostBtnIsDisplayed() {
+        // Check if the category input is displayed
+        onView(withId(R.id.send_post)).check(
+            matches(
+                isDisplayed()
+            )
+        )
+    }
+
+    @Test
     fun typeInCategoryWorks() {
         // Check the category input
         onView(withId(R.id.post_category)).perform(typeText("test"))
@@ -128,5 +145,4 @@ class SendPostFragmentTest {
         onView(withId(R.id.post_description)).perform(typeText("test"))
         onView(withId(R.id.post_description)).check(matches(withText("test")))
     }
-
 }
