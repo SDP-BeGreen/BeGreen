@@ -21,7 +21,7 @@ data class User (val id: String, var score: Int, val displayName: String? = null
         return this.score.compareTo(other.score)
     }
 
-  //  override fun toString(): String = displayName ?: "Username"
+    override fun toString(): String = displayName ?: "Username"
 
     fun addPhotoMetadata(metadata: TrashPhotoMetadata) {
         trashPhotosMetadatasList = trashPhotosMetadatasList?.let { it + metadata } ?: listOf(metadata)
