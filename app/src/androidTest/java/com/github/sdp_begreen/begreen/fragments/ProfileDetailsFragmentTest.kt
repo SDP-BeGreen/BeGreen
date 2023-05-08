@@ -63,7 +63,7 @@ class ProfileDetailsFragmentTest {
                 "0"
             )
         )
-        private val userProfilePicturePhotoMetadata = ProfilePhotoMetadata("user1_profile_picture", null, null)
+        private val userProfilePicturePhotoMetadata = ProfilePhotoMetadata("user1_profile_picture")
 
         private const val userId1 = "1234"
         private val user1 = User(
