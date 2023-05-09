@@ -289,7 +289,16 @@ class MainActivity : AppCompatActivity() {
             bottomSheetDialog.dismiss()
         }
 
-        btnSend!!.setOnClickListener {
+        setSendBtnOnClickListener(btnSend, etMessage, formattedDate, bottomSheetDialog)
+
+        bottomSheetDialog.show()
+    }
+
+    private fun setSendBtnOnClickListener(btnSend: Button?,
+                                          etMessage: EditText?,
+                                          formattedDate: String,
+                                          bottomSheetDialog: BottomSheetDialog){
+        btnSend?.setOnClickListener {
             val msg = etMessage?.text.toString()
             if (msg.isEmpty()) {
                 etMessage?.error = "Enter a message"
@@ -308,7 +317,5 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
-        bottomSheetDialog.show()
     }
 }
