@@ -20,7 +20,6 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.map.Bin
-import com.github.sdp_begreen.begreen.models.CustomLatLng
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
