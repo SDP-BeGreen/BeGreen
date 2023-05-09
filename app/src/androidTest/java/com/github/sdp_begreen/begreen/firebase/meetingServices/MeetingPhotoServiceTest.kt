@@ -319,7 +319,7 @@ class MeetingPhotoServiceTest {
             runTest {
                 MeetingPhotoServiceImpl.removeMeetingPhoto(
                     meetingWithPhotos.meetingId!!,
-                    TrashPhotoMetadata(pictureId = " ", takenBy = null)
+                    TrashPhotoMetadata(pictureId = " ")
                 )
             }
         }

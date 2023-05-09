@@ -1,8 +1,6 @@
 package com.github.sdp_begreen.begreen.models
 
-import android.os.Parcel
 import android.os.Parcelable
-import com.github.sdp_begreen.begreen.R
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import kotlinx.parcelize.Parcelize
 

@@ -520,7 +520,7 @@ class ProfileDetailsFragmentTest {
             displayName = "User Test 1",
             email = "user1@email.ch",
             phone = "1984z719848",
-            profilePictureMetadata = ProfilePhotoMetadata("VaRgQioAuiGtfDlv5uNuosNsACCJ_profile_picture", null, null)
+            profilePictureMetadata = ProfilePhotoMetadata("VaRgQioAuiGtfDlv5uNuosNsACCJ_profile_picture")
         )
 
         val bundle = Bundle().apply { putParcelable(ARG_USER, user) }

@@ -1,70 +1,43 @@
 package com.github.sdp_begreen.begreen.models
 
 import android.os.Parcel
+import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import com.github.sdp_begreen.begreen.matchers.ContainsPropertyMatcher
 import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert
 import org.junit.Test
 
 class ProfilePhotoMetadataTest {
 
     @Test
-    fun photoParcelConstructorNotNull() {
-        val profilePhotoMetadata = ProfilePhotoMetadata(Parcel.obtain())
-        MatcherAssert.assertThat(profilePhotoMetadata, CoreMatchers.notNullValue())
-    }
+    fun emptyConstructorWorks(){
 
-    @Test
-    fun photoWriteToParcelWorks() {
+        val profilePhotoMetadata = ProfilePhotoMetadata()
 
-        val profilePhotoMetadata = ProfilePhotoMetadata(Parcel.obtain())
-        val parcel = Parcel.obtain()
-        profilePhotoMetadata.writeToParcel(parcel, 0)
-        parcel.setDataPosition(0)
-        val result = ProfilePhotoMetadata(parcel)
-        MatcherAssert.assertThat(profilePhotoMetadata, CoreMatchers.equalTo(result))
-    }
-
-    @Test
-    fun photoDescribeContentsReturnZero() {
-        val profilePhotoMetadata = ProfilePhotoMetadata(Parcel.obtain())
-        MatcherAssert.assertThat(profilePhotoMetadata.describeContents(), CoreMatchers.equalTo(0))
-    }
-
-    @Test
-    fun photoCreatorIsNotNull() {
-
-        MatcherAssert.assertThat(ProfilePhotoMetadata.CREATOR, CoreMatchers.notNullValue())
-    }
-
-    @Test
-    fun photoCreateFromParcelWorks(){
-        val profilePhotoMetadata = ProfilePhotoMetadata(Parcel.obtain())
-        val parcel = Parcel.obtain()
-        profilePhotoMetadata.writeToParcel(parcel, 0)
-        parcel.setDataPosition(0)
-        val result = ProfilePhotoMetadata.CREATOR.createFromParcel(parcel)
-        MatcherAssert.assertThat(profilePhotoMetadata, CoreMatchers.equalTo(result))
-    }
-
-    @Test
-    fun photoNewArrayIsNotNull(){
-
-        val result = ProfilePhotoMetadata.CREATOR.newArray(1)
-        MatcherAssert.assertThat(result, CoreMatchers.notNullValue())
+        assertThat(profilePhotoMetadata.pictureId, equalTo(null))
+        assertThat(profilePhotoMetadata.takenOn, equalTo(null))
+        assertThat(profilePhotoMetadata.takenBy, equalTo(null))
     }
 
     @Test
     fun photoGettersWorks(){
+
         val date = ParcelableDate.now
-        val user = User("1",0, "test")
-        val profilePhotoMetadata = ProfilePhotoMetadata("key", date, user.id)
-        MatcherAssert.assertThat(
-            profilePhotoMetadata, CoreMatchers.allOf(
-                ContainsPropertyMatcher.hasProp("pictureId", CoreMatchers.equalTo("key")),
-                ContainsPropertyMatcher.hasProp("takenOn", CoreMatchers.equalTo(date)),
-                ContainsPropertyMatcher.hasProp("takenBy", CoreMatchers.equalTo(user.id))
-            )
-        )
+        val profilePhotoMetadata = ProfilePhotoMetadata("key", date, "id")
+
+        assertThat(profilePhotoMetadata.pictureId, equalTo("key"))
+        assertThat(profilePhotoMetadata.takenOn, equalTo(date))
+        assertThat(profilePhotoMetadata.takenBy, equalTo("id"))
+    }
+
+    @Test
+    fun photoPictureIdSetterWorks(){
+
+        val date = ParcelableDate.now
+        val profilePhotoMetadata = ProfilePhotoMetadata("key", date, "id")
+        profilePhotoMetadata.pictureId = "edited"
+
+        assertThat(profilePhotoMetadata.pictureId, equalTo("edited"))
     }
 }

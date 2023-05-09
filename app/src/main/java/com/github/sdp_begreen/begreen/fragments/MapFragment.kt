@@ -122,7 +122,7 @@ class MapFragment : Fragment() {
         val adapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_item,
-            TrashCategory.values()
+            TrashCategory.values().map { trash -> trash.title }
         )
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_item)
         binTypeSelector.adapter = adapter

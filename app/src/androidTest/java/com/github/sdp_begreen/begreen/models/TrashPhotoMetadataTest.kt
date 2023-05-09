@@ -1,73 +1,46 @@
 package com.github.sdp_begreen.begreen.models
 
-import android.os.Parcel
+import androidx.test.espresso.matcher.ViewMatchers
 import com.github.sdp_begreen.begreen.matchers.ContainsPropertyMatcher.Companion.hasProp
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 
 class TrashPhotoMetadataTest {
 
-
     @Test
-    fun photoParcelConstructorNotNull() {
-        val trashPhotoMetadata = TrashPhotoMetadata(Parcel.obtain())
-        assertThat(trashPhotoMetadata, notNullValue())
-    }
+    fun emptyConstructorWorks(){
 
-    @Test
-    fun photoWriteToParcelWorks() {
+        val trashPhotoMetadata = TrashPhotoMetadata()
 
-        val trashPhotoMetadata = TrashPhotoMetadata(Parcel.obtain())
-        val parcel = Parcel.obtain()
-        trashPhotoMetadata.writeToParcel(parcel, 0)
-        parcel.setDataPosition(0)
-        val result = TrashPhotoMetadata(parcel)
-        assertThat(trashPhotoMetadata, equalTo(result))
-    }
-
-    @Test
-    fun photoDescribeContentsReturnZero() {
-        val trashPhotoMetadata = TrashPhotoMetadata(Parcel.obtain())
-        assertThat(trashPhotoMetadata.describeContents(), equalTo(0))
-    }
-
-    @Test
-    fun photoCreatorIsNotNull() {
-
-        assertThat(TrashPhotoMetadata.CREATOR, notNullValue())
-    }
-
-    @Test
-    fun photoCreateFromParcelWorks(){
-        val trashPhotoMetadata = TrashPhotoMetadata(Parcel.obtain())
-        val parcel = Parcel.obtain()
-        trashPhotoMetadata.writeToParcel(parcel, 0)
-        parcel.setDataPosition(0)
-        val result = TrashPhotoMetadata.CREATOR.createFromParcel(parcel)
-        assertThat(trashPhotoMetadata, equalTo(result))
-    }
-
-    @Test
-    fun photoNewArrayIsNotNull(){
-
-        val result = TrashPhotoMetadata.CREATOR.newArray(1)
-        assertThat(result, notNullValue())
+        ViewMatchers.assertThat(trashPhotoMetadata.pictureId, equalTo(null))
+        ViewMatchers.assertThat(trashPhotoMetadata.takenOn, equalTo(null))
+        ViewMatchers.assertThat(trashPhotoMetadata.takenBy, equalTo(null))
+        ViewMatchers.assertThat(trashPhotoMetadata.caption, equalTo(null))
+        ViewMatchers.assertThat(trashPhotoMetadata.trashCategory, equalTo(null))
     }
 
     @Test
     fun photoGettersWorks(){
+
         val date = ParcelableDate.now
-        val user = User("1",0, "test")
-        val trashPhotoMetadata = TrashPhotoMetadata("key", date, user.id, "title", TrashCategory.PLASTIC)
-        assertThat(trashPhotoMetadata, allOf(
-            hasProp("pictureId", equalTo("key")),
-            hasProp("takenOn", equalTo(date)),
-            hasProp("takenBy", equalTo(user.id)),
-            hasProp("caption", equalTo("title")),
-            hasProp("trashCategory", equalTo(TrashCategory.PLASTIC))
-            ))
+        val trashPhotoMetadata = TrashPhotoMetadata("key", date, "id", "title", TrashCategory.PLASTIC)
+
+        ViewMatchers.assertThat(trashPhotoMetadata.pictureId, equalTo("key"))
+        ViewMatchers.assertThat(trashPhotoMetadata.takenOn, equalTo(date))
+        ViewMatchers.assertThat(trashPhotoMetadata.takenBy, equalTo("id"))
+        ViewMatchers.assertThat(trashPhotoMetadata.caption, equalTo("title"))
+        ViewMatchers.assertThat(trashPhotoMetadata.trashCategory, equalTo(TrashCategory.PLASTIC))
+    }
+
+    @Test
+    fun photoPictureIdSetterWorks(){
+
+        val date = ParcelableDate.now
+        val trashPhotoMetadata = TrashPhotoMetadata("key", date, "id", "title", TrashCategory.PLASTIC)
+        trashPhotoMetadata.pictureId = "edited"
+
+        ViewMatchers.assertThat(trashPhotoMetadata.pictureId, equalTo("edited"))
     }
 }

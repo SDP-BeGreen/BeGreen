@@ -61,7 +61,7 @@ class MainActivityTest {
      * Initialize some constant to use in tests
      */
     companion object {
-        private val userPhotoMetadata = ProfilePhotoMetadata("user1_profile_picture", null, null)
+        private val userPhotoMetadata = ProfilePhotoMetadata("user1_profile_picture")
         private const val userId1 = "1234"
         private const val userId2 = "1235"
         private const val userId3 = "1236"
