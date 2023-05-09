@@ -9,7 +9,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.activities.DatabaseActivity
+import com.github.sdp_begreen.begreen.activities.MainActivity
 import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.map.BinType
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
@@ -33,7 +33,7 @@ class FirebaseDBTest {
 
     // For some reason to perform the write in the database, an activity has to be started
     @get:Rule
-    val activityRule = ActivityScenarioRule(DatabaseActivity::class.java)
+    val activityRule = ActivityScenarioRule(MainActivity::class.java)
 
     @get:Rule
     val koinTestRule = KoinTestRule()

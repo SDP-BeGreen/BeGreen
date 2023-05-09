@@ -52,8 +52,6 @@ class MainActivity : AppCompatActivity() {
     //TODO remove after demo
     private val db by inject<DB>()
 
-    val firebaseDatabase = FirebaseDatabase.getInstance().reference
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -297,18 +295,20 @@ class MainActivity : AppCompatActivity() {
                 etMessage?.error = "Enter a message"
             }
             else {
-                firebaseDatabase.child("contact_us").child(com.google.firebase.auth.FirebaseAuth.getInstance().uid!!)
-                    .child(formattedDate).setValue(msg).addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            Toast.makeText(this, R.string.message_sent_success, Toast.LENGTH_SHORT).show()
+                auth.getConnectedUserId()?.let {
+                    lifecycleScope.launch {
+                        if (db.addFeedback(msg, it, formattedDate)) {
+                            Toast.makeText(this@MainActivity, R.string.message_sent_success, Toast.LENGTH_SHORT)
+                                .show()
                             bottomSheetDialog.dismiss()
-                        }
-                        else {
-                            Toast.makeText(this, R.string.message_sent_error, Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this@MainActivity, R.string.message_sent_error, Toast.LENGTH_SHORT).show()
                         }
                     }
+                }
             }
         }
+
         bottomSheetDialog.show()
     }
 }

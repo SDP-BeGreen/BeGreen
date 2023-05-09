@@ -214,4 +214,6 @@ interface DB {
      */
     suspend fun getFollowers(userId: String, timeout: Long = TIMEOUT): List<User>
 
+    suspend fun addFeedback(feedback: String, userId: String, date: String, timeout: Long = TIMEOUT): Boolean
+
 }
