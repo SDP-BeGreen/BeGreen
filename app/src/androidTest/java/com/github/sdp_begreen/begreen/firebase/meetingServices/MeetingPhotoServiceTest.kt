@@ -107,8 +107,6 @@ class MeetingPhotoServiceTest {
     }
 
 
-    // TODO : Didn't manage to make this tests pass. I will work on it later.
-
     @Test
     fun addMeetingPhotoCorrectlyAddPhotoToMeetingInDB() {
         runTest {
