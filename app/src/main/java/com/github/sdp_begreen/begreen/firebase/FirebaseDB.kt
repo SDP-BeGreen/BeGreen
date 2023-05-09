@@ -115,7 +115,7 @@ object FirebaseDB: DB {
         return storePicture(image, USER_PROFILE_PICTURE_METADATA, metadata,
             databaseReference.child(USERS_PATH).child(userId),
             storageReference.child(USERS_PATH).child(userId).child(
-                USER_PROFILE_PICTURE_METADATA))
+                USER_PROFILE_PICTURE_METADATA)) as ProfilePhotoMetadata
     }
 
     override suspend fun addTrashPhoto(image : Bitmap, trashPhotoMetadata: TrashPhotoMetadata): TrashPhotoMetadata? {
@@ -135,7 +135,7 @@ object FirebaseDB: DB {
 
         return storePicture(image, USER_POSTS, newPhotoMetadata,
             databaseReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_POSTS),
-            storageReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_POSTS))
+            storageReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_POSTS)) as TrashPhotoMetadata
     }
 
     override suspend fun userExists(userId: String, timeout: Long): Boolean {
