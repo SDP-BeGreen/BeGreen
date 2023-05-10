@@ -272,7 +272,7 @@ class MainActivityTest {
     }
 
     @Test
-    fun cancelButtonCorrectlyHidesTheBottomSheet() {
+    fun cancelButtonCorrectlyHidesTheContactUsWindow() {
         runTest {
             // sign in user
             authUserFlow.emit(userId1)
@@ -290,7 +290,7 @@ class MainActivityTest {
             onView(withId(R.id.cancel_button)).check(matches(isDisplayed()))
                 .perform(click())
 
-            // Check that the Bottom Sheet Dialog was dismissed
+            // Check that the contact us window was dismissed
             onView(withId(R.id.bottom_sheet_contact_us)).check(doesNotExist())
         }
     }
@@ -324,14 +324,14 @@ class MainActivityTest {
             // Check that the error is correctly displayed
             onView(withId(R.id.message_edittext)).check(matches(hasErrorText("Enter a message")))
 
-            // Check that the Bottom Sheet Dialog was dismissed
+            // Check that the contact us window was dismissed
             onView(withId(R.id.bottom_sheet_contact_us)).check(matches(isDisplayed()))
 
         }
     }
 
     @Test
-    fun testContactUsBottomSheetMessageShouldCallDatabaseWithWrittenMessage() {
+    fun contactUsMessageIsSentToDatabaseWithAddFeedback() {
         runTest {
             `when`(db.addFeedback(org.mockito.kotlin.any(), org.mockito.kotlin.any() , org.mockito.kotlin.any(), org.mockito.kotlin.any()))
                 .then{}
@@ -363,7 +363,7 @@ class MainActivityTest {
     }
 
     @Test
-    fun testContactUsBottomSheetMessageStillVisibleWhenWriteFails() {
+    fun contactUsMessageStillVisibleWhenWriteFails() {
         runTest {
             `when`(db.addFeedback(org.mockito.kotlin.any(), org.mockito.kotlin.any() , org.mockito.kotlin.any(), org.mockito.kotlin.any()))
                 .thenThrow(DatabaseException("error"))
@@ -390,7 +390,7 @@ class MainActivityTest {
                 .check(matches(isDisplayed()))
                 .perform(click())
 
-            // Check that the Bottom Sheet Dialog was dismissed
+            // Check that the contact us window was dismissed
             onView(withId(R.id.bottom_sheet_contact_us)).check(matches(isDisplayed()))
 
             // Check that the database function got called with the right arguments
