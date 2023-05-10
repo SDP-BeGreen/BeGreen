@@ -47,14 +47,6 @@
         <activity
             android:name=".activities.MainActivity"
             android:exported="false" />
-        <activity
-            android:name=".activities.DatabaseActivity"
-            android:exported="false">
-
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
 
     </application>
 

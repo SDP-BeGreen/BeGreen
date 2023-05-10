@@ -2,16 +2,15 @@ package com.github.sdp_begreen.begreen.firebase
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import androidx.test.core.app.launchActivity
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.intent.matcher.IntentMatchers.*
 import androidx.test.espresso.matcher.ViewMatchers.*
-import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.activities.DatabaseActivity
+import com.github.sdp_begreen.begreen.activities.MainActivity
 import com.github.sdp_begreen.begreen.map.Bin
-import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.User
@@ -33,10 +32,6 @@ import kotlin.test.junit.JUnitAsserter.fail
 class FirebaseDBTest {
 
     private val profilePhotoMetaData = ProfilePhotoMetadata()
-
-    // For some reason to perform the write in the database, an activity has to be started
-    @get:Rule
-    val activityRule = ActivityScenarioRule(DatabaseActivity::class.java)
 
     @get:Rule
     val koinTestRule = KoinTestRule()
@@ -119,7 +114,7 @@ class FirebaseDBTest {
         }
 
         // to be able to access resources, need to be in an activity
-        activityRule.scenario.onActivity { activity ->
+        launchActivity<MainActivity>().onActivity { activity ->
             val img: Bitmap = BitmapFactory.decodeResource(activity.resources, R.drawable.marguerite_test_image)
 
             runBlocking {
@@ -449,6 +444,17 @@ class FirebaseDBTest {
             val user1Followers = FirebaseDB.getFollowers(user1.id)
             assertThat(user1.followers!!.size, `is`(2))
             assertThat(user1Followers, containsInAnyOrder(user2, user3))
+        }
+    }
+
+    @Test
+    fun addFeedbackDoesNotThrowException() {
+        try {
+            runBlocking {
+                FirebaseDB.addFeedback("Feedback", "userId", "date")
+            }
+        } catch (_: Exception){
+            fail("addFeeback should not throw exception")
         }
     }
 

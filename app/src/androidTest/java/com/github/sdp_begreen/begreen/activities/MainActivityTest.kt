@@ -1,8 +1,6 @@
 package com.github.sdp_begreen.begreen.activities
 
-import android.Manifest.permission.ACCESS_COARSE_LOCATION
-import android.Manifest.permission.ACCESS_FINE_LOCATION
-import android.Manifest.permission.CAMERA
+import android.Manifest.permission.*
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
@@ -11,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.core.view.GravityCompat
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.DrawerActions
 import androidx.test.espresso.contrib.DrawerMatchers
@@ -31,16 +30,14 @@ import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingService
 import com.github.sdp_begreen.begreen.fragments.SendPostFragment
 import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBitmap
-import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
-
 import com.google.android.gms.tasks.Tasks
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
+import com.google.firebase.database.DatabaseException
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.*
@@ -51,6 +48,8 @@ import org.junit.runner.RunWith
 import org.koin.dsl.module
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.verify
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -254,7 +253,7 @@ class MainActivityTest {
         }
     }
     @Test
-    fun testShowContactUsBottomSheet() {
+    fun contactUsIsDisplayedInDrawerMenu() {
         runTest {
             // sign in user
             authUserFlow.emit(userId1)
@@ -273,7 +272,31 @@ class MainActivityTest {
     }
 
     @Test
-    fun testContactUsBottomSheetMessageCorrected() {
+    fun cancelButtonCorrectlyHidesTheContactUsWindow() {
+        runTest {
+            // sign in user
+            authUserFlow.emit(userId1)
+
+            // Open the navigation drawer
+            onView(withId(R.id.mainDrawerLayout))
+                .perform(DrawerActions.open(GravityCompat.END))
+
+            onView(withId(R.id.mainNavDrawContact))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+            // Click on the cancel button
+            onView(withId(R.id.cancel_button)).check(matches(isDisplayed()))
+                .perform(click())
+
+            // Check that the contact us window was dismissed
+            onView(withId(R.id.bottom_sheet_contact_us)).check(doesNotExist())
+        }
+    }
+
+    @Test
+    fun tryingToSubmitBlankFeedbackPrintError() {
         runTest {
             // sign in user
             authUserFlow.emit(userId1)
@@ -288,20 +311,90 @@ class MainActivityTest {
                 .perform(click())
 
             // Enter a message into the message EditText
-            onView(withId(R.id.message_edittext)).perform(typeText("Test message"), closeSoftKeyboard())
+            onView(withId(R.id.message_edittext)).perform(typeText("  "), closeSoftKeyboard())
 
             // Check if the message EditText has the correct text
-            onView(withId(R.id.message_edittext)).check(matches(withText("Test message")))
+            onView(withId(R.id.message_edittext)).check(matches(withText("  ")))
 
-            // The test commented below are working locally but not with the CI
-//            // Scroll to the Send button
-//            onView(withId(R.id.send_button))
-//                .check(matches(isDisplayed()))
-//                .perform(click())
-//
-//            // Check that the Bottom Sheet Dialog was dismissed
-//            onView(withId(R.id.bottom_sheet_contact_us)).check(doesNotExist())
+            // Scroll to the Send button
+            onView(withId(R.id.send_button))
+                .check(matches(isDisplayed()))
+                .perform(click())
 
+            // Check that the error is correctly displayed
+            onView(withId(R.id.message_edittext)).check(matches(hasErrorText("Enter a message")))
+
+            // Check that the contact us window was dismissed
+            onView(withId(R.id.bottom_sheet_contact_us)).check(matches(isDisplayed()))
+
+        }
+    }
+
+    @Test
+    fun contactUsMessageIsSentToDatabaseWithAddFeedback() {
+        runTest {
+            `when`(db.addFeedback(org.mockito.kotlin.any(), org.mockito.kotlin.any() , org.mockito.kotlin.any(), org.mockito.kotlin.any()))
+                .then{}
+            // sign in user
+            authUserFlow.emit(userId1)
+
+            // Open the navigation drawer
+            onView(withId(R.id.mainDrawerLayout))
+                .perform(DrawerActions.open(GravityCompat.END))
+
+            onView(withId(R.id.mainNavDrawContact))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+            // Enter a message into the message EditText
+            onView(withId(R.id.message_edittext)).perform(typeText("Test message 1"), closeSoftKeyboard())
+
+            // Check if the message EditText has the correct text
+            onView(withId(R.id.message_edittext)).check(matches(withText("Test message 1")))
+
+            onView(withId(R.id.send_button))
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+            // Check that the database function got called with the right arguments
+            verify(db).addFeedback(eq("Test message 1"), eq(userId1), org.mockito.kotlin.any(), org.mockito.kotlin.any())
+        }
+    }
+
+    @Test
+    fun contactUsMessageStillVisibleWhenWriteFails() {
+        runTest {
+            `when`(db.addFeedback(org.mockito.kotlin.any(), org.mockito.kotlin.any() , org.mockito.kotlin.any(), org.mockito.kotlin.any()))
+                .thenThrow(DatabaseException("error"))
+            // sign in user
+            authUserFlow.emit(userId1)
+
+            // Open the navigation drawer
+            onView(withId(R.id.mainDrawerLayout))
+                .perform(DrawerActions.open(GravityCompat.END))
+
+            onView(withId(R.id.mainNavDrawContact))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+            // Enter a message into the message EditText
+            onView(withId(R.id.message_edittext)).perform(typeText("Test message 2"), closeSoftKeyboard())
+
+            // Check if the message EditText has the correct text
+            onView(withId(R.id.message_edittext)).check(matches(withText("Test message 2")))
+
+            // Scroll to the Send button
+            onView(withId(R.id.send_button))
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+            // Check that the contact us window was dismissed
+            onView(withId(R.id.bottom_sheet_contact_us)).check(matches(isDisplayed()))
+
+            // Check that the database function got called with the right arguments
+            verify(db).addFeedback(eq("Test message 2"), eq(userId1), org.mockito.kotlin.any(), org.mockito.kotlin.any())
         }
     }
 

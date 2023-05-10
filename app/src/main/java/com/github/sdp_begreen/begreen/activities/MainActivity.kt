@@ -19,15 +19,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
-import com.github.sdp_begreen.begreen.fragments.AdviceFragment
-import com.github.sdp_begreen.begreen.fragments.CameraContainer
-import com.github.sdp_begreen.begreen.fragments.FollowersFragment
-import com.github.sdp_begreen.begreen.fragments.MapFragment
-import com.github.sdp_begreen.begreen.fragments.MeetingsFragment
-import com.github.sdp_begreen.begreen.fragments.ProfileDetailsFragment
-import com.github.sdp_begreen.begreen.fragments.SettingsFragment
-import com.github.sdp_begreen.begreen.fragments.UserFragment
-import com.github.sdp_begreen.begreen.fragments.UserPhotoFragment
+import com.github.sdp_begreen.begreen.fragments.*
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
@@ -36,15 +28,11 @@ import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigation.NavigationView
-import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.Date
-import kotlin.collections.ArrayList
-
 
 
 class MainActivity : AppCompatActivity() {
@@ -52,8 +40,6 @@ class MainActivity : AppCompatActivity() {
     private val auth by inject<Auth>()
     //TODO remove after demo
     private val db by inject<DB>()
-
-    val firebaseDatabase = FirebaseDatabase.getInstance().reference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -302,24 +288,32 @@ class MainActivity : AppCompatActivity() {
             bottomSheetDialog.dismiss()
         }
 
-        btnSend!!.setOnClickListener {
+        setSendBtnOnClickListener(btnSend, etMessage, formattedDate, bottomSheetDialog)
+
+        bottomSheetDialog.show()
+    }
+
+    private fun setSendBtnOnClickListener(btnSend: Button?, etMessage: EditText?,
+                                          formattedDate: String, bottomSheetDialog: BottomSheetDialog){
+        btnSend?.setOnClickListener {
             val msg = etMessage?.text.toString()
-            if (msg.isEmpty()) {
+            if (msg.isBlank()) {
                 etMessage?.error = "Enter a message"
             }
             else {
-                firebaseDatabase.child("contact_us").child(com.google.firebase.auth.FirebaseAuth.getInstance().uid!!)
-                    .child(formattedDate).setValue(msg).addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            Toast.makeText(this, R.string.message_sent_success, Toast.LENGTH_SHORT).show()
+                connectedUserViewModel.currentUser.value?.id?.let {
+                    lifecycleScope.launch {
+                        try {
+                            db.addFeedback(msg, it, formattedDate)
+                            Toast.makeText(this@MainActivity, R.string.message_sent_success, Toast.LENGTH_SHORT)
+                                .show()
                             bottomSheetDialog.dismiss()
-                        }
-                        else {
-                            Toast.makeText(this, R.string.message_sent_error, Toast.LENGTH_SHORT).show()
+                        } catch (_: java.lang.Exception){
+                            Toast.makeText(this@MainActivity, R.string.message_sent_error, Toast.LENGTH_SHORT).show()
                         }
                     }
+                }
             }
         }
-        bottomSheetDialog.show()
     }
 }
