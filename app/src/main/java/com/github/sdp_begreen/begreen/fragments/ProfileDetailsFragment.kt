@@ -85,6 +85,7 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         val userProgressBar: ProgressBar =
             view.findViewById(R.id.fragment_profile_details_user_progress)
         val followButton: Button = view.findViewById(R.id.fragment_profile_details_follow_button)
+        val sendButton: Button = view.findViewById(R.id.fragment_profile_details_msg_button)
         val editButton: Button = view.findViewById(R.id.fragment_profile_details_edit_profile)
         val saveButton: Button = view.findViewById(R.id.fragment_profile_details_save_profile)
         val cancelButton: Button = view.findViewById(R.id.fragment_profile_details_cancel_modification)
@@ -105,7 +106,15 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         setupSaveButton(saveButton)
         setupCancelButton(cancelButton)
         setupTakePictureButton(takePictureButton)
+        deactivateFollowButtonIfOwnProfile(followButton, sendButton)
         return view
+    }
+
+    fun deactivateFollowButtonIfOwnProfile(followButton: Button, sendButton: Button){
+        if (connectedUserViewModel.currentUser.value!!.id == user!!.id) {
+            sendButton.visibility = View.GONE
+            followButton.visibility = View.GONE
+        }
     }
 
     /**
