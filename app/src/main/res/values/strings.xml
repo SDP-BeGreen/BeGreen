@@ -92,5 +92,6 @@
     <string name="location">Location</string>
     <string name="postal_code">Postal Code</string>
     <string name="city">City</string>
+    <string name="radius_in_meters">Radius in meters</string>
 
 </resources>

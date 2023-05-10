@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:layout_marginHorizontal="10dp"
     tools:context=".fragments.ContestCreationFragment">
 
     <TextView
@@ -21,7 +22,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/contest_creation_title_container"
+            app:id="@+id/contest_creation_title_container"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="5dp"
             android:layout_marginStart="5dp"
@@ -80,30 +81,32 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/firt_line_contest_location_details_container"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/first_line_contest_location_details_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginStart="5dp"
-            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="5dp"
+            android:layout_marginBottom="10dp"
             android:orientation="horizontal"
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/city_contest_creation_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                app:layout_constraintBottom_toTopOf="@+id/contest_creation_city_container"
-                app:layout_constraintEnd_toEndOf="parent">
+                android:layout_alignParentStart="true"
+                android:layout_gravity="center_horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/postal_code_contest_creation_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/city_contest_creation"
-                    android:layout_width="100dp"
+                    android:layout_width="92dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center"
                     android:hint="@string/city"
@@ -112,13 +115,15 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/postal_code_contest_creation_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                app:layout_constraintBottom_toTopOf="@+id/contest_creation_potal_code_container"
-                app:layout_constraintEnd_toEndOf="parent">
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/city_contest_creation_container"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/postal_code_contest_creation"
@@ -130,10 +135,10 @@
                     android:textSize="11sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <LinearLayout
-            android:id="@id/second_line_contest_location_details_container"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/second_line_contest_location_details_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -142,8 +147,71 @@
                 android:id="@+id/countryPicker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center" />
+                android:layout_gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/radius_contest_creation_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/radius_contest_creation_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/countryPicker"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/radius_contest_creation"
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:hint="@string/radius_in_meters"
+                    android:maxLength="6"
+                    android:textSize="11sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/contest_timezone_spinner"
+            android:layout_gravity="center">
+        </Spinner>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+        </LinearLayout>
+
+        <ImageButton
+            android:layout_marginTop="20dp"
+            android:id="@+id/contest_confirm_button"
+            android:layout_gravity="center"
+            android:layout_width="200dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_arrow_right"
+            android:background="@color/green_500">
+
+        </ImageButton>
 
     </LinearLayout>
 
