@@ -286,7 +286,7 @@ object FirebaseDB: DB {
         }
     }
 
-    override suspend fun addFeedback(feedback: String, userId: String, date: String, timeout: Long): Boolean {
+    override suspend fun addFeedback(feedback: String, userId: String, date: String, timeout: Long) {
         try {
             withTimeout(timeout) {
                 databaseReference.child(FEEDBACK_PATH).child(userId).child(date).setValue(feedback)
@@ -294,12 +294,11 @@ object FirebaseDB: DB {
             }
         } catch (timeoutEx: TimeoutCancellationException) {
             Log.d(TAG, "Timeout, can't connect with database")
-            return false
+            throw DatabaseTimeoutException("Timeout, cant connect with database")
         } catch (databaseEx: DatabaseException) {
             Log.d(TAG, "Failed with error message: ${databaseEx.message}")
-            return false
+            throw databaseEx
         }
-        return true
     }
 
 }

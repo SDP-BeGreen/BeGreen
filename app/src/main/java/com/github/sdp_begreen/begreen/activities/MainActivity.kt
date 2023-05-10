@@ -36,6 +36,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
@@ -304,11 +305,12 @@ class MainActivity : AppCompatActivity() {
             else {
                 connectedUserViewModel.currentUser.value?.id?.let {
                     lifecycleScope.launch {
-                        if (db.addFeedback(msg, it, formattedDate)) {
+                        try {
+                            db.addFeedback(msg, it, formattedDate)
                             Toast.makeText(this@MainActivity, R.string.message_sent_success, Toast.LENGTH_SHORT)
                                 .show()
                             bottomSheetDialog.dismiss()
-                        } else {
+                        } catch (_: java.lang.Exception){
                             Toast.makeText(this@MainActivity, R.string.message_sent_error, Toast.LENGTH_SHORT).show()
                         }
                     }

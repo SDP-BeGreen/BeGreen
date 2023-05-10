@@ -23,6 +23,7 @@ import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.espressoUtils.BaseRobot
+import com.github.sdp_begreen.begreen.exceptions.DatabaseTimeoutException
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingParticipantService
@@ -36,6 +37,7 @@ import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.database.DatabaseException
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.test.currentTime
@@ -333,7 +335,7 @@ class MainActivityTest {
     fun testContactUsBottomSheetMessageShouldCallDatabaseWithWrittenMessage() {
         runTest {
             `when`(db.addFeedback(org.mockito.kotlin.any(), org.mockito.kotlin.any() , org.mockito.kotlin.any(), org.mockito.kotlin.any()))
-                .thenReturn(true)
+                .then{}
             // sign in user
             authUserFlow.emit(userId1)
 
@@ -365,7 +367,7 @@ class MainActivityTest {
     fun testContactUsBottomSheetMessageStillVisibleWhenWriteFails() {
         runTest {
             `when`(db.addFeedback(org.mockito.kotlin.any(), org.mockito.kotlin.any() , org.mockito.kotlin.any(), org.mockito.kotlin.any()))
-                .thenReturn(false)
+                .thenThrow(DatabaseException("error"))
             // sign in user
             authUserFlow.emit(userId1)
 
