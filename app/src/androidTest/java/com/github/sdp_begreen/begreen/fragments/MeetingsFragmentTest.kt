@@ -16,8 +16,9 @@ import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
+import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingParticipantService
-import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingService
+import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
 import com.github.sdp_begreen.begreen.matchers.ButtonAssertionView.Companion.atPositionButtonWithText
 import com.github.sdp_begreen.begreen.matchers.ButtonClickAction.Companion.clickButtonIdAtPosition
 import com.github.sdp_begreen.begreen.matchers.TextViewAssertionView.Companion.atPositionTextViewWithText
@@ -53,7 +54,7 @@ import java.util.Locale
 class MeetingsFragmentTest {
 
     companion object {
-        private val meetingService: MeetingService = mock(MeetingService::class.java)
+        private val eventService: EventService = mock(EventService::class.java)
         private val participantService: MeetingParticipantService =
             mock(MeetingParticipantService::class.java)
         private val geocoderApi: GeocodingService = mock(GeocodingService::class.java)
@@ -125,17 +126,17 @@ class MeetingsFragmentTest {
             runTest {
 
                 // Initial setup of getAllMeetings
-                `when`(meetingService.getAllMeetings())
+                `when`(eventService.getAllEvents(RootPath.MEETINGS, Meeting::class.java))
                     .thenReturn(meetingsFlow)
 
                 // setup getAllParticipants for initials meetings
-                `when`(participantService.getAllParticipants(meetings[0].meetingId!!))
+                `when`(participantService.getAllParticipants(meetings[0].id!!))
                     .thenReturn(flowOf(listOf("aaaaaa", "bbbbbb", "cccccc")))
-                `when`(participantService.getAllParticipants(meetings[1].meetingId!!))
+                `when`(participantService.getAllParticipants(meetings[1].id!!))
                     .thenReturn(flowOf(listOf("dddddd")))
-                `when`(participantService.getAllParticipants(meetings[2].meetingId!!))
+                `when`(participantService.getAllParticipants(meetings[2].id!!))
                     .thenReturn(flowOf(listOf("aaaaaa", "123456")))
-                `when`(participantService.getAllParticipants(meetings[3].meetingId!!))
+                `when`(participantService.getAllParticipants(meetings[3].id!!))
                     .thenReturn(flowOf(listOf("iiiiii")))
                 `when`(participantService.getAllParticipants("m5"))
                     .thenReturn(flowOf(listOf("jjjjjj")))
@@ -169,7 +170,7 @@ class MeetingsFragmentTest {
                 // setup participate and withdraw
                 `when`(
                     participantService.addParticipant(
-                        meetings[1].meetingId!!,
+                        meetings[1].id!!,
                         initiallyConnectedUser.id
                     )
                 ).then {
@@ -178,7 +179,7 @@ class MeetingsFragmentTest {
 
                 `when`(
                     participantService.removeParticipant(
-                        meetings[1].meetingId!!,
+                        meetings[1].id!!,
                         initiallyConnectedUser.id
                     )
                 ).then {
@@ -191,7 +192,7 @@ class MeetingsFragmentTest {
     @get:Rule
     val koinTestRule = KoinTestRule(
         modules = listOf(module {
-            single { meetingService }
+            single { eventService }
             single { participantService }
             single { geocoderApi }
             single { auth }

@@ -1,6 +1,6 @@
 package com.github.sdp_begreen.begreen.firebase.meetingServices
 
-import com.github.sdp_begreen.begreen.exceptions.MeetingServiceException
+import com.github.sdp_begreen.begreen.exceptions.EventServiceException
 import com.github.sdp_begreen.begreen.models.Comment
 import kotlinx.coroutines.flow.Flow
 
@@ -18,7 +18,7 @@ interface MeetingCommentService {
      * @return The comment along with its newly generated commentId
      *
      * @throws IllegalArgumentException Throw if the meetingId is blank
-     * @throws MeetingServiceException Throw if the new key for the comment could not be generated,
+     * @throws EventServiceException Throw if the new key for the comment could not be generated,
      * or if an error occurred while adding it
      */
     suspend fun addComment(meetingId: String, comment: Comment): Comment
@@ -34,7 +34,7 @@ interface MeetingCommentService {
      * @return The comment that we modified
      *
      * @throws IllegalArgumentException Throw if one of the argument does not meet the requirement
-     * @throws MeetingServiceException Throw  if an error occurred while adding the comment
+     * @throws EventServiceException Throw  if an error occurred while adding the comment
      * to the database
      */
     suspend fun modifyComment(meetingId: String, userId: String, comment: Comment): Comment
@@ -62,7 +62,7 @@ interface MeetingCommentService {
      * can remove it
      *
      * @throws IllegalArgumentException Throw if one of the arguments does not match the requirement
-     * @throws MeetingServiceException Throw if an error occurred while removing the comment
+     * @throws EventServiceException Throw if an error occurred while removing the comment
      */
     suspend fun removeComment(meetingId: String, comment: Comment, userId: String)
 }

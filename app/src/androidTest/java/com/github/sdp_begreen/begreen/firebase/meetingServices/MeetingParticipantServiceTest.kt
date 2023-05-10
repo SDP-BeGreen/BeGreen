@@ -64,7 +64,7 @@ class MeetingParticipantServiceTest {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 MeetingParticipantServiceImpl.addParticipant(
-                    meetingWithParticipants.meetingId!!,
+                    meetingWithParticipants.id!!,
                     " "
                 )
             }
@@ -81,7 +81,7 @@ class MeetingParticipantServiceTest {
         runTest {
             assertThat(
                 MeetingParticipantServiceImpl.addParticipant(
-                    meetingWithParticipants.meetingId!!,
+                    meetingWithParticipants.id!!,
                     "abcd"
                 ),
                 `is`(equalTo("abcd"))
@@ -118,7 +118,7 @@ class MeetingParticipantServiceTest {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 MeetingParticipantServiceImpl.removeParticipant(
-                    meetingWithParticipants.meetingId!!,
+                    meetingWithParticipants.id!!,
                     " "
                 )
             }
@@ -140,7 +140,7 @@ class MeetingParticipantServiceTest {
         runTest {
             val channel = Channel<List<String>>(1)
             backgroundScope.launch {
-                MeetingParticipantServiceImpl.getAllParticipants(meetingWithParticipants.meetingId!!)
+                MeetingParticipantServiceImpl.getAllParticipants(meetingWithParticipants.id!!)
                     .collect {
                         channel.send(it)
                     }
@@ -153,7 +153,7 @@ class MeetingParticipantServiceTest {
             )
 
             MeetingParticipantServiceImpl.removeParticipant(
-                meetingWithParticipants.meetingId!!,
+                meetingWithParticipants.id!!,
                 participant2
             )
             assertThat(
@@ -162,7 +162,7 @@ class MeetingParticipantServiceTest {
             )
 
             MeetingParticipantServiceImpl.addParticipant(
-                meetingWithParticipants.meetingId!!,
+                meetingWithParticipants.id!!,
                 participant4
             )
             assertThat(

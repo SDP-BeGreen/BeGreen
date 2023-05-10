@@ -1,10 +1,12 @@
-package com.github.sdp_begreen.begreen.firebase.meetingServices
+package com.github.sdp_begreen.begreen.firebase.eventServices
 
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
-import com.github.sdp_begreen.begreen.exceptions.MeetingServiceException
+import com.github.sdp_begreen.begreen.exceptions.EventServiceException
+import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.matchers.ContainsWithSameOrder.Companion.inWithOrder
+import com.github.sdp_begreen.begreen.models.Contest
 import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.models.Meeting
 import com.github.sdp_begreen.begreen.rules.CoroutineTestRule
@@ -30,10 +32,14 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.Calendar
 
+/**
+ * The event service will only be tested using [Meeting]s, but it would work the same
+ * with [Contest]
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 @MediumTest
-class MeetingServiceImplTest {
+class EventServiceImplTest {
 
     companion object {
         @get:ClassRule
@@ -60,12 +66,12 @@ class MeetingServiceImplTest {
         // `newMeeting`
         private val modifiedMeeting =
             newMeeting.copy(
-                meetingId = "-NU2KtnI6nKuswFWakns",
+                id = "-NU2KtnI6nKuswFWakns",
                 title = "Modified title",
                 description = "The description also changed"
             )
 
-        private val meetingToRemove = Meeting(
+        private val meetingInDb = Meeting(
             "-NU5e_cOMcBd1A_fMx5H",
             "123456789",
             "single meeting title",
@@ -83,7 +89,7 @@ class MeetingServiceImplTest {
     fun createMeetingBlankCreatorShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
-                MeetingServiceImpl.createMeeting(newMeeting.copy(creator = " "))
+                EventServiceImpl.createEvent(newMeeting.copy(creator = " "))
             }
         }
 
@@ -94,7 +100,7 @@ class MeetingServiceImplTest {
     fun createMeetingNullCreatorShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
-                MeetingServiceImpl.createMeeting(newMeeting.copy(creator = null))
+                EventServiceImpl.createEvent(newMeeting.copy(creator = null))
             }
         }
 
@@ -104,11 +110,15 @@ class MeetingServiceImplTest {
     @Test
     fun createMeetingCorrectlyCreateMeetingInDB() {
         runTest {
-            val addedMeeting = MeetingServiceImpl.createMeeting(newMeeting)
-            val initMeetingWithId = newMeeting.copy(meetingId = addedMeeting.meetingId)
+            val addedMeeting = EventServiceImpl.createEvent(newMeeting)
+            val initMeetingWithId = newMeeting.copy(id = addedMeeting.id)
             assertThat(addedMeeting, `is`(equalTo(initMeetingWithId)))
 
-            val getAddedMeeting = MeetingServiceImpl.getMeeting(initMeetingWithId.meetingId!!)
+            val getAddedMeeting = EventServiceImpl.getEvent(
+                initMeetingWithId.id!!,
+                RootPath.MEETINGS,
+                Meeting::class.java
+            )
             assertThat(getAddedMeeting, `is`(equalTo(initMeetingWithId)))
         }
     }
@@ -117,7 +127,7 @@ class MeetingServiceImplTest {
     fun createMeetingNullStartDateShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
-                MeetingServiceImpl.createMeeting(newMeeting.copy(startDateTime = null))
+                EventServiceImpl.createEvent(newMeeting.copy(startDateTime = null))
             }
         }
 
@@ -128,7 +138,7 @@ class MeetingServiceImplTest {
     fun modifyMeetingBlankUserIdShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
-                MeetingServiceImpl.modifyMeeting(modifiedMeeting, " ")
+                EventServiceImpl.modifyEvent(modifiedMeeting, " ")
             }
         }
 
@@ -139,13 +149,13 @@ class MeetingServiceImplTest {
     fun modifyMeetingDifferentUserIdShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
-                MeetingServiceImpl.modifyMeeting(modifiedMeeting, "2")
+                EventServiceImpl.modifyEvent(modifiedMeeting, "2")
             }
         }
 
         assertThat(
             exception.message,
-            `is`(equalTo("The user that modify the meeting must be its creator"))
+            `is`(equalTo("The user that modify the event must be its creator"))
         )
     }
 
@@ -153,8 +163,8 @@ class MeetingServiceImplTest {
     fun modifyMeetingBlankMeetingIdShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
-                MeetingServiceImpl.modifyMeeting(
-                    modifiedMeeting.copy(meetingId = " "),
+                EventServiceImpl.modifyEvent(
+                    modifiedMeeting.copy(id = " "),
                     newMeeting.creator!!
                 )
             }
@@ -162,7 +172,7 @@ class MeetingServiceImplTest {
 
         assertThat(
             exception.message,
-            `is`(equalTo("The meeting to modify cannot have a blank or null meetingId"))
+            `is`(equalTo("The event to modify cannot have a blank or null id"))
         )
     }
 
@@ -170,8 +180,8 @@ class MeetingServiceImplTest {
     fun modifyMeetingNullMeetingIdShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
-                MeetingServiceImpl.modifyMeeting(
-                    modifiedMeeting.copy(meetingId = null),
+                EventServiceImpl.modifyEvent(
+                    modifiedMeeting.copy(id = null),
                     newMeeting.creator!!
                 )
             }
@@ -179,16 +189,20 @@ class MeetingServiceImplTest {
 
         assertThat(
             exception.message,
-            `is`(equalTo("The meeting to modify cannot have a blank or null meetingId"))
+            `is`(equalTo("The event to modify cannot have a blank or null id"))
         )
     }
 
     @Test
     fun modifyMeetingCorrectlyModifyMeetingInDB() {
         runTest {
-            MeetingServiceImpl.modifyMeeting(modifiedMeeting, newMeeting.creator!!)
+            EventServiceImpl.modifyEvent(modifiedMeeting, newMeeting.creator!!)
 
-            val getModifiedMeeting = MeetingServiceImpl.getMeeting(modifiedMeeting.meetingId!!)
+            val getModifiedMeeting = EventServiceImpl.getEvent(
+                modifiedMeeting.id!!,
+                RootPath.MEETINGS,
+                Meeting::class.java
+            )
             assertThat(getModifiedMeeting, `is`(equalTo(modifiedMeeting)))
         }
     }
@@ -216,7 +230,7 @@ class MeetingServiceImplTest {
         )
 
         runTest {
-            val list = MeetingServiceImpl.getAllMeetings().first()
+            val list = EventServiceImpl.getAllEvents(RootPath.MEETINGS, Meeting::class.java).first()
             // As its hard to now exactly how many meetings are going to be in the database when
             // we run this test, as test are executed in any order, some new meetings may have
             // been added in between, we check that at least all the meetings from the list `meetings`
@@ -246,7 +260,7 @@ class MeetingServiceImplTest {
         runTest() {
             val channel = Channel<List<Meeting>>(1)
             backgroundScope.launch {
-                MeetingServiceImpl.getAllMeetings().collect {
+                EventServiceImpl.getAllEvents(RootPath.MEETINGS, Meeting::class.java).collect {
                     channel.send(it)
                 }
             }
@@ -261,7 +275,7 @@ class MeetingServiceImplTest {
                 title = "Modified first meeting",
                 description = "Modified description first meeting"
             )
-            MeetingServiceImpl.modifyMeeting(modifiedMeeting1, meeting1.creator!!)
+            EventServiceImpl.modifyEvent(modifiedMeeting1, meeting1.creator!!)
             assertThat(
                 listOf(modifiedMeeting1, meeting2, meeting3),
                 everyItem(`is`(`in`(channel.receive())))
@@ -272,7 +286,7 @@ class MeetingServiceImplTest {
                 title = "Modified second meeting",
                 description = "Modified description second meeting"
             )
-            MeetingServiceImpl.modifyMeeting(modifiedMeeting2, meeting2.creator!!)
+            EventServiceImpl.modifyEvent(modifiedMeeting2, meeting2.creator!!)
             assertThat(
                 listOf(modifiedMeeting1, modifiedMeeting2, meeting3),
                 everyItem(`is`(`in`(channel.receive())))
@@ -283,7 +297,7 @@ class MeetingServiceImplTest {
                 title = "Modified third meeting",
                 description = "Modified description third meeting"
             )
-            MeetingServiceImpl.modifyMeeting(modifiedMeeting3, meeting3.creator!!)
+            EventServiceImpl.modifyEvent(modifiedMeeting3, meeting3.creator!!)
             assertThat(
                 listOf(modifiedMeeting1, modifiedMeeting2, modifiedMeeting3),
                 everyItem(`is`(`in`(channel.receive())))
@@ -315,11 +329,12 @@ class MeetingServiceImplTest {
             Calendar.getInstance().timeInMillis.minus(1000)
         )
         runTest {
-            val newMeeting1 = MeetingServiceImpl.createMeeting(meeting1)
-            val newMeeting2 = MeetingServiceImpl.createMeeting(meeting2)
-            val newMeeting3 = MeetingServiceImpl.createMeeting(meeting3)
+            val newMeeting1 = EventServiceImpl.createEvent(meeting1)
+            val newMeeting2 = EventServiceImpl.createEvent(meeting2)
+            val newMeeting3 = EventServiceImpl.createEvent(meeting3)
 
-            val meetings = MeetingServiceImpl.getAllMeetings().first()
+            val meetings =
+                EventServiceImpl.getAllEvents(RootPath.MEETINGS, Meeting::class.java).first()
 
             // check that those two new meeting are in the correct order
             assertThat(listOf(newMeeting1, newMeeting2), `is`(inWithOrder(meetings)))
@@ -330,10 +345,42 @@ class MeetingServiceImplTest {
     }
 
     @Test
-    fun getNonExistingMeetingShouldThrowMeetingServiceException() {
-        val exception = assertThrows(MeetingServiceException::class.java) {
+    fun getAllEventsNonCorrespondingImplTypeRootPathShouldThrowIllegalArgumentException() {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
-                MeetingServiceImpl.getMeeting("not existing")
+                EventServiceImpl.getAllEvents(RootPath.MEETINGS, Contest::class.java)
+            }
+        }
+
+        assertThat(
+            exception.message,
+            `is`(equalTo("The root path is of type ${RootPath.MEETINGS.name} but the expected object type is Contest"))
+        )
+    }
+
+    @Test
+    fun getEventNonCorrespondingImplTypeRootPathShouldThrowIllegalArgumentException() {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            runTest {
+                EventServiceImpl.getEvent(
+                    meetingInDb.id!!,
+                    RootPath.MEETINGS,
+                    Contest::class.java
+                )
+            }
+        }
+
+        assertThat(
+            exception.message,
+            `is`(equalTo("The root path is of type ${RootPath.MEETINGS.name} but the expected object type is Contest"))
+        )
+    }
+
+    @Test
+    fun getNonExistingMeetingShouldThrowMeetingServiceException() {
+        val exception = assertThrows(EventServiceException::class.java) {
+            runTest {
+                EventServiceImpl.getEvent("not existing", RootPath.MEETINGS, Meeting::class.java)
             }
         }
 
@@ -344,18 +391,22 @@ class MeetingServiceImplTest {
     fun getMeetingBlankMeetingIdShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
-                MeetingServiceImpl.getMeeting("  ")
+                EventServiceImpl.getEvent("  ", RootPath.MEETINGS, Meeting::class.java)
             }
         }
 
-        assertThat(exception.message, `is`("The meeting id cannot be blank"))
+        assertThat(exception.message, `is`("The event id cannot be blank"))
     }
 
     @Test
     fun getMeetingShouldRetrievedCorrectMeetingFromDB() {
         runTest {
-            val retrievedMeeting = MeetingServiceImpl.getMeeting(meetingToRemove.meetingId!!)
-            assertThat(retrievedMeeting, `is`(equalTo(meetingToRemove)))
+            val retrievedMeeting = EventServiceImpl.getEvent(
+                meetingInDb.id!!,
+                RootPath.MEETINGS,
+                Meeting::class.java
+            )
+            assertThat(retrievedMeeting, `is`(equalTo(meetingInDb)))
         }
     }
 
@@ -363,8 +414,8 @@ class MeetingServiceImplTest {
     fun removeMeetingBlankUserIdShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
-                MeetingServiceImpl.removeMeeting(
-                    meetingToRemove,
+                EventServiceImpl.removeEvent(
+                    meetingInDb,
                     " "
                 )
             }
@@ -377,37 +428,37 @@ class MeetingServiceImplTest {
     fun removeMeetingBlankMeetingIdShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
-                MeetingServiceImpl.removeMeeting(
-                    meetingToRemove.copy(meetingId = " "),
-                    meetingToRemove.creator!!
+                EventServiceImpl.removeEvent(
+                    meetingInDb.copy(id = " "),
+                    meetingInDb.creator!!
                 )
             }
         }
 
-        assertThat(exception.message, `is`(equalTo("The meeting id cannot be blank or null")))
+        assertThat(exception.message, `is`(equalTo("The event id cannot be blank or null")))
     }
 
     @Test
     fun removeMeetingNullMeetingIdShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
-                MeetingServiceImpl.removeMeeting(
-                    meetingToRemove.copy(meetingId = null),
-                    meetingToRemove.creator!!
+                EventServiceImpl.removeEvent(
+                    meetingInDb.copy(id = null),
+                    meetingInDb.creator!!
                 )
             }
         }
 
-        assertThat(exception.message, `is`(equalTo("The meeting id cannot be blank or null")))
+        assertThat(exception.message, `is`(equalTo("The event id cannot be blank or null")))
     }
 
     @Test
     fun removeMeetingDifferentUserIdShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
-                MeetingServiceImpl.removeMeeting(
-                    meetingToRemove.copy(creator = "different"),
-                    meetingToRemove.creator!!
+                EventServiceImpl.removeEvent(
+                    meetingInDb.copy(creator = "different"),
+                    meetingInDb.creator!!
                 )
             }
         }
@@ -429,26 +480,25 @@ class MeetingServiceImplTest {
 
         runTest {
             // assert first that meeting is present
-            val retrievedMeeting = MeetingServiceImpl.getMeeting(meeting.meetingId!!)
+            val retrievedMeeting =
+                EventServiceImpl.getEvent(meeting.id!!, RootPath.MEETINGS, Meeting::class.java)
             assertThat(retrievedMeeting, `is`(equalTo(meeting)))
 
             //remove it
             withContext(Dispatchers.Default) {
-                MeetingServiceImpl.removeMeeting(
+                EventServiceImpl.removeEvent(
                     meeting,
                     meeting.creator!!
                 )
             }
 
             // assert meeting removed
-            val exception = assertThrows(MeetingServiceException::class.java) {
+            val exception = assertThrows(EventServiceException::class.java) {
                 runBlocking {
-                    MeetingServiceImpl.getMeeting(meeting.meetingId!!)
+                    EventServiceImpl.getEvent(meeting.id!!, RootPath.MEETINGS, Meeting::class.java)
                 }
             }
             assertThat(exception.message, `is`(equalTo("Data not found, or could not be parsed")))
-
-
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.github.sdp_begreen.begreen.firebase.meetingServices
 
 import android.graphics.Bitmap
-import com.github.sdp_begreen.begreen.exceptions.MeetingServiceException
+import com.github.sdp_begreen.begreen.exceptions.EventServiceException
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import kotlinx.coroutines.flow.Flow
 
@@ -20,7 +20,7 @@ interface MeetingPhotoService {
      * @return The photo metadata containing the new id generated when adding the photo
      *
      * @throws IllegalArgumentException Throw if one of the arguments does not match the requirement
-     * @throws MeetingServiceException Throw if an error occurred while adding the picture to the database,
+     * @throws EventServiceException Throw if an error occurred while adding the picture to the database,
      * or if an error occurred while generating the key for the photo
      */
     suspend fun addMeetingsPhoto(
@@ -49,7 +49,7 @@ interface MeetingPhotoService {
      * @return The photo as a bitmap, or null if the photo could not be decoded
      *
      * @throws IllegalArgumentException Throw if one of the arguments does not match the requirement
-     * @throws MeetingServiceException Throw if an error occurred while retrieving the photo
+     * @throws EventServiceException Throw if an error occurred while retrieving the photo
      */
     suspend fun getPhoto(meetingId: String, photoMetadata: TrashPhotoMetadata): Bitmap?
 
@@ -60,7 +60,7 @@ interface MeetingPhotoService {
      * @param photoMetadata The metadata of the photo to remove
      *
      * @throws IllegalArgumentException Throw if one of the arguments does not match the requirement
-     * @throws MeetingServiceException Throw if an error occurred while removing the comment
+     * @throws EventServiceException Throw if an error occurred while removing the comment
      */
     suspend fun removeMeetingPhoto(meetingId: String, photoMetadata: TrashPhotoMetadata)
 }

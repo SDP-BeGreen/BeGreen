@@ -26,18 +26,18 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.espressoUtils.BaseRobot
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
+import com.github.sdp_begreen.begreen.firebase.RootPath
+import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
 import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingParticipantService
-import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingService
 import com.github.sdp_begreen.begreen.fragments.SendPostFragment
 import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBitmap
-import com.github.sdp_begreen.begreen.models.CustomLatLng
+import com.github.sdp_begreen.begreen.models.Meeting
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
-
 import com.google.android.gms.tasks.Tasks
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -86,7 +86,7 @@ class MainActivityTest {
         private val fakePicture1 = Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888)
         private val db: DB = mock(DB::class.java)
         private val auth: Auth = mock(Auth::class.java)
-        private val meetingService: MeetingService = mock(MeetingService::class.java)
+        private val eventService: EventService = mock(EventService::class.java)
         private val participantService: MeetingParticipantService =
             mock(MeetingParticipantService::class.java)
 
@@ -119,7 +119,7 @@ class MainActivityTest {
 
                 `when`(db.getAllUsers()).thenReturn(listOf(user1))
                 `when`(db.getAllBins()).thenReturn(bins)
-                `when`(meetingService.getAllMeetings()).thenReturn(flowOf())
+                `when`(eventService.getAllEvents(RootPath.MEETINGS, Meeting::class.java)).thenReturn(flowOf())
                 `when`(db.getFollowers("current user id")).thenReturn(listOf())
                 `when`(db.getFollowedIds("current user id")).thenReturn(listOf())
             }
@@ -134,7 +134,7 @@ class MainActivityTest {
         modules = listOf(module {
             single { db }
             single { auth }
-            single { meetingService }
+            single { eventService }
             single { participantService }
         })
     )

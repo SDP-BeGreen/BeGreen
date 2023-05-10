@@ -5,11 +5,8 @@ import com.github.sdp_begreen.begreen.firebase.RootPath
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
-/**
- * Class that represents a waste collection meeting
- */
 @Parcelize
-data class Meeting (
+data class Contest(
     override var id: String? = null,
     override var creator: String? = null,
     override var title: String? = null,
@@ -17,19 +14,12 @@ data class Meeting (
     override var startDateTime: Long? = null,
     override var endDateTime: Long? = null,
     override var startCoordinates: CustomLatLng? = null,
-    var endCoordinates: CustomLatLng? = null,
-    var intermediaryCoordinates: List<CustomLatLng>? = null,
-    // TODO add the itinerary to store the computed way
-    //  add it later when calculating the itinerary to see how to best store it
-    //var itinerary: String? = null,
-) : Event<Meeting>, Parcelable {
+    var radius: Long = 0,
+    var private: Boolean = false,
+): Event<Contest>, Parcelable {
 
     @IgnoredOnParcel
-    override val rootPath = RootPath.MEETINGS
-
-    override fun toString(): String {
-        return "$title: $creator"
-    }
+    override val rootPath = RootPath.CONTESTS
 
     override fun copy(newId: String) = copy(id = newId)
 }

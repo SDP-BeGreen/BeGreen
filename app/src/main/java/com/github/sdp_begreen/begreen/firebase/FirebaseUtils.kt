@@ -1,7 +1,7 @@
 package com.github.sdp_begreen.begreen.firebase
 
 import android.util.Log
-import com.github.sdp_begreen.begreen.exceptions.MeetingServiceException
+import com.github.sdp_begreen.begreen.exceptions.EventServiceException
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -30,7 +30,7 @@ object FirebaseUtils {
      *
      * @return The object that has been saved
      *
-     * @throws MeetingServiceException If an error occurred while saving the object to the database
+     * @throws EventServiceException If an error occurred while saving the object to the database
      */
     suspend fun <T> setObjToDb(
         reference: DatabaseReference,
@@ -42,7 +42,7 @@ object FirebaseUtils {
             return obj
         } catch (e: Exception) {
             Log.d("Object addition failed", e.message.orEmpty())
-            throw MeetingServiceException("$errorMessage ${e.message}", e)
+            throw EventServiceException("$errorMessage ${e.message}", e)
         }
     }
 
@@ -53,7 +53,7 @@ object FirebaseUtils {
      * @param bytes The bytes to store
      * @param errorMessage The error message to add to the thrown exception
      *
-     * @throws MeetingServiceException If an error occurred while saving the object to the storage
+     * @throws EventServiceException If an error occurred while saving the object to the storage
      */
     suspend fun putBytesToStorage(
         reference: StorageReference,
@@ -64,7 +64,7 @@ object FirebaseUtils {
             reference.putBytes(bytes).await()
         } catch (e: Exception) {
             Log.d("Object storing failed", e.message.orEmpty())
-            throw MeetingServiceException(
+            throw EventServiceException(
                 "$errorMessage ${e.message}", e
             )
         }
@@ -79,7 +79,7 @@ object FirebaseUtils {
      *
      * @return The required object, if it could be fetched and parsed
      *
-     * @throws MeetingServiceException If an error occurred while getting the object from the database
+     * @throws EventServiceException If an error occurred while getting the object from the database
      */
     suspend fun <T> getObjFromDb(
         query: Query,
@@ -91,8 +91,8 @@ object FirebaseUtils {
             query.get().await().getValue(valueType)
         } catch (e: Exception) {
             Log.d("Object retrieval failed", e.message.orEmpty())
-            throw MeetingServiceException("$errorMessage ${e.message}")
-        } ?: throw MeetingServiceException("Data not found, or could not be parsed")
+            throw EventServiceException("$errorMessage ${e.message}")
+        } ?: throw EventServiceException("Data not found, or could not be parsed")
     }
 
     /**
@@ -103,7 +103,7 @@ object FirebaseUtils {
      *
      * @return The array of byte representing the object retrieved from the storage
      *
-     * @throws MeetingServiceException If an error occurred while getting the object from the storage
+     * @throws EventServiceException If an error occurred while getting the object from the storage
      */
     suspend fun getBytesFromStorage(
         reference: StorageReference,
@@ -113,7 +113,7 @@ object FirebaseUtils {
             reference.getBytes(ONE_MEGABYTE).await()
         } catch (e: Exception) {
             Log.d("Object loading failed", e.message.orEmpty())
-            throw MeetingServiceException("$errorMessage ${e.message}")
+            throw EventServiceException("$errorMessage ${e.message}")
         }
     }
 
@@ -123,14 +123,14 @@ object FirebaseUtils {
      * @param reference The reference of the object to remove
      * @param errorMessage The error message to add to the thrown exception
      *
-     * @throws MeetingServiceException If an error occurred while removing the object from the database
+     * @throws EventServiceException If an error occurred while removing the object from the database
      */
     suspend fun removeObjFromDb(reference: DatabaseReference, errorMessage: String) {
         try {
             reference.removeValue().await()
         } catch (e: Exception) {
             Log.d("Object removing failed", e.message.orEmpty())
-            throw MeetingServiceException("$errorMessage ${e.message}", e)
+            throw EventServiceException("$errorMessage ${e.message}", e)
         }
     }
 
@@ -140,14 +140,14 @@ object FirebaseUtils {
      * @param reference The reference of the object to remove
      * @param errorMessage The error message to add to the thrown exception
      *
-     * @throws MeetingServiceException If an error occurred while removing the object from the storage
+     * @throws EventServiceException If an error occurred while removing the object from the storage
      */
     suspend fun removeObjFromStorage(reference: StorageReference, errorMessage: String) {
         try {
             reference.delete().await()
         } catch (e: Exception) {
             Log.d("Object removing from storage failed", e.message.orEmpty())
-            throw MeetingServiceException("$errorMessage ${e.message}", e)
+            throw EventServiceException("$errorMessage ${e.message}", e)
         }
     }
 

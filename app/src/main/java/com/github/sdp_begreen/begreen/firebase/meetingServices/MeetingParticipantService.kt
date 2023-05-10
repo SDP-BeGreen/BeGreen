@@ -1,6 +1,6 @@
 package com.github.sdp_begreen.begreen.firebase.meetingServices
 
-import com.github.sdp_begreen.begreen.exceptions.MeetingServiceException
+import com.github.sdp_begreen.begreen.exceptions.EventServiceException
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -28,7 +28,7 @@ interface MeetingParticipantService {
      * @return The id of the participant
      *
      * @throws IllegalArgumentException Throw if one of the argument does not match the requirement
-     * @throws MeetingServiceException Throw if an error occurred while adding the participant
+     * @throws EventServiceException Throw if an error occurred while adding the participant
      */
     suspend fun addParticipant(meetingId: String, participantId: String): String
 
@@ -39,7 +39,7 @@ interface MeetingParticipantService {
      * @param participantId The id of the participant to add
      *
      * @throws IllegalArgumentException Throw if one of the argument does not match the requirement
-     * @throws MeetingServiceException Throw if an error occurred while removing the participant
+     * @throws EventServiceException Throw if an error occurred while removing the participant
      */
     suspend fun removeParticipant(meetingId: String, participantId: String)
 }

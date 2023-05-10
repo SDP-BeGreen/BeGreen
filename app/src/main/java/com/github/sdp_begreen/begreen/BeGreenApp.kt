@@ -11,8 +11,8 @@ import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingParticipan
 import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingParticipantServiceImpl
 import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingPhotoService
 import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingPhotoServiceImpl
-import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingService
-import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingServiceImpl
+import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
+import com.github.sdp_begreen.begreen.firebase.eventServices.EventServiceImpl
 import com.github.sdp_begreen.begreen.services.GeocodingService
 import com.github.sdp_begreen.begreen.services.GeocodingServiceImpl
 import com.google.firebase.database.DatabaseReference
@@ -43,7 +43,7 @@ val productionDbModule = module {
     single { FirebaseRef }
     single<DB> { FirebaseDB }
     single<Auth> { FirebaseAuth() }
-    single<MeetingService> { MeetingServiceImpl }
+    single<EventService> { EventServiceImpl }
     single<MeetingCommentService> { MeetingCommentServiceImpl }
     single<MeetingParticipantService> { MeetingParticipantServiceImpl }
     single<MeetingPhotoService> { MeetingPhotoServiceImpl }

@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
-import com.github.sdp_begreen.begreen.exceptions.MeetingServiceException
+import com.github.sdp_begreen.begreen.exceptions.EventServiceException
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap
 import com.github.sdp_begreen.begreen.models.Meeting
 import com.github.sdp_begreen.begreen.models.ParcelableDate
@@ -75,7 +75,7 @@ class MeetingPhotoServiceTest {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 MeetingPhotoServiceImpl.addMeetingsPhoto(
-                    meetingWithPhotos.meetingId!!,
+                    meetingWithPhotos.id!!,
                     TrashPhotoMetadata(takenBy = " "),
                     Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
                 )
@@ -93,7 +93,7 @@ class MeetingPhotoServiceTest {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 MeetingPhotoServiceImpl.addMeetingsPhoto(
-                    meetingWithPhotos.meetingId!!,
+                    meetingWithPhotos.id!!,
                     TrashPhotoMetadata(takenBy = null),
                     Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
                 )
@@ -120,7 +120,7 @@ class MeetingPhotoServiceTest {
             )
 
             val metadataWithId = MeetingPhotoServiceImpl.addMeetingsPhoto(
-                meetingWithPhotos.meetingId!!,
+                meetingWithPhotos.id!!,
                 metadata,
                 Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
             )
@@ -176,7 +176,7 @@ class MeetingPhotoServiceTest {
         runTest {
             val channel = Channel<List<TrashPhotoMetadata>>(1)
             backgroundScope.launch {
-                MeetingPhotoServiceImpl.getAllPhotosMetadata(meetingWithPhotos.meetingId!!)
+                MeetingPhotoServiceImpl.getAllPhotosMetadata(meetingWithPhotos.id!!)
                     .collect {
                         channel.send(it)
                     }
@@ -190,16 +190,16 @@ class MeetingPhotoServiceTest {
             )
 
             // remove one of the three
-            MeetingPhotoServiceImpl.removeMeetingPhoto(meetingWithPhotos.meetingId!!, metadata2)
+            MeetingPhotoServiceImpl.removeMeetingPhoto(meetingWithPhotos.id!!, metadata2)
             assertThat(
                 listOf(metadata1, metadata3),
                 everyItem(`is`(Matchers.`in`(channel.receive())))
             )
 
             // assert that when we get a photo it doesn't exist
-            val exception = assertThrows(MeetingServiceException::class.java) {
+            val exception = assertThrows(EventServiceException::class.java) {
                 runBlocking {
-                    MeetingPhotoServiceImpl.getPhoto(meetingWithPhotos.meetingId!!, metadata2)
+                    MeetingPhotoServiceImpl.getPhoto(meetingWithPhotos.id!!, metadata2)
                 }
             }
 
@@ -229,7 +229,7 @@ class MeetingPhotoServiceTest {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 MeetingPhotoServiceImpl.getPhoto(
-                    meetingWithPhotos.meetingId!!,
+                    meetingWithPhotos.id!!,
                     TrashPhotoMetadata(pictureId = null, takenBy = "non null")
                 )
             }
@@ -246,7 +246,7 @@ class MeetingPhotoServiceTest {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 MeetingPhotoServiceImpl.getPhoto(
-                    meetingWithPhotos.meetingId!!,
+                    meetingWithPhotos.id!!,
                     TrashPhotoMetadata(pictureId = " ")
                 )
             }
@@ -264,7 +264,7 @@ class MeetingPhotoServiceTest {
         runTest {
             val metadata =
                 MeetingPhotoServiceImpl.addMeetingsPhoto(
-                    meetingWithPhotos.meetingId!!,
+                    meetingWithPhotos.id!!,
                     TrashPhotoMetadata(
                         null,
                         ParcelableDate.now,
@@ -275,7 +275,7 @@ class MeetingPhotoServiceTest {
                     bitmap
                 )
             val retrievedPhoto =
-                MeetingPhotoServiceImpl.getPhoto(meetingWithPhotos.meetingId!!, metadata)
+                MeetingPhotoServiceImpl.getPhoto(meetingWithPhotos.id!!, metadata)
             assertThat(bitmap, EqualsToBitmap.equalsBitmap(retrievedPhoto!!))
         }
     }
@@ -299,7 +299,7 @@ class MeetingPhotoServiceTest {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 MeetingPhotoServiceImpl.removeMeetingPhoto(
-                    meetingWithPhotos.meetingId!!,
+                    meetingWithPhotos.id!!,
                     TrashPhotoMetadata(pictureId = null, takenBy = "non null")
                 )
             }
@@ -316,7 +316,7 @@ class MeetingPhotoServiceTest {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 MeetingPhotoServiceImpl.removeMeetingPhoto(
-                    meetingWithPhotos.meetingId!!,
+                    meetingWithPhotos.id!!,
                     TrashPhotoMetadata(pictureId = " ")
                 )
             }

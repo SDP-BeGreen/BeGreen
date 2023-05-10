@@ -76,7 +76,7 @@ class MeetingCommentServiceTest {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 MeetingCommentServiceImpl.addComment(
-                    meetingWithComments.meetingId!!,
+                    meetingWithComments.id!!,
                     Comment(author = " ")
                 )
             }
@@ -93,7 +93,7 @@ class MeetingCommentServiceTest {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 MeetingCommentServiceImpl.addComment(
-                    meetingWithComments.meetingId!!,
+                    meetingWithComments.id!!,
                     Comment(author = null)
                 )
             }
@@ -112,7 +112,7 @@ class MeetingCommentServiceTest {
         runTest {
             val addedComment =
                 MeetingCommentServiceImpl.addComment(
-                    meetingWithComments.meetingId!!,
+                    meetingWithComments.id!!,
                     comment
                 )
             val commentWithId = comment.copy(
@@ -132,7 +132,7 @@ class MeetingCommentServiceTest {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 MeetingCommentServiceImpl.modifyComment(
-                    meetingWithComments.meetingId!!,
+                    meetingWithComments.id!!,
                     " ",
                     modifiedComment
                 )
@@ -168,7 +168,7 @@ class MeetingCommentServiceTest {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 MeetingCommentServiceImpl.modifyComment(
-                    meetingWithComments.meetingId!!,
+                    meetingWithComments.id!!,
                     "different",
                     modifiedComment
                 )
@@ -186,7 +186,7 @@ class MeetingCommentServiceTest {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 MeetingCommentServiceImpl.modifyComment(
-                    meetingWithComments.meetingId!!,
+                    meetingWithComments.id!!,
                     modifiedComment.author!!,
                     modifiedComment.copy(commentId = " ")
                 )
@@ -204,7 +204,7 @@ class MeetingCommentServiceTest {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 MeetingCommentServiceImpl.modifyComment(
-                    meetingWithComments.meetingId!!,
+                    meetingWithComments.id!!,
                     modifiedComment.author!!,
                     modifiedComment.copy(commentId = null)
                 )
@@ -242,7 +242,7 @@ class MeetingCommentServiceTest {
 
         runBlocking {
             val list =
-                MeetingCommentServiceImpl.getAllComments(meetingWithComments.meetingId!!)
+                MeetingCommentServiceImpl.getAllComments(meetingWithComments.id!!)
                     .first()
             assertThat(comments, everyItem(`is`(`in`(list))))
         }
@@ -261,7 +261,7 @@ class MeetingCommentServiceTest {
         runTest {
             val channel = Channel<List<Comment>>(1)
             backgroundScope.launch {
-                MeetingCommentServiceImpl.getAllComments(meetingWithComments.meetingId!!)
+                MeetingCommentServiceImpl.getAllComments(meetingWithComments.id!!)
                     .collect {
                         channel.send(it)
                     }
@@ -277,7 +277,7 @@ class MeetingCommentServiceTest {
                 body = "Modified first comment body"
             )
             modifiedComment1 = MeetingCommentServiceImpl.modifyComment(
-                meetingWithComments.meetingId!!,
+                meetingWithComments.id!!,
                 modifiedComment1.author!!,
                 modifiedComment1
             )
@@ -291,7 +291,7 @@ class MeetingCommentServiceTest {
                 body = "Modified second comment body"
             )
             modifiedComment2 = MeetingCommentServiceImpl.modifyComment(
-                meetingWithComments.meetingId!!,
+                meetingWithComments.id!!,
                 modifiedComment2.author!!,
                 modifiedComment2
             )
@@ -305,7 +305,7 @@ class MeetingCommentServiceTest {
                 body = "Modified third comment body"
             )
             modifiedComment3 = MeetingCommentServiceImpl.modifyComment(
-                meetingWithComments.meetingId!!,
+                meetingWithComments.id!!,
                 modifiedComment3.author!!,
                 modifiedComment3
             )
@@ -316,7 +316,7 @@ class MeetingCommentServiceTest {
 
             // remove a comment
             MeetingCommentServiceImpl.removeComment(
-                meetingWithComments.meetingId!!,
+                meetingWithComments.id!!,
                 modifiedComment2,
                 modifiedComment2.author!!
             )
@@ -340,15 +340,15 @@ class MeetingCommentServiceTest {
 
         runTest {
             val newComment3 =
-                MeetingCommentServiceImpl.addComment(meetingWithComments.meetingId!!, comment3)
+                MeetingCommentServiceImpl.addComment(meetingWithComments.id!!, comment3)
             val newComment2 =
-                MeetingCommentServiceImpl.addComment(meetingWithComments.meetingId!!, comment2)
+                MeetingCommentServiceImpl.addComment(meetingWithComments.id!!, comment2)
             val newComment1 =
-                MeetingCommentServiceImpl.addComment(meetingWithComments.meetingId!!, comment1)
+                MeetingCommentServiceImpl.addComment(meetingWithComments.id!!, comment1)
 
             val channel = Channel<List<Comment>>(1)
             backgroundScope.launch {
-                MeetingCommentServiceImpl.getAllComments(meetingWithComments.meetingId!!)
+                MeetingCommentServiceImpl.getAllComments(meetingWithComments.id!!)
                     .collect {
                         channel.send(it)
                     }
@@ -360,7 +360,7 @@ class MeetingCommentServiceTest {
             )
 
             val modifiedComment2 = MeetingCommentServiceImpl.modifyComment(
-                meetingWithComments.meetingId!!,
+                meetingWithComments.id!!,
                 newComment2.author!!,
                 newComment2.copy(body = "Modified comment2")
             )
@@ -371,7 +371,7 @@ class MeetingCommentServiceTest {
             )
 
             val modifiedComment3 = MeetingCommentServiceImpl.modifyComment(
-                meetingWithComments.meetingId!!,
+                meetingWithComments.id!!,
                 newComment3.author!!,
                 newComment3.copy(body = "Modified comment3")
             )
@@ -405,7 +405,7 @@ class MeetingCommentServiceTest {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 MeetingCommentServiceImpl.removeComment(
-                    meetingWithComments.meetingId!!,
+                    meetingWithComments.id!!,
                     commentToRemove,
                     " "
                 )
@@ -422,7 +422,7 @@ class MeetingCommentServiceTest {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 MeetingCommentServiceImpl.removeComment(
-                    meetingWithComments.meetingId!!,
+                    meetingWithComments.id!!,
                     commentToRemove.copy(
                         commentId = " "
                     ),
@@ -441,7 +441,7 @@ class MeetingCommentServiceTest {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 MeetingCommentServiceImpl.removeComment(
-                    meetingWithComments.meetingId!!,
+                    meetingWithComments.id!!,
                     commentToRemove.copy(
                         commentId = null
                     ),
