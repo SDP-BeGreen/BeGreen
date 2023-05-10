@@ -124,6 +124,28 @@ class EventServiceImplTest {
     }
 
     @Test
+    fun createContestCorrectlyCreateContestInDB() {
+        val newContest = Contest(
+            null, "contest creator", "This is a contest", "speed run",
+            Calendar.getInstance().apply {
+                set(2024, 11, 8, 13, 0, 0)
+            }.timeInMillis,
+        )
+        runTest {
+            val addContest = EventServiceImpl.createEvent(newContest)
+            val newContestWithId = newContest.copy(id = addContest.id)
+            assertThat(addContest, `is`(equalTo(newContestWithId)))
+
+            val getAddedContest = EventServiceImpl.getEvent(
+                newContestWithId.id!!,
+                RootPath.CONTESTS,
+                Contest::class.java
+            )
+            assertThat(getAddedContest, `is`(equalTo(newContestWithId)))
+        }
+    }
+
+    @Test
     fun createMeetingNullStartDateShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
