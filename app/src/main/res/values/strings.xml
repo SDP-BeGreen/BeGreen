@@ -98,5 +98,7 @@
     <string name="confirm">Confirm</string>
     <string name="date">Date</string>
     <string name="hour">Hour</string>
+    <string name="chevron_to_expand_location_parameters">Chevron to expand location parameters</string>
+    <string name="map_button_to_open_map_and_select_coordinates">Map button to open map and select coordinates</string>
 
 </resources>
