@@ -20,9 +20,9 @@
         android:paddingBottom="26dp" />
 
         <com.google.android.material.textfield.TextInputLayout
+            app:id="@+id/contest_creation_title_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:id="@+id/contest_creation_title_container"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="5dp"
             android:layout_marginStart="5dp"
@@ -187,10 +187,10 @@
         android:orientation="vertical">
 
         <Spinner
+            android:id="@+id/contest_timezone_spinner"
             android:layout_marginTop="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/contest_timezone_spinner"
             android:layout_gravity="center">
         </Spinner>
 
@@ -231,6 +231,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:icon="@drawable/ic_calendar"
+                android:text="@string/date"
                 android:inset="0dp"
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
@@ -255,6 +256,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:icon="@drawable/ic_calendar"
+                android:text="@string/date"
                 android:inset="0dp"
                 android:layout_gravity="right"
                 app:iconGravity="textStart"
@@ -285,6 +287,7 @@
                android:id="@+id/start_hour_contest"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
+               android:text="@string/hour"
                app:icon="@drawable/ic_clock"
                android:inset="0dp"
                app:iconGravity="textStart"
@@ -307,6 +310,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:icon="@drawable/ic_clock"
+                android:text="@string/hour"
                 android:inset="0dp"
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
@@ -332,26 +336,27 @@
             android:orientation="horizontal"
             android:layout_marginTop="40dp"
             android:gravity="center">
-            <ImageButton
+            <Button
                 android:id="@+id/contest_cancel_button"
                 android:layout_gravity="center"
                 android:layout_width="150dp"
                 android:layout_marginEnd="40dp"
-                android:layout_height="30dp"
-                android:src="@drawable/ic_cancel"
-                android:background="@color/green_triadic_dark_blue">
+                android:layout_height="wrap_content"
+                app:icon="@drawable/ic_cancel"
+                android:text="@string/cancel"
+                android:backgroundTint="@color/green_triadic_dark_blue">
+            </Button>
 
-            </ImageButton>
-
-            <ImageButton
+            <Button
             android:id="@+id/contest_confirm_button"
             android:layout_gravity="center"
             android:layout_width="150dp"
-            android:layout_height="30dp"
-            android:src="@drawable/ic_arrow_right"
-            android:background="@color/green_500">
+            android:layout_height="wrap_content"
+            app:icon="@drawable/ic_arrow_right"
+            android:text="@string/confirm"
+            android:backgroundTint="@color/green_500">
 
-        </ImageButton>
+        </Button>
 
         </LinearLayout>
 
