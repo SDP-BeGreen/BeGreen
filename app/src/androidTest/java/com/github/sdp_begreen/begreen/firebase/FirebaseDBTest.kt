@@ -19,6 +19,7 @@ import com.github.sdp_begreen.begreen.rules.FirebaseEmulatorRule
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.Matchers.*
 import org.junit.*
 import org.junit.Assert.assertFalse
@@ -444,6 +445,17 @@ class FirebaseDBTest {
             val user1Followers = FirebaseDB.getFollowers(user1.id)
             assertThat(user1.followers!!.size, `is`(2))
             assertThat(user1Followers, containsInAnyOrder(user2, user3))
+        }
+    }
+
+    @Test
+    fun addFeedbackDoesNotThrowException() {
+        try {
+            runBlocking {
+                FirebaseDB.addFeedback("Feedback", "userId", "date")
+            }
+        } catch (_: Exception){
+            fail("addFeeback should not throw exception")
         }
     }
 
