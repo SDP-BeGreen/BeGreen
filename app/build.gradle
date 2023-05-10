@@ -127,6 +127,9 @@ dependencies {
     // Picasso
     implementation("com.squareup.picasso:picasso:2.8")
 
+    // Country picker
+    implementation("com.hbb20:android-country-picker:0.0.7")
+
 }
 
 tasks.withType(Test) {
