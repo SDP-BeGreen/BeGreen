@@ -253,7 +253,7 @@ class MainActivityTest {
         }
     }
     @Test
-    fun testShowContactUsBottomSheet() {
+    fun contactUsIsDisplayedInDrawerMenu() {
         runTest {
             // sign in user
             authUserFlow.emit(userId1)
