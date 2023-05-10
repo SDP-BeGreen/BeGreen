@@ -294,10 +294,8 @@ class MainActivity : AppCompatActivity() {
         bottomSheetDialog.show()
     }
 
-    private fun setSendBtnOnClickListener(btnSend: Button?,
-                                          etMessage: EditText?,
-                                          formattedDate: String,
-                                          bottomSheetDialog: BottomSheetDialog){
+    private fun setSendBtnOnClickListener(btnSend: Button?, etMessage: EditText?,
+                                          formattedDate: String, bottomSheetDialog: BottomSheetDialog){
         btnSend?.setOnClickListener {
             val msg = etMessage?.text.toString()
             if (msg.isEmpty()) {
