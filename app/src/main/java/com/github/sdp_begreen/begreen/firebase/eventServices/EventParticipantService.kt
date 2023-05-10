@@ -1,6 +1,7 @@
-package com.github.sdp_begreen.begreen.firebase.meetingServices
+package com.github.sdp_begreen.begreen.firebase.eventServices
 
 import com.github.sdp_begreen.begreen.exceptions.EventServiceException
+import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.models.event.EventParticipant
 import kotlinx.coroutines.flow.Flow
 
@@ -12,6 +13,7 @@ interface EventParticipantService {
     /**
      * Get all the participants. The participants will be returned dynamically in a flow
      *
+     * @param rootPath The enum object representing the path where to find all the participants
      * @param eventId The id of the meeting from which to retrieve the participants
      *
      * @return A flow of participants ids
@@ -19,6 +21,7 @@ interface EventParticipantService {
      * @throws IllegalArgumentException Throw if the meeting id is blank
      */
     suspend fun <T : EventParticipant> getAllParticipants(
+        rootPath: RootPath,
         eventId: String,
         clazz: Class<T>
     ): Flow<List<T>>
@@ -26,6 +29,7 @@ interface EventParticipantService {
     /**
      * Add a new participant to the meeting
      *
+     * @param rootPath The enum object representing the path where to add the participant to
      * @param eventId The id of the meeting to which add the participant
      * @param participant The participant to add
      *
@@ -34,16 +38,17 @@ interface EventParticipantService {
      * @throws IllegalArgumentException Throw if one of the argument does not match the requirement
      * @throws EventServiceException Throw if an error occurred while adding the participant
      */
-    suspend fun <T : EventParticipant> addParticipant(eventId: String, participant: T): T
+    suspend fun <T : EventParticipant> addParticipant(rootPath: RootPath,  eventId: String, participant: T): T
 
     /**
      * Remove a participant from the meeting
      *
+     * @param rootPath The enum object representing the path where to remove the participant from
      * @param eventId The id of the meeting to which add the participant
      * @param participantId The id of the participant to add
      *
      * @throws IllegalArgumentException Throw if one of the argument does not match the requirement
      * @throws EventServiceException Throw if an error occurred while removing the participant
      */
-    suspend fun removeParticipant(eventId: String, participantId: String)
+    suspend fun removeParticipant(rootPath: RootPath, eventId: String, participantId: String)
 }

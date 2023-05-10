@@ -5,7 +5,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
-import com.github.sdp_begreen.begreen.firebase.meetingServices.EventParticipantService
+import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantService
 import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.models.event.Meeting
@@ -98,6 +98,7 @@ class MeetingFragmentViewModelTest {
                 // setup getAllParticipants for initials meetings
                 `when`(
                     participantService.getAllParticipants(
+                        RootPath.MEETINGS,
                         meetings[0].id!!,
                         MeetingParticipant::class.java
                     )
@@ -112,6 +113,7 @@ class MeetingFragmentViewModelTest {
                 )
                 `when`(
                     participantService.getAllParticipants(
+                        RootPath.MEETINGS,
                         meetings[1].id!!,
                         MeetingParticipant::class.java
                     )
@@ -120,6 +122,7 @@ class MeetingFragmentViewModelTest {
                 )
                 `when`(
                     participantService.getAllParticipants(
+                        RootPath.MEETINGS,
                         meetings[2].id!!,
                         MeetingParticipant::class.java
                     )
@@ -129,20 +132,22 @@ class MeetingFragmentViewModelTest {
 
                 `when`(
                     participantService.addParticipant(
+                        RootPath.MEETINGS,
                         meetings[1].id!!,
                         MeetingParticipant(initiallyConnectedUser.id)
                     )
                 ).then {
-                    addRemoveParticipantChannel.trySend(it.arguments[1] as MeetingParticipant)
+                    addRemoveParticipantChannel.trySend(it.arguments[2] as MeetingParticipant)
                 }
 
                 `when`(
                     participantService.removeParticipant(
+                        RootPath.MEETINGS,
                         meetings[2].id!!,
                         initiallyConnectedUser.id
                     )
                 ).then {
-                    addRemoveParticipantChannel.trySend(MeetingParticipant(it.arguments[1] as String))
+                    addRemoveParticipantChannel.trySend(MeetingParticipant(it.arguments[2] as String))
                 }
             }
         }
@@ -255,6 +260,7 @@ class MeetingFragmentViewModelTest {
             backgroundScope.launch {
                 `when`(
                     participantService.getAllParticipants(
+                        RootPath.MEETINGS,
                         newMeeting1[3].id!!,
                         MeetingParticipant::class.java
                     )
@@ -379,9 +385,4 @@ class MeetingFragmentViewModelTest {
             assertThat(meetingFragmentViewModel.withdraw(meetings[1].id!!), `is`(nullValue()))
         }
     }
-
-    private fun registerCallbackAndSendThroughChannelWhenReceiveNewValue() {
-        // TODO continue
-    }
-
 }

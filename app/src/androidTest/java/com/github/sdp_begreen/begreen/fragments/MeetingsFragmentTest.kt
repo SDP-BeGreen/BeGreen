@@ -18,7 +18,7 @@ import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
-import com.github.sdp_begreen.begreen.firebase.meetingServices.EventParticipantService
+import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantService
 import com.github.sdp_begreen.begreen.matchers.ButtonAssertionView.Companion.atPositionButtonWithText
 import com.github.sdp_begreen.begreen.matchers.ButtonClickAction.Companion.clickButtonIdAtPosition
 import com.github.sdp_begreen.begreen.matchers.TextViewAssertionView.Companion.atPositionTextViewWithText
@@ -133,6 +133,7 @@ class MeetingsFragmentTest {
                 // setup getAllParticipants for initials meetings
                 `when`(
                     participantService.getAllParticipants(
+                        RootPath.MEETINGS,
                         meetings[0].id!!,
                         MeetingParticipant::class.java
                     )
@@ -148,12 +149,14 @@ class MeetingsFragmentTest {
                     )
                 `when`(
                     participantService.getAllParticipants(
+                        RootPath.MEETINGS,
                         meetings[1].id!!,
                         MeetingParticipant::class.java
                     )
                 ).thenReturn(flowOf(listOf(MeetingParticipant("dddddd"))))
                 `when`(
                     participantService.getAllParticipants(
+                        RootPath.MEETINGS,
                         meetings[2].id!!,
                         MeetingParticipant::class.java
                     )
@@ -167,12 +170,13 @@ class MeetingsFragmentTest {
                 )
                 `when`(
                     participantService.getAllParticipants(
+                        RootPath.MEETINGS,
                         meetings[3].id!!,
                         MeetingParticipant::class.java
                     )
                 )
                     .thenReturn(flowOf(listOf(MeetingParticipant("iiiiii"))))
-                `when`(participantService.getAllParticipants("m5", MeetingParticipant::class.java))
+                `when`(participantService.getAllParticipants(RootPath.MEETINGS, "m5", MeetingParticipant::class.java))
                     .thenReturn(flowOf(listOf(MeetingParticipant("jjjjjj"))))
 
                 // setup geocoding
@@ -204,20 +208,22 @@ class MeetingsFragmentTest {
                 // setup participate and withdraw
                 `when`(
                     participantService.addParticipant(
+                        RootPath.MEETINGS,
                         meetings[1].id!!,
                         MeetingParticipant(initiallyConnectedUser.id)
                     )
                 ).then {
-                    addRemoveParticipantChannel.trySend("participate: ${it.arguments[1] as MeetingParticipant}")
+                    addRemoveParticipantChannel.trySend("participate: ${it.arguments[2] as MeetingParticipant}")
                 }
 
                 `when`(
                     participantService.removeParticipant(
+                        RootPath.MEETINGS,
                         meetings[1].id!!,
                         initiallyConnectedUser.id
                     )
                 ).then {
-                    addRemoveParticipantChannel.trySend("withdraw: ${it.arguments[1] as String}")
+                    addRemoveParticipantChannel.trySend("withdraw: ${it.arguments[2] as String}")
                 }
             }
         }

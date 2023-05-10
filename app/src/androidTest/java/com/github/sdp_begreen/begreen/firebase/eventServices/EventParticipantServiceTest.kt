@@ -1,8 +1,9 @@
-package com.github.sdp_begreen.begreen.firebase.meetingServices
+package com.github.sdp_begreen.begreen.firebase.eventServices
 
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
+import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.models.event.Meeting
 import com.github.sdp_begreen.begreen.models.event.MeetingParticipant
 import com.github.sdp_begreen.begreen.rules.CoroutineTestRule
@@ -50,7 +51,11 @@ class EventParticipantServiceTest {
     fun addParticipantBlankMeetingIdShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
-                EventParticipantServiceImpl.addParticipant(" ", MeetingParticipant("hhhh"))
+                EventParticipantServiceImpl.addParticipant(
+                    RootPath.MEETINGS,
+                    " ",
+                    MeetingParticipant("hhhh")
+                )
             }
         }
 
@@ -65,6 +70,7 @@ class EventParticipantServiceTest {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 EventParticipantServiceImpl.addParticipant(
+                    RootPath.MEETINGS,
                     meetingWithParticipants.id!!,
                     MeetingParticipant(" ")
                 )
@@ -82,6 +88,7 @@ class EventParticipantServiceTest {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 EventParticipantServiceImpl.addParticipant(
+                    RootPath.MEETINGS,
                     meetingWithParticipants.id!!,
                     MeetingParticipant()
                 )
@@ -99,6 +106,7 @@ class EventParticipantServiceTest {
         runTest {
             assertThat(
                 EventParticipantServiceImpl.addParticipant(
+                    RootPath.MEETINGS,
                     meetingWithParticipants.id!!,
                     MeetingParticipant("abcd")
                 ),
@@ -110,7 +118,13 @@ class EventParticipantServiceTest {
     @Test
     fun getAllParticipantBlankMeetingIdShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
-            runTest { EventParticipantServiceImpl.getAllParticipants(" ", MeetingParticipant::class.java) }
+            runTest {
+                EventParticipantServiceImpl.getAllParticipants(
+                    RootPath.MEETINGS,
+                    " ",
+                    MeetingParticipant::class.java
+                )
+            }
         }
 
         assertThat(
@@ -122,7 +136,13 @@ class EventParticipantServiceTest {
     @Test
     fun removeParticipantBlankMeetingIdShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
-            runTest { EventParticipantServiceImpl.removeParticipant(" ", "aaaaaa") }
+            runTest {
+                EventParticipantServiceImpl.removeParticipant(
+                    RootPath.MEETINGS,
+                    " ",
+                    "aaaaaa"
+                )
+            }
         }
 
         assertThat(
@@ -136,6 +156,7 @@ class EventParticipantServiceTest {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 EventParticipantServiceImpl.removeParticipant(
+                    RootPath.MEETINGS,
                     meetingWithParticipants.id!!,
                     " "
                 )
@@ -158,7 +179,11 @@ class EventParticipantServiceTest {
         runTest {
             val channel = Channel<List<MeetingParticipant>>(1)
             backgroundScope.launch {
-                EventParticipantServiceImpl.getAllParticipants(meetingWithParticipants.id!!, MeetingParticipant::class.java)
+                EventParticipantServiceImpl.getAllParticipants(
+                    RootPath.MEETINGS,
+                    meetingWithParticipants.id!!,
+                    MeetingParticipant::class.java
+                )
                     .collect {
                         channel.send(it)
                     }
@@ -171,6 +196,7 @@ class EventParticipantServiceTest {
             )
 
             EventParticipantServiceImpl.removeParticipant(
+                RootPath.MEETINGS,
                 meetingWithParticipants.id!!,
                 participant2.id!!
             )
@@ -180,6 +206,7 @@ class EventParticipantServiceTest {
             )
 
             EventParticipantServiceImpl.addParticipant(
+                RootPath.MEETINGS,
                 meetingWithParticipants.id!!,
                 participant4
             )

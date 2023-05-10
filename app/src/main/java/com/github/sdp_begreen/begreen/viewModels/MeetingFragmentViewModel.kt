@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.github.sdp_begreen.begreen.firebase.RootPath
-import com.github.sdp_begreen.begreen.firebase.meetingServices.EventParticipantService
+import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantService
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
 import com.github.sdp_begreen.begreen.models.event.Meeting
 import com.github.sdp_begreen.begreen.models.User
@@ -45,6 +45,7 @@ class MeetingFragmentViewModel(private val currentUser: StateFlow<User?>) : View
                 meetings.mapNotNull { meeting ->
                     meeting.id?.let { id ->
                         id to participantService.getAllParticipants(
+                            RootPath.MEETINGS,
                             id,
                             MeetingParticipant::class.java
                         ).first().map { it.id }
@@ -66,7 +67,7 @@ class MeetingFragmentViewModel(private val currentUser: StateFlow<User?>) : View
     fun participate(meetingId: String): String? {
         currentUser.value?.also {
             viewModelScope.launch {
-                participantService.addParticipant(meetingId, MeetingParticipant(it.id))
+                participantService.addParticipant(RootPath.MEETINGS, meetingId, MeetingParticipant(it.id))
             }
             mutableParticipationMap.tryEmit(mutableParticipationMap.value + (meetingId to true))
             return meetingId
@@ -84,7 +85,7 @@ class MeetingFragmentViewModel(private val currentUser: StateFlow<User?>) : View
     fun withdraw(meetingId: String): String? {
         currentUser.value?.also {
             viewModelScope.launch {
-                participantService.removeParticipant(meetingId, it.id)
+                participantService.removeParticipant(RootPath.MEETINGS, meetingId, it.id)
             }
             mutableParticipationMap.tryEmit(mutableParticipationMap.value + (meetingId to false))
             return meetingId
