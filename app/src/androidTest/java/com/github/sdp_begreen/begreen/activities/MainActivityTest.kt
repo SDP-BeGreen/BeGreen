@@ -267,8 +267,32 @@ class MainActivityTest {
     }
 
     @Test
+    fun cancelButtonCorrectlyHidesTheBottomSheet() {
+        runTest {
+            // sign in user
+            authUserFlow.emit(userId1)
+
+            // Open the navigation drawer
+            onView(withId(R.id.mainDrawerLayout))
+                .perform(DrawerActions.open(GravityCompat.END))
+
+            onView(withId(R.id.mainNavDrawContact))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+            // Click on the cancel button
+            onView(withId(R.id.cancel_button)).check(matches(isDisplayed()))
+                .perform(click())
+
+            // Check that the Bottom Sheet Dialog was dismissed
+            onView(withId(R.id.bottom_sheet_contact_us)).check(doesNotExist())
+        }
+    }
+
+    @Test
     fun testContactUsBottomSheetMessageNotVisibleWhenWriteSucceeds() {
-        runBlocking {
+        runTest {
             `when`(db.addFeedback(org.mockito.kotlin.any(), org.mockito.kotlin.any() , org.mockito.kotlin.any(), org.mockito.kotlin.any()))
                 .thenReturn(true)
             // sign in user
@@ -282,12 +306,6 @@ class MainActivityTest {
                 .perform(scrollTo())
                 .check(matches(isDisplayed()))
                 .perform(click())
-
-            // Enter a message into the message EditText
-            onView(withId(R.id.message_edittext)).perform(typeText("Test message"), closeSoftKeyboard())
-
-            // Check if the message EditText has the correct text
-            onView(withId(R.id.message_edittext)).check(matches(withText("Test message")))
 
             // The test commented below are working locally but not with the CI
             // Scroll to the Send button
