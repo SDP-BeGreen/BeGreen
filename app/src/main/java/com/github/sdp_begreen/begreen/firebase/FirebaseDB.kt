@@ -112,7 +112,7 @@ object FirebaseDB: DB {
         return storePicture(image, USER_PROFILE_PICTURE_METADATA, metadata,
             databaseReference.child(USERS_PATH).child(userId),
             storageReference.child(USERS_PATH).child(userId).child(
-                USER_PROFILE_PICTURE_METADATA)) as ProfilePhotoMetadata
+                USER_PROFILE_PICTURE_METADATA))
     }
 
     override suspend fun addTrashPhoto(image : Bitmap, trashPhotoMetadata: TrashPhotoMetadata): TrashPhotoMetadata? {
@@ -132,7 +132,7 @@ object FirebaseDB: DB {
 
         return storePicture(image, USER_POSTS, newPhotoMetadata,
             databaseReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_POSTS),
-            storageReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_POSTS)) as TrashPhotoMetadata
+            storageReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_POSTS))
     }
 
     override suspend fun userExists(userId: String, timeout: Long): Boolean {
@@ -214,7 +214,7 @@ object FirebaseDB: DB {
         if (!userExists(userId)) return listOf()
 
         return getNode("$USERS_PATH/$userId/$FOLLOWING_PATH", timeout).children.mapNotNull {
-            it.key as String
+            it.key
         }
     }
 
@@ -222,7 +222,7 @@ object FirebaseDB: DB {
         if (!userExists(userId)) return listOf()
 
         return getNode("$USERS_PATH/$userId/$FOLLOWERS_PATH", timeout).children.mapNotNull {
-            it.key as String
+            it.key
         }
     }
 
