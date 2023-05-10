@@ -38,6 +38,7 @@ import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.google.android.gms.tasks.Tasks
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.*
 import org.junit.BeforeClass
@@ -47,6 +48,9 @@ import org.junit.runner.RunWith
 import org.koin.dsl.module
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.atLeastOnce
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.verify
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -326,7 +330,7 @@ class MainActivityTest {
     }
 
     @Test
-    fun testContactUsBottomSheetMessageNotVisibleWhenWriteSucceeds() {
+    fun testContactUsBottomSheetMessageShouldCallDatabaseWithWrittenMessage() {
         runTest {
             `when`(db.addFeedback(org.mockito.kotlin.any(), org.mockito.kotlin.any() , org.mockito.kotlin.any(), org.mockito.kotlin.any()))
                 .thenReturn(true)
@@ -342,14 +346,18 @@ class MainActivityTest {
                 .check(matches(isDisplayed()))
                 .perform(click())
 
-            // The test commented below are working locally but not with the CI
-            // Scroll to the Send button
-            //onView(withId(R.id.send_button))
-            //    .check(matches(isDisplayed()))
-            //    .perform(click())
+            // Enter a message into the message EditText
+            onView(withId(R.id.message_edittext)).perform(typeText("Test message 1"), closeSoftKeyboard())
 
-            // Check that the Bottom Sheet Dialog was dismissed
-            //onView(withId(R.id.bottom_sheet_contact_us)).check(doesNotExist())
+            // Check if the message EditText has the correct text
+            onView(withId(R.id.message_edittext)).check(matches(withText("Test message 1")))
+
+            onView(withId(R.id.send_button))
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+            // Check that the database function got called with the right arguments
+            verify(db).addFeedback(eq("Test message 1"), eq(userId1), org.mockito.kotlin.any(), org.mockito.kotlin.any())
         }
     }
 
@@ -371,10 +379,10 @@ class MainActivityTest {
                 .perform(click())
 
             // Enter a message into the message EditText
-            onView(withId(R.id.message_edittext)).perform(typeText("Test message"), closeSoftKeyboard())
+            onView(withId(R.id.message_edittext)).perform(typeText("Test message 2"), closeSoftKeyboard())
 
             // Check if the message EditText has the correct text
-            onView(withId(R.id.message_edittext)).check(matches(withText("Test message")))
+            onView(withId(R.id.message_edittext)).check(matches(withText("Test message 2")))
 
             // Scroll to the Send button
             onView(withId(R.id.send_button))
@@ -384,6 +392,8 @@ class MainActivityTest {
             // Check that the Bottom Sheet Dialog was dismissed
             onView(withId(R.id.bottom_sheet_contact_us)).check(matches(isDisplayed()))
 
+            // Check that the database function got called with the right arguments
+            verify(db).addFeedback(eq("Test message 2"), eq(userId1), org.mockito.kotlin.any(), org.mockito.kotlin.any())
         }
     }
 

@@ -298,9 +298,11 @@ class MainActivity : AppCompatActivity() {
                                           formattedDate: String, bottomSheetDialog: BottomSheetDialog){
         btnSend?.setOnClickListener {
             val msg = etMessage?.text.toString()
-            if (msg.isBlank()) etMessage?.error = "Enter a message"
+            if (msg.isBlank()) {
+                etMessage?.error = "Enter a message"
+            }
             else {
-                auth.getConnectedUserId()?.let {
+                connectedUserViewModel.currentUser.value?.id?.let {
                     lifecycleScope.launch {
                         if (db.addFeedback(msg, it, formattedDate)) {
                             Toast.makeText(this@MainActivity, R.string.message_sent_success, Toast.LENGTH_SHORT)

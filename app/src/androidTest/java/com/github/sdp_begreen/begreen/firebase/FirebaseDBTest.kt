@@ -2,6 +2,7 @@ package com.github.sdp_begreen.begreen.firebase
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import androidx.test.core.app.launchActivity
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.intent.matcher.IntentMatchers.*
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -30,10 +31,6 @@ import kotlin.test.junit.JUnitAsserter.fail
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class FirebaseDBTest {
-
-    // For some reason to perform the write in the database, an activity has to be started
-    @get:Rule
-    val activityRule = ActivityScenarioRule(MainActivity::class.java)
 
     @get:Rule
     val koinTestRule = KoinTestRule()
@@ -116,7 +113,7 @@ class FirebaseDBTest {
         }
 
         // to be able to access resources, need to be in an activity
-        activityRule.scenario.onActivity { activity ->
+        launchActivity<MainActivity>().onActivity { activity ->
             val img: Bitmap = BitmapFactory.decodeResource(activity.resources, R.drawable.marguerite_test_image)
             val photoMetadata = PhotoMetadata()
 
