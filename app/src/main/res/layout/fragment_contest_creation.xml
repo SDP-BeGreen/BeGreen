@@ -110,8 +110,8 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/city_contest_creation"
-                    android:layout_width="92dp"
-                    android:layout_height="30dp"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:hint="@string/city"
                     android:maxLength="15"
@@ -132,7 +132,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/postal_code_contest_creation"
                     android:layout_width="100dp"
-                    android:layout_height="30dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:hint="@string/postal_code"
                     android:maxLength="6"
@@ -170,8 +170,8 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/radius_contest_creation"
-                    android:layout_width="100dp"
-                    android:layout_height="30dp"
+                    android:layout_width="105dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:hint="@string/radius_in_meters"
                     android:maxLength="6"
@@ -345,7 +345,7 @@
                 android:layout_height="wrap_content"
                 app:icon="@drawable/ic_cancel"
                 android:text="@string/cancel"
-                android:backgroundTint="@color/green_triadic_dark_blue">
+                android:backgroundTint="@color/green_triadic_light_blue">
             </Button>
 
             <Button
