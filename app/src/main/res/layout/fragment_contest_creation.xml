@@ -20,7 +20,7 @@
         android:paddingBottom="26dp" />
 
         <com.google.android.material.textfield.TextInputLayout
-            app:id="@+id/contest_creation_title_container"
+            android:id="@+id/contest_creation_title_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
