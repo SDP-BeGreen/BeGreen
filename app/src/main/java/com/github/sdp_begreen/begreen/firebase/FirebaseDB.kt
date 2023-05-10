@@ -12,11 +12,7 @@ import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.utils.checkArgument
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseException
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.TimeoutCancellationException
@@ -50,6 +46,7 @@ object FirebaseDB: DB {
     private const val ADVICES_LOCATION_PATH = "advices"
     private const val FOLLOWERS_PATH = "followers"
     private const val FOLLOWING_PATH = "following"
+    private const val FEEDBACK_PATH = "contact_us"
 
     // Logs (in the console) the connections and disconnections with the Firebase database
     // We might want to provide a new constructor that takes code to execute on connections/disconnections
@@ -115,7 +112,7 @@ object FirebaseDB: DB {
         return storePicture(image, USER_PROFILE_PICTURE_METADATA, metadata,
             databaseReference.child(USERS_PATH).child(userId),
             storageReference.child(USERS_PATH).child(userId).child(
-                USER_PROFILE_PICTURE_METADATA)) as ProfilePhotoMetadata
+                USER_PROFILE_PICTURE_METADATA))
     }
 
     override suspend fun addTrashPhoto(image : Bitmap, trashPhotoMetadata: TrashPhotoMetadata): TrashPhotoMetadata? {
@@ -135,7 +132,7 @@ object FirebaseDB: DB {
 
         return storePicture(image, USER_POSTS, newPhotoMetadata,
             databaseReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_POSTS),
-            storageReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_POSTS)) as TrashPhotoMetadata
+            storageReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_POSTS))
     }
 
     override suspend fun userExists(userId: String, timeout: Long): Boolean {
@@ -217,7 +214,7 @@ object FirebaseDB: DB {
         if (!userExists(userId)) return listOf()
 
         return getNode("$USERS_PATH/$userId/$FOLLOWING_PATH", timeout).children.mapNotNull {
-            it.key as String
+            it.key
         }
     }
 
@@ -225,7 +222,7 @@ object FirebaseDB: DB {
         if (!userExists(userId)) return listOf()
 
         return getNode("$USERS_PATH/$userId/$FOLLOWERS_PATH", timeout).children.mapNotNull {
-            it.key as String
+            it.key
         }
     }
 
@@ -304,4 +301,20 @@ object FirebaseDB: DB {
             throw databaseEx
         }
     }
+
+    override suspend fun addFeedback(feedback: String, userId: String, date: String, timeout: Long) {
+        try {
+            withTimeout(timeout) {
+                databaseReference.child(FEEDBACK_PATH).child(userId).child(date).setValue(feedback)
+                    .await()
+            }
+        } catch (timeoutEx: TimeoutCancellationException) {
+            Log.d(TAG, "Timeout, can't connect with database")
+            throw DatabaseTimeoutException("Timeout, cant connect with database")
+        } catch (databaseEx: DatabaseException) {
+            Log.d(TAG, "Failed with error message: ${databaseEx.message}")
+            throw databaseEx
+        }
+    }
+
 }

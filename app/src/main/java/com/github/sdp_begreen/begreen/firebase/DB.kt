@@ -216,4 +216,16 @@ interface DB {
      * @throws DatabaseException if an exception occurred while retrieving the data
      */
     suspend fun getFollowers(userId: String, timeout: Long = TIMEOUT): List<User>
+
+    /**
+     * Add a feedback to the database
+     *
+     * @param feedback the feedback to be added to the database
+     * @param userId the Id of the user that added the feedback
+     * @param date the date at which the feedback was sent
+     * @param timeout the maximum time we wait for the database to respond
+     * @throws DatabaseTimeoutException if the database could not be reached
+     * @throws DatabaseException if an exception occurred while retrieving the data
+     */
+    suspend fun addFeedback(feedback: String, userId: String, date: String, timeout: Long = TIMEOUT)
 }
