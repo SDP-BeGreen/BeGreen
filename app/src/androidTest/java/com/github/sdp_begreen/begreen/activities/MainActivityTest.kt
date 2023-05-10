@@ -28,7 +28,7 @@ import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
-import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingParticipantService
+import com.github.sdp_begreen.begreen.firebase.meetingServices.EventParticipantService
 import com.github.sdp_begreen.begreen.fragments.SendPostFragment
 import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBitmap
@@ -87,8 +87,8 @@ class MainActivityTest {
         private val db: DB = mock(DB::class.java)
         private val auth: Auth = mock(Auth::class.java)
         private val eventService: EventService = mock(EventService::class.java)
-        private val participantService: MeetingParticipantService =
-            mock(MeetingParticipantService::class.java)
+        private val participantService: EventParticipantService =
+            mock(EventParticipantService::class.java)
 
         // initially do as if no user were signed in
         private val authUserFlow = MutableStateFlow<String?>(null)

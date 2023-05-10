@@ -4,6 +4,7 @@ import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.github.sdp_begreen.begreen.models.event.Meeting
+import com.github.sdp_begreen.begreen.models.event.MeetingParticipant
 import com.github.sdp_begreen.begreen.rules.CoroutineTestRule
 import com.github.sdp_begreen.begreen.rules.FirebaseEmulatorRule
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
@@ -24,7 +25,7 @@ import org.junit.runner.RunWith
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 @MediumTest
-class MeetingParticipantServiceTest {
+class EventParticipantServiceTest {
 
     companion object {
         @get:ClassRule
@@ -49,13 +50,13 @@ class MeetingParticipantServiceTest {
     fun addParticipantBlankMeetingIdShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
-                MeetingParticipantServiceImpl.addParticipant(" ", "hhhh")
+                EventParticipantServiceImpl.addParticipant(" ", MeetingParticipant("hhhh"))
             }
         }
 
         assertThat(
             exception.message,
-            `is`(equalTo("The meeting id cannot be blank"))
+            `is`(equalTo("The event id cannot be blank"))
         )
     }
 
@@ -63,9 +64,26 @@ class MeetingParticipantServiceTest {
     fun addParticipantBlankParticipantShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
-                MeetingParticipantServiceImpl.addParticipant(
+                EventParticipantServiceImpl.addParticipant(
                     meetingWithParticipants.id!!,
-                    " "
+                    MeetingParticipant(" ")
+                )
+            }
+        }
+
+        assertThat(
+            exception.message,
+            `is`(equalTo("The participant id cannot be blank"))
+        )
+    }
+
+    @Test
+    fun addParticipantNullParticipantShouldThrowIllegalArgumentException() {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            runTest {
+                EventParticipantServiceImpl.addParticipant(
+                    meetingWithParticipants.id!!,
+                    MeetingParticipant()
                 )
             }
         }
@@ -80,11 +98,11 @@ class MeetingParticipantServiceTest {
     fun addParticipantCorrectlyAddParticipantToMeetingInDB() {
         runTest {
             assertThat(
-                MeetingParticipantServiceImpl.addParticipant(
+                EventParticipantServiceImpl.addParticipant(
                     meetingWithParticipants.id!!,
-                    "abcd"
+                    MeetingParticipant("abcd")
                 ),
-                `is`(equalTo("abcd"))
+                `is`(equalTo(MeetingParticipant("abcd")))
             )
         }
     }
@@ -92,24 +110,24 @@ class MeetingParticipantServiceTest {
     @Test
     fun getAllParticipantBlankMeetingIdShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
-            runTest { MeetingParticipantServiceImpl.getAllParticipants(" ") }
+            runTest { EventParticipantServiceImpl.getAllParticipants(" ", MeetingParticipant::class.java) }
         }
 
         assertThat(
             exception.message,
-            `is`(equalTo("The meeting id cannot be blank"))
+            `is`(equalTo("The event id cannot be blank"))
         )
     }
 
     @Test
     fun removeParticipantBlankMeetingIdShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
-            runTest { MeetingParticipantServiceImpl.removeParticipant(" ", "aaaaaa") }
+            runTest { EventParticipantServiceImpl.removeParticipant(" ", "aaaaaa") }
         }
 
         assertThat(
             exception.message,
-            `is`(equalTo("The meeting id cannot be blank"))
+            `is`(equalTo("The event id cannot be blank"))
         )
     }
 
@@ -117,7 +135,7 @@ class MeetingParticipantServiceTest {
     fun removeParticipantBlankParticipantIdShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
-                MeetingParticipantServiceImpl.removeParticipant(
+                EventParticipantServiceImpl.removeParticipant(
                     meetingWithParticipants.id!!,
                     " "
                 )
@@ -132,15 +150,15 @@ class MeetingParticipantServiceTest {
 
     @Test
     fun getAllParticipantsReturnCorrectModifiedListUponModification() {
-        val participant1 = "participant1"
-        val participant2 = "participant2"
-        val participant3 = "participant3"
-        val participant4 = "participant4"
+        val participant1 = MeetingParticipant("participant1")
+        val participant2 = MeetingParticipant("participant2")
+        val participant3 = MeetingParticipant("participant3")
+        val participant4 = MeetingParticipant("participant4")
 
         runTest {
-            val channel = Channel<List<String>>(1)
+            val channel = Channel<List<MeetingParticipant>>(1)
             backgroundScope.launch {
-                MeetingParticipantServiceImpl.getAllParticipants(meetingWithParticipants.id!!)
+                EventParticipantServiceImpl.getAllParticipants(meetingWithParticipants.id!!, MeetingParticipant::class.java)
                     .collect {
                         channel.send(it)
                     }
@@ -152,16 +170,16 @@ class MeetingParticipantServiceTest {
                 everyItem(`is`(`in`(channel.receive())))
             )
 
-            MeetingParticipantServiceImpl.removeParticipant(
+            EventParticipantServiceImpl.removeParticipant(
                 meetingWithParticipants.id!!,
-                participant2
+                participant2.id!!
             )
             assertThat(
                 listOf(participant1, participant3),
                 everyItem(`is`(`in`(channel.receive())))
             )
 
-            MeetingParticipantServiceImpl.addParticipant(
+            EventParticipantServiceImpl.addParticipant(
                 meetingWithParticipants.id!!,
                 participant4
             )

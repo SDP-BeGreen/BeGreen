@@ -17,14 +17,15 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.RootPath
-import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingParticipantService
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
+import com.github.sdp_begreen.begreen.firebase.meetingServices.EventParticipantService
 import com.github.sdp_begreen.begreen.matchers.ButtonAssertionView.Companion.atPositionButtonWithText
 import com.github.sdp_begreen.begreen.matchers.ButtonClickAction.Companion.clickButtonIdAtPosition
 import com.github.sdp_begreen.begreen.matchers.TextViewAssertionView.Companion.atPositionTextViewWithText
 import com.github.sdp_begreen.begreen.models.CustomLatLng
-import com.github.sdp_begreen.begreen.models.event.Meeting
 import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.models.event.Meeting
+import com.github.sdp_begreen.begreen.models.event.MeetingParticipant
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.services.GeocodingService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -55,8 +56,8 @@ class MeetingsFragmentTest {
 
     companion object {
         private val eventService: EventService = mock(EventService::class.java)
-        private val participantService: MeetingParticipantService =
-            mock(MeetingParticipantService::class.java)
+        private val participantService: EventParticipantService =
+            mock(EventParticipantService::class.java)
         private val geocoderApi: GeocodingService = mock(GeocodingService::class.java)
         private val db: DB = mock(DB::class.java)
         private val auth: Auth = mock(Auth::class.java)
@@ -130,16 +131,49 @@ class MeetingsFragmentTest {
                     .thenReturn(meetingsFlow)
 
                 // setup getAllParticipants for initials meetings
-                `when`(participantService.getAllParticipants(meetings[0].id!!))
-                    .thenReturn(flowOf(listOf("aaaaaa", "bbbbbb", "cccccc")))
-                `when`(participantService.getAllParticipants(meetings[1].id!!))
-                    .thenReturn(flowOf(listOf("dddddd")))
-                `when`(participantService.getAllParticipants(meetings[2].id!!))
-                    .thenReturn(flowOf(listOf("aaaaaa", "123456")))
-                `when`(participantService.getAllParticipants(meetings[3].id!!))
-                    .thenReturn(flowOf(listOf("iiiiii")))
-                `when`(participantService.getAllParticipants("m5"))
-                    .thenReturn(flowOf(listOf("jjjjjj")))
+                `when`(
+                    participantService.getAllParticipants(
+                        meetings[0].id!!,
+                        MeetingParticipant::class.java
+                    )
+                )
+                    .thenReturn(
+                        flowOf(
+                            listOf(
+                                MeetingParticipant("aaaaaa"),
+                                MeetingParticipant("bbbbbb"),
+                                MeetingParticipant("cccccc")
+                            )
+                        )
+                    )
+                `when`(
+                    participantService.getAllParticipants(
+                        meetings[1].id!!,
+                        MeetingParticipant::class.java
+                    )
+                ).thenReturn(flowOf(listOf(MeetingParticipant("dddddd"))))
+                `when`(
+                    participantService.getAllParticipants(
+                        meetings[2].id!!,
+                        MeetingParticipant::class.java
+                    )
+                ).thenReturn(
+                    flowOf(
+                        listOf(
+                            MeetingParticipant("aaaaaa"),
+                            MeetingParticipant("123456")
+                        )
+                    )
+                )
+                `when`(
+                    participantService.getAllParticipants(
+                        meetings[3].id!!,
+                        MeetingParticipant::class.java
+                    )
+                )
+                    .thenReturn(flowOf(listOf(MeetingParticipant("iiiiii"))))
+                `when`(participantService.getAllParticipants("m5", MeetingParticipant::class.java))
+                    .thenReturn(flowOf(listOf(MeetingParticipant("jjjjjj"))))
 
                 // setup geocoding
                 `when`(geocoderApi.getAddresses(latLngMeeting1, 1))
@@ -171,10 +205,10 @@ class MeetingsFragmentTest {
                 `when`(
                     participantService.addParticipant(
                         meetings[1].id!!,
-                        initiallyConnectedUser.id
+                        MeetingParticipant(initiallyConnectedUser.id)
                     )
                 ).then {
-                    addRemoveParticipantChannel.trySend("participate: ${it.arguments[1] as String}")
+                    addRemoveParticipantChannel.trySend("participate: ${it.arguments[1] as MeetingParticipant}")
                 }
 
                 `when`(
@@ -218,7 +252,8 @@ class MeetingsFragmentTest {
     fun checkMeetingListCorrectlyDisplayedInRecycler() {
 
         fragmentScenario.onFragment {
-            val recyclerView = it.requireView().findViewById<RecyclerView>(R.id.fragment_meeting_list)
+            val recyclerView =
+                it.requireView().findViewById<RecyclerView>(R.id.fragment_meeting_list)
             val itemView = recyclerView.findViewHolderForAdapterPosition(0)?.itemView
             val title = itemView?.findViewById<TextView>(R.id.fragment_meeting_elem_title)
             assertThat(title?.text, `is`(equalTo(meetings[0].title)))
@@ -291,7 +326,7 @@ class MeetingsFragmentTest {
 
             assertThat(
                 addRemoveParticipantChannel.receive(),
-                `is`(equalTo("participate: ${initiallyConnectedUser.id}"))
+                `is`(equalTo("participate: ${MeetingParticipant(initiallyConnectedUser.id)}"))
             )
 
             // click to withdraw
