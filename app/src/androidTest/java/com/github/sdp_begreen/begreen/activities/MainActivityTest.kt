@@ -272,6 +272,8 @@ class MainActivityTest {
     @Test
     fun testContactUsBottomSheetMessageCorrected() {
         runTest {
+            `when`(db.addFeedback(org.mockito.kotlin.any(), org.mockito.kotlin.any() , org.mockito.kotlin.any(), org.mockito.kotlin.any()))
+                .thenReturn(true)
             // sign in user
             authUserFlow.emit(userId1)
 
@@ -292,12 +294,12 @@ class MainActivityTest {
 
             // The test commented below are working locally but not with the CI
             // Scroll to the Send button
-            //onView(withId(R.id.send_button))
-            //    .check(matches(isDisplayed()))
-            //    .perform(click())
+            onView(withId(R.id.send_button))
+                .check(matches(isDisplayed()))
+                .perform(click())
 
             // Check that the Bottom Sheet Dialog was dismissed
-            //onView(withId(R.id.bottom_sheet_contact_us)).check(doesNotExist())
+            onView(withId(R.id.bottom_sheet_contact_us)).check(doesNotExist())
 
         }
     }
