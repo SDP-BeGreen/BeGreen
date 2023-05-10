@@ -14,13 +14,13 @@ import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashCategory
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
-import java.util.Date
 
 //argument constant
 private const val ARG_URI = "uri"
@@ -77,34 +77,60 @@ class SendPostFragment : Fragment() {
     private fun setUpShare(){
         val shareBtn = view?.findViewById<ImageView>(R.id.send_post)
         shareBtn?.setOnClickListener {
+
+            // fetch current user. He is necessarily not null
+            val user = connectedUserViewModel.currentUser.value!!
+
             //create a metadata file
-            var metadata : PhotoMetadata? = null
+            var metadata : TrashPhotoMetadata? = null
+
             //fetch description on UI
             view?.findViewById<TextInputEditText>(R.id.post_description).also {
-                val description = it?.text.toString()
-                var category : String = ""
+
+                val caption = it?.text.toString()
+
+                // TODO : Let the user choose the category like what we did in googlemap for the bin category
+                var category = TrashCategory.ORGANIC
+
+                /*
                 //fetch category on UI
                 view?.findViewById<TextInputEditText>(R.id.post_category)?.also { cat ->
                     category = cat.text.toString()
-                }
-                //fetch current user
-                val user = connectedUserViewModel.currentUser.value
-                val date = ParcelableDate(Date())
+                }*/
 
-                metadata = PhotoMetadata("photo?.id", description, date, user?.id, category, description)
-            }
-            //Post photo to firebase
-            view?.findViewById<ImageView>(R.id.preview)?.drawable?.toBitmap()?.let { bitmap ->
-                lifecycleScope.launch {
-                    //TODO decomment this when my paging3 branch is merged
-                    //metadata = metadata?.let { it1 -> db.addImage(bitmap,1, it1) }
-                }
+                metadata = TrashPhotoMetadata(null, ParcelableDate.now, user?.id, caption, category)
+
             }
 
-            val msg = "Photo sent successfully"
-            //display toast
-            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-            returnToCamera()
+            // Post picture to firebase
+            lifecycleScope.launch {
+                view?.findViewById<ImageView>(R.id.preview)?.drawable?.toBitmap()?.let { bitmap ->
+                    // Get the stored metadata
+                    val storedMetadata = metadata?.let {
+
+                        //sharePhoto(bitmap, it)
+                        db.addTrashPhoto(bitmap, it)
+                    }
+
+                    if (storedMetadata != null) {
+
+                        // new user with
+                        user.addPhotoMetadata(storedMetadata)
+
+                        // store the new User in firebase
+                        db.addUser(user, user.id)
+
+                        // once stored, set again the new user along with his metadata in current
+                        // user, for consistency
+                        connectedUserViewModel.setCurrentUser(user, true)
+
+                        // Display toast
+                        Toast.makeText(requireContext(), R.string.photo_shared_success, Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                returnToCamera()
+            }
         }
     }
 

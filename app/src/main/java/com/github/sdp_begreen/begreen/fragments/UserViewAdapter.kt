@@ -15,10 +15,10 @@ import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.databinding.FragmentUserBinding
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashCategory
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.inject
-import java.util.*
 
 
 /**
@@ -34,56 +34,15 @@ class UserViewAdapter(
     private val db by inject<DB>(DB::class.java)
 
     //TODO----------------FOR DEMO------------------------
-    private val photos = listOf(
-        PhotoMetadata(
+    private val photos = List(5) {
+
+        TrashPhotoMetadata(
             "erfs",
-            "Look at me cleaning!",
-            ParcelableDate(Date()),
+            ParcelableDate.now,
             "0",
-            "Déchet organique",
-            "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
-        ),
-        PhotoMetadata(
-            "erfs",
             "Look at me cleaning!",
-            ParcelableDate(Date()),
-            "0",
-            "Déchet organique",
-            "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
-        ),
-        PhotoMetadata(
-            "erfs",
-            "Look at me cleaning!",
-            ParcelableDate(Date()),
-            "0",
-            "Déchet organique",
-            "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
-        ),
-        PhotoMetadata(
-            "erfs",
-            "Look at me cleaning!",
-            ParcelableDate(Date()),
-            "0",
-            "Déchet organique",
-            "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
-        ),
-        PhotoMetadata(
-            "erfs",
-            "Look at me cleaning!",
-            ParcelableDate(Date()),
-            "0",
-            "Déchet organique",
-            "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
-        ),
-        PhotoMetadata(
-            "erfs",
-            "Look at me cleaning!",
-            ParcelableDate(Date()),
-            "0",
-            "Déchet organique",
-            "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
-        ),
-    )
+            TrashCategory.PLASTIC,
+        )}
 
     //----------------FOR DEMO-----------------------------
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

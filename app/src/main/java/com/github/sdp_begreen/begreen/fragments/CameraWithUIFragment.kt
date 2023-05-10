@@ -33,6 +33,8 @@ import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashCategory
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -187,9 +189,8 @@ class CameraWithUIFragment : Fragment() {
         //TODO remove this after demo
         //_______________________________________________________
         val photos = listOf(
-            PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(
-                Date()
-            ), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!")
+            TrashPhotoMetadata("1", ParcelableDate.now, "Look at me cleaning!", "0", TrashCategory.ORGANIC),
+            TrashPhotoMetadata("1", ParcelableDate.now, "Look at me cleaning!", "0", TrashCategory.ORGANIC)
         )
         //_______________________________________________________
         return (connectedUserViewModel.currentUser.value?.let {

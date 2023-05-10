@@ -1,44 +1,10 @@
 package com.github.sdp_begreen.begreen.models
 
-import android.os.Parcel
 import android.os.Parcelable
 
+abstract class PhotoMetadata: Parcelable {
 
-data class PhotoMetadata(var pictureId: String? = null, val title: String? = null,
-                         val takenOn: ParcelableDate? = null, val takenBy: String? = null,
-                         val category: String? = null, val description: String? = null)
-    : Parcelable {
-    constructor(parcel: Parcel) : this(
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readParcelable(ParcelableDate::class.java.classLoader),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString()
-    )
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(pictureId)
-        parcel.writeString(title)
-        parcel.writeParcelable(takenOn, flags)
-        parcel.writeString(takenBy)
-        parcel.writeString(category)
-        parcel.writeString(description)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-
-
-    companion object CREATOR : Parcelable.Creator<PhotoMetadata> {
-        override fun createFromParcel(parcel: Parcel): PhotoMetadata {
-            return PhotoMetadata(parcel)
-        }
-
-        override fun newArray(size: Int): Array<PhotoMetadata?> {
-            return arrayOfNulls(size)
-        }
-    }
+    abstract var pictureId: String?
+    abstract val takenOn: ParcelableDate?
+    abstract val takenBy: String?
 }

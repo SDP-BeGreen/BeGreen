@@ -12,7 +12,8 @@ import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.activities.MainActivity
 import com.github.sdp_begreen.begreen.models.ParcelableDate
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashCategory
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import junit.framework.TestCase.*
 import org.hamcrest.CoreMatchers
@@ -35,7 +36,7 @@ class UserPhotoFragmentTest {
     val koinTestRule = KoinTestRule()
 
     private lateinit var fragment: UserPhotoFragment
-    private lateinit var photoList: List<PhotoMetadata>
+    private lateinit var photoList: List<TrashPhotoMetadata>
 
     private val ARG_COLUMN_COUNT = "column-count"
     private val ARG_PHOTO_LIST = "photo-list"
@@ -45,12 +46,11 @@ class UserPhotoFragmentTest {
     fun setup() {
         // Initialize test data
         val photos = listOf(
-            PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"), PhotoMetadata("1","Look at me cleaning!", ParcelableDate(
-                Date()
-            ), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),
-            PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),
-            PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"),
-            PhotoMetadata("1","Look at me cleaning!", ParcelableDate(Date()), "0", "Organique","Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!")
+            TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
+            TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
+            TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
+            TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
+            TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC)
         )
         photoList = photos
 

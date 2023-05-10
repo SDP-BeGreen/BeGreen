@@ -7,6 +7,7 @@ import java.util.*
 
 
 class ParcelableDate() : Parcelable {
+
     var date: Date? = null
 
     constructor(parcel: Parcel) : this() {
@@ -40,6 +41,8 @@ class ParcelableDate() : Parcelable {
         override fun newArray(size: Int): Array<ParcelableDate?> {
             return arrayOfNulls(size)
         }
+
+        val now = ParcelableDate(Date())
     }
 
 }
