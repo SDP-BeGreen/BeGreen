@@ -52,6 +52,7 @@
         android:orientation="horizontal">
 
         <ImageView
+            android:id="@+id/contest_creation_location_expand"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
@@ -67,6 +68,7 @@
             android:textSize="24sp"
             android:textStyle="bold"/>
         <ImageView
+            android:id="@+id/contest_creation_location_map"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="right"
@@ -145,7 +147,7 @@
             android:orientation="horizontal">
 
             <com.hbb20.CountryPickerView
-                android:id="@+id/countryPicker"
+                android:id="@+id/contest_creation_country_picker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -162,7 +164,7 @@
                 android:layout_gravity="center"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/countryPicker"
+                app:layout_constraintStart_toEndOf="@+id/contest_creation_country_picker"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -225,9 +227,9 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/start_date_contest"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/start_date_contest"
                 app:icon="@drawable/ic_calendar"
                 android:inset="0dp"
                 app:iconGravity="textStart"
@@ -237,12 +239,13 @@
             </Button>
 
             <TextClock
+                android:id="@+id/start_date_text_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:format12Hour="dd/MM/yyyy"
                 android:text="dd/MM/yyyy"
-                android:layout_marginStart="10dp"
                 android:layout_toEndOf="@+id/start_date_contest"
+                android:layout_marginStart="10dp"
                 android:layout_centerVertical="true">
 
             </TextClock>
@@ -261,6 +264,7 @@
             </Button>
 
             <TextClock
+                android:id="@+id/end_date_contest_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:format12Hour="dd/MM/yyyy"
@@ -289,6 +293,7 @@
                android:layout_alignParentStart="true">
            </Button>
             <TextClock
+                android:id="@+id/start_hour_contest_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@+id/start_hour_contest"
@@ -298,9 +303,9 @@
             </TextClock>
 
             <Button
+                android:id="@+id/end_hour_contest"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/end_hour_contest"
                 app:icon="@drawable/ic_clock"
                 android:inset="0dp"
                 app:iconGravity="textStart"
@@ -309,6 +314,7 @@
                 android:layout_alignParentEnd="true">
             </Button>
             <TextClock
+                android:id="@+id/end_hour_contest_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -333,9 +339,10 @@
                 android:layout_marginEnd="40dp"
                 android:layout_height="30dp"
                 android:src="@drawable/ic_cancel"
-                android:background="@color/green_triadic_light_blue">
+                android:background="@color/green_triadic_dark_blue">
 
             </ImageButton>
+
             <ImageButton
             android:id="@+id/contest_confirm_button"
             android:layout_gravity="center"
