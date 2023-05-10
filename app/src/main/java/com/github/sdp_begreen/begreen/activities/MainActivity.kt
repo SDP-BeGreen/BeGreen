@@ -298,7 +298,7 @@ class MainActivity : AppCompatActivity() {
                                           formattedDate: String, bottomSheetDialog: BottomSheetDialog){
         btnSend?.setOnClickListener {
             val msg = etMessage?.text.toString()
-            if (msg.isEmpty()) {
+            if (msg.isBlank()) {
                 etMessage?.error = "Enter a message"
             }
             else {
