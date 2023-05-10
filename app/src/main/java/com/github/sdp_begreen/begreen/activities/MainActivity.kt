@@ -19,15 +19,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
-import com.github.sdp_begreen.begreen.fragments.AdviceFragment
-import com.github.sdp_begreen.begreen.fragments.CameraContainer
-import com.github.sdp_begreen.begreen.fragments.FollowersFragment
-import com.github.sdp_begreen.begreen.fragments.MapFragment
-import com.github.sdp_begreen.begreen.fragments.MeetingsFragment
-import com.github.sdp_begreen.begreen.fragments.ProfileDetailsFragment
-import com.github.sdp_begreen.begreen.fragments.SettingsFragment
-import com.github.sdp_begreen.begreen.fragments.UserFragment
-import com.github.sdp_begreen.begreen.fragments.UserPhotoFragment
+import com.github.sdp_begreen.begreen.fragments.*
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
@@ -36,16 +28,11 @@ import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigation.NavigationView
-import com.google.firebase.database.FirebaseDatabase
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.Date
-import kotlin.collections.ArrayList
-
 
 
 class MainActivity : AppCompatActivity() {

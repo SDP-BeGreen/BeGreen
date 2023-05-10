@@ -23,7 +23,6 @@ import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.espressoUtils.BaseRobot
-import com.github.sdp_begreen.begreen.exceptions.DatabaseTimeoutException
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingParticipantService
@@ -31,18 +30,15 @@ import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingService
 import com.github.sdp_begreen.begreen.fragments.SendPostFragment
 import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBitmap
-import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
-
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.DatabaseException
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.*
 import org.junit.BeforeClass
@@ -52,7 +48,6 @@ import org.junit.runner.RunWith
 import org.koin.dsl.module
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
-import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 
