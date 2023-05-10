@@ -17,7 +17,7 @@
         android:textSize="24sp"
         android:textStyle="bold"
         android:paddingTop="25dp"
-        android:paddingBottom="16dp" />
+        android:paddingBottom="26dp" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
@@ -31,10 +31,11 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/contest_creation_title"
-                android:maxLength="40"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/contest_title" />
+                android:hint="@string/contest_title"
+                android:maxLength="40"
+                android:textAlignment="center" />
             <CheckBox
                 android:id="@+id/private_contest_checkbox"
                 android:layout_width="wrap_content"
@@ -319,16 +320,33 @@
         </RelativeLayout>
         </LinearLayout>
 
-        <ImageButton
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_marginTop="40dp"
+            android:gravity="center">
+            <ImageButton
+                android:id="@+id/contest_cancel_button"
+                android:layout_gravity="center"
+                android:layout_width="150dp"
+                android:layout_marginEnd="40dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_cancel"
+                android:background="@color/green_triadic_light_blue">
+
+            </ImageButton>
+            <ImageButton
             android:id="@+id/contest_confirm_button"
             android:layout_gravity="center"
-            android:layout_width="200dp"
+            android:layout_width="150dp"
             android:layout_height="30dp"
             android:src="@drawable/ic_arrow_right"
             android:background="@color/green_500">
 
         </ImageButton>
+
+        </LinearLayout>
 
     </LinearLayout>
 
