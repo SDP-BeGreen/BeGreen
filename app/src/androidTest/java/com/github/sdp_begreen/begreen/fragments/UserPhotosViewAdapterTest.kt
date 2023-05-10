@@ -7,14 +7,14 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.activities.MainActivity
 import com.github.sdp_begreen.begreen.models.ParcelableDate
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashCategory
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert
 import org.junit.Rule
 import org.junit.Test
-import java.util.Date
 
 class UserPhotosViewAdapterTest {
     @get:Rule
@@ -23,8 +23,8 @@ class UserPhotosViewAdapterTest {
     val koinTestRule = KoinTestRule()
 
     private val photoList = listOf(
-        PhotoMetadata("1", "title", ParcelableDate(Date()), "0", "Gros vilain pas beau", "desc"),
-        PhotoMetadata("2", "title2", ParcelableDate(Date()), "0", "Gros vilain tout beau", "desc2")
+        TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
+        TrashPhotoMetadata("2", ParcelableDate.now, "1", "Helloooo", TrashCategory.PLASTIC),
     )
     private var userPhotoViewAdapter = UserPhotosViewAdapter(photoList, true)
     private val appContext = InstrumentationRegistry.getInstrumentation().targetContext
@@ -48,11 +48,13 @@ class UserPhotosViewAdapterTest {
 
     @Test
     fun userPhotosViewAdapterOnBindViewHolderWorksOnTrivialList() {
+
         val viweHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
         userPhotoViewAdapter.onBindViewHolder(viweHolder, 0)
-        MatcherAssert.assertThat(viweHolder.titleView.text, equalTo("title"))
+
+        MatcherAssert.assertThat(viweHolder.titleView.text, CoreMatchers.equalTo("Look at me cleaning!"))
         MatcherAssert.assertThat(viweHolder.subtitleView, CoreMatchers.notNullValue())
-        MatcherAssert.assertThat(viweHolder.subtitleView.text.subSequence(15,35), equalTo("Gros vilain pas beau"))
+        MatcherAssert.assertThat(viweHolder.subtitleView.text.toString(), CoreMatchers.containsString(TrashCategory.PLASTIC.title))
     }
 
     @Test

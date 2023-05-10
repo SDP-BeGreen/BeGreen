@@ -11,8 +11,9 @@ import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.activities.DatabaseActivity
 import com.github.sdp_begreen.begreen.map.Bin
-import com.github.sdp_begreen.begreen.map.BinType
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.CustomLatLng
+import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.FirebaseEmulatorRule
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
@@ -30,6 +31,8 @@ import kotlin.test.junit.JUnitAsserter.fail
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class FirebaseDBTest {
+
+    private val profilePhotoMetaData = ProfilePhotoMetadata()
 
     // For some reason to perform the write in the database, an activity has to be started
     @get:Rule
@@ -75,7 +78,7 @@ class FirebaseDBTest {
     fun storeUserProfilePictureBlankUserIdThrowIllegalArgument() {
         assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
-                FirebaseDB.storeUserProfilePicture(Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888), " ", PhotoMetadata())
+                FirebaseDB.storeUserProfilePicture(Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888), " ", profilePhotoMetaData)
             }
         }
     }
@@ -93,14 +96,14 @@ class FirebaseDBTest {
     fun getUserProfilePictureBlankUserIdThrowIllegalArgument() {
         assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
-                FirebaseDB.getUserProfilePicture(PhotoMetadata(), " ")
+                FirebaseDB.getUserProfilePicture(profilePhotoMetaData, " ")
             }
         }
     }
 
     @Test
     fun retrieveUserAfterSetShouldMatch() {
-        val user = User("1",  100, "User Test", 10, null, "description", "0076286372", "test@email.com", 1, null, null)
+        val user = User("1",  100, "User Test", 10, "description", "0076286372", "test@email.com", 1, null, null)
 
         runBlocking {
             FirebaseDB.addUser(user, user.id)
@@ -118,10 +121,9 @@ class FirebaseDBTest {
         // to be able to access resources, need to be in an activity
         activityRule.scenario.onActivity { activity ->
             val img: Bitmap = BitmapFactory.decodeResource(activity.resources, R.drawable.marguerite_test_image)
-            val photoMetadata = PhotoMetadata()
 
             runBlocking {
-                val pictureUID = FirebaseDB.storeUserProfilePicture(img, user.id, photoMetadata)
+                val pictureUID = FirebaseDB.storeUserProfilePicture(img, user.id, profilePhotoMetaData)
 
                 assertThat(pictureUID, notNullValue())
 
@@ -154,14 +156,14 @@ class FirebaseDBTest {
     @Test
     fun getImageWithEmptyPhotoIdReturnNull() {
         runBlocking {
-            assertThat(FirebaseDB.getImage(PhotoMetadata(), 1), nullValue())
+            assertThat(FirebaseDB.getImage(profilePhotoMetaData, 1), nullValue())
         }
     }
 
     @Test
     fun getProfilePictureEmptyPhotoIdReturnNull() {
         runBlocking {
-            assertThat(FirebaseDB.getImage(PhotoMetadata(), 1), nullValue())
+            assertThat(FirebaseDB.getImage(profilePhotoMetaData, 1), nullValue())
         }
     }
 
@@ -171,7 +173,7 @@ class FirebaseDBTest {
     fun addBinThrowsIllegalArgumentExceptionWhenBinIdIsNotNull() {
         assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
-                val bin = Bin("Not null ID", BinType.ELECTRONIC, 4.3, 2.1)
+                val bin = Bin("Not null ID", TrashCategory.ELECTRONIC, 4.3, 2.1)
                 assertTrue(FirebaseDB.addBin(bin))
             }
         }
@@ -179,7 +181,7 @@ class FirebaseDBTest {
     @Test
     fun addBinReturnsTrueWhenStoreSucceeds() {
         runBlocking {
-            val bin = Bin(BinType.ELECTRONIC, LatLng(4.3, 2.1))
+            val bin = Bin(TrashCategory.ELECTRONIC, LatLng(4.3, 2.1))
             assertTrue(FirebaseDB.addBin(bin))
         }
     }
@@ -187,7 +189,7 @@ class FirebaseDBTest {
     @Test
     fun addBinUpdatesBinIdWhenStoreSucceeds() {
         runBlocking {
-            val bin = Bin(BinType.ELECTRONIC, LatLng(4.3, 2.1))
+            val bin = Bin(TrashCategory.ELECTRONIC, LatLng(4.3, 2.1))
             assertTrue(FirebaseDB.addBin(bin))
             assertNotNull(bin.id)
         }
@@ -196,7 +198,7 @@ class FirebaseDBTest {
     @Test
     fun addBinCorrectlyUpdatesDatabase() {
 
-        val bin = Bin(BinType.PAPER, LatLng(10.2, -4.2))
+        val bin = Bin(TrashCategory.PAPER, LatLng(10.2, -4.2))
 
         runBlocking {
 
@@ -211,7 +213,7 @@ class FirebaseDBTest {
     @Test
     fun removeBinCorrectlyUpdatesDatabase() {
 
-        val bin = Bin(BinType.ORGANIC, LatLng(0.1, 89.9))
+        val bin = Bin(TrashCategory.ORGANIC, LatLng(0.1, 89.9))
 
         runBlocking {
 
@@ -239,8 +241,8 @@ class FirebaseDBTest {
 
             // Checks that the location got correctly added
             assertThat(binLocations, hasItems(
-                Bin("123", BinType.PAPER,69.6969,420.42),
-                Bin("456", BinType.METAL,123.456,654.321)
+                Bin("123", TrashCategory.PAPER, 69.6969,420.42),
+                Bin("456", TrashCategory.METAL,123.456,654.321)
             ))
         }
     }

@@ -11,8 +11,10 @@ import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.map.Bin
-import com.github.sdp_begreen.begreen.map.BinType
+import com.github.sdp_begreen.begreen.models.CustomLatLng
+import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.*
 import org.junit.Rule
@@ -36,9 +38,9 @@ class MapFragmentTest {
         private val db: DB = Mockito.mock(DB::class.java)
 
         private val bins = mutableListOf(
-            Bin("1", BinType.CLOTHES, 4.3, 2.8),
-            Bin("2", BinType.PAPER, 56.3, 22.3),
-            Bin("3", BinType.CLOTHES, 6.0, 9.0)
+            Bin("1", TrashCategory.CLOTHES, 4.3, 2.8),
+            Bin("2", TrashCategory.PAPER,56.3, 22.3),
+            Bin("3", TrashCategory.CLOTHES,6.0, 9.0)
         )
 
 

@@ -8,9 +8,10 @@ import org.junit.Test
 import java.util.*
 
 class ParcelableDateTest {
+
     @Test
     fun parcelableDateWriteToParcelCorrectly() {
-        val date = ParcelableDate(Date())
+        val date = ParcelableDate.now
         val parcel = Parcel.obtain()
         date.writeToParcel(parcel, 0)
         parcel.setDataPosition(0)
@@ -20,7 +21,7 @@ class ParcelableDateTest {
 
     @Test
     fun parcelableDateDescribeContentsEqualsZero() {
-        val date = ParcelableDate(Date())
+        val date = ParcelableDate.now
         assertThat(date.describeContents(), equalTo(0))
     }
 
@@ -52,7 +53,7 @@ class ParcelableDateTest {
 
     @Test
     fun parcelableDateSetDateCorrectly() {
-        val date = ParcelableDate(Date())
+        val date = ParcelableDate.now
         val newDate = Date()
         date.date = newDate
         assertThat(date.date?.time, equalTo(newDate.time))

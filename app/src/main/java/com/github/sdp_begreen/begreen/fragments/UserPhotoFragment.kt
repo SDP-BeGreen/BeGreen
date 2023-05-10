@@ -9,7 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import kotlin.collections.ArrayList
 
 /**
@@ -18,7 +18,7 @@ import kotlin.collections.ArrayList
 class UserPhotoFragment : Fragment() {
 
     private var columnCount = 1
-    private var photoList: List<PhotoMetadata>? = null
+    private var photoList: List<TrashPhotoMetadata>? = null
     private var isFeed: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +62,7 @@ class UserPhotoFragment : Fragment() {
         const val ARG_IS_FEED = "is-feed"
 
         @JvmStatic
-        fun newInstance(columnCount: Int, photoList: List<PhotoMetadata>?, isFeed: Boolean) =
+        fun newInstance(columnCount: Int, photoList: List<TrashPhotoMetadata>?, isFeed: Boolean) =
             //Put args
             UserPhotoFragment().apply {
                 arguments = Bundle().apply {

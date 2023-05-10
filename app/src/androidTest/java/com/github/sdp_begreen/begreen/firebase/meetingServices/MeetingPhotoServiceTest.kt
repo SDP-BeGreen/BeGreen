@@ -6,8 +6,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.github.sdp_begreen.begreen.exceptions.MeetingServiceException
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.Meeting
+import com.github.sdp_begreen.begreen.models.ParcelableDate
+import com.github.sdp_begreen.begreen.models.TrashCategory
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.rules.CoroutineTestRule
 import com.github.sdp_begreen.begreen.rules.FirebaseEmulatorRule
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
@@ -56,7 +58,7 @@ class MeetingPhotoServiceTest {
             runTest {
                 MeetingPhotoServiceImpl.addMeetingsPhoto(
                     " ",
-                    PhotoMetadata(),
+                    TrashPhotoMetadata(takenBy = "not null"),
                     Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
                 )
             }
@@ -74,7 +76,7 @@ class MeetingPhotoServiceTest {
             runTest {
                 MeetingPhotoServiceImpl.addMeetingsPhoto(
                     meetingWithPhotos.meetingId!!,
-                    PhotoMetadata(takenBy = " "),
+                    TrashPhotoMetadata(takenBy = " "),
                     Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
                 )
             }
@@ -92,7 +94,7 @@ class MeetingPhotoServiceTest {
             runTest {
                 MeetingPhotoServiceImpl.addMeetingsPhoto(
                     meetingWithPhotos.meetingId!!,
-                    PhotoMetadata(takenBy = null),
+                    TrashPhotoMetadata(takenBy = null),
                     Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
                 )
             }
@@ -104,16 +106,19 @@ class MeetingPhotoServiceTest {
         )
     }
 
+
     @Test
     fun addMeetingPhotoCorrectlyAddPhotoToMeetingInDB() {
         runTest {
-            val metadata = PhotoMetadata(
+
+            val metadata = TrashPhotoMetadata(
                 null,
-                "Coke can",
-                takenBy = "aaaaaa",
-                category = "aluminium",
-                description = "Trash found along the river"
+                null,
+                "aaaaaa",
+                "Hello",
+                null
             )
+
             val metadataWithId = MeetingPhotoServiceImpl.addMeetingsPhoto(
                 meetingWithPhotos.meetingId!!,
                 metadata,
@@ -140,35 +145,43 @@ class MeetingPhotoServiceTest {
         )
     }
 
+
     @Test
     fun getAllPhotoMetadataReturnCorrectModifiedListUponModification() {
-        val metadata1 = PhotoMetadata(
+
+        val metadata1 = TrashPhotoMetadata(
             "-NU8AMWCpNWmjCRlNU7x",
-            "Trash 1",
-            takenBy = "aaaaaa",
-            description = "Trash found along the river"
+            null,
+            "aaaaaa",
+            "Hello",
+            null
         )
-        val metadata2 = PhotoMetadata(
+
+        val metadata2 = TrashPhotoMetadata(
             "-NU8AMzGOjxhfRySRlNm",
-            "Trash 2",
-            takenBy = "bbbbbb",
-            description = "Trash found in the forest"
+            null,
+            "bbbbbb",
+            "world",
+            null
         )
-        val metadata3 = PhotoMetadata(
+
+        val metadata3 = TrashPhotoMetadata(
             "-NU8AN2L5DiW1rfyAOR9",
-            "Trash 3",
-            takenBy = "cccccc",
-            description = "Trash found on the street"
+            null,
+            "cccccc",
+            "blablabla",
+            null
         )
 
         runTest {
-            val channel = Channel<List<PhotoMetadata>>(1)
+            val channel = Channel<List<TrashPhotoMetadata>>(1)
             backgroundScope.launch {
                 MeetingPhotoServiceImpl.getAllPhotosMetadata(meetingWithPhotos.meetingId!!)
                     .collect {
                         channel.send(it)
                     }
             }
+
 
             // check initial meetings
             assertThat(
@@ -201,7 +214,7 @@ class MeetingPhotoServiceTest {
     fun getPhotoBlankMeetingIdShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
-                MeetingPhotoServiceImpl.getPhoto(" ", PhotoMetadata())
+                MeetingPhotoServiceImpl.getPhoto(" ", TrashPhotoMetadata(pictureId = null, takenBy = "not null"))
             }
         }
 
@@ -217,7 +230,7 @@ class MeetingPhotoServiceTest {
             runTest {
                 MeetingPhotoServiceImpl.getPhoto(
                     meetingWithPhotos.meetingId!!,
-                    PhotoMetadata(pictureId = null)
+                    TrashPhotoMetadata(pictureId = null, takenBy = "non null")
                 )
             }
         }
@@ -234,7 +247,7 @@ class MeetingPhotoServiceTest {
             runTest {
                 MeetingPhotoServiceImpl.getPhoto(
                     meetingWithPhotos.meetingId!!,
-                    PhotoMetadata(pictureId = " ")
+                    TrashPhotoMetadata(pictureId = " ")
                 )
             }
         }
@@ -252,11 +265,12 @@ class MeetingPhotoServiceTest {
             val metadata =
                 MeetingPhotoServiceImpl.addMeetingsPhoto(
                     meetingWithPhotos.meetingId!!,
-                    PhotoMetadata(
+                    TrashPhotoMetadata(
                         null,
+                        ParcelableDate.now,
+                        "1234567890",
                         "Bin",
-                        takenBy = "1234567890",
-                        description = "Picture of a plastic bin"
+                        TrashCategory.PLASTIC
                     ),
                     bitmap
                 )
@@ -270,7 +284,7 @@ class MeetingPhotoServiceTest {
     fun removeMeetingPhotoBlankMeetingIdShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
-                MeetingPhotoServiceImpl.removeMeetingPhoto(" ", PhotoMetadata())
+                MeetingPhotoServiceImpl.removeMeetingPhoto(" ", TrashPhotoMetadata(pictureId = "not null", takenBy = "non null"))
             }
         }
 
@@ -286,7 +300,7 @@ class MeetingPhotoServiceTest {
             runTest {
                 MeetingPhotoServiceImpl.removeMeetingPhoto(
                     meetingWithPhotos.meetingId!!,
-                    PhotoMetadata(pictureId = null)
+                    TrashPhotoMetadata(pictureId = null, takenBy = "non null")
                 )
             }
         }
@@ -303,7 +317,7 @@ class MeetingPhotoServiceTest {
             runTest {
                 MeetingPhotoServiceImpl.removeMeetingPhoto(
                     meetingWithPhotos.meetingId!!,
-                    PhotoMetadata(pictureId = " ")
+                    TrashPhotoMetadata(pictureId = " ")
                 )
             }
         }

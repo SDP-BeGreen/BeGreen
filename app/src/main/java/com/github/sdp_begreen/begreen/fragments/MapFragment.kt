@@ -17,9 +17,9 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.map.Bin
-import com.github.sdp_begreen.begreen.map.BinType
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -121,7 +121,7 @@ class MapFragment : Fragment() {
         val adapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_item,
-            BinType.values()
+            TrashCategory.values().map { trash -> trash.title }
         )
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_item)
         binTypeSelector.adapter = adapter
@@ -138,9 +138,9 @@ class MapFragment : Fragment() {
         binBtn.setOnClickListener {
             // If no marker is currently selected, add a new one at the current location
             if (selectedMarker == null) {
-                // Get the BinType from the selector
-                val binType: BinType = BinType.values()[binTypeSelector.selectedItemPosition]
-                addNewBin(binType)
+                // Get the TrashCategory from the selector
+                val trashCategory: TrashCategory = TrashCategory.values()[binTypeSelector.selectedItemPosition]
+                addNewBin(trashCategory)
             } else {
                 // Remove the bin from the database
                 lifecycleScope.launch {
@@ -215,7 +215,6 @@ class MapFragment : Fragment() {
      */
     private fun displayBinsMarkers(bins: List<Bin>) = bins.forEach{ addMarker(it) }
 
-
     /**
      * Helper function that setups marker and map click listener actions
      */
@@ -237,7 +236,7 @@ class MapFragment : Fragment() {
     /**
      * Helper function that add a bin marker to the user current location, with the given binType
      */
-    private fun addNewBin(binType: BinType) {
+    private fun addNewBin(trashCategory: TrashCategory) {
 
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -250,7 +249,7 @@ class MapFragment : Fragment() {
 
             userLocation?.apply {
                 // Add a bin of type "binType" at the user current location
-                Bin(binType, LatLng(latitude, longitude))
+                Bin(trashCategory, LatLng(latitude, longitude))
                     .let {bin ->
                         lifecycleScope.launch {
                             // Add the new bin to the database
@@ -275,7 +274,7 @@ class MapFragment : Fragment() {
             MarkerOptions()
                 .position(bin.location())
                 .title(bin.type.toString())
-                .icon(BitmapDescriptorFactory.defaultMarker(bin.type.markerColor))
+                .icon(BitmapDescriptorFactory.defaultMarker(bin.type.color))
         )?.apply {
             tag = bin
         }

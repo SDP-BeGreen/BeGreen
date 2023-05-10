@@ -5,7 +5,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.CoroutineTestRule
 import kotlinx.coroutines.*
@@ -41,8 +41,8 @@ class ConnectedUserViewModelTest: KoinTest {
     companion object {
         private val db: DB = mock(DB::class.java)
         private val auth: Auth = mock(Auth::class.java)
-        private val userPhotoMetadata = PhotoMetadata("user1_profile_picture")
-        private val userPhotoMetadata2 = PhotoMetadata("user3_profile_picture")
+        private val userPhotoMetadata = ProfilePhotoMetadata("user1_profile_picture")
+        private val userPhotoMetadata2 = ProfilePhotoMetadata("user3_profile_picture")
         private const val userId1 = "1234"
         private const val userId2 = "1235"
         private const val userId3 = "1236"

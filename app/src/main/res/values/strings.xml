@@ -62,6 +62,14 @@
     <string name="cancel">Cancel</string>
     <string name="send">Send</string>
     <string name="change_bin_type">Change bin type</string>
+    <string name="post_cannot_be_shared_error">An error occurred. Please try again</string>
+    <string name="paper">Paper</string>
+    <string name="plastic">Plastic</string>
+    <string name="organic">Organic</string>
+    <string name="glass">Glass</string>
+    <string name="electronic">Electronic</string>
+    <string name="clothes">Clothes</string>
+    <string name="metal">Metal</string>
     <string name="message_sent_success">Message sent successfully</string>
     <string name="message_sent_error">Something went wrong</string>
     <string name="meetings">Meetings</string>
@@ -75,4 +83,6 @@
     <string name="here_is_the_photo_that_was_taken">Here is the photo that was taken</string>
     <string name="button_to_send_the_post_online">button to send the post online</string>
     <string name="cross_button_to_come_back_to_camera">cross button to come back to camera</string>
+    <string name="photo_shared_success">Photo shared successfully</string>
+
 </resources>

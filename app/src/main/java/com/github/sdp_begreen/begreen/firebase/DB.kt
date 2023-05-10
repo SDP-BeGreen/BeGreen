@@ -4,6 +4,8 @@ import android.graphics.Bitmap
 import com.github.sdp_begreen.begreen.exceptions.DatabaseTimeoutException
 import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.google.firebase.database.DatabaseException
 import com.google.firebase.storage.StorageException
@@ -77,16 +79,17 @@ interface DB {
      *
      * @throws IllegalArgumentException if the [userId] was blank or empty
      */
-    suspend fun storeUserProfilePicture(image: Bitmap, userId: String, metadata: PhotoMetadata): PhotoMetadata?
+    suspend fun storeUserProfilePicture(image: Bitmap, userId: String, metadata: ProfilePhotoMetadata): ProfilePhotoMetadata?
+
 
     /**
-     * Adds and [image] for the user [userId] in the database
+     * Adds and [image] of the trash to store in the database
      *
      * @param image the image we want to add to the database
-     * @param userId the ID of the user wanting to store a new image
-     * @return a unique ID under which the image got stored, and null if the image couldn't get stored
+     * @param trashPhotoMetadata the photoMetadata associated to this trash
+     * @return the PhotoMetadata under which the image got stored, and null if the image couldn't get stored
      */
-    suspend fun addImage(image: Bitmap, userId: Int, metadata: PhotoMetadata): PhotoMetadata?
+    suspend fun addTrashPhoto(image : Bitmap, trashPhotoMetadata: TrashPhotoMetadata): TrashPhotoMetadata?
 
     /**
      * Test whether a [User] exists in the database for the given [userId]
@@ -109,7 +112,7 @@ interface DB {
      * @throws DatabaseTimeoutException if the database could not be reached
      * @throws DatabaseException if an exception occurred while retrieving the image
      */
-    suspend fun getImage(metadata: PhotoMetadata, userId: Int, timeout: Long = TIMEOUT): Bitmap?
+    suspend fun getImage(metadata: PhotoMetadata, timeout: Long = TIMEOUT): Bitmap?
 
     /**
      * Retrieves the profile image associated with the given [userId] and [metadata] from the database
@@ -122,7 +125,7 @@ interface DB {
      * @throws DatabaseTimeoutException if the database could not be reached
      * @throws DatabaseException if an exception occurred while retrieving the image
      */
-    suspend fun getUserProfilePicture(metadata: PhotoMetadata, userId: String, timeout: Long = TIMEOUT): Bitmap?
+    suspend fun getUserProfilePicture(metadata: ProfilePhotoMetadata, userId: String, timeout: Long = TIMEOUT): Bitmap?
 
     /**
      * Store the given [bin] in the database and assigns a fresh id to the bin
@@ -213,5 +216,4 @@ interface DB {
      * @throws DatabaseException if an exception occurred while retrieving the data
      */
     suspend fun getFollowers(userId: String, timeout: Long = TIMEOUT): List<User>
-
 }

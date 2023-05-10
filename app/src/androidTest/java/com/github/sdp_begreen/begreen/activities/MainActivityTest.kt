@@ -30,12 +30,14 @@ import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingParticipan
 import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingService
 import com.github.sdp_begreen.begreen.fragments.SendPostFragment
 import com.github.sdp_begreen.begreen.map.Bin
-import com.github.sdp_begreen.begreen.map.BinType
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBitmap
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.CustomLatLng
+import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
+
 import com.google.android.gms.tasks.Tasks
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -59,7 +61,7 @@ class MainActivityTest {
      * Initialize some constant to use in tests
      */
     companion object {
-        private val userPhotoMetadata = PhotoMetadata("user1_profile_picture")
+        private val userPhotoMetadata = ProfilePhotoMetadata("user1_profile_picture")
         private const val userId1 = "1234"
         private const val userId2 = "1235"
         private const val userId3 = "1236"
@@ -69,8 +71,10 @@ class MainActivityTest {
             12,
             "User 1",
             5,
-            null, "user 1 description", "123456789",
-            "user1@email.com", profilePictureMetadata = userPhotoMetadata
+            "user 1 description",
+            "123456789",
+            "user1@email.com",
+            profilePictureMetadata = userPhotoMetadata
         )
         private val user2 = User(
             userId2,
@@ -89,9 +93,9 @@ class MainActivityTest {
         // initially do as if no user were signed in
         private val authUserFlow = MutableStateFlow<String?>(null)
         private val bins = listOf(
-            Bin("1", BinType.CLOTHES, 4.3, 2.8),
-            Bin("2", BinType.PAPER, 56.3, 22.3),
-            Bin("3", BinType.CLOTHES, 6.0, 9.0)
+            Bin("1", TrashCategory.CLOTHES, 4.3, 2.8),
+            Bin("2", TrashCategory.PAPER, 56.3, 22.3),
+            Bin("3", TrashCategory.CLOTHES, 6.0, 9.0)
         )
 
         @BeforeClass

@@ -24,7 +24,7 @@ import com.github.sdp_begreen.begreen.*
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
@@ -51,31 +51,26 @@ import java.util.*
 class ProfileDetailsFragmentTest {
     companion object {
         val photos = arrayListOf(
-            PhotoMetadata(
+            ProfilePhotoMetadata(
                 "erfs",
-                "Look at me cleaning!",
-                ParcelableDate(Date()),
-                "0",
-                "Déchet organique",
-                "Wowa je suis incroyable en train de ramasser cette couche usagée pour faire un selfie avec!"
+                ParcelableDate.now,
+                "0"
             ),
-            PhotoMetadata(
-                "1",
-                "title",
-                ParcelableDate(Date()),
-                "0",
-                "Gros vilain pas beau",
-                "desc"
-            ),
+
+            ProfilePhotoMetadata(
+                "erfs",
+                ParcelableDate.now,
+                "0"
+            )
         )
-        private val userProfilePicturePhotoMetadata = PhotoMetadata("user1_profile_picture")
+        private val userProfilePicturePhotoMetadata = ProfilePhotoMetadata("user1_profile_picture")
+
         private const val userId1 = "1234"
         private val user1 = User(
             userId1,
             142,
             "Alice",
             56,
-            photos[0],
             "Description poutou poutou",
             "08920939459802",
             "cc@gmail.com",
@@ -470,7 +465,10 @@ class ProfileDetailsFragmentTest {
         )
 
 
+
         editUserValues(newUser)
+
+
 
         // cancel modifications
         onView(withId(R.id.fragment_profile_details_cancel_modification))
@@ -482,6 +480,7 @@ class ProfileDetailsFragmentTest {
         onView(withId(R.id.fragment_profile_details_edit_profile))
             .check(matches(isDisplayed()))
             .perform(click())
+
 
         checkViewsContainsText(listOf(
             R.id.fragment_profile_details_profile_name_edit to user1.displayName,
@@ -521,7 +520,7 @@ class ProfileDetailsFragmentTest {
             displayName = "User Test 1",
             email = "user1@email.ch",
             phone = "1984z719848",
-            profilePictureMetadata = PhotoMetadata("VaRgQioAuiGtfDlv5uNuosNsACCJ_profile_picture")
+            profilePictureMetadata = ProfilePhotoMetadata("VaRgQioAuiGtfDlv5uNuosNsACCJ_profile_picture")
         )
 
         val bundle = Bundle().apply { putParcelable(ARG_USER, user) }

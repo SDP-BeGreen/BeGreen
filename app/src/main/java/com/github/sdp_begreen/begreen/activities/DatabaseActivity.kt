@@ -10,7 +10,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashCategory
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import kotlinx.coroutines.launch
 
 /**
@@ -48,8 +51,9 @@ class DatabaseActivity : AppCompatActivity() {
             bitmap.eraseColor(Color.RED)
 
             lifecycleScope.launch {
-                imageId = FirebaseDB.addImage(bitmap, 3,
-                    PhotoMetadata(null, null, null, null,"Plastic bottle",null))
+                imageId = FirebaseDB.addTrashPhoto(
+                    bitmap, TrashPhotoMetadata(null, ParcelableDate.now, "Hello", "Messi", TrashCategory.PLASTIC)
+                )
             }
         }
 
