@@ -41,6 +41,7 @@ import com.google.android.gms.tasks.Tasks
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.*
 import org.junit.BeforeClass
@@ -269,9 +270,9 @@ class MainActivityTest {
         }
     }
 
-    /*@Test
+    @Test
     fun testContactUsBottomSheetMessageCorrected() {
-        runTest {
+        runBlocking {
             `when`(db.addFeedback(org.mockito.kotlin.any(), org.mockito.kotlin.any() , org.mockito.kotlin.any(), org.mockito.kotlin.any()))
                 .thenReturn(true)
             // sign in user
@@ -297,12 +298,13 @@ class MainActivityTest {
             onView(withId(R.id.send_button))
                 .check(matches(isDisplayed()))
                 .perform(click())
+            Thread.sleep(5000)
 
             // Check that the Bottom Sheet Dialog was dismissed
             onView(withId(R.id.bottom_sheet_contact_us)).check(doesNotExist())
 
         }
-    }*/
+    }
 
     @Test
     fun testContactUsBottomSheetMessageStillVisibleWhenWriteFails() {
