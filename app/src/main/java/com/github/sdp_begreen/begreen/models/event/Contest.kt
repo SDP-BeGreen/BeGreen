@@ -1,7 +1,8 @@
-package com.github.sdp_begreen.begreen.models
+package com.github.sdp_begreen.begreen.models.event
 
 import android.os.Parcelable
 import com.github.sdp_begreen.begreen.firebase.RootPath
+import com.github.sdp_begreen.begreen.models.CustomLatLng
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
@@ -22,4 +23,8 @@ data class Contest(
     override val rootPath = RootPath.CONTESTS
 
     override fun copy(newId: String) = copy(id = newId)
+
+    override fun toString(): String {
+        return "$title: $creator"
+    }
 }

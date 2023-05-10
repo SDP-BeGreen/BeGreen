@@ -2,7 +2,7 @@ package com.github.sdp_begreen.begreen.firebase.eventServices
 
 import com.github.sdp_begreen.begreen.exceptions.EventServiceException
 import com.github.sdp_begreen.begreen.firebase.RootPath
-import com.github.sdp_begreen.begreen.models.Event
+import com.github.sdp_begreen.begreen.models.event.Event
 import kotlinx.coroutines.flow.Flow
 
 /**

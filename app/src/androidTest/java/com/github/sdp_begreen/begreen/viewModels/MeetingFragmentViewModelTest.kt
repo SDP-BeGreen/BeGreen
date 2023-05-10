@@ -8,7 +8,7 @@ import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingParticipan
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
 import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.models.User
-import com.github.sdp_begreen.begreen.models.Meeting
+import com.github.sdp_begreen.begreen.models.event.Meeting
 import com.github.sdp_begreen.begreen.rules.CoroutineTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel

@@ -6,9 +6,9 @@ import androidx.test.filters.MediumTest
 import com.github.sdp_begreen.begreen.exceptions.EventServiceException
 import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.matchers.ContainsWithSameOrder.Companion.inWithOrder
-import com.github.sdp_begreen.begreen.models.Contest
+import com.github.sdp_begreen.begreen.models.event.Contest
 import com.github.sdp_begreen.begreen.models.CustomLatLng
-import com.github.sdp_begreen.begreen.models.Meeting
+import com.github.sdp_begreen.begreen.models.event.Meeting
 import com.github.sdp_begreen.begreen.rules.CoroutineTestRule
 import com.github.sdp_begreen.begreen.rules.FirebaseEmulatorRule
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
@@ -345,7 +345,7 @@ class EventServiceImplTest {
     }
 
     @Test
-    fun getAllEventsNonCorrespondingImplTypeRootPathShouldThrowIllegalArgumentException() {
+    fun getAllEventsMeetingsRootPathContestThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 EventServiceImpl.getAllEvents(RootPath.MEETINGS, Contest::class.java)
@@ -359,7 +359,21 @@ class EventServiceImplTest {
     }
 
     @Test
-    fun getEventNonCorrespondingImplTypeRootPathShouldThrowIllegalArgumentException() {
+    fun getAllEventsContestRootPathMeetingShouldThrowIllegalArgumentException() {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            runTest {
+                EventServiceImpl.getAllEvents(RootPath.CONTESTS, Meeting::class.java)
+            }
+        }
+
+        assertThat(
+            exception.message,
+            `is`(equalTo("The root path is of type ${RootPath.CONTESTS.name} but the expected object type is Meeting"))
+        )
+    }
+
+    @Test
+    fun getEventMetingRootPathContestShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 EventServiceImpl.getEvent(
@@ -373,6 +387,24 @@ class EventServiceImplTest {
         assertThat(
             exception.message,
             `is`(equalTo("The root path is of type ${RootPath.MEETINGS.name} but the expected object type is Contest"))
+        )
+    }
+
+    @Test
+    fun getEventContestRootPathMeetingShouldThrowIllegalArgumentException() {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            runTest {
+                EventServiceImpl.getEvent(
+                    meetingInDb.id!!,
+                    RootPath.CONTESTS,
+                    Meeting::class.java
+                )
+            }
+        }
+
+        assertThat(
+            exception.message,
+            `is`(equalTo("The root path is of type ${RootPath.CONTESTS.name} but the expected object type is Meeting"))
         )
     }
 

@@ -7,9 +7,9 @@ import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.getObjFromDb
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.removeObjFromDb
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.setObjToDb
 import com.github.sdp_begreen.begreen.firebase.RootPath
-import com.github.sdp_begreen.begreen.models.Contest
-import com.github.sdp_begreen.begreen.models.Event
-import com.github.sdp_begreen.begreen.models.Meeting
+import com.github.sdp_begreen.begreen.models.event.Contest
+import com.github.sdp_begreen.begreen.models.event.Event
+import com.github.sdp_begreen.begreen.models.event.Meeting
 import com.github.sdp_begreen.begreen.utils.checkArgument
 import kotlinx.coroutines.flow.Flow
 import org.koin.java.KoinJavaComponent.inject
@@ -101,7 +101,7 @@ object EventServiceImpl : EventService {
 
             RootPath.CONTESTS -> checkArgument(
                 clazz.isAssignableFrom(Contest::class.java),
-                "The root path is of type ${RootPath.MEETINGS.name} but the expected object type is ${clazz.simpleName}"
+                "The root path is of type ${RootPath.CONTESTS.name} but the expected object type is ${clazz.simpleName}"
             )
         }
 }
