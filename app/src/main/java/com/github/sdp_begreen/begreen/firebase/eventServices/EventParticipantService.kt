@@ -14,11 +14,11 @@ interface EventParticipantService {
      * Get all the participants. The participants will be returned dynamically in a flow
      *
      * @param rootPath The enum object representing the path where to find all the participants
-     * @param eventId The id of the meeting from which to retrieve the participants
+     * @param eventId The id of the event from which to retrieve the participants
      *
      * @return A flow of participants ids
      *
-     * @throws IllegalArgumentException Throw if the meeting id is blank
+     * @throws IllegalArgumentException Throw if the event id is blank
      */
     suspend fun <T : EventParticipant> getAllParticipants(
         rootPath: RootPath,
@@ -27,10 +27,10 @@ interface EventParticipantService {
     ): Flow<List<T>>
 
     /**
-     * Add a new participant to the meeting
+     * Add a new participant to the event
      *
      * @param rootPath The enum object representing the path where to add the participant to
-     * @param eventId The id of the meeting to which add the participant
+     * @param eventId The id of the event to which add the participant
      * @param participant The participant to add
      *
      * @return The added participant
@@ -41,10 +41,10 @@ interface EventParticipantService {
     suspend fun <T : EventParticipant> addParticipant(rootPath: RootPath,  eventId: String, participant: T): T
 
     /**
-     * Remove a participant from the meeting
+     * Remove a participant from the event
      *
      * @param rootPath The enum object representing the path where to remove the participant from
-     * @param eventId The id of the meeting to which add the participant
+     * @param eventId The id of the event to which add the participant
      * @param participantId The id of the participant to add
      *
      * @throws IllegalArgumentException Throw if one of the argument does not match the requirement

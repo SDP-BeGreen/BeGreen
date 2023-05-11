@@ -15,7 +15,7 @@ interface EventService {
      *
      * @param event The event to be created in the database
      *
-     * @return The meeting, with its newly generated id
+     * @return The event, with its newly generated id
      *
      * @throws IllegalArgumentException If the creator of the event is blank or null
      * @throws EventServiceException If it was impossible to generate the new event key,
@@ -30,10 +30,10 @@ interface EventService {
      * @param userId The id of the user that wants to modify the event
      * Only the user that created the event should be able to modify it
      *
-     * @return The modified meeting
+     * @return The modified event
      *
      * @throws IllegalArgumentException Throw if one of the argument does not match the requirement
-     * @throws EventServiceException Throw if an error occurred while adding the meeting
+     * @throws EventServiceException Throw if an error occurred while adding the event
      */
     suspend fun <T : Event<T>> modifyEvent(event: T, userId: String): T
 
@@ -47,7 +47,7 @@ interface EventService {
      * @param rootPath The enum object representing the path where to find the object we want
      * @param eventImplType The class of the object we expect to retrieve
      *
-     * @return A flow of all the event
+     * @return A flow of all the events
      */
     suspend fun <T : Event<T>> getAllEvents(rootPath: RootPath, eventImplType: Class<T>): Flow<List<T>>
 

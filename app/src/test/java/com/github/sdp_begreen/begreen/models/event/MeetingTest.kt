@@ -17,7 +17,7 @@ class MeetingTest {
     @Test
     fun metingCopyCorrectlyCopyMeetingWithNewId() {
         val meeting = Meeting("1", "2", "Meeting to copy")
-        val copy = meeting.copy("4")
+        val copy = meeting.copyWithNewId("4")
 
         assertThat(meeting.copy(id = "4"), `is`(equalTo(copy)))
     }

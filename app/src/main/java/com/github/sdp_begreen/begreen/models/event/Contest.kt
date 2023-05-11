@@ -22,7 +22,7 @@ data class Contest(
     @IgnoredOnParcel
     override val rootPath = RootPath.CONTESTS
 
-    override fun copy(newId: String) = copy(id = newId)
+    override fun copyWithNewId(newId: String) = copy(id = newId)
 
     override fun toString(): String {
         return "$title: $creator"

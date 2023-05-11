@@ -32,5 +32,5 @@ data class Meeting (
         return "$title: $creator"
     }
 
-    override fun copy(newId: String) = copy(id = newId)
+    override fun copyWithNewId(newId: String) = copy(id = newId)
 }

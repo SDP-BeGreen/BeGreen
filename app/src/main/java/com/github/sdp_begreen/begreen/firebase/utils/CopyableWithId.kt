@@ -1,4 +1,4 @@
-package com.github.sdp_begreen.begreen.utils
+package com.github.sdp_begreen.begreen.firebase.utils
 
 /**
  * Interface that should be implemented to enforce a class to have an id, and that it must
@@ -13,7 +13,7 @@ interface CopyableWithId<T> {
      *
      * @param newId The new id to add when copying object
      */
-    fun copy(newId: String): T
+    fun copyWithNewId(newId: String): T
 
     var id: String?
 }

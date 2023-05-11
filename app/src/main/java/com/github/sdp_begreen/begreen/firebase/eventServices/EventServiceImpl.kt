@@ -26,8 +26,8 @@ object EventServiceImpl : EventService {
         checkArgument(event.startDateTime != null, "The starting time cannot be null")
         val eventReference = dbRef.child(event.rootPath.path)
         return eventReference.push().key?.let {
-            val metingWithId = event.copy(it)
-            setObjToDb(eventReference.child(it), metingWithId, "Error while creating the event")
+            val eventWithId = event.copyWithNewId(it)
+            setObjToDb(eventReference.child(it), eventWithId, "Error while creating the event")
         } ?: throw EventServiceException("Error while generating new key for event entry")
     }
 
