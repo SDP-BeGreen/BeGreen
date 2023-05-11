@@ -3,11 +3,13 @@ package com.github.sdp_begreen.begreen.viewModels
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
-import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingParticipantService
-import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingService
+import com.github.sdp_begreen.begreen.firebase.RootPath
+import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
+import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantService
 import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.models.User
-import com.github.sdp_begreen.begreen.models.Meeting
+import com.github.sdp_begreen.begreen.models.event.Meeting
+import com.github.sdp_begreen.begreen.models.event.MeetingParticipant
 import com.github.sdp_begreen.begreen.rules.CoroutineTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
@@ -34,9 +36,9 @@ import org.mockito.Mockito.`when`
 class MeetingFragmentViewModelTest {
 
     companion object {
-        private val meetingService: MeetingService = mock(MeetingService::class.java)
-        private val participantService: MeetingParticipantService =
-            mock(MeetingParticipantService::class.java)
+        private val eventService: EventService = mock(EventService::class.java)
+        private val participantService: EventParticipantService =
+            mock(EventParticipantService::class.java)
 
         private val initiallyConnectedUser = User("123456", 10, "User 1")
         private val currentUser: MutableStateFlow<User?> = MutableStateFlow(initiallyConnectedUser)
@@ -78,7 +80,7 @@ class MeetingFragmentViewModelTest {
 
         // supposed to represent a Channel where both add participant and
         // remove participant can be send through
-        val addRemoveParticipantChannel = Channel<String>(1)
+        val addRemoveParticipantChannel = Channel<MeetingParticipant>(1)
 
         @BeforeClass
         @JvmStatic
@@ -86,35 +88,66 @@ class MeetingFragmentViewModelTest {
             runTest {
 
                 // Initial setup of getAllMeetings
-                `when`(meetingService.getAllMeetings()).thenReturn(meetingsFlow)
+                `when`(
+                    eventService.getAllEvents(
+                        RootPath.MEETINGS,
+                        Meeting::class.java
+                    )
+                ).thenReturn(meetingsFlow)
 
                 // setup getAllParticipants for initials meetings
-                `when`(participantService.getAllParticipants(meetings[0].meetingId!!)).thenReturn(
-                    flowOf(listOf("aaaaaa", "bbbbbb", "cccccc"))
+                `when`(
+                    participantService.getAllParticipants(
+                        RootPath.MEETINGS,
+                        meetings[0].id!!,
+                        MeetingParticipant::class.java
+                    )
+                ).thenReturn(
+                    flowOf(
+                        listOf(
+                            MeetingParticipant("aaaaaa"),
+                            MeetingParticipant("bbbbbb"),
+                            MeetingParticipant("cccccc")
+                        )
+                    )
                 )
-                `when`(participantService.getAllParticipants(meetings[1].meetingId!!)).thenReturn(
-                    flowOf(listOf("dddddd"))
+                `when`(
+                    participantService.getAllParticipants(
+                        RootPath.MEETINGS,
+                        meetings[1].id!!,
+                        MeetingParticipant::class.java
+                    )
+                ).thenReturn(
+                    flowOf(listOf(MeetingParticipant("dddddd")))
                 )
-                `when`(participantService.getAllParticipants(meetings[2].meetingId!!)).thenReturn(
-                    flowOf(listOf("aaaaaa", "123456"))
+                `when`(
+                    participantService.getAllParticipants(
+                        RootPath.MEETINGS,
+                        meetings[2].id!!,
+                        MeetingParticipant::class.java
+                    )
+                ).thenReturn(
+                    flowOf(listOf(MeetingParticipant("aaaaaa"), MeetingParticipant("123456")))
                 )
 
                 `when`(
                     participantService.addParticipant(
-                        meetings[1].meetingId!!,
-                        initiallyConnectedUser.id
+                        RootPath.MEETINGS,
+                        meetings[1].id!!,
+                        MeetingParticipant(initiallyConnectedUser.id)
                     )
                 ).then {
-                    addRemoveParticipantChannel.trySend(it.arguments[1] as String)
+                    addRemoveParticipantChannel.trySend(it.arguments[2] as MeetingParticipant)
                 }
 
                 `when`(
                     participantService.removeParticipant(
-                        meetings[2].meetingId!!,
+                        RootPath.MEETINGS,
+                        meetings[2].id!!,
                         initiallyConnectedUser.id
                     )
                 ).then {
-                    addRemoveParticipantChannel.trySend(it.arguments[1] as String)
+                    addRemoveParticipantChannel.trySend(MeetingParticipant(it.arguments[2] as String))
                 }
             }
         }
@@ -126,7 +159,7 @@ class MeetingFragmentViewModelTest {
     @get:Rule
     val koinTestRule = KoinTestRule.create {
         modules(module {
-            single { meetingService }
+            single { eventService }
             single { participantService }
         })
     }
@@ -179,27 +212,27 @@ class MeetingFragmentViewModelTest {
 
             // assert that it should initially be
             val initialMap = mapOf(
-                meetings[0].meetingId!! to false,
-                meetings[1].meetingId!! to false,
-                meetings[2].meetingId!! to true,
+                meetings[0].id!! to false,
+                meetings[1].id!! to false,
+                meetings[2].id!! to true,
             )
             assertThat(channel.receive(), `is`(equalTo(initialMap)))
 
             // modify connected user
             currentUser.emit(User("aaaaaa", 12, "User 2"))
             val map2 = mapOf(
-                meetings[0].meetingId!! to true,
-                meetings[1].meetingId!! to false,
-                meetings[2].meetingId!! to true,
+                meetings[0].id!! to true,
+                meetings[1].id!! to false,
+                meetings[2].id!! to true,
             )
             assertThat(channel.receive(), `is`(equalTo(map2)))
 
             // modify connected user
             currentUser.emit(User("dddddd", 16, "User 3"))
             val map3 = mapOf(
-                meetings[0].meetingId!! to false,
-                meetings[1].meetingId!! to true,
-                meetings[2].meetingId!! to false,
+                meetings[0].id!! to false,
+                meetings[1].id!! to true,
+                meetings[2].id!! to false,
             )
             assertThat(channel.receive(), `is`(equalTo(map3)))
         }
@@ -225,8 +258,14 @@ class MeetingFragmentViewModelTest {
         runTest {
             // mock new meeting
             backgroundScope.launch {
-                `when`(participantService.getAllParticipants(newMeeting1[3].meetingId!!)).thenReturn(
-                    flowOf(listOf("cccccc", "123456"))
+                `when`(
+                    participantService.getAllParticipants(
+                        RootPath.MEETINGS,
+                        newMeeting1[3].id!!,
+                        MeetingParticipant::class.java
+                    )
+                ).thenReturn(
+                    flowOf(listOf(MeetingParticipant("cccccc"), MeetingParticipant("123456")))
                 )
             }
 
@@ -239,26 +278,26 @@ class MeetingFragmentViewModelTest {
 
             // assert that it should initially be
             val initialMap = mapOf(
-                meetings[0].meetingId!! to false,
-                meetings[1].meetingId!! to false,
-                meetings[2].meetingId!! to true,
+                meetings[0].id!! to false,
+                meetings[1].id!! to false,
+                meetings[2].id!! to true,
             )
             assertThat(channel.receive(), `is`(equalTo(initialMap)))
 
             meetingsFlow.emit(newMeeting1)
             val map2 = mapOf(
-                newMeeting1[0].meetingId!! to false,
-                newMeeting1[1].meetingId!! to false,
-                newMeeting1[2].meetingId!! to true,
-                newMeeting1[3].meetingId!! to true,
+                newMeeting1[0].id!! to false,
+                newMeeting1[1].id!! to false,
+                newMeeting1[2].id!! to true,
+                newMeeting1[3].id!! to true,
             )
             assertThat(channel.receive(), `is`(equalTo(map2)))
 
             meetingsFlow.emit(newMeeting2)
             val map3 = mapOf(
-                newMeeting2[0].meetingId!! to false,
-                newMeeting2[1].meetingId!! to false,
-                newMeeting2[2].meetingId!! to true,
+                newMeeting2[0].id!! to false,
+                newMeeting2[1].id!! to false,
+                newMeeting2[2].id!! to true,
             )
             assertThat(channel.receive(), `is`(equalTo(map3)))
 
@@ -278,19 +317,19 @@ class MeetingFragmentViewModelTest {
             }
 
             assertThat(
-                meetingFragmentViewModel.participate(meetings[1].meetingId!!),
-                `is`(equalTo(meetings[1].meetingId!!))
+                meetingFragmentViewModel.participate(meetings[1].id!!),
+                `is`(equalTo(meetings[1].id!!))
             )
 
             assertThat(
                 addRemoveParticipantChannel.receive(),
-                `is`(equalTo(initiallyConnectedUser.id))
+                `is`(equalTo(MeetingParticipant(initiallyConnectedUser.id)))
             )
 
             val mapAfterAddParticipation = mapOf(
-                meetings[0].meetingId!! to false,
-                meetings[1].meetingId!! to true,
-                meetings[2].meetingId!! to true,
+                meetings[0].id!! to false,
+                meetings[1].id!! to true,
+                meetings[2].id!! to true,
             )
 
             assertThat(channel.receive(), `is`(equalTo(mapAfterAddParticipation)))
@@ -309,17 +348,20 @@ class MeetingFragmentViewModelTest {
                 }
             }
 
-            assertThat(meetingFragmentViewModel.withdraw(meetings[2].meetingId!!), `is`(equalTo(meetings[2].meetingId!!)))
+            assertThat(
+                meetingFragmentViewModel.withdraw(meetings[2].id!!),
+                `is`(equalTo(meetings[2].id!!))
+            )
 
             assertThat(
                 addRemoveParticipantChannel.receive(),
-                `is`(equalTo(initiallyConnectedUser.id))
+                `is`(equalTo(MeetingParticipant(initiallyConnectedUser.id)))
             )
 
             val mapAfterRemoveParticipation = mapOf(
-                meetings[0].meetingId!! to false,
-                meetings[1].meetingId!! to false,
-                meetings[2].meetingId!! to false,
+                meetings[0].id!! to false,
+                meetings[1].id!! to false,
+                meetings[2].id!! to false,
             )
 
             assertThat(channel.receive(), `is`(equalTo(mapAfterRemoveParticipation)))
@@ -331,7 +373,7 @@ class MeetingFragmentViewModelTest {
         runTest {
 
             currentUser.emit(null) // simulate no connected user
-            assertThat(meetingFragmentViewModel.participate(meetings[1].meetingId!!), `is`(nullValue()))
+            assertThat(meetingFragmentViewModel.participate(meetings[1].id!!), `is`(nullValue()))
         }
     }
 
@@ -340,12 +382,7 @@ class MeetingFragmentViewModelTest {
         runTest {
 
             currentUser.emit(null) // simulate no connected user
-            assertThat(meetingFragmentViewModel.withdraw(meetings[1].meetingId!!), `is`(nullValue()))
+            assertThat(meetingFragmentViewModel.withdraw(meetings[1].id!!), `is`(nullValue()))
         }
     }
-
-    private fun registerCallbackAndSendThroughChannelWhenReceiveNewValue() {
-        // TODO continue
-    }
-
 }

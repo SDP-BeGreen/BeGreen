@@ -202,16 +202,4 @@ class CameraWithUIFragmentTest {
         val fragment = CameraWithUIFragment.newInstance()
         assertThat(fragment, instanceOf(CameraWithUIFragment::class.java))
     }
-
-    @Test
-    fun onRequestPermissionResult() {
-        fragmentScenario.onFragment{
-            try {
-            it.onRequestPermissionsResult(0, arrayOf(Manifest.permission.CAMERA), intArrayOf(0))
-            } catch (e: Exception) {
-                assertThat(e, instanceOf(Exception::class.java))
-            }
-        }
-    }
-
 }

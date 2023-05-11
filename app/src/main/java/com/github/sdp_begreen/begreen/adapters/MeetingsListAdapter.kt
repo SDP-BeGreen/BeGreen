@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.github.sdp_begreen.begreen.databinding.FragmentMeetingElemBinding
-import com.github.sdp_begreen.begreen.models.Meeting
+import com.github.sdp_begreen.begreen.models.event.Meeting
 import java.text.DateFormat
 import java.util.Calendar
 
@@ -48,7 +48,7 @@ class MeetingsListAdapter(
             )
         }
 
-        meeting.meetingId?.also {
+        meeting.id?.also {
             meetingDataAdapterListeners.setJoinButtonText(holder.joinButton, it)
             meetingDataAdapterListeners.setJoinButtonListener(holder.joinButton, it)
         }
@@ -72,7 +72,7 @@ class MeetingsListAdapter(
      */
     private object DiffMeeting : DiffUtil.ItemCallback<Meeting>() {
         override fun areItemsTheSame(oldItem: Meeting, newItem: Meeting) =
-            oldItem.meetingId == newItem.meetingId
+            oldItem.id == newItem.id
 
         override fun areContentsTheSame(oldItem: Meeting, newItem: Meeting) =
             oldItem == newItem

@@ -1,10 +1,11 @@
 package com.github.sdp_begreen.begreen.firebase.meetingServices
 
 import com.github.sdp_begreen.begreen.FirebaseRef
-import com.github.sdp_begreen.begreen.exceptions.MeetingServiceException
+import com.github.sdp_begreen.begreen.exceptions.EventServiceException
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.getFlowOfObjects
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.removeObjFromDb
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.setObjToDb
+import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.models.Comment
 import com.github.sdp_begreen.begreen.utils.checkArgument
 import kotlinx.coroutines.flow.Flow
@@ -17,7 +18,7 @@ object MeetingCommentServiceImpl : MeetingCommentService {
     private val dbRefs by KoinJavaComponent.inject<FirebaseRef>(FirebaseRef::class.java)
 
     private val dbRef = dbRefs.databaseReference
-    private const val MEETING_PATH = "meeting"
+    private val MEETINGS_PATH = RootPath.MEETINGS.path
     private const val COMMENTS_PATH = "comments"
 
     override suspend fun addComment(meetingId: String, comment: Comment): Comment {
@@ -26,7 +27,7 @@ object MeetingCommentServiceImpl : MeetingCommentService {
             !comment.author.isNullOrBlank(),
             "The author of the comment cannot be blank or null"
         )
-        val commentReference = dbRef.child(MEETING_PATH).child(meetingId).child(
+        val commentReference = dbRef.child(MEETINGS_PATH).child(meetingId).child(
             COMMENTS_PATH
         )
         return commentReference.push().key?.let {
@@ -38,7 +39,7 @@ object MeetingCommentServiceImpl : MeetingCommentService {
                 commentWithId,
                 "Error while creating the comment"
             )
-        } ?: throw MeetingServiceException("Error while generating new key for comment entry")
+        } ?: throw EventServiceException("Error while generating new key for comment entry")
     }
 
     override suspend fun modifyComment(
@@ -61,7 +62,7 @@ object MeetingCommentServiceImpl : MeetingCommentService {
         )
 
         return setObjToDb(
-            dbRef.child(MEETING_PATH).child(meetingId)
+            dbRef.child(MEETINGS_PATH).child(meetingId)
                 .child(COMMENTS_PATH)
                 .child(comment.commentId!!),
             comment.copy(modifiedAt = Calendar.getInstance().timeInMillis),
@@ -72,7 +73,7 @@ object MeetingCommentServiceImpl : MeetingCommentService {
     override suspend fun getAllComments(meetingId: String): Flow<List<Comment>> {
         checkArgument(meetingId.isNotBlank(), "The meeting id should not be blank")
         return getFlowOfObjects(
-            dbRef.child(MEETING_PATH).child(meetingId)
+            dbRef.child(MEETINGS_PATH).child(meetingId)
                 .child(COMMENTS_PATH).orderByChild("modifiedAt"),
             Comment::class.java
         ).map { it.reversed() }
@@ -84,7 +85,7 @@ object MeetingCommentServiceImpl : MeetingCommentService {
         checkArgument(!comment.commentId.isNullOrBlank(), "The comment id cannot be blank or null")
 
         removeObjFromDb(
-            dbRef.child(MEETING_PATH).child(meetingId)
+            dbRef.child(MEETINGS_PATH).child(meetingId)
                 .child(COMMENTS_PATH)
                 .child(comment.commentId!!), "Error while removing the comment"
         )

@@ -7,12 +7,12 @@ import com.github.sdp_begreen.begreen.firebase.FirebaseAuth
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingCommentService
 import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingCommentServiceImpl
-import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingParticipantService
-import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingParticipantServiceImpl
+import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantService
+import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantServiceImpl
 import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingPhotoService
 import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingPhotoServiceImpl
-import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingService
-import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingServiceImpl
+import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
+import com.github.sdp_begreen.begreen.firebase.eventServices.EventServiceImpl
 import com.github.sdp_begreen.begreen.services.GeocodingService
 import com.github.sdp_begreen.begreen.services.GeocodingServiceImpl
 import com.google.firebase.database.DatabaseReference
@@ -43,9 +43,9 @@ val productionDbModule = module {
     single { FirebaseRef }
     single<DB> { FirebaseDB }
     single<Auth> { FirebaseAuth() }
-    single<MeetingService> { MeetingServiceImpl }
+    single<EventService> { EventServiceImpl }
     single<MeetingCommentService> { MeetingCommentServiceImpl }
-    single<MeetingParticipantService> { MeetingParticipantServiceImpl }
+    single<EventParticipantService> { EventParticipantServiceImpl }
     single<MeetingPhotoService> { MeetingPhotoServiceImpl }
 }
 

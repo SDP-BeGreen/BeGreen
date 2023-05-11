@@ -3,9 +3,12 @@ package com.github.sdp_begreen.begreen.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingParticipantService
-import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingService
+import com.github.sdp_begreen.begreen.firebase.RootPath
+import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantService
+import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
+import com.github.sdp_begreen.begreen.models.event.Meeting
 import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.models.event.MeetingParticipant
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -20,15 +23,15 @@ import org.koin.java.KoinJavaComponent.inject
 
 class MeetingFragmentViewModel(private val currentUser: StateFlow<User?>) : ViewModel() {
 
-    private val meetingService by inject<MeetingService>(MeetingService::class.java)
-    private val participantService by inject<MeetingParticipantService>(MeetingParticipantService::class.java)
+    private val eventService by inject<EventService>(EventService::class.java)
+    private val participantService by inject<EventParticipantService>(EventParticipantService::class.java)
 
     private val mutableParticipationMap: MutableStateFlow<Map<String, Boolean>> =
         MutableStateFlow(emptyMap())
 
     val participationMap = mutableParticipationMap.asStateFlow()
     val allMeetings = flow {
-        meetingService.getAllMeetings().collect {
+        eventService.getAllEvents(RootPath.MEETINGS, Meeting::class.java).collect {
             emit(it)
         }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
@@ -40,10 +43,12 @@ class MeetingFragmentViewModel(private val currentUser: StateFlow<User?>) : View
             // subscribe to user connection changes
             currentUser.mapNotNull { it?.id }.combine(allMeetings) { userId, meetings ->
                 meetings.mapNotNull { meeting ->
-                    meeting.meetingId?.let { id ->
+                    meeting.id?.let { id ->
                         id to participantService.getAllParticipants(
-                            id
-                        ).first()
+                            RootPath.MEETINGS,
+                            id,
+                            MeetingParticipant::class.java
+                        ).first().map { it.id }
                     }
                 }.associate {
                     it.first to it.second.contains(userId)
@@ -62,7 +67,7 @@ class MeetingFragmentViewModel(private val currentUser: StateFlow<User?>) : View
     fun participate(meetingId: String): String? {
         currentUser.value?.also {
             viewModelScope.launch {
-                participantService.addParticipant(meetingId, it.id)
+                participantService.addParticipant(RootPath.MEETINGS, meetingId, MeetingParticipant(it.id))
             }
             mutableParticipationMap.tryEmit(mutableParticipationMap.value + (meetingId to true))
             return meetingId
@@ -80,7 +85,7 @@ class MeetingFragmentViewModel(private val currentUser: StateFlow<User?>) : View
     fun withdraw(meetingId: String): String? {
         currentUser.value?.also {
             viewModelScope.launch {
-                participantService.removeParticipant(meetingId, it.id)
+                participantService.removeParticipant(RootPath.MEETINGS, meetingId, it.id)
             }
             mutableParticipationMap.tryEmit(mutableParticipationMap.value + (meetingId to false))
             return meetingId
