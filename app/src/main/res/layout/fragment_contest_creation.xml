@@ -228,7 +228,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/start_date_contest"
+                android:id="@+id/date_period_contest"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:icon="@drawable/ic_calendar"
@@ -236,8 +236,8 @@
                 android:inset="0dp"
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
-                app:shapeAppearanceOverlay="@style/Circular"
-                android:layout_alignParentStart="true">
+                android:layout_centerHorizontal="true"
+                app:shapeAppearanceOverlay="@style/Circular">
             </Button>
 
             <TextClock
@@ -246,25 +246,12 @@
                 android:layout_height="wrap_content"
                 android:format12Hour="dd/MM/yyyy"
                 android:text="dd/MM/yyyy"
-                android:layout_toEndOf="@+id/start_date_contest"
+                android:layout_alignParentStart="true"
                 android:layout_marginStart="10dp"
                 android:layout_centerVertical="true">
 
             </TextClock>
 
-            <Button
-                android:id="@+id/end_date_contest"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:icon="@drawable/ic_calendar"
-                android:text="@string/date"
-                android:inset="0dp"
-                android:layout_gravity="right"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                app:shapeAppearanceOverlay="@style/Circular"
-                android:layout_alignParentEnd="true">
-            </Button>
 
             <TextClock
                 android:id="@+id/end_date_contest_text"
@@ -272,7 +259,7 @@
                 android:layout_height="wrap_content"
                 android:format12Hour="dd/MM/yyyy"
                 android:layout_centerVertical="true"
-                android:layout_toStartOf="@+id/end_date_contest"
+                android:layout_alignParentEnd="true"
                 android:layout_marginEnd="10dp"
                 android:text="dd/MM/yyyy">
 

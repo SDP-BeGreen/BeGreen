@@ -14,6 +14,8 @@ import android.widget.TextClock
 import com.github.sdp_begreen.begreen.R
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import com.hbb20.CountryPickerView
 import java.util.TimeZone
 
@@ -46,9 +48,8 @@ class ContestCreationFragment : Fragment() {
         val countryPicker = view.findViewById<CountryPickerView>(R.id.contest_creation_country_picker)
         val radiusText = view.findViewById<TextInputEditText>(R.id.radius_contest_creation)
         val timezoneSpinner = view.findViewById<Spinner>(R.id.contest_timezone_spinner)
-        val startDateButton = view.findViewById<Button>(R.id.start_date_contest)
+        val startDateButton = view.findViewById<Button>(R.id.date_period_contest)
         val startDateText = view.findViewById<TextClock>(R.id.start_date_contest_text)
-        val endDateButton = view.findViewById<Button>(R.id.end_date_contest)
         val endDateText = view.findViewById<TextClock>(R.id.end_date_contest_text)
         val startHourButton = view.findViewById<Button>(R.id.start_hour_contest)
         val startHourText = view.findViewById<TextClock>(R.id.start_hour_contest_text)
@@ -57,17 +58,22 @@ class ContestCreationFragment : Fragment() {
         val cancelCreationButton = view.findViewById<Button>(R.id.contest_cancel_button)
         val confirmCreationButton = view.findViewById<Button>(R.id.contest_confirm_button)
         val locationDetailsContainer = view.findViewById<View>(R.id.contest_location_details_container)
-        val datePicker =
-            MaterialDatePicker.Builder.datePicker()
-                .setTitleText("Select date")
-                .build()
         val rangeDatePicker = MaterialDatePicker.Builder.dateRangePicker()
             .setTitleText("Select dates")
             .build()
+        val picker =
+            MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setHour(12)
+                .setMinute(10)
+                //.setTitle("Select Appointment time")
+                .build()
 
         setupExpandButton(expandButton, locationDetailsContainer)
         populateAndUpdateTimeZone(timezoneSpinner)
-        setupStartDateButton(startDateButton, startDateText, rangeDatePicker)
+        setupDateButton(startDateButton, startDateText, rangeDatePicker)
+        setupHoursButton(startHourButton, picker)
+        setupHoursButton(endHourButton, picker)
         return view
     }
 
@@ -77,12 +83,17 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
-    fun setupStartDateButton(startDateButton : Button, startDateText : TextClock, datePicker : MaterialDatePicker<*>) {
+    fun setupDateButton(startDateButton : Button, startDateText : TextClock, datePicker : MaterialDatePicker<*>) {
         startDateButton.setOnClickListener {
             datePicker.show(requireActivity().supportFragmentManager, "datePicker")
         }
     }
 
+    fun setupHoursButton(startHoursButton: Button, hourPicker: MaterialTimePicker) {
+        startHoursButton.setOnClickListener{
+            hourPicker.show(requireActivity().supportFragmentManager, "hourPicker")
+        }
+    }
 
     fun setupExpandButton(expandButton: ImageView, locationDetailsContainer: View){
         expandButton.setOnClickListener {
