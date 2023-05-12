@@ -124,7 +124,7 @@ class EventDataAdapterListenerImplTest {
             scope,
             eventsFragmentViewModel,
             geocodingService
-        ) { if (it == R.string.meeting_list_join_button_withdraw) "Withdraw" else "Join" }
+        ) { if (it == R.string.event_list_join_button_withdraw) "Withdraw" else "Join" }
     }
 
     @Test

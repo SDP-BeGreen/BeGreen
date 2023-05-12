@@ -37,7 +37,7 @@ class EventDataAdapterListenersImpl<T : Event<T>, K : EventParticipant>(
                 textView.text = addresses?.first()?.locality
             } catch (ioException: IOException) {
                 Log.d(
-                    "Meetings Recycler view",
+                    "Event Recycler view",
                     "Error while trying to find the address form location " +
                             ioException.message.orEmpty()
                 )
@@ -68,9 +68,9 @@ class EventDataAdapterListenersImpl<T : Event<T>, K : EventParticipant>(
 
             button.text =
                 if (map[eventId] == true) {
-                    getString(R.string.meeting_list_join_button_withdraw)
+                    getString(R.string.event_list_join_button_withdraw)
                 } else {
-                    getString(R.string.meeting_list_join_button_join)
+                    getString(R.string.event_list_join_button_join)
                 }
         }
     }
