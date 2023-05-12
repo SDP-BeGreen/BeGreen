@@ -16,10 +16,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.adapters.MeetingDataAdapterListeners
 import com.github.sdp_begreen.begreen.adapters.MeetingsListAdapter
+import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.models.CustomLatLng
+import com.github.sdp_begreen.begreen.models.event.Meeting
+import com.github.sdp_begreen.begreen.models.event.MeetingParticipant
 import com.github.sdp_begreen.begreen.services.GeocodingService
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
-import com.github.sdp_begreen.begreen.viewModels.MeetingFragmentViewModel
+import com.github.sdp_begreen.begreen.viewModels.EventsFragmentViewModel
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.first
@@ -34,8 +37,13 @@ class MeetingsFragment : Fragment() {
 
     private val connectedUserViewModel:
             ConnectedUserViewModel by viewModels(ownerProducer = { requireActivity() })
-    private val meetingFragmentViewModel by viewModels<MeetingFragmentViewModel> {
-        MeetingFragmentViewModel.factory(connectedUserViewModel.currentUser)
+    private val eventsFragmentViewModel by viewModels<EventsFragmentViewModel<Meeting, MeetingParticipant>> {
+        EventsFragmentViewModel.factory(
+            connectedUserViewModel.currentUser,
+            RootPath.MEETINGS,
+            Meeting::class.java,
+            MeetingParticipant::class.java
+        )
     }
     private val geocodingApi by inject<GeocodingService>()
 
@@ -52,8 +60,8 @@ class MeetingsFragment : Fragment() {
 
                 adapter = MeetingsListAdapter(MeetingDataAdapterListenersImpl()).apply {
                     lifecycleScope.launch {
-                        meetingFragmentViewModel
-                            .allMeetings
+                        eventsFragmentViewModel
+                            .allEvents
                             .flowWithLifecycle(
                                 viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED
                             ).collect {
@@ -98,11 +106,10 @@ class MeetingsFragment : Fragment() {
         override fun setJoinButtonListener(button: MaterialButton, meetingId: String) {
             button.setOnClickListener {
                 lifecycleScope.launch {
-                    Log.d("Print test participation view model", "Clicked on button: $meetingId")
-                    if (meetingFragmentViewModel.participationMap.value[meetingId] == true) {
-                        meetingFragmentViewModel.withdraw(meetingId)
+                    if (eventsFragmentViewModel.participationMap.value[meetingId] == true) {
+                        eventsFragmentViewModel.withdraw(meetingId)
                     } else {
-                        meetingFragmentViewModel.participate(meetingId)
+                        eventsFragmentViewModel.participate(meetingId)
                     }
                     setJoinButtonText(button, meetingId)
                 }
@@ -110,12 +117,10 @@ class MeetingsFragment : Fragment() {
         }
 
         override fun setJoinButtonText(button: MaterialButton, meetingId: String) {
-            Log.d("Print test participation view model", "set text for button: $meetingId")
-
             lifecycleScope.launch {
                 // wait until the map has been retrieved to assign text
-                val map = meetingFragmentViewModel.participationMap.dropWhile {
-                    it.isEmpty() && meetingFragmentViewModel.allMeetings.value.isNotEmpty()
+                val map = eventsFragmentViewModel.participationMap.dropWhile {
+                    it.isEmpty() && eventsFragmentViewModel.allEvents.value.isNotEmpty()
                 }.first()
 
                 button.text =
