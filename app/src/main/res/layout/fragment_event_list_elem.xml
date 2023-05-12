@@ -36,11 +36,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="@dimen/text_margin"
             android:layout_marginStart="@dimen/text_margin"
+            android:layout_marginTop="@dimen/text_margin"
             android:layout_marginEnd="@dimen/text_margin"
             android:layout_marginBottom="@dimen/text_margin"
-            android:layout_toStartOf="@id/fragment_event_elem_join_button"
             android:textAppearance="?attr/textAppearanceHeadline6"
             tools:text="Lausanne" />
 
@@ -56,7 +55,6 @@
             android:layout_marginBottom="@dimen/text_margin"
             android:layout_toEndOf="@id/fragment_event_elem_location"
             android:gravity="end|center_vertical"
-
             android:textAppearance="?attr/textAppearanceBody2"
             android:textColor="?android:attr/textColorSecondary"
             tools:text="15 juin 2024, 12:00" />
