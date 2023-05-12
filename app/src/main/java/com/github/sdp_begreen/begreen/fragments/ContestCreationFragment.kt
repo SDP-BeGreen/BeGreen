@@ -17,6 +17,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.hbb20.CountryPickerView
+import java.text.SimpleDateFormat
 import java.util.TimeZone
 
 
@@ -71,9 +72,9 @@ class ContestCreationFragment : Fragment() {
 
         setupExpandButton(expandButton, locationDetailsContainer)
         populateAndUpdateTimeZone(timezoneSpinner)
-        setupDateButton(startDateButton, startDateText, rangeDatePicker)
-        setupHoursButton(startHourButton, picker)
-        setupHoursButton(endHourButton, picker)
+        setupDateButton(startDateButton, startDateText, endDateText, rangeDatePicker)
+        setupStartHoursButton(startHourButton, startHourText, picker)
+        setupEndHoursButton(endHourButton, endHourText, picker)
         return view
     }
 
@@ -83,15 +84,41 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
-    fun setupDateButton(startDateButton : Button, startDateText : TextClock, datePicker : MaterialDatePicker<*>) {
+    fun setupDateButton(startDateButton : Button, startDateText : TextClock, endDateText : TextClock, datePicker : MaterialDatePicker<*>) {
         startDateButton.setOnClickListener {
             datePicker.show(requireActivity().supportFragmentManager, "datePicker")
         }
+        datePicker.addOnPositiveButtonClickListener {
+            startDateText.text = datePicker.headerText
+            val pair : androidx.core.util.Pair<Long,Long> = datePicker.selection as androidx.core.util.Pair<Long, Long>
+            startDateText.text = pair.first.toString()
+            val formatter = SimpleDateFormat("dd/MM/yyyy")
+            val begin = formatter.format(pair.first)
+            val end = formatter.format(pair.second)
+            startDateText.text = begin
+            endDateText.text = end
+        }
     }
 
-    fun setupHoursButton(startHoursButton: Button, hourPicker: MaterialTimePicker) {
+    fun setupStartHoursButton(startHoursButton: Button, startHourText: TextClock, hourPicker: MaterialTimePicker) {
         startHoursButton.setOnClickListener{
             hourPicker.show(requireActivity().supportFragmentManager, "hourPicker")
+        }
+        hourPicker.addOnPositiveButtonClickListener {
+            val hour = hourPicker.hour
+            val minute = hourPicker.minute
+            startHourText.text = "$hour:$minute"
+        }
+    }
+
+    fun setupEndHoursButton(endHoursButton: Button, endHourText: TextClock, hourPicker: MaterialTimePicker) {
+        endHoursButton.setOnClickListener{
+            hourPicker.show(requireActivity().supportFragmentManager, "hourPicker")
+        }
+        hourPicker.addOnPositiveButtonClickListener {
+            val hour = hourPicker.hour
+            val minute = hourPicker.minute
+            endHourText.text = "$hour:$minute"
         }
     }
 
