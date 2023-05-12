@@ -35,7 +35,9 @@ import com.github.sdp_begreen.begreen.models.event.Meeting
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.models.event.Contest
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
+import com.github.sdp_begreen.begreen.services.GeocodingService
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.DatabaseException
@@ -52,6 +54,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -90,6 +93,7 @@ class MainActivityTest {
         private val eventService: EventService = mock(EventService::class.java)
         private val participantService: EventParticipantService =
             mock(EventParticipantService::class.java)
+        private val geocodingService: GeocodingService = mock(GeocodingService::class.java)
 
         // initially do as if no user were signed in
         private val authUserFlow = MutableStateFlow<String?>(null)
@@ -121,6 +125,7 @@ class MainActivityTest {
                 `when`(db.getAllUsers()).thenReturn(listOf(user1))
                 `when`(db.getAllBins()).thenReturn(bins)
                 `when`(eventService.getAllEvents(RootPath.MEETINGS, Meeting::class.java)).thenReturn(flowOf())
+                whenever(eventService.getAllEvents(RootPath.CONTESTS, Contest::class.java)).thenReturn(flowOf())
                 `when`(db.getFollowers("current user id")).thenReturn(listOf())
                 `when`(db.getFollowedIds("current user id")).thenReturn(listOf())
             }
@@ -137,6 +142,7 @@ class MainActivityTest {
             single { auth }
             single { eventService }
             single { participantService }
+            single { geocodingService }
         })
     )
 
@@ -446,6 +452,19 @@ class MainActivityTest {
             .perform(click())
 
         onView(withId(R.id.fragment_meeting_list))
+            .check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun pressDrawerMenuContestsDisplayContestsFragment() {
+        onView(withId(R.id.mainDrawerLayout)).perform(DrawerActions.open(GravityCompat.END))
+
+        onView(withId(R.id.mainNavDrawContests))
+            .perform(scrollTo())
+            .check(matches(isDisplayed()))
+            .perform(click())
+
+        onView(withId(R.id.fragment_contests_list_container))
             .check(matches(isDisplayed()))
     }
 

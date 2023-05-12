@@ -3,6 +3,7 @@ package com.github.sdp_begreen.begreen.models.event
 import android.os.Parcelable
 import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.models.CustomLatLng
+import com.google.firebase.database.Exclude
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
@@ -10,7 +11,7 @@ import kotlinx.parcelize.Parcelize
  * Class that represents a waste collection meeting
  */
 @Parcelize
-data class Meeting (
+data class Meeting(
     override var id: String? = null,
     override var creator: String? = null,
     override var title: String? = null,
@@ -25,6 +26,7 @@ data class Meeting (
     //var itinerary: String? = null,
 ) : Event<Meeting>, Parcelable {
 
+    @get:Exclude
     @IgnoredOnParcel
     override val rootPath = RootPath.MEETINGS
 

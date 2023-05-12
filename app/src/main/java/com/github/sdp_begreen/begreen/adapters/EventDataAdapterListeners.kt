@@ -5,10 +5,10 @@ import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.google.android.material.button.MaterialButton
 
 /**
- * Interface to implement to help the [MeetingsListAdapter] to properly display
+ * Interface to implement to help the [EventsListAdapter] to properly display
  * each element in its view. And setup the button listeners.
  */
-interface MeetingDataAdapterListeners {
+interface EventDataAdapterListeners {
 
     /**
      * Function to get the address corresponding to the received coordinates and set it to
