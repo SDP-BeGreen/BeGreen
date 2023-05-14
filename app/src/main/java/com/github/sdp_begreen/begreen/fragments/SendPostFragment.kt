@@ -16,6 +16,7 @@ import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
+import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.squareup.picasso.Picasso
@@ -105,37 +106,43 @@ class SendPostFragment : Fragment() {
 
                 }
 
-                // Post picture to firebase
+                // Update the user and return
                 lifecycleScope.launch {
-                    view?.findViewById<ImageView>(R.id.preview)?.drawable?.toBitmap()?.let { bitmap ->
-
-                        // Get the stored metadata
-                        val storedMetadata = metadata?.let {
-
-                            //sharePhoto(bitmap, it)
-                            db.addTrashPhoto(bitmap, it)
-                        }
-
-                        storedMetadata?.let {
-
-                            // update the user with the new photo metadata and update its score
-                            user.addPhotoMetadata(it)
-                            user.score += it.trashCategory?.value ?: 0
-
-                            // store the new User in firebase
-                            db.addUser(user, user.id)
-
-                            // once stored, set again the new user along with his metadata in current
-                            // user, for consistency
-                            connectedUserViewModel.setCurrentUser(user, true)
-
-                            // Display toast
-                            Toast.makeText(requireContext(), R.string.photo_shared_success, Toast.LENGTH_SHORT).show()
-                        }
-                    }
-
+                    updateUser(metadata, user)
                     if (!param_test) returnToCamera()
                 }
+            }
+        }
+    }
+
+    /**
+     * Helper function to update the user after posting a photo
+     */
+    private suspend fun updateUser(metadata: TrashPhotoMetadata?, user: User) {
+        view?.findViewById<ImageView>(R.id.preview)?.drawable?.toBitmap()?.let { bitmap ->
+
+            // Get the stored metadata
+            val storedMetadata = metadata?.let {
+
+                //sharePhoto(bitmap, it)
+                db.addTrashPhoto(bitmap, it)
+            }
+
+            storedMetadata?.let {
+
+                // update the user with the new photo metadata and update its score
+                user.addPhotoMetadata(it)
+                user.score += it.trashCategory?.value ?: 0
+
+                // store the new User in firebase
+                db.addUser(user, user.id)
+
+                // once stored, set again the new user along with his metadata in current
+                // user, for consistency
+                connectedUserViewModel.setCurrentUser(user, true)
+
+                // Display toast
+                Toast.makeText(requireContext(), R.string.photo_shared_success, Toast.LENGTH_SHORT).show()
             }
         }
     }
