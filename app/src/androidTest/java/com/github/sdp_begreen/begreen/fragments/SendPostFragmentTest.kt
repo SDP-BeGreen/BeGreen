@@ -2,7 +2,7 @@ package com.github.sdp_begreen.begreen.fragments
 
 import android.Manifest
 import android.graphics.Bitmap
-import android.os.Bundle
+import android.widget.ImageView
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.espresso.Espresso.onView
@@ -12,6 +12,7 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
@@ -32,7 +33,10 @@ import org.junit.runner.RunWith
 import org.koin.dsl.module
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.*
+import java.util.*
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class SendPostFragmentTest {
@@ -43,9 +47,7 @@ class SendPostFragmentTest {
         val user = User("test", 2, "test", 5, "test", "test", "test", 15)
         private val db: DB = Mockito.mock(DB::class.java)
         private val auth: Auth = Mockito.mock(Auth::class.java)
-        private val bitmap = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
-        private val trashPhotoMetadata = TrashPhotoMetadata("1")
-        val users = listOf<User>(
+        val users = listOf(
             User("1", 123, "Alice"),
             User("2", 0, "Bob Zeu bricoleur"),
             User("3", 14, "Charlie Chaplin"),
@@ -73,8 +75,7 @@ class SendPostFragmentTest {
                     .thenReturn(user.id)
                 `when`(db.getAllUsers()).thenReturn(users)
 
-                `when`(db.addTrashPhoto(bitmap, trashPhotoMetadata)).thenReturn(trashPhotoMetadata)
-            }
+           }
         }
     }
 
@@ -97,9 +98,7 @@ class SendPostFragmentTest {
     @Before
     fun setup() {
         fragmentScenario = launchFragmentInContainer(
-            fragmentArgs = Bundle().apply {
-                putString("uri", user.id)
-            }
+            SendPostFragment.newInstance(user.id, true).arguments
         )
     }
 
@@ -107,6 +106,16 @@ class SendPostFragmentTest {
     fun categoryIsDisplayed() {
         // Check if the category input is displayed
         onView(withId(R.id.post_category)).check(
+            matches(
+                isDisplayed()
+            )
+        )
+    }
+
+    @Test
+    fun previewImageIsDisplayed() {
+        // Check if the description input is displayed
+        onView(withId(R.id.preview)).check(
             matches(
                 isDisplayed()
             )
@@ -139,10 +148,89 @@ class SendPostFragmentTest {
         onView(withId(R.id.post_category)).perform(typeText("test"))
         onView(withId(R.id.post_category)).check(matches(withText("test")))
     }
+
     @Test
     fun typeInDescriptionWorks() {
         // Check the description input
         onView(withId(R.id.post_description)).perform(typeText("test"))
         onView(withId(R.id.post_description)).check(matches(withText("test")))
     }
+
+    @Test
+    fun postPhotoDoesNotUpdateUserWhenDatabaseFailsToStoreImage() {
+
+        runTest {
+
+            // Mock the db to pretend it could not store the image
+            `when`(db.addTrashPhoto(any(), any())).thenReturn(null)
+
+            // Image of the post
+            val postImage = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
+
+            // Set the image in the ImageView
+            fragmentScenario.onFragment { fragment ->
+                val rootView = fragment.view
+                val imageView = rootView!!.rootView.findViewById<ImageView>(R.id.preview)
+                imageView.setImageBitmap(postImage)
+            }
+
+            onView(withId(R.id.post_category))
+                .perform(typeText("category"), closeSoftKeyboard())
+            onView(withId(R.id.post_description))
+                .perform(typeText("description"), closeSoftKeyboard())
+            // Click to send the photo
+            onView(withId(R.id.send_post)).perform(click())
+
+            // Check that we correctly tried to post the photo
+            verify(db, times(1)).addTrashPhoto(eq(postImage), any())
+            // Check that we did update anything on the database, since we could not post the image
+            verify(db, never()).addUser(any(), any())
+        }
+
+    }
+
+    @Test
+    fun postPhotoUpdateUserCorrectlyWhenDatabaseSucceedsToStoreImage() {
+
+        runTest {
+
+            var updatedScore = user.score
+            var newTrashPhotoMetadata: TrashPhotoMetadata? = null
+
+            // Mock the database to pretend it correctly stored the image
+            `when`(db.addTrashPhoto(any(), any())).then{
+                newTrashPhotoMetadata = it.arguments[1] as TrashPhotoMetadata
+                updatedScore += newTrashPhotoMetadata!!.trashCategory!!.value
+                newTrashPhotoMetadata
+            }
+
+            // Image of the post
+            val postImage = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+
+            // Set the image in the ImageView
+            fragmentScenario.onFragment { fragment ->
+                val rootView = fragment.view
+                val imageView = rootView!!.rootView.findViewById<ImageView>(R.id.preview)
+                imageView.setImageBitmap(postImage)
+            }
+
+            onView(withId(R.id.post_category))
+                .perform(typeText("category"), closeSoftKeyboard())
+            onView(withId(R.id.post_description))
+                .perform(typeText("description"), closeSoftKeyboard())
+            // Click to send the photo
+            onView(withId(R.id.send_post)).perform(click())
+
+            // Check that we correctly tried to post the photo
+            verify(db, times(1)).addTrashPhoto(eq(postImage), any())
+            // Check that we updated the user with its new score and new trashPhotoMetadata list
+            verify(db, times(1)).addUser(
+                user.copy(
+                    score = updatedScore,
+                    trashPhotosMetadatasList = listOf(newTrashPhotoMetadata!!)),
+                user.id)
+        }
+
+    }
+
 }

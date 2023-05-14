@@ -41,7 +41,7 @@ import org.junit.runner.RunWith
 import org.koin.dsl.module
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
-import org.mockito.kotlin.eq
+import org.mockito.kotlin.*
 import java.util.*
 
 
@@ -297,7 +297,7 @@ class ProfileDetailsFragmentTest {
         }
         var savedPicture: Bitmap? = null
         runTest {
-            `when`(db.storeUserProfilePicture(eq(fakePicture2), eq(user.id), org.mockito.kotlin.any()))
+            `when`(db.storeUserProfilePicture(eq(fakePicture2), eq(user.id), any()))
                 .then {
                     savedPicture = it.getArgument(0) // retrieved the fake pictured passed in arg, to ensure that the method has been called
                     it.arguments[2] // return the same metadata as received

@@ -50,8 +50,7 @@ import org.junit.runner.RunWith
 import org.koin.dsl.module
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.verify
+import org.mockito.kotlin.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -335,7 +334,7 @@ class MainActivityTest {
     @Test
     fun contactUsMessageIsSentToDatabaseWithAddFeedback() {
         runTest {
-            `when`(db.addFeedback(org.mockito.kotlin.any(), org.mockito.kotlin.any() , org.mockito.kotlin.any(), org.mockito.kotlin.any()))
+            `when`(db.addFeedback(any(), any() , any(), any()))
                 .then{}
             // sign in user
             authUserFlow.emit(userId1)
@@ -360,14 +359,14 @@ class MainActivityTest {
                 .perform(click())
 
             // Check that the database function got called with the right arguments
-            verify(db).addFeedback(eq("Test message 1"), eq(userId1), org.mockito.kotlin.any(), org.mockito.kotlin.any())
+            verify(db).addFeedback(eq("Test message 1"), eq(userId1), any(), any())
         }
     }
 
     @Test
     fun contactUsMessageStillVisibleWhenWriteFails() {
         runTest {
-            `when`(db.addFeedback(org.mockito.kotlin.any(), org.mockito.kotlin.any() , org.mockito.kotlin.any(), org.mockito.kotlin.any()))
+            `when`(db.addFeedback(any(), any() , any(), any()))
                 .thenThrow(DatabaseException("error"))
             // sign in user
             authUserFlow.emit(userId1)
@@ -396,7 +395,7 @@ class MainActivityTest {
             onView(withId(R.id.bottom_sheet_contact_us)).check(matches(isDisplayed()))
 
             // Check that the database function got called with the right arguments
-            verify(db).addFeedback(eq("Test message 2"), eq(userId1), org.mockito.kotlin.any(), org.mockito.kotlin.any())
+            verify(db).addFeedback(eq("Test message 2"), eq(userId1), any(), any())
         }
     }
 

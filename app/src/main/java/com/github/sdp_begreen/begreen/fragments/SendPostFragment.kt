@@ -24,9 +24,11 @@ import org.koin.android.ext.android.inject
 
 //argument constant
 private const val ARG_URI = "uri"
+private const val ARG_TEST = "test"
 
 class SendPostFragment : Fragment() {
     private var param_uri: String? = null
+    private var param_test: Boolean = false
     private val db by inject<DB>()
     private val connectedUserViewModel: ConnectedUserViewModel by viewModels(ownerProducer = { requireActivity() })
 
@@ -34,6 +36,7 @@ class SendPostFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param_uri = it.getString(ARG_URI)
+            param_test = it.getBoolean(ARG_TEST)
         }
     }
 
@@ -79,57 +82,60 @@ class SendPostFragment : Fragment() {
         shareBtn?.setOnClickListener {
 
             // fetch current user. He is necessarily not null
-            val user = connectedUserViewModel.currentUser.value!!
+            connectedUserViewModel.currentUser.value?.let{user ->
 
-            //create a metadata file
-            var metadata : TrashPhotoMetadata? = null
+                //create a metadata file
+                var metadata: TrashPhotoMetadata?
 
-            //fetch description on UI
-            view?.findViewById<TextInputEditText>(R.id.post_description).also {
+                //fetch description on UI
+                view?.findViewById<TextInputEditText>(R.id.post_description).also {
 
-                val caption = it?.text.toString()
+                    val caption = it?.text.toString()
 
-                // TODO : Let the user choose the category like what we did in googlemap for the bin category
-                var category = TrashCategory.ORGANIC
+                    // TODO : Let the user choose the category like what we did in googlemap for the bin category
+                    val category = TrashCategory.ORGANIC
 
-                /*
-                //fetch category on UI
-                view?.findViewById<TextInputEditText>(R.id.post_category)?.also { cat ->
-                    category = cat.text.toString()
-                }*/
+                    /*
+                    //fetch category on UI
+                    view?.findViewById<TextInputEditText>(R.id.post_category)?.also { cat ->
+                        category = cat.text.toString()
+                    }*/
 
-                metadata = TrashPhotoMetadata(null, ParcelableDate.now, user?.id, caption, category)
+                    metadata = TrashPhotoMetadata(null, ParcelableDate.now, user.id, caption, category)
 
-            }
-
-            // Post picture to firebase
-            lifecycleScope.launch {
-                view?.findViewById<ImageView>(R.id.preview)?.drawable?.toBitmap()?.let { bitmap ->
-                    // Get the stored metadata
-                    val storedMetadata = metadata?.let {
-
-                        //sharePhoto(bitmap, it)
-                        db.addTrashPhoto(bitmap, it)
-                    }
-
-                    if (storedMetadata != null) {
-
-                        // new user with
-                        user.addPhotoMetadata(storedMetadata)
-
-                        // store the new User in firebase
-                        db.addUser(user, user.id)
-
-                        // once stored, set again the new user along with his metadata in current
-                        // user, for consistency
-                        connectedUserViewModel.setCurrentUser(user, true)
-
-                        // Display toast
-                        Toast.makeText(requireContext(), R.string.photo_shared_success, Toast.LENGTH_SHORT).show()
-                    }
                 }
 
-                returnToCamera()
+                // Post picture to firebase
+                lifecycleScope.launch {
+                    view?.findViewById<ImageView>(R.id.preview)?.drawable?.toBitmap()?.let { bitmap ->
+
+                        // Get the stored metadata
+                        val storedMetadata = metadata?.let {
+
+                            //sharePhoto(bitmap, it)
+                            db.addTrashPhoto(bitmap, it)
+                        }
+
+                        storedMetadata?.let {
+
+                            // update the user with the new photo metadata and update its score
+                            user.addPhotoMetadata(it)
+                            user.score += it.trashCategory?.value ?: 0
+
+                            // store the new User in firebase
+                            db.addUser(user, user.id)
+
+                            // once stored, set again the new user along with his metadata in current
+                            // user, for consistency
+                            connectedUserViewModel.setCurrentUser(user, true)
+
+                            // Display toast
+                            Toast.makeText(requireContext(), R.string.photo_shared_success, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                    if (!param_test) returnToCamera()
+                }
             }
         }
     }
@@ -140,10 +146,11 @@ class SendPostFragment : Fragment() {
      */
     companion object {
         @JvmStatic
-        fun newInstance(param1: String) =
+        fun newInstance(param1: String, param2: Boolean = false) =
             SendPostFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_URI, param1)
+                    putBoolean(ARG_TEST, param2)
                 }
             }
     }

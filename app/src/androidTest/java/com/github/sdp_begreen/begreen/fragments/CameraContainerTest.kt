@@ -96,7 +96,9 @@ class CameraContainerTest {
     //Setup the scenario
     @Before
     fun setup() {
-        fragmentScenario = launchFragmentInContainer()
+        fragmentScenario = launchFragmentInContainer(
+            CameraContainer.newInstance().arguments
+        )
     }
 
     @Test
