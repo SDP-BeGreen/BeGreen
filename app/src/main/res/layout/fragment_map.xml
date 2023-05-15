@@ -22,7 +22,8 @@
         android:background="@drawable/rectangular_background"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="5dp"
+        android:paddingHorizontal="5dp"
+        android:paddingVertical="1dp"
         app:layout_constraintBottom_toBottomOf="@+id/mapFragment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
