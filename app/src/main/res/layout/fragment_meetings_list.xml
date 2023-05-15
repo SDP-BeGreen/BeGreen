@@ -11,4 +11,4 @@
     android:layout_marginTop="32dp"
     app:layoutManager="LinearLayoutManager"
     tools:context=".fragments.MeetingsFragment"
-    tools:listitem="@layout/fragment_meeting_elem" />
+    tools:listitem="@layout/fragment_event_list_elem" />

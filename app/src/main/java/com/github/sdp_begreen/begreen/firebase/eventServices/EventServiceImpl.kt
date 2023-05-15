@@ -7,10 +7,9 @@ import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.getObjFromDb
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.removeObjFromDb
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.setObjToDb
 import com.github.sdp_begreen.begreen.firebase.RootPath
-import com.github.sdp_begreen.begreen.models.event.Contest
 import com.github.sdp_begreen.begreen.models.event.Event
-import com.github.sdp_begreen.begreen.models.event.Meeting
 import com.github.sdp_begreen.begreen.utils.checkArgument
+import com.github.sdp_begreen.begreen.utils.checkRootPathMatchEventClassImpl
 import kotlinx.coroutines.flow.Flow
 import org.koin.java.KoinJavaComponent.inject
 import java.util.Calendar
@@ -51,7 +50,7 @@ object EventServiceImpl : EventService {
         rootPath: RootPath,
         eventImplType: Class<T>
     ): Flow<List<T>> {
-        checkRootPathMatchClass(rootPath, eventImplType)
+        checkRootPathMatchEventClassImpl(rootPath, eventImplType)
         return getFlowOfObjects(
             dbRef.child(rootPath.path).orderByChild("startDateTime")
                 .startAt(Calendar.getInstance().timeInMillis.toDouble()),
@@ -66,7 +65,7 @@ object EventServiceImpl : EventService {
         eventImplType: Class<T>
     ): T {
         checkArgument(eventId.isNotBlank(), "The event id cannot be blank")
-        checkRootPathMatchClass(rootPath, eventImplType)
+        checkRootPathMatchEventClassImpl(rootPath, eventImplType)
         return getObjFromDb(
             dbRef.child(rootPath.path).child(eventId),
             eventImplType,
@@ -88,20 +87,4 @@ object EventServiceImpl : EventService {
             "Error while removing the event"
         )
     }
-
-    /**
-     * Helper function to ensure that the root path correspond to the expected object return type
-     */
-    private fun <T : Event<T>> checkRootPathMatchClass(rootPath: RootPath, clazz: Class<T>) =
-        when (rootPath) {
-            RootPath.MEETINGS -> checkArgument(
-                clazz.isAssignableFrom(Meeting::class.java),
-                "The root path is of type ${RootPath.MEETINGS.name} but the expected object type is ${clazz.simpleName}"
-            )
-
-            RootPath.CONTESTS -> checkArgument(
-                clazz.isAssignableFrom(Contest::class.java),
-                "The root path is of type ${RootPath.CONTESTS.name} but the expected object type is ${clazz.simpleName}"
-            )
-        }
 }

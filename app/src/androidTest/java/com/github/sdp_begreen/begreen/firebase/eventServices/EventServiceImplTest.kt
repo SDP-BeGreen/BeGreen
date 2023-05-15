@@ -376,7 +376,7 @@ class EventServiceImplTest {
 
         assertThat(
             exception.message,
-            `is`(equalTo("The root path is of type ${RootPath.MEETINGS.name} but the expected object type is Contest"))
+            `is`(equalTo("The root path is of type ${RootPath.MEETINGS.name} but the expected event type is Contest"))
         )
     }
 
@@ -390,7 +390,7 @@ class EventServiceImplTest {
 
         assertThat(
             exception.message,
-            `is`(equalTo("The root path is of type ${RootPath.CONTESTS.name} but the expected object type is Meeting"))
+            `is`(equalTo("The root path is of type ${RootPath.CONTESTS.name} but the expected event type is Meeting"))
         )
     }
 
@@ -408,7 +408,7 @@ class EventServiceImplTest {
 
         assertThat(
             exception.message,
-            `is`(equalTo("The root path is of type ${RootPath.MEETINGS.name} but the expected object type is Contest"))
+            `is`(equalTo("The root path is of type ${RootPath.MEETINGS.name} but the expected event type is Contest"))
         )
     }
 
@@ -426,7 +426,7 @@ class EventServiceImplTest {
 
         assertThat(
             exception.message,
-            `is`(equalTo("The root path is of type ${RootPath.CONTESTS.name} but the expected object type is Meeting"))
+            `is`(equalTo("The root path is of type ${RootPath.CONTESTS.name} but the expected event type is Meeting"))
         )
     }
 

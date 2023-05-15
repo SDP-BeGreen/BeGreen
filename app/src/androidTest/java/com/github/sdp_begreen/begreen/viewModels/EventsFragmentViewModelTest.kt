@@ -4,10 +4,12 @@ import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.github.sdp_begreen.begreen.firebase.RootPath
-import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantService
+import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
 import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.models.event.Contest
+import com.github.sdp_begreen.begreen.models.event.ContestParticipant
 import com.github.sdp_begreen.begreen.models.event.Meeting
 import com.github.sdp_begreen.begreen.models.event.MeetingParticipant
 import com.github.sdp_begreen.begreen.rules.CoroutineTestRule
@@ -20,6 +22,7 @@ import kotlinx.coroutines.test.runTest
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.nullValue
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
@@ -30,10 +33,13 @@ import org.koin.test.KoinTestRule
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 
+/**
+ * This view model is only tested for the Meeting, as it works exactly the same for Contest
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 @MediumTest
-class MeetingFragmentViewModelTest {
+class EventsFragmentViewModelTest {
 
     companion object {
         private val eventService: EventService = mock(EventService::class.java)
@@ -169,10 +175,15 @@ class MeetingFragmentViewModelTest {
         // reset user meetings and user
         meetingsFlow.tryEmit(meetings)
         currentUser.tryEmit(initiallyConnectedUser)
-        meetingFragmentViewModel = MeetingFragmentViewModel(currentUser)
+        eventsFragmentViewModel = EventsFragmentViewModel(
+            currentUser,
+            RootPath.MEETINGS,
+            Meeting::class.java,
+            MeetingParticipant::class.java
+        )
     }
 
-    private lateinit var meetingFragmentViewModel: MeetingFragmentViewModel
+    private lateinit var eventsFragmentViewModel: EventsFragmentViewModel<Meeting, MeetingParticipant>
 
 
     @Test
@@ -180,7 +191,7 @@ class MeetingFragmentViewModelTest {
         runTest {
             val channel = Channel<List<Meeting>>(1)
             backgroundScope.launch {
-                meetingFragmentViewModel.allMeetings.collect {
+                eventsFragmentViewModel.allEvents.collect {
                     channel.send(it)
                 }
             }
@@ -205,7 +216,7 @@ class MeetingFragmentViewModelTest {
         runTest {
             val channel = Channel<Map<String, Boolean>>(1)
             backgroundScope.launch {
-                meetingFragmentViewModel.participationMap.collect {
+                eventsFragmentViewModel.participationMap.collect {
                     channel.send(it)
                 }
             }
@@ -253,7 +264,12 @@ class MeetingFragmentViewModelTest {
 
         val newMeeting2 = newMeeting1 - meetings[2]
 
-        val meetingFragmentViewModel = MeetingFragmentViewModel(currentUser)
+        val eventsFragmentViewModel = EventsFragmentViewModel(
+            currentUser,
+            RootPath.MEETINGS,
+            Meeting::class.java,
+            MeetingParticipant::class.java
+        )
 
         runTest {
             // mock new meeting
@@ -271,7 +287,7 @@ class MeetingFragmentViewModelTest {
 
             val channel = Channel<Map<String, Boolean>>(1)
             backgroundScope.launch {
-                meetingFragmentViewModel.participationMap.collect {
+                eventsFragmentViewModel.participationMap.collect {
                     channel.send(it)
                 }
             }
@@ -311,13 +327,13 @@ class MeetingFragmentViewModelTest {
             val channel = Channel<Map<String, Boolean>>(1)
 
             backgroundScope.launch {
-                meetingFragmentViewModel.participationMap.collect {
+                eventsFragmentViewModel.participationMap.collect {
                     channel.send(it)
                 }
             }
 
             assertThat(
-                meetingFragmentViewModel.participate(meetings[1].id!!),
+                eventsFragmentViewModel.participate(meetings[1].id!!),
                 `is`(equalTo(meetings[1].id!!))
             )
 
@@ -343,13 +359,13 @@ class MeetingFragmentViewModelTest {
             val channel = Channel<Map<String, Boolean>>(1)
 
             backgroundScope.launch {
-                meetingFragmentViewModel.participationMap.collect {
+                eventsFragmentViewModel.participationMap.collect {
                     channel.send(it)
                 }
             }
 
             assertThat(
-                meetingFragmentViewModel.withdraw(meetings[2].id!!),
+                eventsFragmentViewModel.withdraw(meetings[2].id!!),
                 `is`(equalTo(meetings[2].id!!))
             )
 
@@ -373,7 +389,7 @@ class MeetingFragmentViewModelTest {
         runTest {
 
             currentUser.emit(null) // simulate no connected user
-            assertThat(meetingFragmentViewModel.participate(meetings[1].id!!), `is`(nullValue()))
+            assertThat(eventsFragmentViewModel.participate(meetings[1].id!!), `is`(nullValue()))
         }
     }
 
@@ -382,7 +398,75 @@ class MeetingFragmentViewModelTest {
         runTest {
 
             currentUser.emit(null) // simulate no connected user
-            assertThat(meetingFragmentViewModel.withdraw(meetings[1].id!!), `is`(nullValue()))
+            assertThat(eventsFragmentViewModel.withdraw(meetings[1].id!!), `is`(nullValue()))
         }
+    }
+
+    @Test
+    fun incoherentMeetingRootPathShouldThrowIllegalArgumentException() {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            EventsFragmentViewModel(
+                currentUser,
+                RootPath.MEETINGS,
+                Contest::class.java,
+                MeetingParticipant::class.java
+            )
+        }
+
+        assertThat(
+            exception.message,
+            `is`(equalTo("The root path is of type ${RootPath.MEETINGS.name} but the expected event type is Contest"))
+        )
+    }
+
+    @Test
+    fun incoherentContestRootPathShouldThrowIllegalArgumentException() {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            EventsFragmentViewModel(
+                currentUser,
+                RootPath.CONTESTS,
+                Meeting::class.java,
+                MeetingParticipant::class.java
+            )
+        }
+
+        assertThat(
+            exception.message,
+            `is`(equalTo("The root path is of type ${RootPath.CONTESTS.name} but the expected event type is Meeting"))
+        )
+    }
+
+    @Test
+    fun incoherentMeetingParticipantRootPathShouldThrowIllegalArgumentException() {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            EventsFragmentViewModel(
+                currentUser,
+                RootPath.MEETINGS,
+                Meeting::class.java,
+                ContestParticipant::class.java
+            )
+        }
+
+        assertThat(
+            exception.message,
+            `is`(equalTo("The root path is of type ${RootPath.MEETINGS.name} but the expected participant type is ContestParticipant"))
+        )
+    }
+
+    @Test
+    fun incoherentContestParticipantRootPathShouldThrowIllegalArgumentException() {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            EventsFragmentViewModel(
+                currentUser,
+                RootPath.CONTESTS,
+                Contest::class.java,
+                MeetingParticipant::class.java
+            )
+        }
+
+        assertThat(
+            exception.message,
+            `is`(equalTo("The root path is of type ${RootPath.CONTESTS.name} but the expected participant type is MeetingParticipant"))
+        )
     }
 }

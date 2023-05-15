@@ -4,6 +4,7 @@ import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.github.sdp_begreen.begreen.firebase.RootPath
+import com.github.sdp_begreen.begreen.models.event.ContestParticipant
 import com.github.sdp_begreen.begreen.models.event.Meeting
 import com.github.sdp_begreen.begreen.models.event.MeetingParticipant
 import com.github.sdp_begreen.begreen.rules.CoroutineTestRule
@@ -130,6 +131,42 @@ class EventParticipantServiceTest {
         assertThat(
             exception.message,
             `is`(equalTo("The event id cannot be blank"))
+        )
+    }
+
+    @Test
+    fun getAllContestParticipantWithMeetingRootPathShouldThrowIllegalArgumentException() {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            runTest {
+                EventParticipantServiceImpl.getAllParticipants(
+                    RootPath.MEETINGS,
+                    meetingWithParticipants.id!!,
+                    ContestParticipant::class.java
+                )
+            }
+        }
+
+        assertThat(
+            exception.message,
+            `is`(equalTo("The root path is of type ${RootPath.MEETINGS.name} but the expected participant type is ContestParticipant"))
+        )
+    }
+
+    @Test
+    fun getAllMeetingParticipantWithContestRootPathShouldThrowIllegalArgumentException() {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            runTest {
+                EventParticipantServiceImpl.getAllParticipants(
+                    RootPath.CONTESTS,
+                    meetingWithParticipants.id!!,
+                    MeetingParticipant::class.java
+                )
+            }
+        }
+
+        assertThat(
+            exception.message,
+            `is`(equalTo("The root path is of type ${RootPath.CONTESTS.name} but the expected participant type is MeetingParticipant"))
         )
     }
 

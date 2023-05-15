@@ -1,8 +1,8 @@
 package com.github.sdp_begreen.begreen.models.event
 
-import android.os.Parcelable
 import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.models.CustomLatLng
+import com.google.firebase.database.Exclude
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
@@ -17,8 +17,9 @@ data class Contest(
     override var startCoordinates: CustomLatLng? = null,
     var radius: Long = 0,
     var private: Boolean = false,
-): Event<Contest>, Parcelable {
+) : Event<Contest> {
 
+    @get:Exclude
     @IgnoredOnParcel
     override val rootPath = RootPath.CONTESTS
 

@@ -261,7 +261,7 @@ class MeetingsFragmentTest {
             val recyclerView =
                 it.requireView().findViewById<RecyclerView>(R.id.fragment_meeting_list)
             val itemView = recyclerView.findViewHolderForAdapterPosition(0)?.itemView
-            val title = itemView?.findViewById<TextView>(R.id.fragment_meeting_elem_title)
+            val title = itemView?.findViewById<TextView>(R.id.fragment_event_elem_title)
             assertThat(title?.text, `is`(equalTo(meetings[0].title)))
         }
 
@@ -272,14 +272,14 @@ class MeetingsFragmentTest {
                 .check(
                     atPositionTextViewWithText(
                         index,
-                        R.id.fragment_meeting_elem_title,
+                        R.id.fragment_event_elem_title,
                         meeting.title
                     )
                 )
                 .check(
                     atPositionTextViewWithText(
                         index,
-                        R.id.fragment_meeting_elem_date,
+                        R.id.fragment_event_elem_date,
                         DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
                             .format(Calendar.getInstance().apply {
                                 timeInMillis = meeting.startDateTime!!
@@ -289,14 +289,14 @@ class MeetingsFragmentTest {
                 .check(
                     atPositionTextViewWithText(
                         index,
-                        R.id.fragment_meeting_elem_location,
+                        R.id.fragment_event_elem_location,
                         localities[index]
                     )
                 )
                 .check(
                     atPositionButtonWithText(
                         index,
-                        R.id.fragment_meeting_elem_join_button,
+                        R.id.fragment_event_elem_join_button,
                         initialButtonText[index]
                     )
                 )
@@ -309,15 +309,15 @@ class MeetingsFragmentTest {
             .check(
                 atPositionButtonWithText(
                     1,
-                    R.id.fragment_meeting_elem_join_button,
+                    R.id.fragment_event_elem_join_button,
                     "Join"
                 )
             )
-            .perform(clickButtonIdAtPosition(1, R.id.fragment_meeting_elem_join_button))
+            .perform(clickButtonIdAtPosition(1, R.id.fragment_event_elem_join_button))
             .check(
                 atPositionButtonWithText(
                     1,
-                    R.id.fragment_meeting_elem_join_button,
+                    R.id.fragment_event_elem_join_button,
                     "Withdraw"
                 )
             )
@@ -328,7 +328,7 @@ class MeetingsFragmentTest {
         runTest {
             // click to participate
             onView(withId(R.id.fragment_meeting_list))
-                .perform(clickButtonIdAtPosition(1, R.id.fragment_meeting_elem_join_button))
+                .perform(clickButtonIdAtPosition(1, R.id.fragment_event_elem_join_button))
 
             assertThat(
                 addRemoveParticipantChannel.receive(),
@@ -337,7 +337,7 @@ class MeetingsFragmentTest {
 
             // click to withdraw
             onView(withId(R.id.fragment_meeting_list))
-                .perform(clickButtonIdAtPosition(1, R.id.fragment_meeting_elem_join_button))
+                .perform(clickButtonIdAtPosition(1, R.id.fragment_event_elem_join_button))
 
             assertThat(
                 addRemoveParticipantChannel.receive(),
