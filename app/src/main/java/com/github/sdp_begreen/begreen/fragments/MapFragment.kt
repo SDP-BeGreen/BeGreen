@@ -259,7 +259,7 @@ class MapFragment : Fragment() {
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
 
         } else {
-            if (userLocation == null) throw java.lang.IllegalArgumentException("No location")
+
             userLocation?.apply {
                 // Add a bin of type "binType" at the user current location
                 Bin(trashCategory, LatLng(latitude, longitude))
