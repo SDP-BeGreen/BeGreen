@@ -37,18 +37,17 @@ private val matchParticipantClassImplErrorMsg =
  * @param rootPath The requested root path, where to look for the data
  * @param eventImpl The [Event] class implementation
  */
-fun <T : Event<T>> checkRootPathMatchEventClassImpl(rootPath: RootPath, eventImpl: Class<T>) =
-    when (rootPath) {
-        RootPath.MEETINGS -> checkArgument(
-            eventImpl.isAssignableFrom(Meeting::class.java),
-            matchEventClassImplErrorMsg(rootPath.name, eventImpl.simpleName)
-        )
-
-        RootPath.CONTESTS -> checkArgument(
-            eventImpl.isAssignableFrom(Contest::class.java),
-            matchEventClassImplErrorMsg(rootPath.name, eventImpl.simpleName)
-        )
+fun <T : Event<T>> checkRootPathMatchEventClassImpl(rootPath: RootPath, eventImpl: Class<T>) {
+    val actualClass = when(rootPath) {
+        RootPath.MEETINGS -> Meeting::class.java
+        RootPath.CONTESTS -> Contest::class.java
     }
+
+    checkArgument(
+        eventImpl.isAssignableFrom(actualClass),
+        matchEventClassImplErrorMsg(rootPath.name, eventImpl.simpleName)
+    )
+}
 
 /**
  * Function to call in order to check that the [EventParticipant] class implementation is coherent with
@@ -60,15 +59,14 @@ fun <T : Event<T>> checkRootPathMatchEventClassImpl(rootPath: RootPath, eventImp
 fun <T : EventParticipant> checkRootPathMatchParticipantClassImpl(
     rootPath: RootPath,
     participantImpl: Class<T>
-) = when (rootPath) {
-    RootPath.MEETINGS -> checkArgument(
-        participantImpl.isAssignableFrom(MeetingParticipant::class.java),
+) {
+    val actualClass = when(rootPath) {
+        RootPath.MEETINGS -> MeetingParticipant::class.java
+        RootPath.CONTESTS -> ContestParticipant::class.java
+    }
+
+    checkArgument(
+        participantImpl.isAssignableFrom(actualClass),
         matchParticipantClassImplErrorMsg(rootPath.name, participantImpl.simpleName)
     )
-
-    RootPath.CONTESTS -> checkArgument(
-        participantImpl.isAssignableFrom(ContestParticipant::class.java),
-        matchParticipantClassImplErrorMsg(rootPath.name, participantImpl.simpleName)
-    )
-
 }

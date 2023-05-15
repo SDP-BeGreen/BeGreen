@@ -1,6 +1,5 @@
 package com.github.sdp_begreen.begreen.models.event
 
-import android.os.Parcelable
 import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.google.firebase.database.Exclude
@@ -24,7 +23,7 @@ data class Meeting(
     // TODO add the itinerary to store the computed way
     //  add it later when calculating the itinerary to see how to best store it
     //var itinerary: String? = null,
-) : Event<Meeting>, Parcelable {
+) : Event<Meeting> {
 
     @get:Exclude
     @IgnoredOnParcel
