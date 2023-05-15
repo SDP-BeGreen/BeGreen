@@ -25,19 +25,16 @@ import org.koin.android.ext.android.inject
 
 //argument constant
 private const val ARG_URI = "uri"
-private const val ARG_TEST = "test"
 
 class SendPostFragment : Fragment() {
-    private var param_uri: String? = null
-    private var param_test: Boolean = false
+    private var paramUri: String? = null
     private val db by inject<DB>()
     private val connectedUserViewModel: ConnectedUserViewModel by viewModels(ownerProducer = { requireActivity() })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param_uri = it.getString(ARG_URI)
-            param_test = it.getBoolean(ARG_TEST)
+            paramUri = it.getString(ARG_URI)
         }
     }
 
@@ -54,14 +51,15 @@ class SendPostFragment : Fragment() {
         initView()
     }
 
-    private fun initView(){
+    private fun initView() {
         //load image
-        Picasso.Builder(requireContext()).build().load(param_uri).into(view?.findViewById(R.id.preview))
+        Picasso.Builder(requireContext()).build().load(paramUri)
+            .into(view?.findViewById(R.id.preview))
         setUpCancel()
         setUpShare()
     }
 
-    private fun setUpCancel(){
+    private fun setUpCancel() {
         val cancelBtn = view?.findViewById<ImageView>(R.id.cancel_post)
         cancelBtn?.setOnClickListener {
             returnToCamera()
@@ -70,20 +68,20 @@ class SendPostFragment : Fragment() {
 
     private fun returnToCamera() {
         //return to camera fragment
-    lifecycleScope.launch {
-            parentFragmentManager.commit { 
+        lifecycleScope.launch {
+            parentFragmentManager.commit {
                 setReorderingAllowed(true)
                 replace(R.id.mainCameraFragmentContainer, CameraWithUIFragment.newInstance())
             }
         }
     }
 
-    private fun setUpShare(){
+    private fun setUpShare() {
         val shareBtn = view?.findViewById<ImageView>(R.id.send_post)
         shareBtn?.setOnClickListener {
 
             // fetch current user. He is necessarily not null
-            connectedUserViewModel.currentUser.value?.let{user ->
+            connectedUserViewModel.currentUser.value?.also { user ->
 
                 //create a metadata file
                 var metadata: TrashPhotoMetadata?
@@ -102,14 +100,15 @@ class SendPostFragment : Fragment() {
                         category = cat.text.toString()
                     }*/
 
-                    metadata = TrashPhotoMetadata(null, ParcelableDate.now, user.id, caption, category)
+                    metadata =
+                        TrashPhotoMetadata(null, ParcelableDate.now, user.id, caption, category)
 
                 }
 
                 // Update the user and return
                 lifecycleScope.launch {
                     updateUser(metadata, user)
-                    if (!param_test) returnToCamera()
+                    returnToCamera()
                 }
             }
         }
@@ -119,7 +118,7 @@ class SendPostFragment : Fragment() {
      * Helper function to update the user after posting a photo
      */
     private suspend fun updateUser(metadata: TrashPhotoMetadata?, user: User) {
-        view?.findViewById<ImageView>(R.id.preview)?.drawable?.toBitmap()?.let { bitmap ->
+        view?.findViewById<ImageView>(R.id.preview)?.drawable?.toBitmap()?.also { bitmap ->
 
             // Get the stored metadata
             val storedMetadata = metadata?.let {
@@ -142,7 +141,8 @@ class SendPostFragment : Fragment() {
                 connectedUserViewModel.setCurrentUser(user, true)
 
                 // Display toast
-                Toast.makeText(requireContext(), R.string.photo_shared_success, Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), R.string.photo_shared_success, Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
@@ -153,11 +153,10 @@ class SendPostFragment : Fragment() {
      */
     companion object {
         @JvmStatic
-        fun newInstance(param1: String, param2: Boolean = false) =
+        fun newInstance(imageUri: String) =
             SendPostFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_URI, param1)
-                    putBoolean(ARG_TEST, param2)
+                    putString(ARG_URI, imageUri)
                 }
             }
     }

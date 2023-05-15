@@ -6,9 +6,7 @@ import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.fragment.app.viewModels
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.matcher.ViewMatchers.assertThat
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
@@ -40,8 +38,10 @@ class CameraContainerTest {
 
     //Companion object to mock the DB and Auth
     companion object {
-        val user = User("test", 2, "test", 5, "test",
-            "test", "test", 15, listOf("1", "3", "6"), listOf("2", "4"))
+        val user = User(
+            "test", 2, "test", 5, "test",
+            "test", "test", 15, listOf("1", "3", "6"), listOf("2", "4")
+        )
         private val db: DB = Mockito.mock(DB::class.java)
         private val auth: Auth = Mockito.mock(Auth::class.java)
         val users = listOf<User>(
@@ -53,6 +53,7 @@ class CameraContainerTest {
             User("6", 1234, "Alain Berset"),
             User("7", 1235, "Mister Alix")
         )
+
         // Setup the mock
         @OptIn(ExperimentalCoroutinesApi::class)
         @BeforeClass
@@ -76,7 +77,6 @@ class CameraContainerTest {
             }
         }
     }
-
 
 
     //Setup the koin test rule
@@ -108,7 +108,7 @@ class CameraContainerTest {
                     by it.viewModels<ConnectedUserViewModel>(ownerProducer = { it.requireActivity() })
             connectedUserViewModel.setCurrentUser(user)
         }
-         //Click the add new post button
+        //Click the add new post button
         onView(withId(R.id.camera_capture_button)).perform(click())
         withId(R.layout.fragment_send_post).matches(isDisplayed())
     }

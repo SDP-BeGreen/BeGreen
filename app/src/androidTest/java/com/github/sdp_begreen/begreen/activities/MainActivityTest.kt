@@ -26,15 +26,15 @@ import com.github.sdp_begreen.begreen.espressoUtils.BaseRobot
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.RootPath
-import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantService
+import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
 import com.github.sdp_begreen.begreen.fragments.SendPostFragment
 import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBitmap
-import com.github.sdp_begreen.begreen.models.event.Meeting
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.models.event.Meeting
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.google.android.gms.tasks.Tasks
@@ -119,7 +119,12 @@ class MainActivityTest {
 
                 `when`(db.getAllUsers()).thenReturn(listOf(user1))
                 `when`(db.getAllBins()).thenReturn(bins)
-                `when`(eventService.getAllEvents(RootPath.MEETINGS, Meeting::class.java)).thenReturn(flowOf())
+                `when`(
+                    eventService.getAllEvents(
+                        RootPath.MEETINGS,
+                        Meeting::class.java
+                    )
+                ).thenReturn(flowOf())
                 `when`(db.getFollowers("current user id")).thenReturn(listOf())
                 `when`(db.getFollowedIds("current user id")).thenReturn(listOf())
             }
@@ -253,6 +258,7 @@ class MainActivityTest {
                 .check(matches(isDisplayed()))
         }
     }
+
     @Test
     fun contactUsIsDisplayedInDrawerMenu() {
         runTest {
@@ -334,8 +340,8 @@ class MainActivityTest {
     @Test
     fun contactUsMessageIsSentToDatabaseWithAddFeedback() {
         runTest {
-            `when`(db.addFeedback(any(), any() , any(), any()))
-                .then{}
+            `when`(db.addFeedback(any(), any(), any(), any()))
+                .then {}
             // sign in user
             authUserFlow.emit(userId1)
 
@@ -349,7 +355,10 @@ class MainActivityTest {
                 .perform(click())
 
             // Enter a message into the message EditText
-            onView(withId(R.id.message_edittext)).perform(typeText("Test message 1"), closeSoftKeyboard())
+            onView(withId(R.id.message_edittext)).perform(
+                typeText("Test message 1"),
+                closeSoftKeyboard()
+            )
 
             // Check if the message EditText has the correct text
             onView(withId(R.id.message_edittext)).check(matches(withText("Test message 1")))
@@ -366,7 +375,7 @@ class MainActivityTest {
     @Test
     fun contactUsMessageStillVisibleWhenWriteFails() {
         runTest {
-            `when`(db.addFeedback(any(), any() , any(), any()))
+            `when`(db.addFeedback(any(), any(), any(), any()))
                 .thenThrow(DatabaseException("error"))
             // sign in user
             authUserFlow.emit(userId1)
@@ -381,7 +390,10 @@ class MainActivityTest {
                 .perform(click())
 
             // Enter a message into the message EditText
-            onView(withId(R.id.message_edittext)).perform(typeText("Test message 2"), closeSoftKeyboard())
+            onView(withId(R.id.message_edittext)).perform(
+                typeText("Test message 2"),
+                closeSoftKeyboard()
+            )
 
             // Check if the message EditText has the correct text
             onView(withId(R.id.message_edittext)).check(matches(withText("Test message 2")))
@@ -503,8 +515,9 @@ class MainActivityTest {
 
 
             activityRule.scenario.onActivity {
-                val image = it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
-                        as BitmapDrawable
+                val image =
+                    it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
+                            as BitmapDrawable
                 assertThat(image.bitmap, equalsBitmap(fakePicture1))
             }
         }
@@ -527,9 +540,11 @@ class MainActivityTest {
 
 
             activityRule.scenario.onActivity {
-                val image = it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
-                        as BitmapDrawable
-                val expected = BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
+                val image =
+                    it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
+                            as BitmapDrawable
+                val expected =
+                    BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
                 assertThat(image.bitmap, equalsBitmap(expected))
             }
         }
@@ -554,9 +569,11 @@ class MainActivityTest {
                 .check(matches((withText("More Info on user"))))
 
             activityRule.scenario.onActivity {
-                val image = it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
-                        as BitmapDrawable
-                val expected = BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
+                val image =
+                    it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
+                            as BitmapDrawable
+                val expected =
+                    BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
                 assertThat(image.bitmap, equalsBitmap(expected))
             }
         }
@@ -581,9 +598,11 @@ class MainActivityTest {
                 .check(matches((withText("user 2 description"))))
 
             activityRule.scenario.onActivity {
-                val image = it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
-                        as BitmapDrawable
-                val expected = BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
+                val image =
+                    it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
+                            as BitmapDrawable
+                val expected =
+                    BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
                 assertThat(image.bitmap, equalsBitmap(expected))
             }
         }
@@ -608,9 +627,11 @@ class MainActivityTest {
                 .check(matches((withText("More Info on user"))))
 
             activityRule.scenario.onActivity {
-                val image = it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
-                        as BitmapDrawable
-                val expected = BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
+                val image =
+                    it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
+                            as BitmapDrawable
+                val expected =
+                    BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
                 assertThat(image.bitmap, equalsBitmap(expected))
             }
         }

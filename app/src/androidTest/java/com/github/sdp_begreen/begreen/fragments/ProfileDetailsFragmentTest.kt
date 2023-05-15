@@ -11,10 +11,7 @@ import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.fragment.app.viewModels
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.clearText
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
-import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -158,12 +155,14 @@ class ProfileDetailsFragmentTest {
 
     @Test
     fun correctInfoDisplayedAuthenticatedUser() {
-        checkViewsContainsText(listOf(
-            R.id.fragment_profile_details_profile_name to user1.displayName,
-            R.id.fragment_profile_details_profile_description to user1.description,
-            R.id.fragment_profile_details_profile_email to user1.email,
-            R.id.fragment_profile_details_profile_phone to user1.phone
-        ))
+        checkViewsContainsText(
+            listOf(
+                R.id.fragment_profile_details_profile_name to user1.displayName,
+                R.id.fragment_profile_details_profile_description to user1.description,
+                R.id.fragment_profile_details_profile_email to user1.email,
+                R.id.fragment_profile_details_profile_phone to user1.phone
+            )
+        )
     }
 
     @Test
@@ -181,11 +180,13 @@ class ProfileDetailsFragmentTest {
             connectedUserViewModel.setCurrentUser(user2)
         }
 
-        checkViewsMatchesMatcher(listOf(
-            R.id.fragment_profile_details_edit_profile to not(isDisplayed()),
-            R.id.fragment_profile_details_save_profile to not(isDisplayed()),
-            R.id.fragment_profile_details_cancel_modification to not(isDisplayed())
-        ))
+        checkViewsMatchesMatcher(
+            listOf(
+                R.id.fragment_profile_details_edit_profile to not(isDisplayed()),
+                R.id.fragment_profile_details_save_profile to not(isDisplayed()),
+                R.id.fragment_profile_details_cancel_modification to not(isDisplayed())
+            )
+        )
 
         frag.close()
     }
@@ -198,30 +199,36 @@ class ProfileDetailsFragmentTest {
 
     @Test
     fun saveAndCancelButtonDisplayedClickOnEditButton() {
-        checkViewsMatchesMatcher(listOf(
-            R.id.fragment_profile_details_save_profile to not(isDisplayed()),
-            R.id.fragment_profile_details_cancel_modification to not(isDisplayed()),
-        ))
+        checkViewsMatchesMatcher(
+            listOf(
+                R.id.fragment_profile_details_save_profile to not(isDisplayed()),
+                R.id.fragment_profile_details_cancel_modification to not(isDisplayed()),
+            )
+        )
 
         onView(withId(R.id.fragment_profile_details_edit_profile))
             .check(matches(isDisplayed()))
             .perform(click())
 
-        checkViewsMatchesMatcher(listOf(
-            R.id.fragment_profile_details_save_profile to isDisplayed(),
-            R.id.fragment_profile_details_cancel_modification to isDisplayed(),
-            R.id.fragment_profile_details_edit_profile to not(isDisplayed())
-        ))
+        checkViewsMatchesMatcher(
+            listOf(
+                R.id.fragment_profile_details_save_profile to isDisplayed(),
+                R.id.fragment_profile_details_cancel_modification to isDisplayed(),
+                R.id.fragment_profile_details_edit_profile to not(isDisplayed())
+            )
+        )
     }
 
     @Test
     fun editableFieldInitiallyHidden() {
-        checkViewsMatchesMatcher(listOf(
-            R.id.fragment_profile_details_profile_name_edit to not(isDisplayed()),
-            R.id.fragment_profile_details_profile_description_edit to not(isDisplayed()),
-            R.id.fragment_profile_details_profile_email_edit to not(isDisplayed()),
-            R.id.fragment_profile_details_profile_phone_edit to not(isDisplayed())
-        ))
+        checkViewsMatchesMatcher(
+            listOf(
+                R.id.fragment_profile_details_profile_name_edit to not(isDisplayed()),
+                R.id.fragment_profile_details_profile_description_edit to not(isDisplayed()),
+                R.id.fragment_profile_details_profile_email_edit to not(isDisplayed()),
+                R.id.fragment_profile_details_profile_phone_edit to not(isDisplayed())
+            )
+        )
     }
 
     @Test
@@ -230,12 +237,14 @@ class ProfileDetailsFragmentTest {
             .check(matches(isDisplayed()))
             .perform(click())
 
-        checkViewsMatchesMatcher(listOf(
-            R.id.fragment_profile_details_profile_name_edit to isDisplayed(),
-            R.id.fragment_profile_details_profile_description_edit to isDisplayed(),
-            R.id.fragment_profile_details_profile_email_edit to isDisplayed(),
-            R.id.fragment_profile_details_profile_phone_edit to isDisplayed()
-        ))
+        checkViewsMatchesMatcher(
+            listOf(
+                R.id.fragment_profile_details_profile_name_edit to isDisplayed(),
+                R.id.fragment_profile_details_profile_description_edit to isDisplayed(),
+                R.id.fragment_profile_details_profile_email_edit to isDisplayed(),
+                R.id.fragment_profile_details_profile_phone_edit to isDisplayed()
+            )
+        )
     }
 
     @Test
@@ -244,12 +253,14 @@ class ProfileDetailsFragmentTest {
             .check(matches(isDisplayed()))
             .perform(click())
 
-        checkViewsMatchesMatcher(listOf(
-            R.id.fragment_profile_details_profile_name to not(isDisplayed()),
-            R.id.fragment_profile_details_profile_description to not(isDisplayed()),
-            R.id.fragment_profile_details_profile_email to not(isDisplayed()),
-            R.id.fragment_profile_details_profile_phone to not(isDisplayed())
-        ))
+        checkViewsMatchesMatcher(
+            listOf(
+                R.id.fragment_profile_details_profile_name to not(isDisplayed()),
+                R.id.fragment_profile_details_profile_description to not(isDisplayed()),
+                R.id.fragment_profile_details_profile_email to not(isDisplayed()),
+                R.id.fragment_profile_details_profile_phone to not(isDisplayed())
+            )
+        )
     }
 
     @Test
@@ -271,12 +282,14 @@ class ProfileDetailsFragmentTest {
             .check(matches(isDisplayed()))
             .perform(click())
 
-        checkViewsContainsText(listOf(
-            R.id.fragment_profile_details_profile_name_edit to user1.displayName,
-            R.id.fragment_profile_details_profile_description_edit to user1.description,
-            R.id.fragment_profile_details_profile_email_edit to user1.email,
-            R.id.fragment_profile_details_profile_phone_edit to user1.phone
-        ))
+        checkViewsContainsText(
+            listOf(
+                R.id.fragment_profile_details_profile_name_edit to user1.displayName,
+                R.id.fragment_profile_details_profile_description_edit to user1.description,
+                R.id.fragment_profile_details_profile_email_edit to user1.email,
+                R.id.fragment_profile_details_profile_phone_edit to user1.phone
+            )
+        )
     }
 
     @Test
@@ -299,7 +312,8 @@ class ProfileDetailsFragmentTest {
         runTest {
             `when`(db.storeUserProfilePicture(eq(fakePicture2), eq(user.id), any()))
                 .then {
-                    savedPicture = it.getArgument(0) // retrieved the fake pictured passed in arg, to ensure that the method has been called
+                    savedPicture =
+                        it.getArgument(0) // retrieved the fake pictured passed in arg, to ensure that the method has been called
                     it.arguments[2] // return the same metadata as received
                 }
         }
@@ -469,7 +483,6 @@ class ProfileDetailsFragmentTest {
         editUserValues(newUser)
 
 
-
         // cancel modifications
         onView(withId(R.id.fragment_profile_details_cancel_modification))
             .check(matches(isDisplayed()))
@@ -482,12 +495,14 @@ class ProfileDetailsFragmentTest {
             .perform(click())
 
 
-        checkViewsContainsText(listOf(
-            R.id.fragment_profile_details_profile_name_edit to user1.displayName,
-            R.id.fragment_profile_details_profile_description_edit to user1.description,
-            R.id.fragment_profile_details_profile_email_edit to user1.email,
-            R.id.fragment_profile_details_profile_phone_edit to user1.phone
-        ))
+        checkViewsContainsText(
+            listOf(
+                R.id.fragment_profile_details_profile_name_edit to user1.displayName,
+                R.id.fragment_profile_details_profile_description_edit to user1.description,
+                R.id.fragment_profile_details_profile_email_edit to user1.email,
+                R.id.fragment_profile_details_profile_phone_edit to user1.phone
+            )
+        )
 
     }
 
@@ -502,12 +517,14 @@ class ProfileDetailsFragmentTest {
 
         editAndSaveUserValues(newUser)
 
-        checkViewsContainsText(listOf(
-            R.id.fragment_profile_details_profile_name to newUser.displayName,
-            R.id.fragment_profile_details_profile_description to newUser.description,
-            R.id.fragment_profile_details_profile_email to newUser.email,
-            R.id.fragment_profile_details_profile_phone to newUser.phone
-        ))
+        checkViewsContainsText(
+            listOf(
+                R.id.fragment_profile_details_profile_name to newUser.displayName,
+                R.id.fragment_profile_details_profile_description to newUser.description,
+                R.id.fragment_profile_details_profile_email to newUser.email,
+                R.id.fragment_profile_details_profile_phone to newUser.phone
+            )
+        )
 
     }
 
@@ -526,12 +543,14 @@ class ProfileDetailsFragmentTest {
         val bundle = Bundle().apply { putParcelable(ARG_USER, user) }
         val frag = launchFragmentInContainer<ProfileDetailsFragment>(bundle)
 
-        checkViewsContainsText(listOf(
-            R.id.fragment_profile_details_profile_name to user.displayName,
-            R.id.fragment_profile_details_profile_description to user.description,
-            R.id.fragment_profile_details_profile_email to user.email,
-            R.id.fragment_profile_details_profile_phone to user.phone
-        ))
+        checkViewsContainsText(
+            listOf(
+                R.id.fragment_profile_details_profile_name to user.displayName,
+                R.id.fragment_profile_details_profile_description to user.description,
+                R.id.fragment_profile_details_profile_email to user.email,
+                R.id.fragment_profile_details_profile_phone to user.phone
+            )
+        )
 
         frag.close()
     }

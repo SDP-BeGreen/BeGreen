@@ -3,16 +3,13 @@ package com.github.sdp_begreen.begreen.fragments
 import android.Manifest
 import android.graphics.Bitmap
 import android.widget.ImageView
+import androidx.fragment.app.commit
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
@@ -31,7 +28,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.dsl.module
-import org.mockito.Mockito
+import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.*
 import java.util.*
@@ -40,13 +37,13 @@ import java.util.*
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class SendPostFragmentTest {
-    private lateinit var fragmentScenario: FragmentScenario<SendPostFragment>
+    private lateinit var fragmentScenario: FragmentScenario<CameraContainer>
 
     //Companion object to mock the DB and Auth
     companion object {
         val user = User("test", 2, "test", 5, "test", "test", "test", 15)
-        private val db: DB = Mockito.mock(DB::class.java)
-        private val auth: Auth = Mockito.mock(Auth::class.java)
+        private val db: DB = mock(DB::class.java)
+        private val auth: Auth = mock(Auth::class.java)
         val users = listOf(
             User("1", 123, "Alice"),
             User("2", 0, "Bob Zeu bricoleur"),
@@ -74,8 +71,8 @@ class SendPostFragmentTest {
                 `when`(auth.getConnectedUserId())
                     .thenReturn(user.id)
                 `when`(db.getAllUsers()).thenReturn(users)
-
-           }
+                `when`(db.getFollowedIds(any(), any())).thenReturn(emptyList())
+            }
         }
     }
 
@@ -97,9 +94,13 @@ class SendPostFragmentTest {
     //Setup the scenario
     @Before
     fun setup() {
-        fragmentScenario = launchFragmentInContainer(
-            SendPostFragment.newInstance(user.id, true).arguments
-        )
+        fragmentScenario = launchFragmentInContainer { CameraContainer.newInstance() }
+            .onFragment {
+                it.parentFragmentManager.commit {
+                    setReorderingAllowed(true)
+                    replace(R.id.mainCameraFragmentContainer, SendPostFragment.newInstance(user.id))
+                }
+            }
     }
 
     @Test
@@ -198,7 +199,7 @@ class SendPostFragmentTest {
             var newTrashPhotoMetadata: TrashPhotoMetadata? = null
 
             // Mock the database to pretend it correctly stored the image
-            `when`(db.addTrashPhoto(any(), any())).then{
+            `when`(db.addTrashPhoto(any(), any())).then {
                 newTrashPhotoMetadata = it.arguments[1] as TrashPhotoMetadata
                 updatedScore += newTrashPhotoMetadata!!.trashCategory!!.value
                 newTrashPhotoMetadata
@@ -227,8 +228,10 @@ class SendPostFragmentTest {
             verify(db, times(1)).addUser(
                 user.copy(
                     score = updatedScore,
-                    trashPhotosMetadatasList = listOf(newTrashPhotoMetadata!!)),
-                user.id)
+                    trashPhotosMetadatasList = listOf(newTrashPhotoMetadata!!)
+                ),
+                user.id
+            )
         }
 
     }

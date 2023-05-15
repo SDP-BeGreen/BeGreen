@@ -5,7 +5,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-enum class TrashCategory(val title : String, val color : Float, val value : Int) : Parcelable {
+enum class TrashCategory(val title: String, val color: Float, val value: Int) : Parcelable {
 
     // The title will be displayed in the screen to the user, so we prefer to define it in the strings.xml instead
     // of Capitalizing the toString() value.
