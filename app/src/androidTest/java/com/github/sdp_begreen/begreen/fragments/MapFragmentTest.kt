@@ -108,13 +108,13 @@ class MapFragmentTest {
 
     @Test
     fun clickOnAddNewBinBtnAddsNewBin() {
+        runTest {
 
-        val initialNumberOfBins = bins.size
+            // Add a new bin by clicking the button
+            onView(withId(R.id.binBtn)).perform(click())
 
-        // Add a new bin by clicking the button
-        onView(withId(R.id.binBtn)).perform(click())
-
-        // Check that a new bin have been added
-        assertThat(bins.size, `is`(equalTo(initialNumberOfBins + 1)))
+            // Check that a bin got added
+            verify(db).addBin(any())
+        }
     }
 }
