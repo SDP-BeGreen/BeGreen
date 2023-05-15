@@ -17,7 +17,7 @@
         android:textSize="24sp"
         android:textStyle="bold"
         android:paddingTop="25dp"
-        android:paddingBottom="26dp" />
+        android:paddingBottom="10dp" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/contest_creation_title_container"
@@ -40,10 +40,11 @@
     <CheckBox
         android:id="@+id/private_contest_checkbox"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="20dp"
+        android:gravity="center"
         android:layout_gravity="end"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="5dp"
         android:text="@string/private_contest"/>
 
     <LinearLayout
@@ -332,6 +333,7 @@
                 android:layout_height="wrap_content"
                 app:icon="@drawable/ic_cancel"
                 android:text="@string/cancel"
+                android:textAlignment="center"
                 android:backgroundTint="@color/green_triadic_light_blue">
             </Button>
 
@@ -342,6 +344,7 @@
             android:layout_height="wrap_content"
             app:icon="@drawable/ic_arrow_right"
             android:text="@string/confirm"
+            android:textAlignment="center"
             android:backgroundTint="@color/green_500">
 
         </Button>
