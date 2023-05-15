@@ -6,6 +6,7 @@ import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -17,6 +18,7 @@ import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.Matchers.*
 import org.junit.Before
@@ -105,16 +107,16 @@ class MapFragmentTest {
         onView(withId(R.id.trashCategorySelector)).check(matches(isDisplayed()))
     }
 
-    /* This test still fails on the CI from unknown reasons. Will try to fix later if I have time
     @Test
     fun clickOnAddNewBinBtnAddsNewBin() {
-        runTest {
-
+        runBlocking {
             // Add a new bin by clicking the button
             onView(withId(R.id.binBtn)).perform(click())
+
+            Thread.sleep(10000)
 
             // Check that a bin got added
             verify(db).addBin(any())
         }
-    } */
+    }
 }
