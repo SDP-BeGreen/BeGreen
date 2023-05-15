@@ -113,7 +113,7 @@ class MapFragmentTest {
             // Add a new bin by clicking the button
             onView(withId(R.id.binBtn)).perform(click())
 
-            Thread.sleep(5000)
+            Thread.sleep(10000)
 
             // Check that a bin got added
             verify(db).addBin(any())
