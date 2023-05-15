@@ -34,8 +34,10 @@ import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBi
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.models.event.Contest
 import com.github.sdp_begreen.begreen.models.event.Meeting
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
+import com.github.sdp_begreen.begreen.services.GeocodingService
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.DatabaseException
@@ -49,7 +51,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.dsl.module
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
 import org.mockito.kotlin.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -89,6 +90,7 @@ class MainActivityTest {
         private val eventService: EventService = mock(EventService::class.java)
         private val participantService: EventParticipantService =
             mock(EventParticipantService::class.java)
+        private val geocodingService: GeocodingService = mock(GeocodingService::class.java)
 
         // initially do as if no user were signed in
         private val authUserFlow = MutableStateFlow<String?>(null)
@@ -105,28 +107,34 @@ class MainActivityTest {
             // that's why we do it in the beforeClass method
             runTest {
                 // setup basic get user and getProfilePicture use in multiple tests
-                `when`(db.getUser(userId1)).thenReturn(user1)
-                `when`(db.getUserProfilePicture(userPhotoMetadata, userId1))
+                whenever(db.getUser(userId1)).thenReturn(user1)
+                whenever(db.getUserProfilePicture(userPhotoMetadata, userId1))
                     .thenReturn(fakePicture1)
                 // add a small delay, just to be sure that it is triggered after initialization
                 // and arrive second, after the initial null value
                 // use a mutable state flow, so that we can easily simulate different authenticated
                 // user between tests, by simply pushing a new userId
-                `when`(auth.getFlowUserIds())
+                whenever(auth.getFlowUserIds())
                     .thenReturn(authUserFlow.onEach { delay(10) })
-                `when`(auth.getConnectedUserId())
+                whenever(auth.getConnectedUserId())
                     .thenReturn("current user id")
 
-                `when`(db.getAllUsers()).thenReturn(listOf(user1))
-                `when`(db.getAllBins()).thenReturn(bins)
-                `when`(
+                whenever(db.getAllUsers()).thenReturn(listOf(user1))
+                whenever(db.getAllBins()).thenReturn(bins)
+                whenever(
                     eventService.getAllEvents(
                         RootPath.MEETINGS,
                         Meeting::class.java
                     )
                 ).thenReturn(flowOf())
-                `when`(db.getFollowers("current user id")).thenReturn(listOf())
-                `when`(db.getFollowedIds("current user id")).thenReturn(listOf())
+                whenever(
+                    eventService.getAllEvents(
+                        RootPath.CONTESTS,
+                        Contest::class.java
+                    )
+                ).thenReturn(flowOf())
+                whenever(db.getFollowers("current user id")).thenReturn(listOf())
+                whenever(db.getFollowedIds("current user id")).thenReturn(listOf())
             }
         }
     }
@@ -141,6 +149,7 @@ class MainActivityTest {
             single { auth }
             single { eventService }
             single { participantService }
+            single { geocodingService }
         })
     )
 
@@ -206,7 +215,7 @@ class MainActivityTest {
     fun pressAdviceMenuDisplayAdviceFragment() {
         runTest {
             val advices = setOf("Advice1", "Advice2", "Advice3")
-            `when`(db.getAdvices()).thenReturn(advices)
+            whenever(db.getAdvices()).thenReturn(advices)
             onView(withId(R.id.bottomMenuAdvice))
                 .check(matches(isDisplayed()))
                 .perform(click())
@@ -340,8 +349,10 @@ class MainActivityTest {
     @Test
     fun contactUsMessageIsSentToDatabaseWithAddFeedback() {
         runTest {
-            `when`(db.addFeedback(any(), any(), any(), any()))
+
+            whenever(db.addFeedback(any(), any(), any(), any()))
                 .then {}
+
             // sign in user
             authUserFlow.emit(userId1)
 
@@ -375,7 +386,7 @@ class MainActivityTest {
     @Test
     fun contactUsMessageStillVisibleWhenWriteFails() {
         runTest {
-            `when`(db.addFeedback(any(), any(), any(), any()))
+            whenever(db.addFeedback(any(), any(), any(), any()))
                 .thenThrow(DatabaseException("error"))
             // sign in user
             authUserFlow.emit(userId1)
@@ -424,7 +435,7 @@ class MainActivityTest {
     @Test
     fun pressDrawerMenuFollowersDisplayFollowersFragmentWithNoAuthenticatedUser() {
 
-        `when`(auth.getConnectedUserId()).thenReturn(null)
+        whenever(auth.getConnectedUserId()).thenReturn(null)
 
         onView(withId(R.id.mainDrawerLayout)).perform(DrawerActions.open(GravityCompat.END))
 
@@ -460,6 +471,19 @@ class MainActivityTest {
             .check(matches(isDisplayed()))
     }
 
+    @Test
+    fun pressDrawerMenuContestsDisplayContestsFragment() {
+        onView(withId(R.id.mainDrawerLayout)).perform(DrawerActions.open(GravityCompat.END))
+
+        onView(withId(R.id.mainNavDrawContests))
+            .perform(scrollTo())
+            .check(matches(isDisplayed()))
+            .perform(click())
+
+        onView(withId(R.id.fragment_contests_list_container))
+            .check(matches(isDisplayed()))
+    }
+
 
     @Test
     fun pressDrawerMenuSettingsDisplaySettingsFragment() {
@@ -479,7 +503,7 @@ class MainActivityTest {
     fun pressDrawerMenuLogoutDisplaySignInActivity() {
         // mock the signOutCurrentUser
         activityRule.scenario.onActivity {
-            `when`(auth.signOutCurrentUser(it, it.getString(R.string.default_web_client_id)))
+            whenever(auth.signOutCurrentUser(it, it.getString(R.string.default_web_client_id)))
                 .thenReturn(Tasks.forResult(null))
         }
         Intents.init()
@@ -554,7 +578,7 @@ class MainActivityTest {
     fun defaultValueDisplayedForAuthenticatedUserNotInDB() {
         runTest {
             // simulate not in db by returning a null user
-            `when`(db.getUser(userId4)).thenReturn(null)
+            whenever(db.getUser(userId4)).thenReturn(null)
 
             // sign in user 2
             authUserFlow.emit(userId4)
@@ -583,7 +607,7 @@ class MainActivityTest {
     fun defaultProfilePicturesDisplayedAuthenticatedUserNoProfilePicturedRegistered() {
         runTest {
             // user 2 doesn't have any profile picture
-            `when`(db.getUser(userId2)).thenReturn(user2)
+            whenever(db.getUser(userId2)).thenReturn(user2)
 
             // sign in user 2
             authUserFlow.emit(userId2)
@@ -612,7 +636,7 @@ class MainActivityTest {
     fun defaultValueDisplayedForAuthenticatedExistingUserWithoutExistingValues() {
         runTest {
             // user 3 doesn't have any information
-            `when`(db.getUser(userId3)).thenReturn(user3)
+            whenever(db.getUser(userId3)).thenReturn(user3)
 
             // sign in user 3
             authUserFlow.emit(userId3)

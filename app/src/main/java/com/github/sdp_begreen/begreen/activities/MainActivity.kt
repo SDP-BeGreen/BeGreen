@@ -241,6 +241,9 @@ class MainActivity : AppCompatActivity() {
             R.id.mainNavDrawMeetings -> {
                 replaceFragInMainContainer(MeetingsFragment())
             }
+            R.id.mainNavDrawContests -> {
+                replaceFragInMainContainer(ContestsFragment())
+            }
             //----------------------------------------------------------------------
             R.id.mainNavDrawSettings -> {
                 replaceFragInMainContainer(SettingsFragment())
