@@ -8,28 +8,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.Spinner
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.map.Bin
-
+import com.github.sdp_begreen.begreen.models.TrashCategory
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.launch
@@ -54,7 +49,7 @@ class MapFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var lastLocation: Location
 
-    private var userLocation : Location? = null
+    private var userLocation: Location? = null
 
     // Currently selected marker on the map, or null if no marker selected
     private var selectedMarker: Marker? = null
@@ -81,18 +76,21 @@ class MapFragment : Fragment() {
 
         setupAddBinBtnAndSelector()
 
-
-
     }
 
-    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
 
-        if (isGranted) {
-            displayUserLocation()
-        } else {
-            Toast.makeText(requireActivity(), getString(R.string.location_permissions_not_granted), Toast.LENGTH_LONG).show()
+            if (isGranted) {
+                displayUserLocation()
+            } else {
+                Toast.makeText(
+                    requireActivity(),
+                    getString(R.string.location_permissions_not_granted),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -104,7 +102,8 @@ class MapFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val mapFragment = childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment?
+        val mapFragment =
+            childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment?
         mapFragment?.getMapAsync(mapReadyCallback)
 
         // Get the localisation of the user
@@ -117,29 +116,30 @@ class MapFragment : Fragment() {
     private fun setupAddBinBtnAndSelector() {
 
         // Type selector
-        val binTypeSelector: Spinner = requireView().findViewById(R.id.binTypeSelector)
+        val trashCategorySelector: Spinner = requireView().findViewById(R.id.trashCategorySelector)
         val adapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_item,
             TrashCategory.values().map { trash -> trash.title }
         )
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_item)
-        binTypeSelector.adapter = adapter
+        trashCategorySelector.adapter = adapter
 
         // Button
         val binBtn: Button = requireView().findViewById(R.id.binBtn)
-        setUpBinButtonClick(binBtn, binTypeSelector)
+        setUpBinButtonClick(binBtn, trashCategorySelector)
     }
 
     /**
      * Helper function that sets up button click events listeners
      */
-    private fun setUpBinButtonClick(binBtn: Button, binTypeSelector: Spinner) {
+    private fun setUpBinButtonClick(binBtn: Button, trashCategorySelector: Spinner) {
         binBtn.setOnClickListener {
             // If no marker is currently selected, add a new one at the current location
             if (selectedMarker == null) {
                 // Get the TrashCategory from the selector
-                val trashCategory: TrashCategory = TrashCategory.values()[binTypeSelector.selectedItemPosition]
+                val trashCategory: TrashCategory =
+                    TrashCategory.values()[trashCategorySelector.selectedItemPosition]
                 addNewBin(trashCategory)
             } else {
                 // Remove the bin from the database
@@ -154,9 +154,13 @@ class MapFragment : Fragment() {
                 selectedMarker = null
 
                 binBtn.text = getString(R.string.add_new_bin)
+                trashCategorySelector.visibility = View.VISIBLE
+
                 // Informs the user that his action took place
-                Toast.makeText(requireContext(), "Bin removed",
-                    Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(), "Bin removed",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
 
         }
@@ -170,7 +174,8 @@ class MapFragment : Fragment() {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED) {
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
 
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
 
@@ -205,7 +210,11 @@ class MapFragment : Fragment() {
 
         } else {
 
-            Toast.makeText(requireActivity(), getString(R.string.user_current_location_error), Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                requireActivity(),
+                getString(R.string.user_current_location_error),
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
@@ -213,7 +222,7 @@ class MapFragment : Fragment() {
      * Helper functions that displays bins markers on the map, and sets up click events
      * Only called once when the view is created
      */
-    private fun displayBinsMarkers(bins: List<Bin>) = bins.forEach{ addMarker(it) }
+    private fun displayBinsMarkers(bins: List<Bin>) = bins.forEach { addMarker(it) }
 
     /**
      * Helper function that setups marker and map click listener actions
@@ -221,15 +230,18 @@ class MapFragment : Fragment() {
     private fun setupMarkerAndMapClicks() {
 
         val addNewBinBtn: Button = requireView().findViewById(R.id.binBtn)
+        val trashCategorySelector: Spinner = requireView().findViewById(R.id.trashCategorySelector)
 
         map.setOnMarkerClickListener {
             selectedMarker = it
             addNewBinBtn.text = getString(R.string.remove_bin)
+            trashCategorySelector.visibility = View.GONE
             false
         }
         map.setOnMapClickListener {
             selectedMarker = null
             addNewBinBtn.text = getString(R.string.add_new_bin)
+            trashCategorySelector.visibility = View.VISIBLE
         }
     }
 
@@ -241,7 +253,8 @@ class MapFragment : Fragment() {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED) {
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
 
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
 
@@ -250,15 +263,17 @@ class MapFragment : Fragment() {
             userLocation?.apply {
                 // Add a bin of type "binType" at the user current location
                 Bin(trashCategory, LatLng(latitude, longitude))
-                    .let {bin ->
+                    .let { bin ->
                         lifecycleScope.launch {
                             // Add the new bin to the database
                             if (db.addBin(bin)) {
                                 // Display the marker on the map
                                 addMarker(bin)
                                 // Informs the user that his action took place
-                                Toast.makeText(requireContext(), "Bin added",
-                                    Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    requireContext(), "Bin added",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
                     }
@@ -269,7 +284,7 @@ class MapFragment : Fragment() {
     /**
      * Helper function to add a marker on the map and set its tag with the bin infos
      */
-    private fun addMarker(bin: Bin){
+    private fun addMarker(bin: Bin) {
         map.addMarker(
             MarkerOptions()
                 .position(bin.location())
