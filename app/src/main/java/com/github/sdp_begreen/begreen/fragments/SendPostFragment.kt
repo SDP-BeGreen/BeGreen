@@ -122,8 +122,6 @@ class SendPostFragment : Fragment() {
 
             // Get the stored metadata
             val storedMetadata = metadata?.let {
-
-                //sharePhoto(bitmap, it)
                 db.addTrashPhoto(bitmap, it)
             }
 

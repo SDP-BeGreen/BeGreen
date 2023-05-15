@@ -18,7 +18,7 @@ object MeetingCommentServiceImpl : MeetingCommentService {
     private val dbRefs by KoinJavaComponent.inject<FirebaseRef>(FirebaseRef::class.java)
 
     private val dbRef = dbRefs.databaseReference
-    private val MEETINGS_PATH = RootPath.MEETINGS.path
+    private val MEETINGS_PATH = RootPath.MEETINGS.eventPath
     private const val COMMENTS_PATH = "comments"
 
     override suspend fun addComment(meetingId: String, comment: Comment): Comment {

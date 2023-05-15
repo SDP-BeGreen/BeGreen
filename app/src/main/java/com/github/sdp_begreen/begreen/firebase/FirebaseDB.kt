@@ -37,16 +37,15 @@ object FirebaseDB: DB {
     // Storage ref (for images)
     private val storageReference: StorageReference = dbRefs.storageReference
     private val connectedReference = dbRefs.database.getReference(".info/connected")
-    private const val USERS_PATH = "users"
-    private const val USER_PROFILE_PICTURE_METADATA = "profilePictureMetadata"
-    private const val USER_TRASH_PICTURE_METADATA = "trashPictureMetadata"
-    private const val USER_POSTS = "posts"
-    private const val USER_ID_ATTRIBUTE = "id"
-    private const val BIN_LOCATION_PATH = "bin"
-    private const val ADVICES_LOCATION_PATH = "advices"
-    private const val FOLLOWERS_PATH = "followers"
-    private const val FOLLOWING_PATH = "following"
-    private const val FEEDBACK_PATH = "contact_us"
+    const val USERS_PATH = "users"
+    const val USER_PROFILE_PICTURE_METADATA = "profilePictureMetadata"
+    const val USER_POSTS = "posts"
+    const val USER_ID_ATTRIBUTE = "id"
+    const val BIN_LOCATION_PATH = "bin"
+    const val ADVICES_LOCATION_PATH = "advices"
+    const val FOLLOWERS_PATH = "followers"
+    const val FOLLOWING_PATH = "following"
+    const val FEEDBACK_PATH = "contact_us"
 
     // Logs (in the console) the connections and disconnections with the Firebase database
     // We might want to provide a new constructor that takes code to execute on connections/disconnections

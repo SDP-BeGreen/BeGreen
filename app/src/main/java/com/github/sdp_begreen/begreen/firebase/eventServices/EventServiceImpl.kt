@@ -23,7 +23,7 @@ object EventServiceImpl : EventService {
     override suspend fun <T : Event<T>> createEvent(event: T): T {
         checkArgument(!event.creator.isNullOrBlank(), "The creator cannot be blank or null")
         checkArgument(event.startDateTime != null, "The starting time cannot be null")
-        val eventReference = dbRef.child(event.rootPath.path)
+        val eventReference = dbRef.child(event.rootPath.eventPath)
         return eventReference.push().key?.let {
             val eventWithId = event.copyWithNewId(it)
             setObjToDb(eventReference.child(it), eventWithId, "Error while creating the event")
@@ -41,7 +41,7 @@ object EventServiceImpl : EventService {
             "The event to modify cannot have a blank or null id"
         )
         return setObjToDb(
-            dbRef.child(event.rootPath.path).child(event.id!!), event,
+            dbRef.child(event.rootPath.eventPath).child(event.id!!), event,
             "Error while modifying the event"
         )
     }
@@ -52,7 +52,7 @@ object EventServiceImpl : EventService {
     ): Flow<List<T>> {
         checkRootPathMatchEventClassImpl(rootPath, eventImplType)
         return getFlowOfObjects(
-            dbRef.child(rootPath.path).orderByChild("startDateTime")
+            dbRef.child(rootPath.eventPath).orderByChild("startDateTime")
                 .startAt(Calendar.getInstance().timeInMillis.toDouble()),
             eventImplType
         )
@@ -67,7 +67,7 @@ object EventServiceImpl : EventService {
         checkArgument(eventId.isNotBlank(), "The event id cannot be blank")
         checkRootPathMatchEventClassImpl(rootPath, eventImplType)
         return getObjFromDb(
-            dbRef.child(rootPath.path).child(eventId),
+            dbRef.child(rootPath.eventPath).child(eventId),
             eventImplType,
             "Error while getting event $eventId from the database"
         )
@@ -83,7 +83,7 @@ object EventServiceImpl : EventService {
         )
 
         removeObjFromDb(
-            dbRef.child(event.rootPath.path).child(event.id!!),
+            dbRef.child(event.rootPath.eventPath).child(event.id!!),
             "Error while removing the event"
         )
     }
