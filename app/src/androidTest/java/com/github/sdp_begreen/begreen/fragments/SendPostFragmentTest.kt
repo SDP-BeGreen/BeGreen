@@ -16,8 +16,13 @@ import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
+import com.github.sdp_begreen.begreen.firebase.RootPath
+import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantService
+import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.models.event.Contest
+import com.github.sdp_begreen.begreen.models.event.ContestParticipant
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,6 +49,9 @@ class SendPostFragmentTest {
         val user = User("test", 2, "test", 5, "test", "test", "test", 15)
         private val db: DB = mock(DB::class.java)
         private val auth: Auth = mock(Auth::class.java)
+        private val eventParticipantService: EventParticipantService =
+            mock(EventParticipantService::class.java)
+        private val eventService: EventService = mock(EventService::class.java)
         val users = listOf(
             User("1", 123, "Alice"),
             User("2", 0, "Bob Zeu bricoleur"),
@@ -61,17 +69,31 @@ class SendPostFragmentTest {
         fun setUp() {
             runTest {
                 // setup basic get user and getProfilePicture use in multiple tests
-                `when`(db.getUser(user.id))
+                whenever(db.getUser(user.id))
                     .thenReturn(user)
                 // add a small delay, just to be sure that it is triggered after initialization
                 // and arrive second, after the initial null value
                 // user between tests, by simply pushing a new userId
-                `when`(auth.getFlowUserIds())
+                whenever(auth.getFlowUserIds())
                     .thenReturn(MutableStateFlow(user.id))
-                `when`(auth.getConnectedUserId())
+                whenever(auth.getConnectedUserId())
                     .thenReturn(user.id)
-                `when`(db.getAllUsers()).thenReturn(users)
-                `when`(db.getFollowedIds(any(), any())).thenReturn(emptyList())
+                whenever(db.getAllUsers()).thenReturn(users)
+                whenever(db.getFollowedIds(any(), any())).thenReturn(emptyList())
+                whenever(
+                    eventParticipantService.getParticipant(
+                        any(),
+                        any(),
+                        eq(user.id),
+                        eq(ContestParticipant::class.java)
+                    )
+                ).thenReturn(
+                    ContestParticipant(user.id, 0)
+                )
+                whenever(eventParticipantService.addParticipant(any(), eq(user.id), any())).then { }
+                whenever(eventService.getAllEvents(RootPath.CONTESTS, Contest::class.java)).thenReturn(
+                    MutableStateFlow(listOf())
+                )
             }
         }
     }
@@ -83,6 +105,8 @@ class SendPostFragmentTest {
         modules = listOf(module {
             single { db }
             single { auth }
+            single { eventParticipantService }
+            single { eventService }
         })
     )
 

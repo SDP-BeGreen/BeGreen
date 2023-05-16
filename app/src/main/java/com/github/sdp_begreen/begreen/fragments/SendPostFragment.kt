@@ -3,7 +3,6 @@ package com.github.sdp_begreen.begreen.fragments
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -36,8 +35,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.textfield.TextInputEditText
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -47,18 +45,23 @@ private const val ARG_URI = "uri"
 class SendPostFragment : Fragment() {
     private var paramUri: String? = null
     private val db by inject<DB>()
+    private val eventParticipantService by inject<EventParticipantService>()
+
     //private val eventService by inject<EventService>()
     //private val eventParticipantService by inject<EventParticipantService>()
     //private val contestPhotoService by inject<ContestPhotoService>()
     private val connectedUserViewModel: ConnectedUserViewModel by viewModels(ownerProducer = { requireActivity() })
-    /*private val eventsFragmentViewModel by viewModels<EventsFragmentViewModel<Contest, ContestParticipant>> {
+    private val eventsFragmentViewModel by viewModels<EventsFragmentViewModel<Contest, ContestParticipant>> {
         EventsFragmentViewModel.factory(
             connectedUserViewModel.currentUser,
             RootPath.CONTESTS,
             Contest::class.java,
             ContestParticipant::class.java
         )
-    }*/
+    }
+
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var userLocation: Location? = null
 
     //private lateinit var fusedLocationClient: FusedLocationProviderClient
     //private var userLocation : Location? = null
@@ -81,7 +84,50 @@ class SendPostFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        checkUserLocationPermissions()
         initView()
+    }
+
+
+    /**
+     * Displays the user current location assuming that location permissions are granted
+     */
+    @SuppressLint("MissingPermission")
+    private fun displayUserLocation(/*user: User, category: TrashCategory, bitmap: Bitmap, metadata: TrashPhotoMetadata*/) {
+
+        // Fetch and display the user's current location
+        fusedLocationClient.lastLocation.addOnSuccessListener(requireActivity()) { location ->
+            userLocation = location
+            //contestsUpdateScoresAndPhotos(user, category, bitmap, metadata, location)
+
+        }
+    }
+
+    private fun checkUserLocationPermissions(/*user: User, category: TrashCategory, bitmap: Bitmap, metadata: TrashPhotoMetadata*/) {
+
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+
+                if (isGranted) {
+                    displayUserLocation(/*user, category, bitmap, metadata*/)
+                } else {
+                    Toast.makeText(
+                        requireActivity(),
+                        getString(R.string.location_permissions_not_granted),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+
+        } else {
+            displayUserLocation(/*user, category, bitmap, metadata*/)
+        }
     }
 
     private fun initView() {
@@ -163,8 +209,13 @@ class SendPostFragment : Fragment() {
                 // update the user with the new photo metadata and update its score
                 user.addPhotoMetadata(it)
                 user.score += it.trashCategory?.value ?: 0
+
                 // update the user's score in the active contests
-                //it.trashCategory?.also { category -> contestsUpdateScoresAndPhotos(user, category, bitmap, metadata) }
+                it.trashCategory?.also { category ->
+                    userLocation?.also { location ->
+                        contestsUpdateScores(category, location)
+                    }
+                }
 
                 // store the new User in firebase
                 db.addUser(user, user.id)
@@ -180,58 +231,43 @@ class SendPostFragment : Fragment() {
         }
     }
 
-    /*private fun contestsUpdateScoresAndPhotos(user: User, trashCategory: TrashCategory, bitmap: Bitmap, metadata: TrashPhotoMetadata) {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED) {
-
-            requestPermissions(user, trashCategory, bitmap, metadata)
-
-        } else {
-            fusedLocationClient.lastLocation.addOnSuccessListener(requireActivity()) { location ->
-                userLocation = location
-                lifecycleScope.launch { updateScore(user, trashCategory, location, bitmap, metadata) }
-            }
-            //userLocation?.also { lifecycleScope.launch { updateScore(user, trashCategory, it, bitmap, metadata) } }
-        }
-
-
-
-    }
-
-    private suspend fun updateScore(user: User, trashCategory: TrashCategory, location: Location, bitmap: Bitmap, trashPhotoMetadata: TrashPhotoMetadata) {
-        Log.d("SendPostFragment", "User location: " + userLocation)
+    private suspend fun contestsUpdateScores(
+        trashCategory: TrashCategory,
+        location: Location,
+    ) {
+        Log.d("SendPostFragment", "User location: " + location)
         Log.d("SendPostFragment", "Updating user's contest score")
-        user.contestIdsList?.forEach {contestId ->
-            val event = eventService.getEvent(contestId, RootPath.CONTESTS, Contest::class.java)
-            Log.d("SendPostFragment", "User takes part in contest with id: $contestId")
-            Log.d("SendPostFragment", "Is event active? " + event.isActive())
-            Log.d("SendPostFragment", "Is event in range? " + event.isInRange(location))
-            if (event.isActive() && event.isInRange(location)) {
-                val participant = eventParticipantService.getParticipant(RootPath.CONTESTS, contestId, user.id, ContestParticipant::class.java)
-                eventsFragmentViewModel.participate(contestId)
-                //val participants = eventParticipantService.getAllParticipants(RootPath.CONTESTS, contestId, ContestParticipant::class.java)
-                //contestPhotoService.addContestsPhotoAndUpdateScore(contestId, trashPhotoMetadata, bitmap, participant)
-            }
-        }
-    }
+        Log.d("SendPostFragment", "User id: " + connectedUserViewModel.currentUser.value?.id)
 
-    @SuppressLint("MissingPermission")
-    private fun requestPermissions(user: User, trashCategory: TrashCategory, bitmap: Bitmap, metadata: TrashPhotoMetadata){
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+        connectedUserViewModel.currentUser.value?.id?.also { participantId ->
+            val participationMap = eventsFragmentViewModel.participationMap.value
+            Log.d("SendPostFragment", "Contest IDs: " + eventsFragmentViewModel.allEvents.value)
 
-            if (isGranted) {
-                fusedLocationClient.lastLocation.addOnSuccessListener(requireActivity()) { location ->
-                    userLocation = location
-                    lifecycleScope.launch { updateScore(user, trashCategory, location, bitmap, metadata) }
+            eventsFragmentViewModel.allEvents.value.forEach { contest ->
+                Log.d("SendPostFragment", "ContestID: " + contest.id + " participates?: " + (participationMap[contest.id] == true) +
+                " isActive?: " + contest.isActive() + " is in range?: " + contest.isInRange(location))
+                if (participationMap[contest.id] == true && contest.isActive()
+                    && contest.isInRange(location)
+                ) {
+                    val updatedParticipant = eventParticipantService.getParticipant(
+                        RootPath.CONTESTS,
+                        contest.id!!,
+                        participantId,
+                        ContestParticipant::class.java
+                    )
+                    eventParticipantService.addParticipant(
+                        RootPath.CONTESTS,
+                        contest.id!!,
+                        updatedParticipant.copy(
+                            score = updatedParticipant.score?.plus(trashCategory.value)
+                                ?: trashCategory.value
+                        )
+                    )
                 }
-
-            } else {
-                Toast.makeText(requireActivity(), getString(R.string.cant_update_contests_score), Toast.LENGTH_LONG).show()
             }
         }
-    }*/
+
+    }
 
     /**
      * Companion object to create fragment
