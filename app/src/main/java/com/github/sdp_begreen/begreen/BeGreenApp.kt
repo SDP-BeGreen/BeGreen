@@ -47,7 +47,6 @@ val productionDbModule = module {
     single<MeetingCommentService> { MeetingCommentServiceImpl }
     single<EventParticipantService> { EventParticipantServiceImpl }
     single<MeetingPhotoService> { MeetingPhotoServiceImpl }
-    //single<ContestPhotoService> { ContestPhotoServiceImpl }
 }
 
 /**

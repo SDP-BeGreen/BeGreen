@@ -23,31 +23,10 @@ data class User(
     var following: List<String>? = null,
     var profilePictureMetadata: ProfilePhotoMetadata? = null,
     var trashPhotosMetadatasList: List<TrashPhotoMetadata>? = null,
-    var meetingIdsList: List<String>? = null,
-    var contestIdsList: List<String>? = null
 ) : Parcelable, Comparable<User> {
 
     suspend fun addFollower(follower: User) {
         //TODO : add the following to the database
-    }
-
-    /**
-     * TODO: comments
-     */
-    fun <T: Event<T>> copyWithNewEvent(eventId: String, eventImplType: Class<T>): User {
-        return when(eventImplType) {
-            Meeting::class.java -> copy(meetingIdsList = meetingIdsList?.let { it + eventId } ?: listOf(eventId))
-            Contest::class.java -> copy(contestIdsList = contestIdsList?.let { it + eventId } ?: listOf(eventId))
-            else -> {throw java.lang.IllegalArgumentException("Illegal event class")}
-        }
-    }
-
-    fun <T: Event<T>> copyWithRemovedEvent(eventId: String, eventImplType: Class<T>): User {
-        return when(eventImplType) {
-            Meeting::class.java -> copy(meetingIdsList = meetingIdsList?.let { it - eventId } ?: listOf(eventId))
-            Contest::class.java -> copy(contestIdsList = contestIdsList?.let { it - eventId } ?: listOf(eventId))
-            else -> {throw java.lang.IllegalArgumentException("Illegal event class")}
-        }
     }
 
     override fun compareTo(other: User): Int {

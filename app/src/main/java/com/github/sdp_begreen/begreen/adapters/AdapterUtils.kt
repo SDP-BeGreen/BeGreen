@@ -26,8 +26,6 @@ import kotlinx.coroutines.launch
  */
 fun <T : Event<T>, P : EventParticipant> RecyclerView.setUpEventListAdapter(
     eventsFragmentViewModel: EventsFragmentViewModel<T, P>,
-    connectedUserViewModel: ConnectedUserViewModel,
-    eventImplType: Class<T>,
     lifecycle: Lifecycle,
     geocodingService: GeocodingService,
     context: Context?,
@@ -39,8 +37,6 @@ fun <T : Event<T>, P : EventParticipant> RecyclerView.setUpEventListAdapter(
         EventDataAdapterListenersImpl(
             lifecycle.coroutineScope,
             eventsFragmentViewModel,
-            connectedUserViewModel,
-            eventImplType,
             geocodingService,
             getString
         )

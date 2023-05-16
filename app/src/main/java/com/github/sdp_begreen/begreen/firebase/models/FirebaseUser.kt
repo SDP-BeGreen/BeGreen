@@ -20,8 +20,6 @@ data class FirebaseUser(
     var following: Map<String, Boolean>? = null,
     var profilePictureMetadata: ProfilePhotoMetadata? = null,
     var trashPhotosMetadatasList: List<TrashPhotoMetadata>? = null,
-    var meetingIdsList: Map<String, Boolean>? = null,
-    var contestIdsList: Map<String, Boolean>? = null
 ) {
 
     // Default constructor required to deserialized object retrieved from firebase
@@ -40,8 +38,6 @@ data class FirebaseUser(
         user.following?.associate { it to true },
         user.profilePictureMetadata,
         user.trashPhotosMetadatasList,
-        user.meetingIdsList?.associate { it to true },
-        user.contestIdsList?.associate { it to true }
     )
 
     fun toUser(): User {
@@ -58,8 +54,6 @@ data class FirebaseUser(
             following?.keys?.toList(),
             profilePictureMetadata,
             trashPhotosMetadatasList,
-            meetingIdsList?.keys?.toList(),
-            contestIdsList?.keys?.toList()
         )
     }
 }

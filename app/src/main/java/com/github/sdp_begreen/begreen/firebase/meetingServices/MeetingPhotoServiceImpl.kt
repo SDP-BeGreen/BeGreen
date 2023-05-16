@@ -20,7 +20,7 @@ object MeetingPhotoServiceImpl : MeetingPhotoService {
 
     private val dbRef = dbRefs.databaseReference
     private val storageRef = dbRefs.storageReference
-    private val MEETINGS_PATH = RootPath.MEETINGS.eventPath
+    private val MEETINGS_PATH = RootPath.MEETINGS.path
     private const val PHOTOS_PATH = "meetingPhotos"
 
     override suspend fun addMeetingsPhoto(
