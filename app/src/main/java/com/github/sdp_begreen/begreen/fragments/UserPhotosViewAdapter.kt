@@ -65,12 +65,11 @@ class UserPhotosViewAdapter(
 
             if (isFeed) {
 
-                // Display avatar if on feed
-                if (photo is ProfilePhotoMetadata) {
+                holder.avatarView.visibility = View.VISIBLE
 
-                    val avatarImage = db.getUserProfilePicture(photo, photo.takenBy!!)
-                    holder.avatarView.setImageBitmap(Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888))
-                }
+                // Display avatar if on feed
+                val avatarImage = db.getUserProfilePicture(ProfilePhotoMetadata(""), photo.takenBy!!)
+                holder.avatarView.setImageBitmap(avatarImage)
 
             } else {
 

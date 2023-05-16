@@ -46,6 +46,7 @@ object FirebaseDB: DB {
     private const val FOLLOWERS_PATH = "followers"
     private const val FOLLOWING_PATH = "following"
     private const val FEEDBACK_PATH = "contact_us"
+    private const val USER_PROFILE_PICTURE_ID_SUFFIX = "_profile_picture"
 
     // Logs (in the console) the connections and disconnections with the Firebase database
     // We might want to provide a new constructor that takes code to execute on connections/disconnections
@@ -106,7 +107,7 @@ object FirebaseDB: DB {
         if (userId.isBlank())
             throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
 
-        metadata.pictureId = "${userId}_profile_picture"
+        metadata.pictureId = "${userId}${USER_PROFILE_PICTURE_ID_SUFFIX}"
 
         return storePicture(image, USER_PROFILE_PICTURE_METADATA, metadata,
             databaseReference.child(USERS_PATH).child(userId),
@@ -167,7 +168,7 @@ object FirebaseDB: DB {
             throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
         return metadata.pictureId?.let {
             getPicture(storageReference.child(USERS_PATH).child(userId).child(
-                USER_PROFILE_PICTURE_METADATA).child(it), timeout)
+                USER_PROFILE_PICTURE_METADATA).child("${userId}${USER_PROFILE_PICTURE_ID_SUFFIX}"), timeout)
         }
     }
 
