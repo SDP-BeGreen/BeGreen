@@ -1,5 +1,6 @@
 package com.github.sdp_begreen.begreen.fragments
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
@@ -18,7 +19,9 @@ import com.github.sdp_begreen.begreen.databinding.FragmentUserPhotoBinding
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
+import com.github.sdp_begreen.begreen.models.User
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.java.KoinJavaComponent.inject
@@ -54,39 +57,40 @@ class UserPhotosViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val photo = photos?.get(position)
+        lifecycleScope.launch {
 
-        if(isFeed) {
+            val photo = photos?.get(position)
 
-            // Display avatar if on feed
-            val drawable = ContextCompat.getDrawable(holder.avatarView.context, R.drawable.ic_baseline_person)
-            val defaultAvatar = drawable?.toBitmap()
-            // holder.avatarView.setImageBitmap(getFromDB(photo) ?: defaultAvatar)
-            holder.avatarView.setImageBitmap( defaultAvatar)
+            val user = db.getUser(photo?.takenBy!!)!!
 
-        }else{
-            // Do not display avatar if not on feed
-            holder.avatarView.visibility = View.GONE
-        }
+            if (isFeed) {
 
-        if (photo is TrashPhotoMetadata) {
+                // Display avatar if on feed
+                if (photo is ProfilePhotoMetadata) {
 
-            //Set default value
-            holder.titleView.text = photo?.caption ?: "No title"
-            holder.subtitleView.text = (photo?.takenOn?.toString()
-                ?: "Unknown date") + " | " + (photo?.trashCategory?.title
-                ?: "No category")
+                    val avatarImage = db.getUserProfilePicture(photo, photo.takenBy!!)
+                    holder.avatarView.setImageBitmap(Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888))
+                }
 
-                // TODO : inject database
-            lifecycleScope.launch {
+            } else {
+
+                // Do not display avatar if not on feed
+                holder.avatarView.visibility = View.GONE
+            }
+
+            // Display post content
+            if (photo is TrashPhotoMetadata) {
+
+                // Set default value
+                holder.titleView.text = user!!.displayName
+                holder.subtitleView.text = (photo?.takenOn?.toString()
+                    ?: "Unknown date") + " | " + (photo?.trashCategory?.title
+                    ?: "No category")
+                holder.descriptionView.text = photo?.caption
                 holder.photoView.setImageBitmap(
                     db.getImage(photo)
                 )
             }
-            //------------FOR DEMO -----------------
-
-            // TODO : to change
-            holder.descriptionView.text = photo?.caption
         }
     }
 
