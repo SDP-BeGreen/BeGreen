@@ -25,15 +25,19 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.espressoUtils.BaseRobot
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
-import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingParticipantService
-import com.github.sdp_begreen.begreen.firebase.meetingServices.MeetingService
+import com.github.sdp_begreen.begreen.firebase.RootPath
+import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantService
+import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
 import com.github.sdp_begreen.begreen.fragments.SendPostFragment
 import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBitmap
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.models.event.Contest
+import com.github.sdp_begreen.begreen.models.event.Meeting
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
+import com.github.sdp_begreen.begreen.services.GeocodingService
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.DatabaseException
@@ -47,9 +51,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.dsl.module
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.verify
+import org.mockito.kotlin.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -85,9 +87,10 @@ class MainActivityTest {
         private val fakePicture1 = Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888)
         private val db: DB = mock(DB::class.java)
         private val auth: Auth = mock(Auth::class.java)
-        private val meetingService: MeetingService = mock(MeetingService::class.java)
-        private val participantService: MeetingParticipantService =
-            mock(MeetingParticipantService::class.java)
+        private val eventService: EventService = mock(EventService::class.java)
+        private val participantService: EventParticipantService =
+            mock(EventParticipantService::class.java)
+        private val geocodingService: GeocodingService = mock(GeocodingService::class.java)
 
         // initially do as if no user were signed in
         private val authUserFlow = MutableStateFlow<String?>(null)
@@ -104,23 +107,34 @@ class MainActivityTest {
             // that's why we do it in the beforeClass method
             runTest {
                 // setup basic get user and getProfilePicture use in multiple tests
-                `when`(db.getUser(userId1)).thenReturn(user1)
-                `when`(db.getUserProfilePicture(userPhotoMetadata, userId1))
+                whenever(db.getUser(userId1)).thenReturn(user1)
+                whenever(db.getUserProfilePicture(userPhotoMetadata, userId1))
                     .thenReturn(fakePicture1)
                 // add a small delay, just to be sure that it is triggered after initialization
                 // and arrive second, after the initial null value
                 // use a mutable state flow, so that we can easily simulate different authenticated
                 // user between tests, by simply pushing a new userId
-                `when`(auth.getFlowUserIds())
+                whenever(auth.getFlowUserIds())
                     .thenReturn(authUserFlow.onEach { delay(10) })
-                `when`(auth.getConnectedUserId())
+                whenever(auth.getConnectedUserId())
                     .thenReturn("current user id")
 
-                `when`(db.getAllUsers()).thenReturn(listOf(user1))
-                `when`(db.getAllBins()).thenReturn(bins)
-                `when`(meetingService.getAllMeetings()).thenReturn(flowOf())
-                `when`(db.getFollowers("current user id")).thenReturn(listOf())
-                `when`(db.getFollowedIds("current user id")).thenReturn(listOf())
+                whenever(db.getAllUsers()).thenReturn(listOf(user1))
+                whenever(db.getAllBins()).thenReturn(bins)
+                whenever(
+                    eventService.getAllEvents(
+                        RootPath.MEETINGS,
+                        Meeting::class.java
+                    )
+                ).thenReturn(flowOf())
+                whenever(
+                    eventService.getAllEvents(
+                        RootPath.CONTESTS,
+                        Contest::class.java
+                    )
+                ).thenReturn(flowOf())
+                whenever(db.getFollowers("current user id")).thenReturn(listOf())
+                whenever(db.getFollowedIds("current user id")).thenReturn(listOf())
             }
         }
     }
@@ -133,8 +147,9 @@ class MainActivityTest {
         modules = listOf(module {
             single { db }
             single { auth }
-            single { meetingService }
+            single { eventService }
             single { participantService }
+            single { geocodingService }
         })
     )
 
@@ -200,7 +215,7 @@ class MainActivityTest {
     fun pressAdviceMenuDisplayAdviceFragment() {
         runTest {
             val advices = setOf("Advice1", "Advice2", "Advice3")
-            `when`(db.getAdvices()).thenReturn(advices)
+            whenever(db.getAdvices()).thenReturn(advices)
             onView(withId(R.id.bottomMenuAdvice))
                 .check(matches(isDisplayed()))
                 .perform(click())
@@ -252,6 +267,7 @@ class MainActivityTest {
                 .check(matches(isDisplayed()))
         }
     }
+
     @Test
     fun contactUsIsDisplayedInDrawerMenu() {
         runTest {
@@ -333,8 +349,10 @@ class MainActivityTest {
     @Test
     fun contactUsMessageIsSentToDatabaseWithAddFeedback() {
         runTest {
-            `when`(db.addFeedback(org.mockito.kotlin.any(), org.mockito.kotlin.any() , org.mockito.kotlin.any(), org.mockito.kotlin.any()))
-                .then{}
+
+            whenever(db.addFeedback(any(), any(), any(), any()))
+                .then {}
+
             // sign in user
             authUserFlow.emit(userId1)
 
@@ -348,7 +366,10 @@ class MainActivityTest {
                 .perform(click())
 
             // Enter a message into the message EditText
-            onView(withId(R.id.message_edittext)).perform(typeText("Test message 1"), closeSoftKeyboard())
+            onView(withId(R.id.message_edittext)).perform(
+                typeText("Test message 1"),
+                closeSoftKeyboard()
+            )
 
             // Check if the message EditText has the correct text
             onView(withId(R.id.message_edittext)).check(matches(withText("Test message 1")))
@@ -358,14 +379,14 @@ class MainActivityTest {
                 .perform(click())
 
             // Check that the database function got called with the right arguments
-            verify(db).addFeedback(eq("Test message 1"), eq(userId1), org.mockito.kotlin.any(), org.mockito.kotlin.any())
+            verify(db).addFeedback(eq("Test message 1"), eq(userId1), any(), any())
         }
     }
 
     @Test
     fun contactUsMessageStillVisibleWhenWriteFails() {
         runTest {
-            `when`(db.addFeedback(org.mockito.kotlin.any(), org.mockito.kotlin.any() , org.mockito.kotlin.any(), org.mockito.kotlin.any()))
+            whenever(db.addFeedback(any(), any(), any(), any()))
                 .thenThrow(DatabaseException("error"))
             // sign in user
             authUserFlow.emit(userId1)
@@ -380,7 +401,10 @@ class MainActivityTest {
                 .perform(click())
 
             // Enter a message into the message EditText
-            onView(withId(R.id.message_edittext)).perform(typeText("Test message 2"), closeSoftKeyboard())
+            onView(withId(R.id.message_edittext)).perform(
+                typeText("Test message 2"),
+                closeSoftKeyboard()
+            )
 
             // Check if the message EditText has the correct text
             onView(withId(R.id.message_edittext)).check(matches(withText("Test message 2")))
@@ -394,7 +418,7 @@ class MainActivityTest {
             onView(withId(R.id.bottom_sheet_contact_us)).check(matches(isDisplayed()))
 
             // Check that the database function got called with the right arguments
-            verify(db).addFeedback(eq("Test message 2"), eq(userId1), org.mockito.kotlin.any(), org.mockito.kotlin.any())
+            verify(db).addFeedback(eq("Test message 2"), eq(userId1), any(), any())
         }
     }
 
@@ -411,7 +435,7 @@ class MainActivityTest {
     @Test
     fun pressDrawerMenuFollowersDisplayFollowersFragmentWithNoAuthenticatedUser() {
 
-        `when`(auth.getConnectedUserId()).thenReturn(null)
+        whenever(auth.getConnectedUserId()).thenReturn(null)
 
         onView(withId(R.id.mainDrawerLayout)).perform(DrawerActions.open(GravityCompat.END))
 
@@ -447,6 +471,19 @@ class MainActivityTest {
             .check(matches(isDisplayed()))
     }
 
+    @Test
+    fun pressDrawerMenuContestsDisplayContestsFragment() {
+        onView(withId(R.id.mainDrawerLayout)).perform(DrawerActions.open(GravityCompat.END))
+
+        onView(withId(R.id.mainNavDrawContests))
+            .perform(scrollTo())
+            .check(matches(isDisplayed()))
+            .perform(click())
+
+        onView(withId(R.id.fragment_contests_list_container))
+            .check(matches(isDisplayed()))
+    }
+
 
     @Test
     fun pressDrawerMenuSettingsDisplaySettingsFragment() {
@@ -466,7 +503,7 @@ class MainActivityTest {
     fun pressDrawerMenuLogoutDisplaySignInActivity() {
         // mock the signOutCurrentUser
         activityRule.scenario.onActivity {
-            `when`(auth.signOutCurrentUser(it, it.getString(R.string.default_web_client_id)))
+            whenever(auth.signOutCurrentUser(it, it.getString(R.string.default_web_client_id)))
                 .thenReturn(Tasks.forResult(null))
         }
         Intents.init()
@@ -502,8 +539,9 @@ class MainActivityTest {
 
 
             activityRule.scenario.onActivity {
-                val image = it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
-                        as BitmapDrawable
+                val image =
+                    it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
+                            as BitmapDrawable
                 assertThat(image.bitmap, equalsBitmap(fakePicture1))
             }
         }
@@ -526,9 +564,11 @@ class MainActivityTest {
 
 
             activityRule.scenario.onActivity {
-                val image = it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
-                        as BitmapDrawable
-                val expected = BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
+                val image =
+                    it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
+                            as BitmapDrawable
+                val expected =
+                    BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
                 assertThat(image.bitmap, equalsBitmap(expected))
             }
         }
@@ -538,7 +578,7 @@ class MainActivityTest {
     fun defaultValueDisplayedForAuthenticatedUserNotInDB() {
         runTest {
             // simulate not in db by returning a null user
-            `when`(db.getUser(userId4)).thenReturn(null)
+            whenever(db.getUser(userId4)).thenReturn(null)
 
             // sign in user 2
             authUserFlow.emit(userId4)
@@ -553,9 +593,11 @@ class MainActivityTest {
                 .check(matches((withText("More Info on user"))))
 
             activityRule.scenario.onActivity {
-                val image = it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
-                        as BitmapDrawable
-                val expected = BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
+                val image =
+                    it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
+                            as BitmapDrawable
+                val expected =
+                    BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
                 assertThat(image.bitmap, equalsBitmap(expected))
             }
         }
@@ -565,7 +607,7 @@ class MainActivityTest {
     fun defaultProfilePicturesDisplayedAuthenticatedUserNoProfilePicturedRegistered() {
         runTest {
             // user 2 doesn't have any profile picture
-            `when`(db.getUser(userId2)).thenReturn(user2)
+            whenever(db.getUser(userId2)).thenReturn(user2)
 
             // sign in user 2
             authUserFlow.emit(userId2)
@@ -580,9 +622,11 @@ class MainActivityTest {
                 .check(matches((withText("user 2 description"))))
 
             activityRule.scenario.onActivity {
-                val image = it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
-                        as BitmapDrawable
-                val expected = BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
+                val image =
+                    it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
+                            as BitmapDrawable
+                val expected =
+                    BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
                 assertThat(image.bitmap, equalsBitmap(expected))
             }
         }
@@ -592,7 +636,7 @@ class MainActivityTest {
     fun defaultValueDisplayedForAuthenticatedExistingUserWithoutExistingValues() {
         runTest {
             // user 3 doesn't have any information
-            `when`(db.getUser(userId3)).thenReturn(user3)
+            whenever(db.getUser(userId3)).thenReturn(user3)
 
             // sign in user 3
             authUserFlow.emit(userId3)
@@ -607,9 +651,11 @@ class MainActivityTest {
                 .check(matches((withText("More Info on user"))))
 
             activityRule.scenario.onActivity {
-                val image = it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
-                        as BitmapDrawable
-                val expected = BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
+                val image =
+                    it.findViewById<ImageView>(R.id.nav_drawer_profile_picture_imageview).drawable
+                            as BitmapDrawable
+                val expected =
+                    BitmapFactory.decodeResource(it.resources, R.drawable.blank_profile_picture)
                 assertThat(image.bitmap, equalsBitmap(expected))
             }
         }

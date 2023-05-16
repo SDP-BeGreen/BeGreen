@@ -16,6 +16,7 @@ import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
+import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.squareup.picasso.Picasso
@@ -26,14 +27,14 @@ import org.koin.android.ext.android.inject
 private const val ARG_URI = "uri"
 
 class SendPostFragment : Fragment() {
-    private var param_uri: String? = null
+    private var paramUri: String? = null
     private val db by inject<DB>()
     private val connectedUserViewModel: ConnectedUserViewModel by viewModels(ownerProducer = { requireActivity() })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param_uri = it.getString(ARG_URI)
+            paramUri = it.getString(ARG_URI)
         }
     }
 
@@ -50,14 +51,15 @@ class SendPostFragment : Fragment() {
         initView()
     }
 
-    private fun initView(){
+    private fun initView() {
         //load image
-        Picasso.Builder(requireContext()).build().load(param_uri).into(view?.findViewById(R.id.preview))
+        Picasso.Builder(requireContext()).build().load(paramUri)
+            .into(view?.findViewById(R.id.preview))
         setUpCancel()
         setUpShare()
     }
 
-    private fun setUpCancel(){
+    private fun setUpCancel() {
         val cancelBtn = view?.findViewById<ImageView>(R.id.cancel_post)
         cancelBtn?.setOnClickListener {
             returnToCamera()
@@ -66,70 +68,81 @@ class SendPostFragment : Fragment() {
 
     private fun returnToCamera() {
         //return to camera fragment
-    lifecycleScope.launch {
-            parentFragmentManager.commit { 
+        lifecycleScope.launch {
+            parentFragmentManager.commit {
                 setReorderingAllowed(true)
                 replace(R.id.mainCameraFragmentContainer, CameraWithUIFragment.newInstance())
             }
         }
     }
 
-    private fun setUpShare(){
+    private fun setUpShare() {
         val shareBtn = view?.findViewById<ImageView>(R.id.send_post)
         shareBtn?.setOnClickListener {
 
             // fetch current user. He is necessarily not null
-            val user = connectedUserViewModel.currentUser.value!!
+            connectedUserViewModel.currentUser.value?.also { user ->
 
-            //create a metadata file
-            var metadata : TrashPhotoMetadata? = null
+                //create a metadata file
+                var metadata: TrashPhotoMetadata?
 
-            //fetch description on UI
-            view?.findViewById<TextInputEditText>(R.id.post_description).also {
+                //fetch description on UI
+                view?.findViewById<TextInputEditText>(R.id.post_description).also {
 
-                val caption = it?.text.toString()
+                    val caption = it?.text.toString()
 
-                // TODO : Let the user choose the category like what we did in googlemap for the bin category
-                var category = TrashCategory.ORGANIC
+                    // TODO : Let the user choose the category like what we did in googlemap for the bin category
+                    val category = TrashCategory.ORGANIC
 
-                /*
-                //fetch category on UI
-                view?.findViewById<TextInputEditText>(R.id.post_category)?.also { cat ->
-                    category = cat.text.toString()
-                }*/
+                    /*
+                    //fetch category on UI
+                    view?.findViewById<TextInputEditText>(R.id.post_category)?.also { cat ->
+                        category = cat.text.toString()
+                    }*/
 
-                metadata = TrashPhotoMetadata(null, ParcelableDate.now, user?.id, caption, category)
+                    metadata =
+                        TrashPhotoMetadata(null, ParcelableDate.now, user.id, caption, category)
 
-            }
-
-            // Post picture to firebase
-            lifecycleScope.launch {
-                view?.findViewById<ImageView>(R.id.preview)?.drawable?.toBitmap()?.let { bitmap ->
-                    // Get the stored metadata
-                    val storedMetadata = metadata?.let {
-
-                        //sharePhoto(bitmap, it)
-                        db.addTrashPhoto(bitmap, it)
-                    }
-
-                    if (storedMetadata != null) {
-
-                        // new user with
-                        user.addPhotoMetadata(storedMetadata)
-
-                        // store the new User in firebase
-                        db.addUser(user, user.id)
-
-                        // once stored, set again the new user along with his metadata in current
-                        // user, for consistency
-                        connectedUserViewModel.setCurrentUser(user, true)
-
-                        // Display toast
-                        Toast.makeText(requireContext(), R.string.photo_shared_success, Toast.LENGTH_SHORT).show()
-                    }
                 }
 
-                returnToCamera()
+                // Update the user and return
+                lifecycleScope.launch {
+                    updateUser(metadata, user)
+                    returnToCamera()
+                }
+            }
+        }
+    }
+
+    /**
+     * Helper function to update the user after posting a photo
+     */
+    private suspend fun updateUser(metadata: TrashPhotoMetadata?, user: User) {
+        view?.findViewById<ImageView>(R.id.preview)?.drawable?.toBitmap()?.also { bitmap ->
+
+            // Get the stored metadata
+            val storedMetadata = metadata?.let {
+
+                //sharePhoto(bitmap, it)
+                db.addTrashPhoto(bitmap, it)
+            }
+
+            storedMetadata?.let {
+
+                // update the user with the new photo metadata and update its score
+                user.addPhotoMetadata(it)
+                user.score += it.trashCategory?.value ?: 0
+
+                // store the new User in firebase
+                db.addUser(user, user.id)
+
+                // once stored, set again the new user along with his metadata in current
+                // user, for consistency
+                connectedUserViewModel.setCurrentUser(user, true)
+
+                // Display toast
+                Toast.makeText(requireContext(), R.string.photo_shared_success, Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
@@ -140,10 +153,10 @@ class SendPostFragment : Fragment() {
      */
     companion object {
         @JvmStatic
-        fun newInstance(param1: String) =
+        fun newInstance(imageUri: String) =
             SendPostFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_URI, param1)
+                    putString(ARG_URI, imageUri)
                 }
             }
     }

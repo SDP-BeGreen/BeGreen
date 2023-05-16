@@ -14,6 +14,10 @@
             android:title="@string/meetings"
             />
         <item
+            android:id="@+id/mainNavDrawContests"
+            android:title="@string/contests"
+            />
+        <item
             android:id="@+id/mainNavDrawUserList"
             android:title="@string/users"/>
     </group>

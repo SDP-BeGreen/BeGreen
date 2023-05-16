@@ -3,10 +3,11 @@ package com.github.sdp_begreen.begreen.firebase.meetingServices
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.github.sdp_begreen.begreen.FirebaseRef
-import com.github.sdp_begreen.begreen.exceptions.MeetingServiceException
+import com.github.sdp_begreen.begreen.exceptions.EventServiceException
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.getBytesFromStorage
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.putBytesToStorage
+import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.utils.checkArgument
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +20,7 @@ object MeetingPhotoServiceImpl : MeetingPhotoService {
 
     private val dbRef = dbRefs.databaseReference
     private val storageRef = dbRefs.storageReference
-    private const val MEETING_PATH = "meeting"
+    private val MEETINGS_PATH = RootPath.MEETINGS.path
     private const val PHOTOS_PATH = "meetingPhotos"
 
     override suspend fun addMeetingsPhoto(
@@ -32,13 +33,13 @@ object MeetingPhotoServiceImpl : MeetingPhotoService {
             !photoMetadata.takenBy.isNullOrBlank(),
             "The user that took the photo cannot be blank or null"
         )
-        val photoRef = dbRef.child(MEETING_PATH).child(meetingId).child(PHOTOS_PATH)
+        val photoRef = dbRef.child(MEETINGS_PATH).child(meetingId).child(PHOTOS_PATH)
         return photoRef.push().key?.let {
             val newPhotoMetadata = photoMetadata.copy(pictureId = it)
             val compressedImage = ByteArrayOutputStream()
             photo.compress(Bitmap.CompressFormat.JPEG, 100, compressedImage)
             putBytesToStorage(
-                storageRef.child(MEETING_PATH).child(meetingId).child(PHOTOS_PATH).child(it),
+                storageRef.child(MEETINGS_PATH).child(meetingId).child(PHOTOS_PATH).child(it),
                 compressedImage.toByteArray(),
                 "Error while storing the photo"
             )
@@ -47,13 +48,13 @@ object MeetingPhotoServiceImpl : MeetingPhotoService {
                 newPhotoMetadata,
                 "Error while adding the metadata for the photo"
             )
-        } ?: throw MeetingServiceException("Error while generating new key for photo entry")
+        } ?: throw EventServiceException("Error while generating new key for photo entry")
     }
 
     override suspend fun getAllPhotosMetadata(meetingId: String): Flow<List<TrashPhotoMetadata>> {
         checkArgument(meetingId.isNotBlank(), "The meeting id cannot be blank")
         return FirebaseUtils.getFlowOfObjects(
-            dbRef.child(MEETING_PATH).child(meetingId)
+            dbRef.child(MEETINGS_PATH).child(meetingId)
                 .child(PHOTOS_PATH),
             TrashPhotoMetadata::class.java
         )
@@ -67,7 +68,7 @@ object MeetingPhotoServiceImpl : MeetingPhotoService {
         )
 
         val compressedPhoto = getBytesFromStorage(
-            storageRef.child(MEETING_PATH).child(meetingId).child(PHOTOS_PATH)
+            storageRef.child(MEETINGS_PATH).child(meetingId).child(PHOTOS_PATH)
                 .child(photoMetadata.pictureId!!),
             "Error while getting picture bytes from storage"
         )
@@ -82,13 +83,13 @@ object MeetingPhotoServiceImpl : MeetingPhotoService {
         )
 
         FirebaseUtils.removeObjFromStorage(
-            storageRef.child(MEETING_PATH).child(meetingId)
+            storageRef.child(MEETINGS_PATH).child(meetingId)
                 .child(PHOTOS_PATH)
                 .child(photoMetadata.pictureId!!),
             "Error while removing the photo from the storage"
         )
         FirebaseUtils.removeObjFromDb(
-            dbRef.child(MEETING_PATH).child(meetingId)
+            dbRef.child(MEETINGS_PATH).child(meetingId)
                 .child(PHOTOS_PATH)
                 .child(photoMetadata.pictureId!!), "Error while removing the photo metadata"
         )

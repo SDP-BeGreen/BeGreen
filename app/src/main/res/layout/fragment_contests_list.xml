@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_contests_list_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="16dp"
+    android:layout_marginTop="32dp"
+    android:layout_marginRight="16dp"
+    android:theme="@style/Theme.BeGreen">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/fragment_contests_add_contest"
+        android:layout_width="36dp"
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:contentDescription="@string/fragment_contests_add_contest_button_description"
+        android:inset="0dp"
+        app:icon="@drawable/baseline_add_24"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:shapeAppearanceOverlay="@style/Circular" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/fragment_contests_list"
+        android:name="com.github.sdp_begreen.begreen.fragments.ContestsFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fragment_contests_add_contest"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        app:layoutManager="LinearLayoutManager"
+        tools:context=".fragments.ContestsFragment"
+        tools:listitem="@layout/fragment_event_list_elem" />
+</RelativeLayout>
