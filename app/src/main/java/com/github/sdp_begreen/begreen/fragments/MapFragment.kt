@@ -52,7 +52,6 @@ class MapFragment : Fragment() {
 
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var lastLocation: Location
 
     private var userLocation : Location? = null
 
@@ -199,7 +198,6 @@ class MapFragment : Fragment() {
         // Got last known location. In some rare situations this can be null.
         if (location != null) {
 
-            lastLocation = location
             val currentLatLng = LatLng(location.latitude, location.longitude)
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, MAP_DEFAULT_ZOOM))
 

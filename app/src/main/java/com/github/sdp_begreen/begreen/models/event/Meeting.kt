@@ -29,9 +29,9 @@ data class Meeting(
     @IgnoredOnParcel
     override val rootPath = RootPath.MEETINGS
 
+    override fun copyWithNewId(newId: String) = copy(id = newId)
+
     override fun toString(): String {
         return "$title: $creator"
     }
-
-    override fun copyWithNewId(newId: String) = copy(id = newId)
 }
