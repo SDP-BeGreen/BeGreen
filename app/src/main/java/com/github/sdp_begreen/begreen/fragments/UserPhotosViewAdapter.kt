@@ -10,11 +10,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.databinding.FragmentUserPhotoBinding
+import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
+import kotlinx.coroutines.launch
 import java.net.URL
 
 
@@ -23,7 +27,8 @@ import java.net.URL
  */
 class UserPhotosViewAdapter(
     val photos: List<PhotoMetadata>?,
-    private val isFeed: Boolean
+    private val isFeed: Boolean,
+    val lifecycleScope: LifecycleCoroutineScope,
 ) : RecyclerView.Adapter<UserPhotosViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -67,14 +72,13 @@ class UserPhotosViewAdapter(
             holder.subtitleView.text = (photo?.takenOn?.toString()
                 ?: "Unknown date") + " | " + (photo?.trashCategory?.title
                 ?: "No category")
-            //holder.photoView.setImageBitmap(photo.getPhotoFromDataBase())
-            //TODO------------FOR DEMO -----------------
-            val url = URL("https://picsum.photos/400")
-            holder.photoView.setImageBitmap(
-                BitmapFactory.decodeStream(
-                    url.openConnection().getInputStream()
+
+                // TODO : inject database
+            lifecycleScope.launch {
+                holder.photoView.setImageBitmap(
+                    FirebaseDB.getImage(photo)
                 )
-            )
+            }
             //------------FOR DEMO -----------------
 
             // TODO : to change

@@ -39,8 +39,7 @@ object FirebaseDB: DB {
     private val connectedReference = dbRefs.database.getReference(".info/connected")
     private const val USERS_PATH = "users"
     private const val USER_PROFILE_PICTURE_METADATA = "profilePictureMetadata"
-    private const val USER_TRASH_PICTURE_METADATA = "trashPictureMetadata"
-    private const val USER_POSTS = "posts"
+    private const val USER_TRASH_PICTURE_METADATA = "posts"
     private const val USER_ID_ATTRIBUTE = "id"
     private const val BIN_LOCATION_PATH = "bin"
     private const val ADVICES_LOCATION_PATH = "advices"
@@ -130,9 +129,9 @@ object FirebaseDB: DB {
         var newPhotoMetadata = trashPhotoMetadata.copy(pictureId = null)
 
 
-        return storePicture(image, USER_POSTS, newPhotoMetadata,
-            databaseReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_POSTS),
-            storageReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_POSTS))
+        return storePicture(image, USER_TRASH_PICTURE_METADATA, newPhotoMetadata,
+            databaseReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_TRASH_PICTURE_METADATA),
+            storageReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_TRASH_PICTURE_METADATA))
     }
 
     override suspend fun userExists(userId: String, timeout: Long): Boolean {
@@ -145,11 +144,21 @@ object FirebaseDB: DB {
 
     override suspend fun getImage(metadata: PhotoMetadata, timeout: Long): Bitmap? {
 
-        // Points to the node where we the image SHOULD be
-        // The path will change when we will actually stores the real pictures
+        checkArgument(
+            !metadata.pictureId.isNullOrBlank(),
+            "The pictureId cannot be a blank or null string"
+        )
+
+        checkArgument(
+            !metadata.takenBy.isNullOrBlank(),
+            "The userId cannot be a blank or null string"
+        )
+
+        val userId = metadata.takenBy!!
+
         return metadata.pictureId?.let {
-            getPicture(storageReference.child("userId").child(
-                metadata.takenBy!!).child(it), timeout)
+            getPicture(storageReference.child(USERS_PATH).child(userId).child(
+                USER_TRASH_PICTURE_METADATA).child(it), timeout)
         }
     }
 

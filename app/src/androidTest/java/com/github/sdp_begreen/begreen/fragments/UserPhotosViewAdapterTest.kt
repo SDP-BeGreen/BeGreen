@@ -2,6 +2,8 @@ package com.github.sdp_begreen.begreen.fragments
 
 import android.widget.LinearLayout
 import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.testing.TestLifecycleOwner
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.sdp_begreen.begreen.R
@@ -26,7 +28,7 @@ class UserPhotosViewAdapterTest {
         TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
         TrashPhotoMetadata("2", ParcelableDate.now, "1", "Helloooo", TrashCategory.PLASTIC),
     )
-    private var userPhotoViewAdapter = UserPhotosViewAdapter(photoList, true)
+    private var userPhotoViewAdapter = UserPhotosViewAdapter(photoList, true, TestLifecycleOwner().lifecycleScope)
     private val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Test
@@ -36,13 +38,13 @@ class UserPhotosViewAdapterTest {
 
     @Test
     fun userViewAdapterGetItemCountWorksOnEmptyList() {
-        userPhotoViewAdapter = UserPhotosViewAdapter(listOf(), true)
+        userPhotoViewAdapter = UserPhotosViewAdapter(listOf(), true, TestLifecycleOwner().lifecycleScope)
         MatcherAssert.assertThat(userPhotoViewAdapter.itemCount, equalTo(0))
     }
 
     @Test
     fun userPhotosViewAdapterGetItemCountWorksOnNullList() {
-        userPhotoViewAdapter = UserPhotosViewAdapter(null, true)
+        userPhotoViewAdapter = UserPhotosViewAdapter(null, true, TestLifecycleOwner().lifecycleScope)
         MatcherAssert.assertThat(userPhotoViewAdapter.itemCount, equalTo(0))
     }
 

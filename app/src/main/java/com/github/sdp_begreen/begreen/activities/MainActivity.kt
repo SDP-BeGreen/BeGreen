@@ -217,11 +217,8 @@ class MainActivity : AppCompatActivity() {
             R.id.mainNavDrawProfile -> {
                 connectedUserViewModel.currentUser.value?.also {
 
-                    val photos = listOf(
-                        TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
-                        TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
-                        TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
-                        TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC))
+                    // User own posts
+                    val photos = it.trashPhotosMetadatasList ?: listOf()
 
                     replaceFragInMainContainer(ProfileDetailsFragment.newInstance(it, photos))
                 }

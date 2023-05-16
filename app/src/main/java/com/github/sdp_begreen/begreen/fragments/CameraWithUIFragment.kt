@@ -192,6 +192,7 @@ class CameraWithUIFragment : Fragment() {
             TrashPhotoMetadata("1", ParcelableDate.now, "Look at me cleaning!", "0", TrashCategory.ORGANIC),
             TrashPhotoMetadata("1", ParcelableDate.now, "Look at me cleaning!", "0", TrashCategory.ORGANIC)
         )
+
         //_______________________________________________________
         return (connectedUserViewModel.currentUser.value?.let {
             ProfileDetailsFragment.newInstance(it, photos)
