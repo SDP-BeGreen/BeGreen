@@ -33,10 +33,8 @@ interface Event<T> : CopyableWithId<T>, Parcelable {
         Log.d("SendPostFragment", "Start date time: " +startDateTime.toString())
         Log.d("SendPostFragment", "End date time: " +endDateTime.toString())
         Log.d("SendPostFragment", "Current time: " +Date().time)
-        Log.d("SendPostFragment", "Has started: " + (startDateTime!! < Date().time))
-        Log.d("SendPostFragment", "Has finished: " + (endDateTime!! > Date().time))
-
-
+        startDateTime?.also{ Log.d("SendPostFragment", "Has started: " + (it < Date().time)) }
+        endDateTime?.also { Log.d("SendPostFragment", "Has finished: " + (it < Date().time)) }
 
         return startDateTime?.let { it < Date().time } ?: false
             && endDateTime?.let { Date().time < it } ?: false }
