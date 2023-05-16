@@ -15,10 +15,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.databinding.FragmentUserPhotoBinding
+import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
+import org.koin.java.KoinJavaComponent.inject
 import java.net.URL
 
 
@@ -30,6 +33,8 @@ class UserPhotosViewAdapter(
     private val isFeed: Boolean,
     val lifecycleScope: LifecycleCoroutineScope,
 ) : RecyclerView.Adapter<UserPhotosViewAdapter.ViewHolder>() {
+
+    private val db by inject<DB>(DB::class.java)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         //TODO-------------------FOR DEMO---------------------
@@ -65,7 +70,6 @@ class UserPhotosViewAdapter(
         }
 
         if (photo is TrashPhotoMetadata) {
-            // use the photo variable as a TrashPhotoMetadata instance
 
             //Set default value
             holder.titleView.text = photo?.caption ?: "No title"
@@ -76,7 +80,7 @@ class UserPhotosViewAdapter(
                 // TODO : inject database
             lifecycleScope.launch {
                 holder.photoView.setImageBitmap(
-                    FirebaseDB.getImage(photo)
+                    db.getImage(photo)
                 )
             }
             //------------FOR DEMO -----------------
