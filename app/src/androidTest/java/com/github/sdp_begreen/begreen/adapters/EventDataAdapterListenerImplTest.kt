@@ -15,9 +15,12 @@ import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.models.event.Contest
 import com.github.sdp_begreen.begreen.models.event.ContestParticipant
+import com.github.sdp_begreen.begreen.models.event.Meeting
+import com.github.sdp_begreen.begreen.models.event.MeetingParticipant
 import com.github.sdp_begreen.begreen.rules.CoroutineTestRule
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.services.GeocodingService
+import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.github.sdp_begreen.begreen.viewModels.EventsFragmentViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -106,6 +109,7 @@ class EventDataAdapterListenerImplTest {
 
     private lateinit var eventDataAdapterListenersImpl: EventDataAdapterListenersImpl<Contest, ContestParticipant>
     private lateinit var eventsFragmentViewModel: EventsFragmentViewModel<Contest, ContestParticipant>
+    private lateinit var connectedUserViewModel: ConnectedUserViewModel
     private lateinit var context: Context
 
     private val scope = TestScope()
@@ -120,9 +124,12 @@ class EventDataAdapterListenerImplTest {
             Contest::class.java,
             ContestParticipant::class.java
         )
+        connectedUserViewModel = ConnectedUserViewModel()
         eventDataAdapterListenersImpl = EventDataAdapterListenersImpl(
             scope,
             eventsFragmentViewModel,
+            connectedUserViewModel,
+            Contest::class.java,
             geocodingService
         ) { if (it == R.string.event_list_join_button_withdraw) "Withdraw" else "Join" }
     }
