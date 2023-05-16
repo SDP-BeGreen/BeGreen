@@ -8,6 +8,7 @@ import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.models.event.Event
 import com.github.sdp_begreen.begreen.models.event.EventParticipant
 import com.github.sdp_begreen.begreen.services.GeocodingService
+import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.github.sdp_begreen.begreen.viewModels.EventsFragmentViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.dropWhile
@@ -21,6 +22,8 @@ import java.io.IOException
 class EventDataAdapterListenersImpl<T : Event<T>, K : EventParticipant>(
     private val lifecycleScope: CoroutineScope,
     private val eventsFragmentViewModel: EventsFragmentViewModel<T, K>,
+    private val connectedUserViewModel: ConnectedUserViewModel,
+    private val eventImplType: Class<T>,
     private val geocodingApi: GeocodingService,
     private val getString: (Int) -> String
 ) :
@@ -50,9 +53,17 @@ class EventDataAdapterListenersImpl<T : Event<T>, K : EventParticipant>(
             lifecycleScope.launch {
                 if (eventsFragmentViewModel.participationMap.value[eventId] == true) {
                     eventsFragmentViewModel.withdraw(eventId)
-                } else {
 
+                    connectedUserViewModel.currentUser.value?.copyWithRemovedEvent(eventId, eventImplType)?.also {
+                        connectedUserViewModel.setCurrentUser(it)
+                    }
+
+                } else {
                     eventsFragmentViewModel.participate(eventId)
+
+                    connectedUserViewModel.currentUser.value?.copyWithNewEvent(eventId, eventImplType)?.also {
+                        connectedUserViewModel.setCurrentUser(it)
+                    }
                 }
                 setJoinButtonText(button, eventId)
             }

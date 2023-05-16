@@ -43,6 +43,8 @@ class MeetingsFragment : Fragment() {
         if (view is RecyclerView) {
             view.setUpEventListAdapter(
                 eventsFragmentViewModel,
+                connectedUserViewModel,
+                Meeting::class.java,
                 viewLifecycleOwner.lifecycle,
                 geocodingApi,
                 context

@@ -1,5 +1,6 @@
 package com.github.sdp_begreen.begreen.viewModels
 
+import androidx.activity.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope

@@ -50,6 +50,8 @@ class ContestsFragment : Fragment() {
 
         recyclerView.setUpEventListAdapter(
             eventsFragmentViewModel,
+            connectedUserViewModel,
+            Contest::class.java,
             viewLifecycleOwner.lifecycle,
             geocodingApi,
             context
