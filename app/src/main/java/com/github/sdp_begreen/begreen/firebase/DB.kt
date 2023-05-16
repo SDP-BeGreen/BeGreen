@@ -116,7 +116,6 @@ interface DB {
     /**
      * Retrieves the profile image associated with the given [userId] and [metadata] from the database
      *
-     * @param metadata the metadata associated with the given image we want to retrieve
      * @param userId the ID of the user where we should find the image
      * @param timeout the maximum time we wait for the database to respond
      * @return the image, or null if no image was found
@@ -124,7 +123,7 @@ interface DB {
      * @throws DatabaseTimeoutException if the database could not be reached
      * @throws DatabaseException if an exception occurred while retrieving the image
      */
-    suspend fun getUserProfilePicture(metadata: ProfilePhotoMetadata, userId: String, timeout: Long = TIMEOUT): Bitmap?
+    suspend fun getUserProfilePicture(userId: String, timeout: Long = TIMEOUT): Bitmap?
 
     /**
      * Store the given [bin] in the database and assigns a fresh id to the bin

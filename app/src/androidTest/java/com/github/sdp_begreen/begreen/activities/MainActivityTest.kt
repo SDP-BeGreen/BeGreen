@@ -108,7 +108,7 @@ class MainActivityTest {
             runTest {
                 // setup basic get user and getProfilePicture use in multiple tests
                 whenever(db.getUser(userId1)).thenReturn(user1)
-                whenever(db.getUserProfilePicture(userPhotoMetadata, userId1))
+                whenever(db.getUserProfilePicture(userId1))
                     .thenReturn(fakePicture1)
                 // add a small delay, just to be sure that it is triggered after initialization
                 // and arrive second, after the initial null value
