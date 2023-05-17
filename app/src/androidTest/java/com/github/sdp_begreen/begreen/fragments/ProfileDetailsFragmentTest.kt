@@ -473,6 +473,7 @@ class ProfileDetailsFragmentTest {
 
     @Test
     fun cancelEditedValuesCorrectlyResetValuesInEditableView() {
+
         val newUser = user1.copy(
             description = "My new description",
             displayName = "My new name",
@@ -480,10 +481,7 @@ class ProfileDetailsFragmentTest {
             email = "My new email address"
         )
 
-
-
         editUserValues(newUser)
-
 
         // cancel modifications
         onView(withId(R.id.fragment_profile_details_cancel_modification))

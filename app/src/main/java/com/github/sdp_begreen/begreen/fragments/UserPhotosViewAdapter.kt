@@ -61,8 +61,9 @@ class UserPhotosViewAdapter(
         lifecycleScope.launch {
 
             val photo = photos?.get(position)
+            val userId = photo?.takenBy
 
-            if (!db.userExists(photo?.takenBy!!)) {
+            if (userId == null) {
                 return@launch
             }
 
