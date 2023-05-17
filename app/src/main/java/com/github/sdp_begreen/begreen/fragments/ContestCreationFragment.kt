@@ -42,39 +42,20 @@ class ContestCreationFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_contest_creation, container, false)
         val contestTitle = view.findViewById<TextInputEditText>(R.id.contest_creation_title)
         val privateCheckbox = view.findViewById<CheckBox>(R.id.private_contest_checkbox)
-        val expandButton = view.findViewById<ImageView>(R.id.contest_creation_location_expand)
         val mapButton = view.findViewById<ImageView>(R.id.contest_creation_location_map)
         val cityText = view.findViewById<TextInputEditText>(R.id.city_contest_creation)
         val postalCodeText = view.findViewById<TextInputEditText>(R.id.postal_code_contest_creation)
         val countryPicker = view.findViewById<CountryPickerView>(R.id.contest_creation_country_picker)
         val radiusText = view.findViewById<TextInputEditText>(R.id.radius_contest_creation)
-        val timezoneSpinner = view.findViewById<Spinner>(R.id.contest_timezone_spinner)
-        val startDateButton = view.findViewById<Button>(R.id.date_period_contest)
-        val startDateText = view.findViewById<TextClock>(R.id.start_date_contest_text)
-        val endDateText = view.findViewById<TextClock>(R.id.end_date_contest_text)
-        val startHourButton = view.findViewById<Button>(R.id.start_hour_contest)
-        val startHourText = view.findViewById<TextClock>(R.id.start_hour_contest_text)
-        val endHourButton = view.findViewById<Button>(R.id.end_hour_contest)
-        val endHourText = view.findViewById<TextClock>(R.id.end_hour_contest_text)
         val cancelCreationButton = view.findViewById<Button>(R.id.contest_cancel_button)
         val confirmCreationButton = view.findViewById<Button>(R.id.contest_confirm_button)
-        val locationDetailsContainer = view.findViewById<View>(R.id.contest_location_details_container)
-        val rangeDatePicker = MaterialDatePicker.Builder.dateRangePicker()
-            .setTitleText("Select dates")
-            .build()
-        val picker =
-            MaterialTimePicker.Builder()
-                .setTimeFormat(TimeFormat.CLOCK_24H)
-                .setHour(12)
-                .setMinute(10)
-                //.setTitle("Select Appointment time")
-                .build()
 
-        setupExpandButton(expandButton, locationDetailsContainer)
-        populateAndUpdateTimeZone(timezoneSpinner)
-        setupDateButton(startDateButton, startDateText, endDateText, rangeDatePicker)
-        setupStartHoursButton(startHourButton, startHourText, picker)
-        setupEndHoursButton(endHourButton, endHourText, picker)
+
+        setupExpandButton(view)
+        populateAndUpdateTimeZone(view)
+        setupDateButton(view)
+        setupStartHoursButton(view)
+        setupEndHoursButton(view)
         return view
     }
 
@@ -84,7 +65,15 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
-    fun setupDateButton(startDateButton : Button, startDateText : TextClock, endDateText : TextClock, datePicker : MaterialDatePicker<*>) {
+    fun setupDateButton(view : View) {
+        val startDateButton = view.findViewById<Button>(R.id.date_period_contest)
+        val startDateText = view.findViewById<TextClock>(R.id.start_date_contest_text)
+        val endDateText = view.findViewById<TextClock>(R.id.end_date_contest_text)
+
+        val datePicker = MaterialDatePicker.Builder.dateRangePicker()
+            .setTitleText("Select dates")
+            .build()
+
         startDateButton.setOnClickListener {
             datePicker.show(requireActivity().supportFragmentManager, "datePicker")
         }
@@ -100,8 +89,18 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
-    fun setupStartHoursButton(startHoursButton: Button, startHourText: TextClock, hourPicker: MaterialTimePicker) {
-        startHoursButton.setOnClickListener{
+    fun setupStartHoursButton(view : View) {
+        val startHourButton = view.findViewById<Button>(R.id.start_hour_contest)
+        val startHourText = view.findViewById<TextClock>(R.id.start_hour_contest_text)
+        val hourPicker =
+            MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setHour(12)
+                .setMinute(10)
+                //.setTitle("Select Appointment time")
+                .build()
+
+        startHourButton.setOnClickListener{
             hourPicker.show(requireActivity().supportFragmentManager, "hourPicker")
         }
         hourPicker.addOnPositiveButtonClickListener {
@@ -111,7 +110,18 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
-    fun setupEndHoursButton(endHoursButton: Button, endHourText: TextClock, hourPicker: MaterialTimePicker) {
+    fun setupEndHoursButton(view : View) {
+        val endHoursButton = view.findViewById<Button>(R.id.end_hour_contest)
+        val endHourText = view.findViewById<TextClock>(R.id.end_hour_contest_text)
+
+        val hourPicker =
+            MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setHour(12)
+                .setMinute(10)
+                //.setTitle("Select Appointment time")
+                .build()
+
         endHoursButton.setOnClickListener{
             hourPicker.show(requireActivity().supportFragmentManager, "hourPicker")
         }
@@ -122,7 +132,9 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
-    fun setupExpandButton(expandButton: ImageView, locationDetailsContainer: View){
+    fun setupExpandButton(view: View){
+        val expandButton = view.findViewById<ImageView>(R.id.contest_creation_location_expand)
+        val locationDetailsContainer = view.findViewById<View>(R.id.contest_location_details_container)
         expandButton.setOnClickListener {
             if (locationDetailsContainer.visibility == View.GONE) {
                 locationDetailsContainer.visibility = View.VISIBLE
@@ -135,7 +147,8 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
-    fun populateAndUpdateTimeZone(spinner: Spinner) {
+    fun populateAndUpdateTimeZone(view : View) {
+        val spinner = view.findViewById<Spinner>(R.id.contest_timezone_spinner)
         val idArray = TimeZone.getAvailableIDs()
         val idAdapter = ArrayAdapter<String>(
             requireContext(), android.R.layout.simple_spinner_dropdown_item,

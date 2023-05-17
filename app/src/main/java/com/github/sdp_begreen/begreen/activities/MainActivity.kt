@@ -239,7 +239,7 @@ class MainActivity : AppCompatActivity() {
                 replaceFragInMainContainer(UserFragment.newInstance(1, userList.toCollection(ArrayList()), true))
             }
             R.id.mainNavDrawMeetings -> {
-                replaceFragInMainContainer(ContestCreationFragment())
+                replaceFragInMainContainer(MeetingsFragment())
             }
             R.id.mainNavDrawContests -> {
                 replaceFragInMainContainer(ContestsFragment())
