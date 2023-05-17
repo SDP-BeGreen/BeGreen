@@ -189,6 +189,14 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/contest_timezone"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp">
+        </TextView>
+
         <Spinner
             android:id="@+id/contest_timezone_spinner"
             android:layout_marginTop="20dp"
@@ -242,30 +250,30 @@
                 app:shapeAppearanceOverlay="@style/Circular">
             </Button>
 
-            <TextClock
+            <EditText
                 android:id="@+id/start_date_contest_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:format12Hour="dd/MM/yyyy"
-                android:text="dd/MM/yyyy"
+                android:text="@string/dd_mm_yyyy"
+                android:inputType="date"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="10dp"
                 android:layout_centerVertical="true">
+            </EditText>
 
-            </TextClock>
 
-
-            <TextClock
+            <EditText
                 android:id="@+id/end_date_contest_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:format12Hour="dd/MM/yyyy"
+                android:inputType="date"
                 android:layout_centerVertical="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="10dp"
-                android:text="dd/MM/yyyy">
-
-            </TextClock>
+                android:text="@string/dd_mm_yyyy">
+            </EditText>
 
         </RelativeLayout>
         <RelativeLayout
@@ -285,15 +293,16 @@
                app:shapeAppearanceOverlay="@style/Circular"
                android:layout_alignParentStart="true">
            </Button>
-            <TextClock
+            <EditText
                 android:id="@+id/start_hour_contest_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@+id/start_hour_contest"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="10dp"
-                android:text="H:M:S">
-            </TextClock>
+                android:inputType="time"
+                android:text="@string/hour_format">
+            </EditText>
 
             <Button
                 android:id="@+id/end_hour_contest"
@@ -307,15 +316,16 @@
                 app:shapeAppearanceOverlay="@style/Circular"
                 android:layout_alignParentEnd="true">
             </Button>
-            <TextClock
+            <EditText
                 android:id="@+id/end_hour_contest_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toStartOf="@+id/end_hour_contest"
                 android:layout_marginEnd="10dp"
-                android:text="H:M:S">
-            </TextClock>
+                android:inputType="time"
+                android:text="@string/hour_format">
+            </EditText>
 
         </RelativeLayout>
         </LinearLayout>
@@ -353,7 +363,5 @@
         </LinearLayout>
 
     </LinearLayout>
-
-
 
 </LinearLayout>

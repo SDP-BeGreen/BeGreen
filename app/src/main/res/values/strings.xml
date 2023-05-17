@@ -101,5 +101,8 @@
     <string name="hour">Hour</string>
     <string name="chevron_to_expand_location_parameters">Chevron to expand location parameters</string>
     <string name="map_button_to_open_map_and_select_coordinates">Map button to open map and select coordinates</string>
+    <string name="contest_timezone">Contest Timezone</string>
+    <string name="dd_mm_yyyy">dd/MM/yyyy</string>
+    <string name="hour_format">H:M</string>
 
 </resources>

@@ -8,9 +8,11 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextClock
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.viewModels.ContestCreationViewModel
@@ -47,10 +49,6 @@ class ContestCreationFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_contest_creation, container, false)
 
 
-
-        val postalCodeText = view.findViewById<TextInputEditText>(R.id.postal_code_contest_creation)
-        val countryPicker = view.findViewById<CountryPickerView>(R.id.contest_creation_country_picker)
-        val radiusText = view.findViewById<TextInputEditText>(R.id.radius_contest_creation)
         val cancelCreationButton = view.findViewById<Button>(R.id.contest_cancel_button)
         val confirmCreationButton = view.findViewById<Button>(R.id.contest_confirm_button)
 
@@ -58,6 +56,9 @@ class ContestCreationFragment : Fragment() {
         setupPrivateCheckbox(view)
         setupExpandButton(view)
         setupCity(view)
+        setupPostalCode(view)
+        setupCountryPicker(view)
+        setupRadius(view)
         populateAndUpdateTimeZone(view)
         setupDateButton(view)
         setupStartHoursButton(view)
@@ -75,6 +76,40 @@ class ContestCreationFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun setupPostalCode(view : View) {
+        val postalCodeText = view.findViewById<TextInputEditText>(R.id.postal_code_contest_creation)
+        postalCodeText.setText(contestCreationViewModel.postalCode.value.toString())
+        postalCodeText.setOnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus) {
+                if(contestCreationViewModel.editPostalCode(postalCodeText.text.toString())) {
+                    postalCodeText.setText(contestCreationViewModel.postalCode.value.toString())
+                }
+            }
+        }
+    }
+
+    private fun setupRadius(view : View) {
+        val radiusText = view.findViewById<TextInputEditText>(R.id.radius_contest_creation)
+        radiusText.setText(contestCreationViewModel.radius.value.toString())
+        radiusText.setOnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus) {
+                if(contestCreationViewModel.editRadius(Integer.parseInt(radiusText.text.toString()))) {
+                    radiusText.setText(contestCreationViewModel.radius.value.toString())
+                }
+            }
+        }
+    }
+
+    private fun setupCountryPicker(view : View) {
+        val countryPicker = view.findViewById<CountryPickerView>(R.id.contest_creation_country_picker)
+        Toast.makeText(context, countryPicker.tvCountryInfo.text , Toast.LENGTH_SHORT).show()
+        //countryPicker.setOnCountryChangeListener {
+        //    if(contestCreationViewModel.editCountry(countryPicker.selectedCountryName)) {
+        //        countryPicker.selectedCountryName
+        //    }
+        //}
     }
 
     private fun setupTitle(view : View) {
@@ -104,8 +139,8 @@ class ContestCreationFragment : Fragment() {
 
     private fun setupDateButton(view : View) {
         val startDateButton = view.findViewById<Button>(R.id.date_period_contest)
-        val startDateText = view.findViewById<TextClock>(R.id.start_date_contest_text)
-        val endDateText = view.findViewById<TextClock>(R.id.end_date_contest_text)
+        val startDateText = view.findViewById<EditText>(R.id.start_date_contest_text)
+        val endDateText = view.findViewById<EditText>(R.id.end_date_contest_text)
 
         val datePicker = MaterialDatePicker.Builder.dateRangePicker()
             .setTitleText("Select dates")
@@ -115,20 +150,19 @@ class ContestCreationFragment : Fragment() {
             datePicker.show(requireActivity().supportFragmentManager, "datePicker")
         }
         datePicker.addOnPositiveButtonClickListener {
-            startDateText.text = datePicker.headerText
+            startDateText.setText(datePicker.headerText.toString())
             val pair : androidx.core.util.Pair<Long,Long> = datePicker.selection as androidx.core.util.Pair<Long, Long>
-            startDateText.text = pair.first.toString()
             val formatter = SimpleDateFormat("dd/MM/yyyy")
             val begin = formatter.format(pair.first)
             val end = formatter.format(pair.second)
-            startDateText.text = begin
-            endDateText.text = end
+            startDateText.setText(begin)
+            endDateText.setText(end)
         }
     }
 
     private fun setupStartHoursButton(view : View) {
         val startHourButton = view.findViewById<Button>(R.id.start_hour_contest)
-        val startHourText = view.findViewById<TextClock>(R.id.start_hour_contest_text)
+        val startHourText = view.findViewById<EditText>(R.id.start_hour_contest_text)
         val hourPicker =
             MaterialTimePicker.Builder()
                 .setTimeFormat(TimeFormat.CLOCK_24H)
@@ -143,13 +177,13 @@ class ContestCreationFragment : Fragment() {
         hourPicker.addOnPositiveButtonClickListener {
             val hour = hourPicker.hour
             val minute = hourPicker.minute
-            startHourText.text = "$hour:$minute"
+            startHourText.setText("$hour:$minute")
         }
     }
 
     private fun setupEndHoursButton(view : View) {
         val endHoursButton = view.findViewById<Button>(R.id.end_hour_contest)
-        val endHourText = view.findViewById<TextClock>(R.id.end_hour_contest_text)
+        val endHourText = view.findViewById<EditText>(R.id.end_hour_contest_text)
 
         val hourPicker =
             MaterialTimePicker.Builder()
@@ -165,7 +199,7 @@ class ContestCreationFragment : Fragment() {
         hourPicker.addOnPositiveButtonClickListener {
             val hour = hourPicker.hour
             val minute = hourPicker.minute
-            endHourText.text = "$hour:$minute"
+            endHourText.setText("$hour:$minute")
         }
     }
 
