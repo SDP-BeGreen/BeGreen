@@ -22,7 +22,6 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantService
-import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
@@ -47,9 +46,6 @@ class SendPostFragment : Fragment() {
     private val db by inject<DB>()
     private val eventParticipantService by inject<EventParticipantService>()
 
-    //private val eventService by inject<EventService>()
-    //private val eventParticipantService by inject<EventParticipantService>()
-    //private val contestPhotoService by inject<ContestPhotoService>()
     private val connectedUserViewModel: ConnectedUserViewModel by viewModels(ownerProducer = { requireActivity() })
     private val eventsFragmentViewModel by viewModels<EventsFragmentViewModel<Contest, ContestParticipant>> {
         EventsFragmentViewModel.factory(
@@ -63,15 +59,11 @@ class SendPostFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var userLocation: Location? = null
 
-    //private lateinit var fusedLocationClient: FusedLocationProviderClient
-    //private var userLocation : Location? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             paramUri = it.getString(ARG_URI)
         }
-        //fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.requireActivity())
     }
 
     override fun onCreateView(
@@ -94,17 +86,15 @@ class SendPostFragment : Fragment() {
      * Displays the user current location assuming that location permissions are granted
      */
     @SuppressLint("MissingPermission")
-    private fun displayUserLocation(/*user: User, category: TrashCategory, bitmap: Bitmap, metadata: TrashPhotoMetadata*/) {
+    private fun updateUserLocation() {
 
         // Fetch and display the user's current location
         fusedLocationClient.lastLocation.addOnSuccessListener(requireActivity()) { location ->
             userLocation = location
-            //contestsUpdateScoresAndPhotos(user, category, bitmap, metadata, location)
-
         }
     }
 
-    private fun checkUserLocationPermissions(/*user: User, category: TrashCategory, bitmap: Bitmap, metadata: TrashPhotoMetadata*/) {
+    private fun checkUserLocationPermissions() {
 
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -115,18 +105,18 @@ class SendPostFragment : Fragment() {
             registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
 
                 if (isGranted) {
-                    displayUserLocation(/*user, category, bitmap, metadata*/)
+                    updateUserLocation()
                 } else {
                     Toast.makeText(
                         requireActivity(),
-                        getString(R.string.location_permissions_not_granted),
+                        getString(R.string.cant_update_contests_score),
                         Toast.LENGTH_LONG
                     ).show()
                 }
             }.launch(Manifest.permission.ACCESS_FINE_LOCATION)
 
         } else {
-            displayUserLocation(/*user, category, bitmap, metadata*/)
+            updateUserLocation()
         }
     }
 
