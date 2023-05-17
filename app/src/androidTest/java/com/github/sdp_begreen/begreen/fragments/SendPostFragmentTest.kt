@@ -297,7 +297,7 @@ class SendPostFragmentTest {
                             System.currentTimeMillis() - 100000,
                             System.currentTimeMillis() + 100000,
                             CustomLatLng(0.0, 0.0),
-                            99999999999, // Verry large radius, to be sure that the user is considered in the contest
+                            Long.MAX_VALUE, // Very large radius, to be sure that the user is considered in the contest
                             false
                         ),
                         // This contest should NOT be updated when posting a photo (contest not joined)
@@ -309,7 +309,7 @@ class SendPostFragmentTest {
                             System.currentTimeMillis() - 100000,
                             System.currentTimeMillis() + 100000,
                             CustomLatLng(0.0, 0.0),
-                            99999999999, // Verry large radius, to be sure that the user is considered in the contest
+                            Long.MAX_VALUE, // Very large radius, to be sure that the user is considered in the contest
                             false
                         ),
                         // This contest should NOT be updated when posting a photo (contest not started)
@@ -321,7 +321,7 @@ class SendPostFragmentTest {
                             System.currentTimeMillis() - 100000,
                             System.currentTimeMillis() - 1000,
                             CustomLatLng(0.0, 0.0),
-                            1000000,
+                            Long.MAX_VALUE, // Very large radius, to be sure that the user is considered in the contest
                             false
                         ),
                         // This contest should NOT be updated when posting a photo (contest too far)
