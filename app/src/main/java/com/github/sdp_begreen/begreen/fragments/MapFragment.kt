@@ -32,9 +32,7 @@ import org.koin.android.ext.android.inject
 
 
 /**
- * A simple [Fragment] subclass.
- * Use the [MapFragment.newInstance] factory method to
- * create an instance of this fragment.
+ * This fragment displays googlemaps' map, aswell as buttons to add and remove markers from the map
  */
 class MapFragment : Fragment() {
 
@@ -166,23 +164,21 @@ class MapFragment : Fragment() {
         }
     }
 
+    private val hasPermission = ContextCompat.checkSelfPermission(
+        requireContext(),
+        Manifest.permission.ACCESS_FINE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED
+
+
     /**
      * Displays the user current location. Asks for permissions if needed.
      */
     private fun checkUserLocationPermissions() {
-
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-
+        if (!hasPermission)
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-
-        } else {
-
+        else
             displayUserLocation()
-        }
+
     }
 
     /**
@@ -250,15 +246,9 @@ class MapFragment : Fragment() {
      */
     private fun addNewBin(trashCategory: TrashCategory) {
 
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-
+        if (!hasPermission)
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-
-        } else {
+        else {
 
             userLocation?.apply {
                 // Add a bin of type "binType" at the user current location
