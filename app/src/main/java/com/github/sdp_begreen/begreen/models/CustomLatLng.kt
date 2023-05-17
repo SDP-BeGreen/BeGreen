@@ -29,17 +29,25 @@ data class CustomLatLng(var latitude: Double? = null, var longitude: Double? = n
     }
 
     /**
-     * Function to convert a [CustomLatLng] to a [LatLng]
+     * Function to convert a [CustomLatLng] to a [LatLng].
+     * Returns null if [latitude] or [longitude] is null
      */
-    fun toMapLatLng() = LatLng(latitude ?: 0.0, longitude ?: 0.0)
+    fun toMapLatLng(): LatLng? =
+        latitude?.let { lat -> longitude?.let { long -> LatLng(lat, long) } }
 
     /**
      * Function to convert a [CustomLatLng] to a [Locatiom]
+     * Returns null if [latitude] or [longitude] is null
      */
-    fun toMapLocation() = Location(LocationManager.GPS_PROVIDER).also {
-        it.latitude = latitude ?: 0.0
-        it.longitude = longitude ?: 0.0
-    }
+    fun toMapLocation(): Location? =
+        latitude?.let { lat ->
+            longitude?.let { long ->
+                Location(LocationManager.GPS_PROVIDER).apply {
+                    latitude = lat
+                    longitude = long
+                }
+            }
+        }
 
     /**
      * Computes the distance with the given [location]

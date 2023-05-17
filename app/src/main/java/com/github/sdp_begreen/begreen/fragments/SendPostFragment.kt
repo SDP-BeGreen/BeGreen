@@ -242,31 +242,41 @@ class SendPostFragment : Fragment() {
 
             eventsFragmentViewModel.allEvents.dropWhile { it.isEmpty() }.first()
                 .forEach { contest ->
+
                     Log.d(
                         "SendPostFragment",
                         "ContestID: " + contest.id + " participates?: " + (participationMap[contest.id] == true) +
-                                " isActive?: " + contest.isActive() + " is in range?: " + contest.isInRange(
-                            location.toMapLocation()
-                        )
+                                " isActive?: " + contest.isActive()
+
                     )
-                    if (participationMap[contest.id] == true &&
-                        contest.isActive() == true &&
-                        contest.isInRange(location.toMapLocation()) == true
-                    ) {
-                        val updatedParticipant = eventParticipantService.getParticipant(
-                            RootPath.CONTESTS,
-                            contest.id!!,
-                            participantId,
-                            ContestParticipant::class.java
+                    location.toMapLocation()?.also {
+                        Log.d(
+                            "SendPostFragment",
+                            "Is in range? " + contest.isInRange(it)
                         )
-                        eventParticipantService.addParticipant(
-                            RootPath.CONTESTS,
-                            contest.id!!,
-                            updatedParticipant.copy(
-                                score = updatedParticipant.score?.plus(trashCategory.value)
-                                    ?: trashCategory.value
+                    }
+
+                    // Check that the location is valid before checking if the user is in range
+                    location.toMapLocation()?.also {
+                        if (participationMap[contest.id] == true &&
+                            contest.isActive() == true &&
+                            contest.isInRange(it) == true
+                        ) {
+                            val updatedParticipant = eventParticipantService.getParticipant(
+                                RootPath.CONTESTS,
+                                contest.id!!,
+                                participantId,
+                                ContestParticipant::class.java
                             )
-                        )
+                            eventParticipantService.addParticipant(
+                                RootPath.CONTESTS,
+                                contest.id!!,
+                                updatedParticipant.copy(
+                                    score = updatedParticipant.score?.plus(trashCategory.value)
+                                        ?: trashCategory.value
+                                )
+                            )
+                        }
                     }
                 }
         }

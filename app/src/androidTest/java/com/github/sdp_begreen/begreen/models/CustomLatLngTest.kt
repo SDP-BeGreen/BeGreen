@@ -3,8 +3,7 @@ package com.github.sdp_begreen.begreen.models
 import android.location.Location
 import android.location.LocationManager
 import com.google.android.gms.maps.model.LatLng
-import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 
@@ -17,7 +16,19 @@ class CustomLatLngTest {
     }
 
     @Test
-    fun customLatLngToMapLatLngReturnCorrectValue() {
+    fun toMapLatLngReturnNullWhenLatitudeIsNull() {
+        val newCustomLatLng = CustomLatLng(null, 4.32)
+        assertThat(newCustomLatLng.toMapLatLng(), `is`(nullValue()))
+    }
+
+    @Test
+    fun toMapLatLngReturnNullWhenLongitudeIsNull() {
+        val newCustomLatLng = CustomLatLng(2.34, null)
+        assertThat(newCustomLatLng.toMapLatLng(), `is`(nullValue()))
+    }
+
+    @Test
+    fun toMapLatLngReturnCorrectValue() {
         val newCustomLatLng = CustomLatLng(12.456, 64.156)
         assertThat(LatLng(12.456, 64.156), `is`(newCustomLatLng.toMapLatLng()))
     }
@@ -46,6 +57,18 @@ class CustomLatLngTest {
     }
 
     @Test
+    fun toMapLocationReturnNullWhenLatitudeIsNull() {
+        val newCustomLatLng = CustomLatLng(null, 4.32)
+        assertThat(newCustomLatLng.toMapLocation(), `is`(nullValue()))
+    }
+
+    @Test
+    fun toMapLocationReturnNullWhenLongitudeIsNull() {
+        val newCustomLatLng = CustomLatLng(2.34, null)
+        assertThat(newCustomLatLng.toMapLocation(), `is`(nullValue()))
+    }
+
+    @Test
     fun toMapLocationReturnsExpectedLocation() {
 
         val lat = -0.7
@@ -56,7 +79,9 @@ class CustomLatLngTest {
         }
 
         val customLatLng = CustomLatLng(lat, long)
-        assertThat(customLatLng.toMapLocation(), `is`(equalTo(location)))
+
+        assertThat(customLatLng.toMapLocation()!!.latitude, `is`(equalTo(location.latitude)))
+        assertThat(customLatLng.toMapLocation()!!.longitude, `is`(equalTo(location.longitude)))
     }
 
     @Test
