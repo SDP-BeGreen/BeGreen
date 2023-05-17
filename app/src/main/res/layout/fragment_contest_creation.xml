@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:layout_marginHorizontal="10dp"
+    android:id="@+id/contest_creation_fragment"
     tools:context=".fragments.ContestCreationFragment">
 
     <TextView
