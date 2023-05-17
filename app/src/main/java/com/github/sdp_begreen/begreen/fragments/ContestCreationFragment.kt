@@ -11,7 +11,10 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextClock
+import androidx.fragment.app.viewModels
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.viewModels.ContestCreationViewModel
+import com.github.sdp_begreen.begreen.viewModels.ProfileEditedValuesViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -27,6 +30,8 @@ import java.util.TimeZone
  * create an instance of this fragment.
  */
 class ContestCreationFragment : Fragment() {
+
+    private val contestCreationViewModel by viewModels<ContestCreationViewModel>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
