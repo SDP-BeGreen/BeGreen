@@ -15,6 +15,7 @@ import android.widget.TextClock
 import android.widget.Toast
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.viewModels.ContestCreationViewModel
@@ -24,6 +25,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.hbb20.CountryPickerView
+import com.hbb20.countrypicker.models.CPCountry
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.TimeZone
@@ -67,10 +69,11 @@ class ContestCreationFragment : Fragment() {
         return view
     }
 
-    private fun setupConfirmCreationButton(view : View) {
+    private fun setupConfirmCreationButton(view: View) {
         val confirmCreationButton = view.findViewById<Button>(R.id.contest_confirm_button)
         confirmCreationButton.setOnClickListener {
             if (contestCreationViewModel.isContestCreationValid()) {
+                //TODO: Call firebase to create the contest
                 lifecycleScope.launch {
                     requireActivity().supportFragmentManager.commit {
                         setReorderingAllowed(true)
@@ -78,12 +81,16 @@ class ContestCreationFragment : Fragment() {
                     }
                 }
             } else {
-                Toast.makeText(context, "Please fill all the fields with correct values", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "Please fill all the fields with correct values",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
 
-    private fun setupCancelCreationButton(view : View) {
+    private fun setupCancelCreationButton(view: View) {
         val cancelCreationButton = view.findViewById<Button>(R.id.contest_cancel_button)
         cancelCreationButton.setOnClickListener {
             lifecycleScope.launch {
@@ -95,53 +102,76 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
-    private fun setupCity(view : View) {
+    private fun setupCity(view: View) {
         val cityText = view.findViewById<TextInputEditText>(R.id.city_contest_creation)
-        cityText.setText(contestCreationViewModel.city.value.toString())
         cityText.setOnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) {
-                if(contestCreationViewModel.editCity(cityText.text.toString())) {
+                if (contestCreationViewModel.editCity(cityText.text.toString())) {
                     cityText.setText(contestCreationViewModel.city.value.toString())
                 }
             }
         }
+        lifecycleScope.launch {
+            contestCreationViewModel.city.flowWithLifecycle(lifecycle).collect {
+                cityText.setText(it)
+            }
+        }
     }
 
-    private fun setupPostalCode(view : View) {
+    private fun setupPostalCode(view: View) {
         val postalCodeText = view.findViewById<TextInputEditText>(R.id.postal_code_contest_creation)
-        postalCodeText.setText(contestCreationViewModel.postalCode.value.toString())
         postalCodeText.setOnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) {
-                if(contestCreationViewModel.editPostalCode(postalCodeText.text.toString())) {
+                if (contestCreationViewModel.editPostalCode(postalCodeText.text.toString())) {
                     postalCodeText.setText(contestCreationViewModel.postalCode.value.toString())
                 }
             }
         }
-    }
-
-    private fun setupRadius(view : View) {
-        val radiusText = view.findViewById<TextInputEditText>(R.id.radius_contest_creation)
-        radiusText.setText(contestCreationViewModel.radius.value.toString())
-        radiusText.setOnFocusChangeListener { v, hasFocus ->
-            if (!hasFocus) {
-                if(contestCreationViewModel.editRadius(Integer.parseInt(radiusText.text.toString()))) {
-                    radiusText.setText(contestCreationViewModel.radius.value.toString())
-                }
+        lifecycleScope.launch {
+            contestCreationViewModel.postalCode.flowWithLifecycle(lifecycle).collect {
+                postalCodeText.setText(it)
             }
         }
     }
 
-    private fun setupCountryPicker(view : View) {
-        val countryPicker = view.findViewById<CountryPickerView>(R.id.contest_creation_country_picker)
-        Toast.makeText(context, countryPicker.tvCountryInfo.text , Toast.LENGTH_SHORT).show()
-        //countryPicker.setOnCountryChangeListener {
-        //    if(contestCreationViewModel.editCountry(countryPicker.selectedCountryName)) {
-        //        countryPicker.selectedCountryName
-        //    }
-        //}
+    private fun setupRadius(view: View) {
+        val radiusText = view.findViewById<TextInputEditText>(R.id.radius_contest_creation)
+        radiusText.setOnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus) {
+                if (contestCreationViewModel.editRadius(Integer.parseInt(radiusText.text.toString()))) {
+                    radiusText.setText(contestCreationViewModel.radius.value.toString())
+                }
+            }
+        }
+        lifecycleScope.launch {
+            contestCreationViewModel.radius.flowWithLifecycle(lifecycle).collect {
+                radiusText.setText(it ?: 0)
+            }
+        }
     }
 
-    private fun setupTitle(view : View) {
+    private fun setupCountryPicker(view: View) {
+        val countryPicker =
+            view.findViewById<CountryPickerView>(R.id.contest_creation_country_picker)
+
+        countryPicker.cpViewHelper.onCountryChangedListener = { selectedCountry: CPCountry? ->
+            if (!contestCreationViewModel.editCountry(selectedCountry?.name)) {
+                Toast.makeText(context, "Country not valid", Toast.LENGTH_SHORT).show()
+            }
+        }
+        lifecycleScope.launch {
+            contestCreationViewModel.country.flowWithLifecycle(lifecycle).collect {
+                countryPicker.cpViewHelper.cpDataStore.countryList.forEach { country ->
+                    if (country.name == it) {
+                        countryPicker.cpViewHelper.setCountry(country)
+                    }
+                }
+            }
+        }
+
+    }
+
+    private fun setupTitle(view: View) {
         val contestTitle = view.findViewById<TextInputEditText>(R.id.contest_creation_title)
         contestTitle.setText(contestCreationViewModel.contestTitle)
         contestTitle.setOnFocusChangeListener { v, hasFocus ->
@@ -151,7 +181,7 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
-    private fun setupPrivateCheckbox(view : View) {
+    private fun setupPrivateCheckbox(view: View) {
         val privateCheckbox = view.findViewById<CheckBox>(R.id.private_contest_checkbox)
         privateCheckbox.isChecked = contestCreationViewModel.isPrivate
         privateCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -159,14 +189,14 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
-    private fun setupMapButton(view : View) {
+    private fun setupMapButton(view: View) {
         val mapButton = view.findViewById<ImageView>(R.id.contest_creation_location_map)
         mapButton.setOnClickListener {
 
         }
     }
 
-    private fun setupDateButton(view : View) {
+    private fun setupDateButton(view: View) {
         val startDateButton = view.findViewById<Button>(R.id.date_period_contest)
         val startDateText = view.findViewById<EditText>(R.id.start_date_contest_text)
         val endDateText = view.findViewById<EditText>(R.id.end_date_contest_text)
@@ -180,7 +210,8 @@ class ContestCreationFragment : Fragment() {
         }
         datePicker.addOnPositiveButtonClickListener {
             startDateText.setText(datePicker.headerText.toString())
-            val pair : androidx.core.util.Pair<Long,Long> = datePicker.selection as androidx.core.util.Pair<Long, Long>
+            val pair: androidx.core.util.Pair<Long, Long> =
+                datePicker.selection as androidx.core.util.Pair<Long, Long>
             val formatter = SimpleDateFormat("dd/MM/yyyy")
             val begin = formatter.format(pair.first)
             val end = formatter.format(pair.second)
@@ -189,7 +220,7 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
-    private fun setupStartHoursButton(view : View) {
+    private fun setupStartHoursButton(view: View) {
         val startHourButton = view.findViewById<Button>(R.id.start_hour_contest)
         val startHourText = view.findViewById<EditText>(R.id.start_hour_contest_text)
         val hourPicker =
@@ -200,7 +231,7 @@ class ContestCreationFragment : Fragment() {
                 //.setTitle("Select Appointment time")
                 .build()
 
-        startHourButton.setOnClickListener{
+        startHourButton.setOnClickListener {
             hourPicker.show(requireActivity().supportFragmentManager, "hourPicker")
         }
         hourPicker.addOnPositiveButtonClickListener {
@@ -210,7 +241,7 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
-    private fun setupEndHoursButton(view : View) {
+    private fun setupEndHoursButton(view: View) {
         val endHoursButton = view.findViewById<Button>(R.id.end_hour_contest)
         val endHourText = view.findViewById<EditText>(R.id.end_hour_contest_text)
 
@@ -222,7 +253,7 @@ class ContestCreationFragment : Fragment() {
                 //.setTitle("Select Appointment time")
                 .build()
 
-        endHoursButton.setOnClickListener{
+        endHoursButton.setOnClickListener {
             hourPicker.show(requireActivity().supportFragmentManager, "hourPicker")
         }
         hourPicker.addOnPositiveButtonClickListener {
@@ -232,9 +263,10 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
-    private fun setupExpandButton(view: View){
+    private fun setupExpandButton(view: View) {
         val expandButton = view.findViewById<ImageView>(R.id.contest_creation_location_expand)
-        val locationDetailsContainer = view.findViewById<View>(R.id.contest_location_details_container)
+        val locationDetailsContainer =
+            view.findViewById<View>(R.id.contest_location_details_container)
 
         locationDetailsContainer.visibility = View.GONE
         expandButton.setImageResource(R.drawable.ic_chevron_up)
@@ -243,15 +275,14 @@ class ContestCreationFragment : Fragment() {
             if (locationDetailsContainer.visibility == View.GONE) {
                 locationDetailsContainer.visibility = View.VISIBLE
                 expandButton.setImageResource(R.drawable.ic_chevron_down)
-            }
-            else {
+            } else {
                 locationDetailsContainer.visibility = View.GONE
                 expandButton.setImageResource(R.drawable.ic_chevron_up)
             }
         }
     }
 
-    private fun populateAndUpdateTimeZone(view : View) {
+    private fun populateAndUpdateTimeZone(view: View) {
         val spinner = view.findViewById<Spinner>(R.id.contest_timezone_spinner)
         val idArray = TimeZone.getAvailableIDs()
         val idAdapter = ArrayAdapter<String>(
@@ -259,7 +290,7 @@ class ContestCreationFragment : Fragment() {
             idArray
         )
         idAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(idAdapter);
+        spinner.adapter = idAdapter;
 
         // now set the spinner to default timezone from the time zone settings
         for (i in idArray.indices) {

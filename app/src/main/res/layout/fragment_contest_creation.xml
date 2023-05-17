@@ -151,6 +151,7 @@
 
             <com.hbb20.CountryPickerView
                 android:id="@+id/contest_creation_country_picker"
+                app:cp_initialSelectionMode="autoDetectCounty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
