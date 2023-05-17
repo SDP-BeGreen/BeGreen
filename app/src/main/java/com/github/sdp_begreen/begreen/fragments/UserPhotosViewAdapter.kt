@@ -39,7 +39,6 @@ class UserPhotosViewAdapter(
 ) : RecyclerView.Adapter<UserPhotosViewAdapter.ViewHolder>() {
 
     private val db by inject<DB>(DB::class.java)
-    private val auth by inject<DB>(Auth::class.java)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         //TODO-------------------FOR DEMO---------------------
@@ -62,6 +61,10 @@ class UserPhotosViewAdapter(
         lifecycleScope.launch {
 
             val photo = photos?.get(position)
+
+            if (!db.userExists(photo?.takenBy!!)) {
+                return@launch
+            }
 
             val user = db.getUser(photo?.takenBy!!)
 

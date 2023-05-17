@@ -180,20 +180,20 @@ class MainActivityTest {
 
     @Test
     fun pressFeedMenuDisplayFeedFragment() {
-        onView(withId(R.id.bottomMenuFeed))
-            .check(matches(isDisplayed()))
 
-        onView(withId(R.id.bottomMenuFeed))
-            .perform(click())
+        runTest {
 
-        // TODO : to correct
+            onView(withId(R.id.bottomMenuFeed))
+                .check(matches(isDisplayed()))
+                .perform(click())
 
-      //  onView(withId(R.id.feed_list)).check(matches(isDisplayed()))
+            onView(withId(R.id.feed_list)).check(matches(isDisplayed()))
 
-        // Go back to camera to test restore outline version of feed menu icon
-        // Hard to compare icon in test
-        //onView(withId(R.id.bottomMenuCamera))
-        //    .perform(click())
+            // Go back to camera to test restore outline version of feed menu icon
+            // Hard to compare icon in test
+            onView(withId(R.id.bottomMenuCamera))
+              .perform(click())
+        }
     }
 
     @Test
