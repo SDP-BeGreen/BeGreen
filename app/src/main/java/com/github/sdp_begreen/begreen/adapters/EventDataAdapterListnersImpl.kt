@@ -51,6 +51,7 @@ class EventDataAdapterListenersImpl<T : Event<T>, K : EventParticipant>(
                 if (eventsFragmentViewModel.participationMap.value[eventId] == true) {
                     eventsFragmentViewModel.withdraw(eventId)
                 } else {
+
                     eventsFragmentViewModel.participate(eventId)
                 }
                 setJoinButtonText(button, eventId)
