@@ -45,18 +45,19 @@ class ContestCreationFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_contest_creation, container, false)
-        val contestTitle = view.findViewById<TextInputEditText>(R.id.contest_creation_title)
-        val privateCheckbox = view.findViewById<CheckBox>(R.id.private_contest_checkbox)
-        val mapButton = view.findViewById<ImageView>(R.id.contest_creation_location_map)
-        val cityText = view.findViewById<TextInputEditText>(R.id.city_contest_creation)
+
+
+
         val postalCodeText = view.findViewById<TextInputEditText>(R.id.postal_code_contest_creation)
         val countryPicker = view.findViewById<CountryPickerView>(R.id.contest_creation_country_picker)
         val radiusText = view.findViewById<TextInputEditText>(R.id.radius_contest_creation)
         val cancelCreationButton = view.findViewById<Button>(R.id.contest_cancel_button)
         val confirmCreationButton = view.findViewById<Button>(R.id.contest_confirm_button)
 
-
+        setupTitle(view)
+        setupPrivateCheckbox(view)
         setupExpandButton(view)
+        setupCity(view)
         populateAndUpdateTimeZone(view)
         setupDateButton(view)
         setupStartHoursButton(view)
@@ -64,13 +65,44 @@ class ContestCreationFragment : Fragment() {
         return view
     }
 
-    fun setupMapButton(mapButton: ImageView) {
+    private fun setupCity(view : View) {
+        val cityText = view.findViewById<TextInputEditText>(R.id.city_contest_creation)
+        cityText.setText(contestCreationViewModel.city.value.toString())
+        cityText.setOnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus) {
+                if(contestCreationViewModel.editCity(cityText.text.toString())) {
+                    cityText.setText(contestCreationViewModel.city.value.toString())
+                }
+            }
+        }
+    }
+
+    private fun setupTitle(view : View) {
+        val contestTitle = view.findViewById<TextInputEditText>(R.id.contest_creation_title)
+        contestTitle.setText(contestCreationViewModel.contestTitle)
+        contestTitle.setOnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus) {
+                contestCreationViewModel.contestTitle = contestTitle.text.toString()
+            }
+        }
+    }
+
+    private fun setupPrivateCheckbox(view : View) {
+        val privateCheckbox = view.findViewById<CheckBox>(R.id.private_contest_checkbox)
+        privateCheckbox.isChecked = contestCreationViewModel.isPrivate
+        privateCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
+            contestCreationViewModel.isPrivate = isChecked
+        }
+    }
+
+    private fun setupMapButton(view : View) {
+        val mapButton = view.findViewById<ImageView>(R.id.contest_creation_location_map)
         mapButton.setOnClickListener {
 
         }
     }
 
-    fun setupDateButton(view : View) {
+    private fun setupDateButton(view : View) {
         val startDateButton = view.findViewById<Button>(R.id.date_period_contest)
         val startDateText = view.findViewById<TextClock>(R.id.start_date_contest_text)
         val endDateText = view.findViewById<TextClock>(R.id.end_date_contest_text)
@@ -94,7 +126,7 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
-    fun setupStartHoursButton(view : View) {
+    private fun setupStartHoursButton(view : View) {
         val startHourButton = view.findViewById<Button>(R.id.start_hour_contest)
         val startHourText = view.findViewById<TextClock>(R.id.start_hour_contest_text)
         val hourPicker =
@@ -115,7 +147,7 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
-    fun setupEndHoursButton(view : View) {
+    private fun setupEndHoursButton(view : View) {
         val endHoursButton = view.findViewById<Button>(R.id.end_hour_contest)
         val endHourText = view.findViewById<TextClock>(R.id.end_hour_contest_text)
 
@@ -137,7 +169,7 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
-    fun setupExpandButton(view: View){
+    private fun setupExpandButton(view: View){
         val expandButton = view.findViewById<ImageView>(R.id.contest_creation_location_expand)
         val locationDetailsContainer = view.findViewById<View>(R.id.contest_location_details_container)
         expandButton.setOnClickListener {
@@ -152,7 +184,7 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
-    fun populateAndUpdateTimeZone(view : View) {
+    private fun populateAndUpdateTimeZone(view : View) {
         val spinner = view.findViewById<Spinner>(R.id.contest_timezone_spinner)
         val idArray = TimeZone.getAvailableIDs()
         val idAdapter = ArrayAdapter<String>(
