@@ -66,7 +66,7 @@ class UserViewAdapter(
             lifecycleScope.launch {
                 val img = user.let { user ->
                     user.profilePictureMetadata?.let { pMetadata ->
-                        db.getUserProfilePicture(user.id)
+                        db.getUserProfilePicture(pMetadata, user.id)
                     }
                 }
                     ?: BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture)

@@ -145,7 +145,7 @@ object FirebaseDB: DB {
 
     override suspend fun getImage(metadata: PhotoMetadata, timeout: Long): Bitmap? {
 
-        val userId = metadata.takenBy!!
+        val userId = metadata.takenBy ?: return null
 
         return metadata.pictureId?.let {
             getPicture(storageReference.child(USERS_PATH).child(userId).child(
@@ -153,13 +153,18 @@ object FirebaseDB: DB {
         }
     }
 
-    override suspend fun getUserProfilePicture(userId: String, timeout: Long): Bitmap? {
+    override suspend fun getUserProfilePicture(metadata: ProfilePhotoMetadata, userId: String, timeout: Long): Bitmap? {
 
-        if (userId.isNullOrBlank())
-            throw java.lang.IllegalArgumentException("The userId cannot be a blank or null string")
+        if (userId.isBlank())
+            throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
 
-        return getPicture(storageReference.child(USERS_PATH).child(userId).child(
-                USER_PROFILE_PICTURE_METADATA).child("${userId}${USER_PROFILE_PICTURE_ID_SUFFIX}"), timeout)
+        return metadata.pictureId?.let {
+            getPicture(
+                storageReference.child(USERS_PATH).child(userId).child(
+                    USER_PROFILE_PICTURE_METADATA
+                ).child(it), timeout
+            )
+        }
     }
 
     override suspend fun addBin(bin: Bin): Boolean {

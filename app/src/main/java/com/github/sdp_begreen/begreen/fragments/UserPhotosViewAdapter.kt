@@ -61,21 +61,20 @@ class UserPhotosViewAdapter(
         lifecycleScope.launch {
 
             val photo = photos?.get(position)
-            val userId = photo?.takenBy
+            val userId = photo?.takenBy ?: return@launch
 
-            if (userId == null) {
-                return@launch
-            }
-
-            val user = db.getUser(photo?.takenBy!!)
+            val user = db.getUser(userId)
 
             if (isFeed) {
 
                 holder.avatarView.visibility = View.VISIBLE
 
                 // Display avatar if on feed
-                val avatarImage = db.getUserProfilePicture(photo.takenBy!!)
-                holder.avatarView.setImageBitmap(avatarImage)
+                if (user?.profilePictureMetadata != null) {
+
+                    val avatarImage = db.getUserProfilePicture(user.profilePictureMetadata!!, userId)
+                    holder.avatarView.setImageBitmap(avatarImage)
+                }
 
             } else {
 

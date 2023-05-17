@@ -123,7 +123,7 @@ interface DB {
      * @throws DatabaseTimeoutException if the database could not be reached
      * @throws DatabaseException if an exception occurred while retrieving the image
      */
-    suspend fun getUserProfilePicture(userId: String, timeout: Long = TIMEOUT): Bitmap?
+    suspend fun getUserProfilePicture(metadata: ProfilePhotoMetadata, userId: String, timeout: Long = TIMEOUT): Bitmap?
 
     /**
      * Store the given [bin] in the database and assigns a fresh id to the bin

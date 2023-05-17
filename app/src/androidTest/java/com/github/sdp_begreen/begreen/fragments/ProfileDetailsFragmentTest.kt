@@ -92,7 +92,7 @@ class ProfileDetailsFragmentTest {
                 // setup basic get user and getProfilePicture use in multiple tests
                 `when`(db.getUser(userId1))
                     .thenReturn(user1)
-                `when`(db.getUserProfilePicture(userId1))
+                `when`(db.getUserProfilePicture(userProfilePicturePhotoMetadata, userId1))
                     .thenReturn(fakePicture1)
                 // add a small delay, just to be sure that it is triggered after initialization
                 // and arrive second, after the initial null value

@@ -32,7 +32,7 @@ class ConnectedUserViewModel: ViewModel() {
         // and update the currentUserProfilePicture value
         it?.also { user ->
             user.profilePictureMetadata?.let { photo ->
-                db.getUserProfilePicture(user.id)
+                db.getUserProfilePicture(photo, user.id)
             }?.also { photo -> mutableCurrentUserProfilePicture.value = photo }
         }
     }

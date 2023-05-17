@@ -62,7 +62,7 @@ class ConnectedUserViewModelTest: KoinTest {
                 `when`(db.getUser(userId1)).thenReturn(user1)
                 `when`(db.getUser(userId2)).thenReturn(user2)
                 `when`(db.getUser(userId3)).thenReturn(user3)
-                `when`(db.getUserProfilePicture(userId1))
+                `when`(db.getUserProfilePicture(userPhotoMetadata, userId1))
                     .thenReturn(fakePicture1)
                 // add a small delay, just to be sure that it is triggered after initialization
                 // and arrive second, after the initial null value
@@ -204,7 +204,7 @@ class ConnectedUserViewModelTest: KoinTest {
     @Test
     fun currentUserProfilePictureCorrectlyUpdatedUponNewAuth() {
         runTest {
-            `when`(db.getUserProfilePicture(userId3))
+            `when`(db.getUserProfilePicture(userPhotoMetadata2, userId3))
                 .thenReturn(fakePicture2)
             `when`(auth.getFlowUserIds())
                 .thenReturn(flowOf(userId1, userId3).onEach { delay(10) })
