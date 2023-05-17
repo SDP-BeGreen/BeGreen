@@ -39,7 +39,7 @@ class MapFragmentTest {
      */
     companion object {
 
-        private val db: DB = mock(DB::class.java)
+        private val db: DB by lazy { mock() }
 
         private val bins = mutableListOf(
             Bin("1", TrashCategory.CLOTHES, 4.3, 2.8),

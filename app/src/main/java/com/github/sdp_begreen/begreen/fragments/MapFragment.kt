@@ -164,7 +164,7 @@ class MapFragment : Fragment() {
         }
     }
 
-    private val hasPermission = ContextCompat.checkSelfPermission(
+    private fun hasPermission() = ContextCompat.checkSelfPermission(
         requireContext(),
         Manifest.permission.ACCESS_FINE_LOCATION
     ) == PackageManager.PERMISSION_GRANTED
@@ -174,7 +174,7 @@ class MapFragment : Fragment() {
      * Displays the user current location. Asks for permissions if needed.
      */
     private fun checkUserLocationPermissions() {
-        if (!hasPermission)
+        if (!hasPermission())
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         else
             displayUserLocation()
@@ -246,7 +246,7 @@ class MapFragment : Fragment() {
      */
     private fun addNewBin(trashCategory: TrashCategory) {
 
-        if (!hasPermission)
+        if (!hasPermission())
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         else {
 
