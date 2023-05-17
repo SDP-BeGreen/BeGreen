@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -21,8 +20,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/rectangular_background"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="3dp"
+        android:paddingHorizontal="5dp"
+        android:paddingVertical="1dp"
         app:layout_constraintBottom_toBottomOf="@+id/mapFragment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -31,14 +32,17 @@
             android:id="@+id/binBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
             android:text="@string/add_new_bin" />
 
         <Spinner
-            android:id="@+id/binTypeSelector"
+            android:id="@+id/trashCategorySelector"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/change_bin_type"
             android:dropDownVerticalOffset="-100dp"
+            android:gravity="center"
             android:minHeight="36dp"
             android:spinnerMode="dropdown" />
     </LinearLayout>
