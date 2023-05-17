@@ -97,14 +97,14 @@ class CameraWithUIFragmentTest {
     }
 
 
-    @Test
+    /*@Test
     fun clickOnSwitchRedirectOnCamera() {
         // Click the switch cam
         onView(withId(R.id.img_switch_camera)).perform(click())
         onView(withId(R.id.camera_capture_button)).check(matches(isDisplayed()))
     }
 
-    /*@Test
+    @Test
     fun clickOnSwitchTwoRedirectOnCamera() {
         // Click the switch cam
         onView(withId(R.id.img_switch_camera)).perform(click())

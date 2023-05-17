@@ -14,10 +14,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.everyItem
-import org.hamcrest.Matchers.`in`
-import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.*
 import org.junit.Assert.assertThrows
 import org.junit.ClassRule
 import org.junit.Rule
@@ -254,4 +251,101 @@ class EventParticipantServiceTest {
 
         }
     }
+
+    @Test
+    fun getParticipantBlankEventIdShouldThrowIllegalArgumentException() {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            runTest {
+                EventParticipantServiceImpl.getParticipant(
+                    RootPath.MEETINGS,
+                    " ",
+                    "id",
+                    MeetingParticipant::class.java
+                )
+            }
+        }
+
+        assertThat(
+            exception.message,
+            `is`(equalTo("The event id cannot be blank"))
+        )
+    }
+
+    @Test
+    fun getParticipantBlankParticipantIdIdShouldThrowIllegalArgumentException() {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            runTest {
+                EventParticipantServiceImpl.getParticipant(
+                    RootPath.MEETINGS,
+                    "id",
+                    " ",
+                    MeetingParticipant::class.java
+                )
+            }
+        }
+
+        assertThat(
+            exception.message,
+            `is`(equalTo("The participant id cannot be blank"))
+        )
+    }
+
+    @Test
+    fun getContestParticipantWithMeetingRootPathShouldThrowIllegalArgumentException() {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            runTest {
+                EventParticipantServiceImpl.getParticipant(
+                    RootPath.MEETINGS,
+                    "meeting id",
+                    "contest participant id",
+                    ContestParticipant::class.java
+                )
+            }
+        }
+
+        assertThat(
+            exception.message,
+            `is`(equalTo("The root path is of type ${RootPath.MEETINGS.name} but the expected participant type is ContestParticipant"))
+        )
+    }
+
+    @Test
+    fun getMeetingParticipantWithContestRootPathShouldThrowIllegalArgumentException() {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            runTest {
+                EventParticipantServiceImpl.getParticipant(
+                    RootPath.CONTESTS,
+                    "contest id",
+                    "meeting participant id",
+                    MeetingParticipant::class.java
+                )
+            }
+        }
+
+        assertThat(
+            exception.message,
+            `is`(equalTo("The root path is of type ${RootPath.CONTESTS.name} but the expected participant type is MeetingParticipant"))
+        )
+    }
+
+    @Test
+    fun getParticipantReturnsFreshlyAddedParticipant() {
+
+        runTest {
+            val storedParticipant = MeetingParticipant("Parcicipant Id 420")
+            EventParticipantServiceImpl.addParticipant(
+                RootPath.MEETINGS,
+                "Meeting Id 69",
+                storedParticipant
+            )
+            val retrievedParticipant = EventParticipantServiceImpl.getParticipant(
+                RootPath.MEETINGS,
+                "Meeting Id 69",
+                storedParticipant.id!!,
+                MeetingParticipant::class.java
+            )
+            assertThat(storedParticipant, `is`(equalTo(retrievedParticipant)))
+        }
+    }
+
 }

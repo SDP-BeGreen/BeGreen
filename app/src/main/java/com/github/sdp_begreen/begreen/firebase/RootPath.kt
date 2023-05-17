@@ -5,5 +5,5 @@ package com.github.sdp_begreen.begreen.firebase
  */
 enum class RootPath(val path: String) {
     MEETINGS("meetings"),
-    CONTESTS("contests"),
+    CONTESTS("contests")
 }

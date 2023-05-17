@@ -27,8 +27,8 @@ object EventParticipantServiceImpl : EventParticipantService {
         clazz: Class<T>
     ): T {
         checkArgument(eventId.isNotBlank(), "The event id cannot be blank")
+        checkArgument(participantId.isNotBlank(), "The participant id cannot be blank")
         checkRootPathMatchParticipantClassImpl(rootPath, clazz)
-        if (clazz == ContestParticipant::class.java) Log.d("SendPostFragment", rootPath.path + "/" + eventId + "/" + PARTICIPANTS_PATH + "/" + participantId)
         return getObjFromDb(
             dbRef.child(rootPath.path).child(eventId).child(PARTICIPANTS_PATH).child(participantId),
             clazz,
