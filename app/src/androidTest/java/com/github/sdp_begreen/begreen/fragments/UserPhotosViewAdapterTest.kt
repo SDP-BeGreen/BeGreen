@@ -1,28 +1,76 @@
 package com.github.sdp_begreen.begreen.fragments
 
+import android.graphics.Bitmap
 import android.widget.LinearLayout
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.testing.TestLifecycleOwner
 import androidx.test.ext.junit.rules.ActivityScenarioRule
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.activities.MainActivity
+import com.github.sdp_begreen.begreen.firebase.Auth
+import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
+import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert
+import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.koin.dsl.module
+import org.mockito.Mockito
+import org.mockito.kotlin.whenever
 
+@RunWith(AndroidJUnit4::class)
+@LargeTest
 class UserPhotosViewAdapterTest {
+
+    companion object {
+        private val db: DB = Mockito.mock(DB::class.java)
+        private val auth: Auth = Mockito.mock(Auth::class.java)
+        private val user = User(id = "10", score = 94, displayName = "Messi")
+        private val userId = "10"
+        private val fakePicture = Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888)
+        private val authUserFlow = MutableStateFlow<String?>(userId)
+
+        @OptIn(ExperimentalCoroutinesApi::class)
+        @BeforeClass
+        @JvmStatic
+        fun setUp() {
+            // The implementation need to be provided before the rule is executed,
+            // that's why we do it in the beforeClass method
+            runTest {
+                // setup basic get user and getProfilePicture use in multiple tests
+              //  whenever(db.getUser(userId)).thenReturn(user)
+              //  whenever(db.getUserProfilePicture(userId)).thenReturn(fakePicture)
+              //  whenever(auth.getConnectedUserId()).thenReturn(userId)
+              //  whenever(auth.getFlowUserIds()).thenReturn(authUserFlow.onEach { delay(10) })
+            }
+        }
+    }
+
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
+
+    // Setup the koin test rule
     @get:Rule
-    val koinTestRule = KoinTestRule()
+    val koinTestRule = KoinTestRule(
+        modules = listOf(module {
+            single { db }
+            single { auth }
+        })
+    )
 
     private val photoList = listOf(
         TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),

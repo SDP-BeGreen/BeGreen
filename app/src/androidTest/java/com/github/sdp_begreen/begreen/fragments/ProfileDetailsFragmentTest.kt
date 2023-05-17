@@ -47,22 +47,24 @@ import java.util.*
 @LargeTest
 class ProfileDetailsFragmentTest {
     companion object {
+
+        private const val userId1 = "1234"
+
         val photos = arrayListOf(
             ProfilePhotoMetadata(
                 "erfs",
                 ParcelableDate.now,
-                "0"
+                userId1
             ),
 
             ProfilePhotoMetadata(
                 "erfs",
                 ParcelableDate.now,
-                "0"
+                userId1
             )
         )
         private val userProfilePicturePhotoMetadata = ProfilePhotoMetadata("user1_profile_picture")
 
-        private const val userId1 = "1234"
         private val user1 = User(
             userId1,
             142,

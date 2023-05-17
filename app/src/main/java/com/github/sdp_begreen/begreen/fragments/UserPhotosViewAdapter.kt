@@ -16,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.databinding.FragmentUserPhotoBinding
+import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.FirebaseDB
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
@@ -38,6 +39,7 @@ class UserPhotosViewAdapter(
 ) : RecyclerView.Adapter<UserPhotosViewAdapter.ViewHolder>() {
 
     private val db by inject<DB>(DB::class.java)
+    private val auth by inject<DB>(Auth::class.java)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         //TODO-------------------FOR DEMO---------------------
@@ -61,7 +63,7 @@ class UserPhotosViewAdapter(
 
             val photo = photos?.get(position)
 
-            val user = db.getUser(photo?.takenBy!!)!!
+            val user = db.getUser(photo?.takenBy!!)
 
             if (isFeed) {
 
@@ -81,7 +83,7 @@ class UserPhotosViewAdapter(
             if (photo is TrashPhotoMetadata) {
 
                 // Set default value
-                holder.titleView.text = user!!.displayName
+                holder.titleView.text = user?.displayName ?: "Unknown user"
                 holder.subtitleView.text = (photo?.takenOn?.toString()
                     ?: "Unknown date") + " | " + (photo?.trashCategory?.title
                     ?: "No category")

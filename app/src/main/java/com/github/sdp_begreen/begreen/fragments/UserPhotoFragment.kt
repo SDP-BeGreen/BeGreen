@@ -46,7 +46,7 @@ class UserPhotoFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-
+                
                 adapter = UserPhotosViewAdapter(photoList?: listOf(), isFeed, lifecycleScope)
             }
             if(!isFeed){
