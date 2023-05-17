@@ -3,7 +3,6 @@ package com.github.sdp_begreen.begreen.models.event
 import android.location.Location
 import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.models.CustomLatLng
-import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.database.Exclude
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -37,9 +36,9 @@ data class Contest(
     /**
      * Tell whether the given [location] is in range of this contest
      * @param location the location for which we want to check if they fall within the range of this contest
-     * @return true if the given [location] is in range of this contest, and false otherwise
+     * @return true if the given [location] is in range of this contest, false if it is not in range,
+     * and null if the startCoordinates of this Contest are null
      */
     fun isInRange(location: Location) =
         startCoordinates?.let { it.distanceFrom(location)?.let { dist -> dist <= radius } }
-            ?: false
 }

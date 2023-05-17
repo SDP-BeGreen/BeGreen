@@ -36,7 +36,7 @@ interface Event<T> : CopyableWithId<T>, Parcelable {
      * @return true if the event is finished, null if the ending date is null and false otherwise
      */
     fun isFinished(): Boolean? {
-        return startDateTime?.let { it > System.currentTimeMillis() }
+        return endDateTime?.let { it < System.currentTimeMillis() }
     }
 
     /**

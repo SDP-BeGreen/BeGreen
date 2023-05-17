@@ -249,9 +249,9 @@ class SendPostFragment : Fragment() {
                             location.toMapLocation()
                         )
                     )
-                    if (participationMap[contest.id] == true && contest.isActive() == true && contest.isInRange(
-                            location.toMapLocation()
-                        )
+                    if (participationMap[contest.id] == true &&
+                        contest.isActive() == true &&
+                        contest.isInRange(location.toMapLocation()) == true
                     ) {
                         val updatedParticipant = eventParticipantService.getParticipant(
                             RootPath.CONTESTS,
