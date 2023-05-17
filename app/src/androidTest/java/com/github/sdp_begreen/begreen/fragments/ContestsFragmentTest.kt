@@ -81,7 +81,7 @@ class ContestsFragmentTest {
         @JvmStatic
         fun setupMock() {
             runTest {
-                whenever(eventService.getAllUpcomingEvents(RootPath.CONTESTS, Contest::class.java))
+                whenever(eventService.getAllEvents(RootPath.CONTESTS, Contest::class.java))
                     .thenReturn(flowOf(contests))
                 whenever(
                     participantService.getAllParticipants(

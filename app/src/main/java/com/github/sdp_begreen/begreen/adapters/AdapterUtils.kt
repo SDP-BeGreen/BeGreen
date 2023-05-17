@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.sdp_begreen.begreen.models.event.Event
 import com.github.sdp_begreen.begreen.models.event.EventParticipant
 import com.github.sdp_begreen.begreen.services.GeocodingService
-import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.github.sdp_begreen.begreen.viewModels.EventsFragmentViewModel
 import kotlinx.coroutines.launch
 

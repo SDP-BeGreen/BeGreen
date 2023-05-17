@@ -46,49 +46,31 @@ object EventServiceImpl : EventService {
         )
     }
 
-    override suspend fun <T : Event<T>> getAllUpcomingEvents(
+    override suspend fun <T : Event<T>> getAllEvents(
         rootPath: RootPath,
         eventImplType: Class<T>
     ): Flow<List<T>> {
-        return getAllEvents(rootPath, eventImplType, true)
+        checkRootPathMatchEventClassImpl(rootPath, eventImplType)
+        val orderBy = when (rootPath) {
+            RootPath.MEETINGS -> "startDateTime"
+            RootPath.CONTESTS -> "endDateTime"
+        }
+        return getFlowOfObjects(
+            dbRef.child(rootPath.path).orderByChild(orderBy)
+                .startAt(System.currentTimeMillis().toDouble()),
+            eventImplType
+        )
     }
 
-    override suspend fun <T : Event<T>> getAllOngoingEvents(
+    /*override suspend fun <T : Event<T>> getAllOngoingEvents(
         rootPath: RootPath,
         eventImplType: Class<T>
     ): Flow<List<T>> {
         return getAllEvents(
             rootPath,
             eventImplType,
-            false
         ).map { events -> events.filter { it.isStarted() ?: false } }
-    }
-
-    /**
-     * If [notStartedEvents] is true, returns the flow of all events that did not start yet and
-     * if [notStartedEvents] is false, returns the flow of all events that did not end yet
-     */
-    private suspend fun <T : Event<T>> getAllEvents(
-        rootPath: RootPath,
-        eventImplType: Class<T>,
-        notStartedEvents: Boolean
-    ): Flow<List<T>> {
-        checkRootPathMatchEventClassImpl(rootPath, eventImplType)
-
-        return if (notStartedEvents) {
-            getFlowOfObjects(
-                dbRef.child(rootPath.path).orderByChild("startDateTime")
-                    .startAt(System.currentTimeMillis().toDouble()),
-                eventImplType
-            )
-        } else {
-            getFlowOfObjects(
-                dbRef.child(rootPath.path).orderByChild("endDateTime")
-                    .startAt(System.currentTimeMillis().toDouble()),
-                eventImplType
-            )
-        }
-    }
+    }*/
 
     override suspend fun <T : Event<T>> getEvent(
         eventId: String,

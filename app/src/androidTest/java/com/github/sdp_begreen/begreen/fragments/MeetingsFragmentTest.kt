@@ -127,7 +127,7 @@ class MeetingsFragmentTest {
             runTest {
 
                 // Initial setup of getAllMeetings
-                `when`(eventService.getAllUpcomingEvents(RootPath.MEETINGS, Meeting::class.java))
+                `when`(eventService.getAllEvents(RootPath.MEETINGS, Meeting::class.java))
                     .thenReturn(meetingsFlow)
 
                 // setup getAllParticipants for initials meetings

@@ -63,7 +63,7 @@ class EventDataAdapterListenerImplTest {
                     listOf(Address(Locale.FRENCH).apply { locality = "Lausanne" })
                 )
 
-                whenever(eventService.getAllUpcomingEvents(RootPath.CONTESTS, Contest::class.java))
+                whenever(eventService.getAllEvents(RootPath.CONTESTS, Contest::class.java))
                     .thenReturn(
                         flowOf(
                             listOf(

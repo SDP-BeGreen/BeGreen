@@ -22,10 +22,7 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantService
-import com.github.sdp_begreen.begreen.models.ParcelableDate
-import com.github.sdp_begreen.begreen.models.TrashCategory
-import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
-import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.models.*
 import com.github.sdp_begreen.begreen.models.event.Contest
 import com.github.sdp_begreen.begreen.models.event.ContestParticipant
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
@@ -163,6 +160,8 @@ class SendPostFragment : Fragment() {
                     // TODO : Let the user choose the category like what we did in googlemap for the bin category
                     val category = TrashCategory.ORGANIC
 
+                    val location = userLocation?.let { loc -> CustomLatLng.fromLocation(loc) }
+
                     /*
                     //fetch category on UI
                     view?.findViewById<TextInputEditText>(R.id.post_category)?.also { cat ->
@@ -170,7 +169,14 @@ class SendPostFragment : Fragment() {
                     }*/
 
                     metadata =
-                        TrashPhotoMetadata(null, ParcelableDate.now, user.id, caption, category)
+                        TrashPhotoMetadata(
+                            null,
+                            ParcelableDate.now,
+                            user.id,
+                            caption,
+                            category,
+                            location
+                        )
 
                 }
 
@@ -213,7 +219,7 @@ class SendPostFragment : Fragment() {
 
                 // update the user's score in the active contests
                 it.trashCategory?.also { category ->
-                    userLocation?.also { location ->
+                    it.location?.also { location ->
                         contestsUpdateScores(category, location)
                     }
                 }
@@ -223,38 +229,46 @@ class SendPostFragment : Fragment() {
 
     private suspend fun contestsUpdateScores(
         trashCategory: TrashCategory,
-        location: Location,
+        location: CustomLatLng,
     ) {
         Log.d("SendPostFragment", "User location: " + location)
         Log.d("SendPostFragment", "Updating user's contest score")
         Log.d("SendPostFragment", "User id: " + connectedUserViewModel.currentUser.value?.id)
 
         connectedUserViewModel.currentUser.value?.id?.also { participantId ->
-            val participationMap = eventsFragmentViewModel.participationMap./*last() */dropWhile { it.isEmpty() }.first()
+            val participationMap =
+                eventsFragmentViewModel.participationMap.dropWhile { it.isEmpty() }.first()
             Log.d("SendPostFragment", "Contest IDs: " + eventsFragmentViewModel.allEvents.value)
 
-            eventsFragmentViewModel.allEvents.dropWhile { it.isEmpty() }.first().forEach { contest ->
-                Log.d("SendPostFragment", "ContestID: " + contest.id + " participates?: " + (participationMap[contest.id] == true) +
-                " isActive?: " + contest.isActive() + " is in range?: " + contest.isInRange(location))
-                if (participationMap[contest.id] == true /*&& contest.isActive()*/ //TODO: uncomment this when active Contests will be in the flow
-                    && contest.isInRange(location)
-                ) {
-                    val updatedParticipant = eventParticipantService.getParticipant(
-                        RootPath.CONTESTS,
-                        contest.id!!,
-                        participantId,
-                        ContestParticipant::class.java
-                    )
-                    eventParticipantService.addParticipant(
-                        RootPath.CONTESTS,
-                        contest.id!!,
-                        updatedParticipant.copy(
-                            score = updatedParticipant.score?.plus(trashCategory.value)
-                                ?: trashCategory.value
+            eventsFragmentViewModel.allEvents.dropWhile { it.isEmpty() }.first()
+                .forEach { contest ->
+                    Log.d(
+                        "SendPostFragment",
+                        "ContestID: " + contest.id + " participates?: " + (participationMap[contest.id] == true) +
+                                " isActive?: " + contest.isActive() + " is in range?: " + contest.isInRange(
+                            location.toMapLocation()
                         )
                     )
+                    if (participationMap[contest.id] == true && contest.isActive() == true && contest.isInRange(
+                            location.toMapLocation()
+                        )
+                    ) {
+                        val updatedParticipant = eventParticipantService.getParticipant(
+                            RootPath.CONTESTS,
+                            contest.id!!,
+                            participantId,
+                            ContestParticipant::class.java
+                        )
+                        eventParticipantService.addParticipant(
+                            RootPath.CONTESTS,
+                            contest.id!!,
+                            updatedParticipant.copy(
+                                score = updatedParticipant.score?.plus(trashCategory.value)
+                                    ?: trashCategory.value
+                            )
+                        )
+                    }
                 }
-            }
         }
 
     }

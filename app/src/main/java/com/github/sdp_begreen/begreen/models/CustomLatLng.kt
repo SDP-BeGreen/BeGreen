@@ -21,12 +21,25 @@ data class CustomLatLng(var latitude: Double? = null, var longitude: Double? = n
          * Factory method to create a new [CustomLatLng] instance from an existing [LatLng].
          */
         fun fromMapLatLng(latLng: LatLng) = CustomLatLng(latLng.latitude, latLng.longitude)
+
+        /**
+         * Factory method to create a new [CustomLatLng] instance from an existing [Location]
+         */
+        fun fromLocation(location: Location) = CustomLatLng(location.latitude, location.longitude)
     }
 
     /**
      * Function to convert a [CustomLatLng] to a [LatLng]
      */
     fun toMapLatLng() = LatLng(latitude ?: 0.0, longitude ?: 0.0)
+
+    /**
+     * Function to convert a [CustomLatLng] to a [Locatiom]
+     */
+    fun toMapLocation() = Location(LocationManager.GPS_PROVIDER).also {
+        it.latitude = latitude ?: 0.0
+        it.longitude = longitude ?: 0.0
+    }
 
     /**
      * Computes the distance with the given [location]

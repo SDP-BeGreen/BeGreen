@@ -95,7 +95,7 @@ class EventsFragmentViewModelTest {
 
                 // Initial setup of getAllMeetings
                 `when`(
-                    eventService.getAllUpcomingEvents(
+                    eventService.getAllEvents(
                         RootPath.MEETINGS,
                         Meeting::class.java
                     )

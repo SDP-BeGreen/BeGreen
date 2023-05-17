@@ -252,7 +252,7 @@ class EventServiceImplTest {
         )
 
         runTest {
-            val list = EventServiceImpl.getAllUpcomingEvents(RootPath.MEETINGS, Meeting::class.java).first()
+            val list = EventServiceImpl.getAllEvents(RootPath.MEETINGS, Meeting::class.java).first()
             // As its hard to now exactly how many meetings are going to be in the database when
             // we run this test, as test are executed in any order, some new meetings may have
             // been added in between, we check that at least all the meetings from the list `meetings`
@@ -282,7 +282,7 @@ class EventServiceImplTest {
         runTest() {
             val channel = Channel<List<Meeting>>(1)
             backgroundScope.launch {
-                EventServiceImpl.getAllUpcomingEvents(RootPath.MEETINGS, Meeting::class.java).collect {
+                EventServiceImpl.getAllEvents(RootPath.MEETINGS, Meeting::class.java).collect {
                     channel.send(it)
                 }
             }
@@ -356,7 +356,7 @@ class EventServiceImplTest {
             val newMeeting3 = EventServiceImpl.createEvent(meeting3)
 
             val meetings =
-                EventServiceImpl.getAllUpcomingEvents(RootPath.MEETINGS, Meeting::class.java).first()
+                EventServiceImpl.getAllEvents(RootPath.MEETINGS, Meeting::class.java).first()
 
             // check that those two new meeting are in the correct order
             assertThat(listOf(newMeeting1, newMeeting2), `is`(inWithOrder(meetings)))
@@ -370,7 +370,7 @@ class EventServiceImplTest {
     fun getAllEventsMeetingsRootPathContestThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
-                EventServiceImpl.getAllUpcomingEvents(RootPath.MEETINGS, Contest::class.java)
+                EventServiceImpl.getAllEvents(RootPath.MEETINGS, Contest::class.java)
             }
         }
 
@@ -384,7 +384,7 @@ class EventServiceImplTest {
     fun getAllEventsContestRootPathMeetingShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
-                EventServiceImpl.getAllUpcomingEvents(RootPath.CONTESTS, Meeting::class.java)
+                EventServiceImpl.getAllEvents(RootPath.CONTESTS, Meeting::class.java)
             }
         }
 
