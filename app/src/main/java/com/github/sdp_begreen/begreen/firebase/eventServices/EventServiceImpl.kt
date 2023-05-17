@@ -11,7 +11,6 @@ import com.github.sdp_begreen.begreen.models.event.Event
 import com.github.sdp_begreen.begreen.utils.checkArgument
 import com.github.sdp_begreen.begreen.utils.checkRootPathMatchEventClassImpl
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import org.koin.java.KoinJavaComponent.inject
 
 object EventServiceImpl : EventService {
@@ -61,16 +60,6 @@ object EventServiceImpl : EventService {
             eventImplType
         )
     }
-
-    /*override suspend fun <T : Event<T>> getAllOngoingEvents(
-        rootPath: RootPath,
-        eventImplType: Class<T>
-    ): Flow<List<T>> {
-        return getAllEvents(
-            rootPath,
-            eventImplType,
-        ).map { events -> events.filter { it.isStarted() ?: false } }
-    }*/
 
     override suspend fun <T : Event<T>> getEvent(
         eventId: String,
