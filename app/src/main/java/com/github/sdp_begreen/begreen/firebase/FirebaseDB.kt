@@ -145,16 +145,6 @@ object FirebaseDB: DB {
 
     override suspend fun getImage(metadata: PhotoMetadata, timeout: Long): Bitmap? {
 
-        checkArgument(
-            !metadata.pictureId.isNullOrBlank(),
-            "The pictureId cannot be a blank or null string"
-        )
-
-        checkArgument(
-            !metadata.takenBy.isNullOrBlank(),
-            "The userId cannot be a blank or null string"
-        )
-
         val userId = metadata.takenBy!!
 
         return metadata.pictureId?.let {
