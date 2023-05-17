@@ -157,4 +157,11 @@ class ContestCreationViewModel : ViewModel() {
         return true
     }
 
+    /**
+     * Function to call to check if the contest creation is valid
+     */
+    fun isContestCreationValid() : Boolean {
+        return true
+    }
+
 }

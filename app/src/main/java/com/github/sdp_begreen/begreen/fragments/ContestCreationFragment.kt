@@ -13,7 +13,9 @@ import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextClock
 import android.widget.Toast
+import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.viewModels.ContestCreationViewModel
 import com.github.sdp_begreen.begreen.viewModels.ProfileEditedValuesViewModel
@@ -22,6 +24,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.hbb20.CountryPickerView
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.TimeZone
 
@@ -48,10 +51,6 @@ class ContestCreationFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_contest_creation, container, false)
 
-
-        val cancelCreationButton = view.findViewById<Button>(R.id.contest_cancel_button)
-        val confirmCreationButton = view.findViewById<Button>(R.id.contest_confirm_button)
-
         setupTitle(view)
         setupPrivateCheckbox(view)
         setupExpandButton(view)
@@ -63,7 +62,37 @@ class ContestCreationFragment : Fragment() {
         setupDateButton(view)
         setupStartHoursButton(view)
         setupEndHoursButton(view)
+        setupCancelCreationButton(view)
+        setupConfirmCreationButton(view)
         return view
+    }
+
+    private fun setupConfirmCreationButton(view : View) {
+        val confirmCreationButton = view.findViewById<Button>(R.id.contest_confirm_button)
+        confirmCreationButton.setOnClickListener {
+            if (contestCreationViewModel.isContestCreationValid()) {
+                lifecycleScope.launch {
+                    requireActivity().supportFragmentManager.commit {
+                        setReorderingAllowed(true)
+                        replace(R.id.mainFragmentContainer, ContestsFragment())
+                    }
+                }
+            } else {
+                Toast.makeText(context, "Please fill all the fields with correct values", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun setupCancelCreationButton(view : View) {
+        val cancelCreationButton = view.findViewById<Button>(R.id.contest_cancel_button)
+        cancelCreationButton.setOnClickListener {
+            lifecycleScope.launch {
+                requireActivity().supportFragmentManager.commit {
+                    setReorderingAllowed(true)
+                    replace(R.id.mainFragmentContainer, ContestsFragment())
+                }
+            }
+        }
     }
 
     private fun setupCity(view : View) {
@@ -206,6 +235,10 @@ class ContestCreationFragment : Fragment() {
     private fun setupExpandButton(view: View){
         val expandButton = view.findViewById<ImageView>(R.id.contest_creation_location_expand)
         val locationDetailsContainer = view.findViewById<View>(R.id.contest_location_details_container)
+
+        locationDetailsContainer.visibility = View.GONE
+        expandButton.setImageResource(R.drawable.ic_chevron_up)
+
         expandButton.setOnClickListener {
             if (locationDetailsContainer.visibility == View.GONE) {
                 locationDetailsContainer.visibility = View.VISIBLE
