@@ -1,11 +1,9 @@
 package com.github.sdp_begreen.begreen.models.event
 
 import android.os.Parcelable
-import android.util.Log
 import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.firebase.utils.CopyableWithId
 import com.github.sdp_begreen.begreen.models.CustomLatLng
-import java.util.*
 
 /**
  * Interface that define the base attribute that an Event should have
@@ -26,16 +24,27 @@ interface Event<T> : CopyableWithId<T>, Parcelable {
     override fun equals(other: Any?): Boolean
 
     /**
-     * Function to tell whether the event is currently active
-     * @return true if the event has started and is not finished yet
+     * Function to tell whether the event has started
+     * @return true if the event has started, null if the starting date is null and false otherwise
      */
-    fun isActive(): Boolean {
-        Log.d("SendPostFragment", "Start date time: " +startDateTime.toString())
-        Log.d("SendPostFragment", "End date time: " +endDateTime.toString())
-        Log.d("SendPostFragment", "Current time: " +Date().time)
-        startDateTime?.also{ Log.d("SendPostFragment", "Has started: " + (it < Date().time)) }
-        endDateTime?.also { Log.d("SendPostFragment", "Has finished: " + (it < Date().time)) }
+    fun isStarted(): Boolean? {
+        return startDateTime?.let { it < System.currentTimeMillis() }
+    }
 
-        return startDateTime?.let { it < Date().time } ?: false
-            && endDateTime?.let { Date().time < it } ?: false }
+    /**
+     * Function to tell whether the event is finished
+     * @return true if the event is finished, null if the ending date is null and false otherwise
+     */
+    fun isFinished(): Boolean? {
+        return startDateTime?.let { it > System.currentTimeMillis() }
+    }
+
+    /**
+     * Function to tell whether the event is currently active
+     * @return true if the event has started and is not finished yet,
+     * null if the starting date or the ending date is null and false otherwise
+     */
+    fun isActive(): Boolean? {
+        return isStarted()?.let { started -> isFinished()?.let { finished -> started && !finished } }
+    }
 }

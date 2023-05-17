@@ -11,8 +11,8 @@ import com.github.sdp_begreen.begreen.models.event.Event
 import com.github.sdp_begreen.begreen.utils.checkArgument
 import com.github.sdp_begreen.begreen.utils.checkRootPathMatchEventClassImpl
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import org.koin.java.KoinJavaComponent.inject
-import java.util.Calendar
 
 object EventServiceImpl : EventService {
 
@@ -46,18 +46,49 @@ object EventServiceImpl : EventService {
         )
     }
 
-    override suspend fun <T : Event<T>> getAllEvents(
+    override suspend fun <T : Event<T>> getAllUpcomingEvents(
         rootPath: RootPath,
         eventImplType: Class<T>
     ): Flow<List<T>> {
-        checkRootPathMatchEventClassImpl(rootPath, eventImplType)
-        return getFlowOfObjects(
-            dbRef.child(rootPath.path).orderByChild("startDateTime")
-                .startAt(Calendar.getInstance().timeInMillis.toDouble()),
-            eventImplType
-        )
+        return getAllEvents(rootPath, eventImplType, true)
     }
 
+    override suspend fun <T : Event<T>> getAllOngoingEvents(
+        rootPath: RootPath,
+        eventImplType: Class<T>
+    ): Flow<List<T>> {
+        return getAllEvents(
+            rootPath,
+            eventImplType,
+            false
+        ).map { events -> events.filter { it.isStarted() ?: false } }
+    }
+
+    /**
+     * If [notStartedEvents] is true, returns the flow of all events that did not start yet and
+     * if [notStartedEvents] is false, returns the flow of all events that did not end yet
+     */
+    private suspend fun <T : Event<T>> getAllEvents(
+        rootPath: RootPath,
+        eventImplType: Class<T>,
+        notStartedEvents: Boolean
+    ): Flow<List<T>> {
+        checkRootPathMatchEventClassImpl(rootPath, eventImplType)
+
+        return if (notStartedEvents) {
+            getFlowOfObjects(
+                dbRef.child(rootPath.path).orderByChild("startDateTime")
+                    .startAt(System.currentTimeMillis().toDouble()),
+                eventImplType
+            )
+        } else {
+            getFlowOfObjects(
+                dbRef.child(rootPath.path).orderByChild("endDateTime")
+                    .startAt(System.currentTimeMillis().toDouble()),
+                eventImplType
+            )
+        }
+    }
 
     override suspend fun <T : Event<T>> getEvent(
         eventId: String,

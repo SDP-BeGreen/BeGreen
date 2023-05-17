@@ -18,7 +18,6 @@ import com.github.sdp_begreen.begreen.models.event.ContestParticipant
 import com.github.sdp_begreen.begreen.rules.CoroutineTestRule
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.services.GeocodingService
-import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.github.sdp_begreen.begreen.viewModels.EventsFragmentViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -64,7 +63,7 @@ class EventDataAdapterListenerImplTest {
                     listOf(Address(Locale.FRENCH).apply { locality = "Lausanne" })
                 )
 
-                whenever(eventService.getAllEvents(RootPath.CONTESTS, Contest::class.java))
+                whenever(eventService.getAllUpcomingEvents(RootPath.CONTESTS, Contest::class.java))
                     .thenReturn(
                         flowOf(
                             listOf(

@@ -63,7 +63,7 @@ class EventsFragmentViewModel<T : Event<T>, K : EventParticipant>(
      * Flow of all the events implementation we are interested in (i.e. Meetings or Contests)
      */
     val allEvents = flow {
-        eventService.getAllEvents(rootPath, eventClass).collect {
+        eventService.getAllUpcomingEvents(rootPath, eventClass).collect {
             emit(it)
         }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())

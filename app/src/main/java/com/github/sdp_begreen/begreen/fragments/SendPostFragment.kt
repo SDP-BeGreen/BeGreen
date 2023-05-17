@@ -210,13 +210,6 @@ class SendPostFragment : Fragment() {
                 user.addPhotoMetadata(it)
                 user.score += it.trashCategory?.value ?: 0
 
-                // update the user's score in the active contests
-                it.trashCategory?.also { category ->
-                    userLocation?.also { location ->
-                        contestsUpdateScores(category, location)
-                    }
-                }
-
                 // store the new User in firebase
                 db.addUser(user, user.id)
 
@@ -227,6 +220,13 @@ class SendPostFragment : Fragment() {
                 // Display toast
                 Toast.makeText(requireContext(), R.string.photo_shared_success, Toast.LENGTH_SHORT)
                     .show()
+
+                // update the user's score in the active contests
+                it.trashCategory?.also { category ->
+                    userLocation?.also { location ->
+                        contestsUpdateScores(category, location)
+                    }
+                }
             }
         }
     }
@@ -240,13 +240,13 @@ class SendPostFragment : Fragment() {
         Log.d("SendPostFragment", "User id: " + connectedUserViewModel.currentUser.value?.id)
 
         connectedUserViewModel.currentUser.value?.id?.also { participantId ->
-            val participationMap = eventsFragmentViewModel.participationMap.value
+            val participationMap = eventsFragmentViewModel.participationMap./*last() */dropWhile { it.isEmpty() }.first()
             Log.d("SendPostFragment", "Contest IDs: " + eventsFragmentViewModel.allEvents.value)
 
-            eventsFragmentViewModel.allEvents.value.forEach { contest ->
+            eventsFragmentViewModel.allEvents.dropWhile { it.isEmpty() }.first().forEach { contest ->
                 Log.d("SendPostFragment", "ContestID: " + contest.id + " participates?: " + (participationMap[contest.id] == true) +
                 " isActive?: " + contest.isActive() + " is in range?: " + contest.isInRange(location))
-                if (participationMap[contest.id] == true && contest.isActive()
+                if (participationMap[contest.id] == true /*&& contest.isActive()*/ //TODO: uncomment this when active Contests will be in the flow
                     && contest.isInRange(location)
                 ) {
                     val updatedParticipant = eventParticipantService.getParticipant(

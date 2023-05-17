@@ -122,13 +122,13 @@ class MainActivityTest {
                 whenever(db.getAllUsers()).thenReturn(listOf(user1))
                 whenever(db.getAllBins()).thenReturn(bins)
                 whenever(
-                    eventService.getAllEvents(
+                    eventService.getAllUpcomingEvents(
                         RootPath.MEETINGS,
                         Meeting::class.java
                     )
                 ).thenReturn(flowOf())
                 whenever(
-                    eventService.getAllEvents(
+                    eventService.getAllUpcomingEvents(
                         RootPath.CONTESTS,
                         Contest::class.java
                     )

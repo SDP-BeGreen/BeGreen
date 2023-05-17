@@ -91,7 +91,7 @@ class SendPostFragmentTest {
                     ContestParticipant(user.id, 0)
                 )
                 whenever(eventParticipantService.addParticipant(any(), eq(user.id), any())).then { }
-                whenever(eventService.getAllEvents(RootPath.CONTESTS, Contest::class.java)).thenReturn(
+                whenever(eventService.getAllUpcomingEvents(RootPath.CONTESTS, Contest::class.java)).thenReturn(
                     MutableStateFlow(listOf())
                 )
             }
