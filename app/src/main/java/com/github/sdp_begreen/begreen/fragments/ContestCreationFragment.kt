@@ -1,6 +1,7 @@
 package com.github.sdp_begreen.begreen.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,8 @@ import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextClock
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.dialog.ContestMapDialog
+import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -26,12 +29,11 @@ import java.util.TimeZone
  * Use the [ContestCreationFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class ContestCreationFragment : Fragment() {
-
+class ContestCreationFragment : Fragment(), ContestMapDialog.ContestMapDialogListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        childFragmentManager.fragmentFactory = ContestMapDialog.factory(this)
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -43,7 +45,6 @@ class ContestCreationFragment : Fragment() {
         val contestTitle = view.findViewById<TextInputEditText>(R.id.contest_creation_title)
         val privateCheckbox = view.findViewById<CheckBox>(R.id.private_contest_checkbox)
         val expandButton = view.findViewById<ImageView>(R.id.contest_creation_location_expand)
-        val mapButton = view.findViewById<ImageView>(R.id.contest_creation_location_map)
         val cityText = view.findViewById<TextInputEditText>(R.id.city_contest_creation)
         val postalCodeText = view.findViewById<TextInputEditText>(R.id.postal_code_contest_creation)
         val countryPicker = view.findViewById<CountryPickerView>(R.id.contest_creation_country_picker)
@@ -75,12 +76,17 @@ class ContestCreationFragment : Fragment() {
         setupDateButton(startDateButton, startDateText, endDateText, rangeDatePicker)
         setupStartHoursButton(startHourButton, startHourText, picker)
         setupEndHoursButton(endHourButton, endHourText, picker)
+        setupMap(view)
         return view
     }
 
-    fun setupMapButton(mapButton: ImageView) {
-        mapButton.setOnClickListener {
+    private fun setupMap(view: View) {
 
+        val mapButton = view.findViewById<ImageView>(R.id.contest_creation_location_map)
+        mapButton.setOnClickListener {
+            //TODO Add correct param to newInstance
+            val contestMapDialog = ContestMapDialog.newInstance(this, CustomLatLng(46.537283, 6.624490), 1000.0)
+            contestMapDialog.show(childFragmentManager, "Contest Map Dialog")
         }
     }
 
@@ -151,6 +157,11 @@ class ContestCreationFragment : Fragment() {
                 break
             }
         }
+    }
+
+    override fun onDialogApprove(location: CustomLatLng?, radius: Double?) {
+        // TODO correctly implement this method
+        Log.d("Approved the map dialog", "approved")
     }
 
     companion object {

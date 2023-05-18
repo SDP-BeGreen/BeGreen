@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/create_contest_map_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/create_contest_map_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/text_margin"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="@dimen/text_margin"
+        android:paddingBottom="8dp"
+        android:text="@string/create_contest_map_dialog_title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="?android:attr/textColorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/create_contest_location_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:icon="@drawable/baseline_location_on_24"
+        android:paddingVertical="0dp"
+        android:paddingHorizontal="8dp"
+        android:layout_marginHorizontal="8dp"
+        android:padding="5dp"
+        android:text="@string/create_contest_map_dialog_location"
+        app:iconTint="#FF0000"
+        app:iconGravity="textStart"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/create_contest_map_title" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/create_contest_radius_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="0dp"
+        android:layout_marginHorizontal="9dp"
+        app:icon="@drawable/baseline_location_on_24"
+        android:text="@string/create_contest_map_dialog_radius"
+        app:iconPadding="0dp"
+        app:iconTint="#0000FF"
+        app:iconGravity="textStart"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        app:layout_constraintStart_toEndOf="@+id/create_contest_location_button"
+        app:layout_constraintTop_toBottomOf="@id/create_contest_map_title" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/create_contest_map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/create_contest_location_button"
+        app:layout_constraintDimensionRatio="w,1:1"
+        tools:context=".dialog.ContestMapDialog" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/create_contest_map_cancel_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/create_contest_map"
+        app:layout_constraintEnd_toStartOf="@id/create_contest_map_approve_button"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/create_contest_map_approve_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Approve"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/create_contest_map_cancel_button"
+        app:layout_constraintTop_toBottomOf="@id/create_contest_map"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
