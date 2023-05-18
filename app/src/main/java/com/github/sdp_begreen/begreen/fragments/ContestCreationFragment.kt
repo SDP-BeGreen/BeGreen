@@ -25,9 +25,12 @@ import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.hbb20.CountryPickerView
 import com.hbb20.countrypicker.models.CPCountry
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.context.startKoin
+import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.TimeZone
 
 
@@ -233,6 +236,51 @@ class ContestCreationFragment : Fragment() {
     }
 
     /**
+     * Convert a formatted date to a timestamp
+     */
+    private fun fromFormattedDateToLong(date: String): Long {
+        val formatter = SimpleDateFormat("dd/MM/yyyy")
+        val date = formatter.parse(date)
+        return date.time
+    }
+
+    /**
+     * Convert a timestamp to a formatted date
+     */
+    private fun fromLongToFormattedDate(date: Long): String {
+        val formatter = SimpleDateFormat("dd/MM/yyyy")
+        return formatter.format(date)
+    }
+
+    /**
+     * Add a listener to the date edit text
+     */
+    private fun addDateListener(text: EditText, viewModelTimeValue: StateFlow<Long?>) {
+        text.setOnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus) {
+                val timestamp = fromFormattedDateToLong(text.text.toString())
+                contestCreationViewModel.editStartDate(timestamp)
+                text.setText(viewModelTimeValue.value?.let {
+                    fromLongToFormattedDate(
+                        it
+                    )
+                })
+            }
+        }
+    }
+
+    /**
+     * Setup the start/end date edit button
+     */
+    private fun setupDateEditText(view: View) {
+        val startDateText = view.findViewById<EditText>(R.id.start_date_contest_text)
+        val endDateText = view.findViewById<EditText>(R.id.end_date_contest_text)
+
+        addDateListener(startDateText, contestCreationViewModel.startDate)
+        addDateListener(endDateText, contestCreationViewModel.endDate)
+    }
+
+    /**
      * Create a new date picker with the current start and end date
      * @return the new date picker
      */
@@ -252,7 +300,7 @@ class ContestCreationFragment : Fragment() {
      * Setup the date button listener
      * @param button the button to setup
      */
-    private fun setDateButtonNewListener( button : Button) {
+    private fun setDateButtonNewListener(button: Button) {
         val datePicker = getNewDatePicker()
 
         button.setOnClickListener {

@@ -205,12 +205,12 @@ class ContestCreationViewModel : ViewModel() {
 
 
         viewModelScope.launch {
-            customLongLat.value?.let {
-                geocodingApi.getAddresses(it, 1)?.let {
+            customLongLat.value?.let { customLongLat ->
+                geocodingApi.getAddresses(customLongLat, 1)?.let {
                     mutableLatLng.value = longLat
-                    mutableCity.value = it.get(0).locality
-                    mutablePostalCode.value = it.get(0).postalCode
-                    mutableCountry.value = it.get(0).countryName
+                    mutableCity.value = it[0].locality
+                    mutablePostalCode.value = it[0].postalCode
+                    mutableCountry.value = it[0].countryName
                 }
             }
         }
