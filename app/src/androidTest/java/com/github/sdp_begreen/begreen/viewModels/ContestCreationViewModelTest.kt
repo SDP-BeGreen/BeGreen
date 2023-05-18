@@ -85,15 +85,15 @@ class ContestCreationViewModelTest {
 
     @Test
     fun isEditStartDateCorrect() {
-        val mili = System.currentTimeMillis()+100
+        val mili = System.currentTimeMillis() + 100
         val date = fromLongToFormattedDate(mili)
         vm.editStartDate(mili)
-        assertThat(fromLongToFormattedDate( vm.startDate.value!!), `is`(date))
+        assertThat(fromLongToFormattedDate(vm.startDate.value!!), `is`(date))
     }
 
     @Test
     fun isEditStartDateRefusingInvalidInput() {
-        val mili = System.currentTimeMillis()-10000000000000
+        val mili = System.currentTimeMillis() - 10000000000000
         val date = null
         assertThat(vm.editStartDate(mili), `is`(false))
         assertThat(vm.editStartDate(date), `is`(false))
@@ -102,15 +102,15 @@ class ContestCreationViewModelTest {
 
     @Test
     fun isEditEndDateCorrect() {
-        val mili = System.currentTimeMillis()+100
+        val mili = System.currentTimeMillis() + 100
         val date = fromLongToFormattedDate(mili)
         vm.editEndDate(mili)
-        assertThat(fromLongToFormattedDate( vm.endDate.value!!), `is`(date))
+        assertThat(fromLongToFormattedDate(vm.endDate.value!!), `is`(date))
     }
 
     @Test
     fun isEditEndDateRefusingInvalidInput() {
-        val mili = System.currentTimeMillis()-10000000000000
+        val mili = System.currentTimeMillis() - 10000000000000
         val date = null
         assertThat(vm.editEndDate(mili), `is`(false))
         assertThat(vm.editEndDate(date), `is`(false))
@@ -254,9 +254,11 @@ class ContestCreationViewModelTest {
     }
 
     @Test
-    fun isContestCreationValidCorrect(){
-        vm.editStartDate(System.currentTimeMillis()+100)
-        vm.editEndDate(System.currentTimeMillis()+100)
+    fun isContestCreationValidCorrect() {
+        vm.editStartDate(System.currentTimeMillis() + 1000)
+        vm.editEndDate(System.currentTimeMillis() + 1000)
+        vm.contestTitle = "Title"
+        vm.isPrivate = true
         vm.editStartHour(10)
         vm.editEndHour(10)
         vm.editStartMinute(10)
@@ -265,10 +267,9 @@ class ContestCreationViewModelTest {
         vm.editCountry("France")
         vm.editPostalCode("1234")
         vm.editRadius(123.0)
-        vm.editLongLat(CustomLatLng(1.0, 1.0))
+        vm.editLongLat(CustomLatLng(43.0, 46.0))
         assertThat(vm.isContestCreationValid(), `is`(true))
     }
-
 
 
 }
