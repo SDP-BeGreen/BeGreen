@@ -15,8 +15,8 @@ import org.koin.java.KoinJavaComponent.inject
 
 object EventServiceImpl : EventService {
 
-    private const val START_DATE_TIME = "startDateTIme"
-    private const val END_DATE_TIME = "endDateTIme"
+    private const val START_DATE_TIME = "startDateTime"
+    private const val END_DATE_TIME = "endDateTime"
 
     private val dbRefs by inject<FirebaseRef>(FirebaseRef::class.java)
 
