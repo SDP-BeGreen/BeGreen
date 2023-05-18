@@ -1,6 +1,7 @@
 package com.github.sdp_begreen.begreen.activities
 
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -11,6 +12,7 @@ import com.github.sdp_begreen.begreen.R
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import com.google.firebase.auth.FirebaseAuth
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
@@ -19,6 +21,14 @@ class SignInActivityTest {
     @get:Rule
     val activityRule = ActivityScenarioRule(SignInActivity::class.java)
 
+    @Test
+    fun testSignInWithCurrentUser() {
+        // Simulate a signed-in user
+        FirebaseAuth.getInstance().signInAnonymously().addOnSuccessListener {
+            // Perform a click on the button that triggers the code snippet
+            onView(withId(R.id.signInGoogleLayout)).perform(click())
+        }
+    }
     @Test
     fun onCreate() {
         onView(withId(R.id.signInGoogleLayout))
