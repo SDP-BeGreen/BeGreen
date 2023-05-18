@@ -414,14 +414,18 @@ class ContestCreationFragment : Fragment() {
      * @param button the button to setup
      * @param hour the hour flow to setup
      * @param minute the minute flow to setup
+     * @param editHour the function to edit the hour value in the view model
+     * @param editMinute the function to edit the minute value in the view model
      */
     private fun setTimeButtonNewListener(
         button: Button,
         hour: StateFlow<Int?>,
-        minute: StateFlow<Int?>
+        minute: StateFlow<Int?>,
+        editHour: (input: Int) -> Boolean,
+        editMinute: (input: Int) -> Boolean
     ) {
         val timePicker = getNewTimePicker(hour, minute)
-        addListenerOnTimePicker(timePicker)
+        addListenerOnTimePicker(timePicker, editHour, editMinute)
 
         button.setOnClickListener {
             timePicker.show(requireActivity().supportFragmentManager, "hourPicker")
@@ -438,18 +442,16 @@ class ContestCreationFragment : Fragment() {
      */
     private fun addListenerOnTimePicker(
         timePicker: MaterialTimePicker,
-        hour: StateFlow<Int?>,
-        minute: StateFlow<Int?>,
-        editHour: (input: Int) -> Unit,
-        editMinute: (input: Int) -> Unit
+        editHour: (input: Int) -> Boolean,
+        editMinute: (input: Int) -> Boolean
     ) {
         timePicker.addOnPositiveButtonClickListener {
             val hour = timePicker.hour
             val minute = timePicker.minute
-            if (!contestCreationViewModel.editStartHour(hour)) {
+            if (!editHour(hour)) {
                 Toast.makeText(context, "Start hours not valid!", Toast.LENGTH_SHORT).show()
             }
-            if (!contestCreationViewModel.editStartMinute(minute)) {
+            if (!editMinute(minute)) {
                 Toast.makeText(context, "Start minutes not valid!", Toast.LENGTH_SHORT).show()
             }
         }
@@ -549,7 +551,7 @@ class ContestCreationFragment : Fragment() {
             MaterialTimePicker.Builder()
                 .setTimeFormat(TimeFormat.CLOCK_24H)
                 .setHour(12)
-                .setMinute(10)
+                .setMinute(0)
                 //.setTitle("Select Appointment time")
                 .build()
         lifecycleScope.launch {
@@ -562,7 +564,13 @@ class ContestCreationFragment : Fragment() {
             }.flowWithLifecycle(lifecycle).collect {
                 it?.let { (startHour, startMinute) ->
                     startHourText.setText("$startHour:$startMinute")
-                    setTimeButtonNewListener(startHourButton)
+                    setTimeButtonNewListener(
+                        startHourButton,
+                        contestCreationViewModel.startHour,
+                        contestCreationViewModel.startMinute,
+                        contestCreationViewModel::editStartHour,
+                        contestCreationViewModel::editStartMinute
+                    )
                 }
             }
         }
@@ -593,6 +601,27 @@ class ContestCreationFragment : Fragment() {
                 .setMinute(10)
                 //.setTitle("Select Appointment time")
                 .build()
+
+        lifecycleScope.launch {
+            contestCreationViewModel.endHour.combine(contestCreationViewModel.endMinute) { endHour, endMinute ->
+                if (endHour != null && endMinute != null) {
+                    endHour to endMinute
+                } else {
+                    null
+                }
+            }.flowWithLifecycle(lifecycle).collect {
+                it?.let { (endHour, endMinute) ->
+                    endHourText.setText("$endHour:$endMinute")
+                    setTimeButtonNewListener(
+                        endHoursButton,
+                        contestCreationViewModel.startHour,
+                        contestCreationViewModel.startMinute,
+                        contestCreationViewModel::editStartHour,
+                        contestCreationViewModel::editStartMinute
+                    )
+                }
+            }
+        }
 
         endHoursButton.setOnClickListener {
             hourPicker.show(requireActivity().supportFragmentManager, "hourPicker")
