@@ -1,7 +1,6 @@
 package com.github.sdp_begreen.begreen.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,7 +44,7 @@ import java.util.TimeZone
  * create an instance of this fragment.
  */
 class ContestCreationFragment : Fragment(), ContestMapDialog.ContestMapDialogListener {
-    private val connectedUserViewModel by viewModels<ConnectedUserViewModel>()
+    private val connectedUserViewModel: ConnectedUserViewModel by viewModels(ownerProducer = { requireActivity() })
     private val contestCreationViewModel by viewModels<ContestCreationViewModel>()
     private val eventService by inject<EventService>()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -118,16 +117,18 @@ class ContestCreationFragment : Fragment(), ContestMapDialog.ContestMapDialogLis
     private fun setupMapButton(view: View) {
         val mapButton = view.findViewById<ImageView>(R.id.contest_creation_location_map)
         mapButton.setOnClickListener {
-            //TODO Add correct param to newInstance
             val contestMapDialog =
-                ContestMapDialog.newInstance(this, CustomLatLng(46.537283, 6.624490), 1000.0)
+                ContestMapDialog.newInstance(this,
+                    contestCreationViewModel.customLongLat.value ?: CustomLatLng(46.537283, 6.624490),
+                     contestCreationViewModel.radius.value ?: 1000.0)
+
             contestMapDialog.show(childFragmentManager, "Contest Map Dialog")
         }
     }
 
     override fun onDialogApprove(location: CustomLatLng?, radius: Double?) {
-        // TODO correctly implement this method
-        Log.d("Approved the map dialog", "approved")
+        contestCreationViewModel.editLongLat(location)
+        contestCreationViewModel.editRadius(radius)
     }
 
     /**
@@ -547,7 +548,7 @@ class ContestCreationFragment : Fragment(), ContestMapDialog.ContestMapDialogLis
         builder.setTimeFormat(TimeFormat.CLOCK_24H)
         builder.setTitleText("Select hours")
         builder.setHour(hour.value!!)
-        builder.setMinute(minute.value!!)
+        builder.setMinute(minute.value ?: 0)
         return builder.build()
     }
 
@@ -558,13 +559,15 @@ class ContestCreationFragment : Fragment(), ContestMapDialog.ContestMapDialogLis
     private fun setupStartHoursButton(view: View) {
         val startHourButton = view.findViewById<Button>(R.id.start_hour_contest)
         val startHourText = view.findViewById<EditText>(R.id.start_hour_contest_text)
-        val hourPicker =
-            MaterialTimePicker.Builder()
-                .setTimeFormat(TimeFormat.CLOCK_24H)
-                .setHour(12)
-                .setMinute(0)
-                //.setTitle("Select Appointment time")
-                .build()
+
+        setTimeButtonNewListener(
+            startHourButton,
+            contestCreationViewModel.startHour,
+            contestCreationViewModel.startMinute,
+            contestCreationViewModel::editStartHour,
+            contestCreationViewModel::editStartMinute
+        )
+
         lifecycleScope.launch {
             contestCreationViewModel.startHour.combine(contestCreationViewModel.startMinute) { startHour, startMinute ->
                 if (startHour != null && startMinute != null) {
@@ -586,15 +589,15 @@ class ContestCreationFragment : Fragment(), ContestMapDialog.ContestMapDialogLis
             }
         }
 
-        startHourButton.setOnClickListener {
-            hourPicker.show(requireActivity().supportFragmentManager, "hourPicker")
-        }
+        //startHourButton.setOnClickListener {
+        //    hourPicker.show(requireActivity().supportFragmentManager, "hourPicker")
+        //}
 
-        hourPicker.addOnPositiveButtonClickListener {
-            val hour = hourPicker.hour
-            val minute = hourPicker.minute
-            startHourText.setText("$hour:$minute")
-        }
+        //hourPicker.addOnPositiveButtonClickListener {
+        //    val hour = hourPicker.hour
+        //    val minute = hourPicker.minute
+        //    startHourText.setText("$hour:$minute")
+        //}
     }
 
     /**
@@ -605,13 +608,13 @@ class ContestCreationFragment : Fragment(), ContestMapDialog.ContestMapDialogLis
         val endHoursButton = view.findViewById<Button>(R.id.end_hour_contest)
         val endHourText = view.findViewById<EditText>(R.id.end_hour_contest_text)
 
-        val hourPicker =
-            MaterialTimePicker.Builder()
-                .setTimeFormat(TimeFormat.CLOCK_24H)
-                .setHour(12)
-                .setMinute(10)
-                //.setTitle("Select Appointment time")
-                .build()
+        setTimeButtonNewListener(
+            endHoursButton,
+            contestCreationViewModel.endHour,
+            contestCreationViewModel.endMinute,
+            contestCreationViewModel::editEndHour,
+            contestCreationViewModel::editEndMinute
+        )
 
         lifecycleScope.launch {
             contestCreationViewModel.endHour.combine(contestCreationViewModel.endMinute) { endHour, endMinute ->
@@ -625,23 +628,23 @@ class ContestCreationFragment : Fragment(), ContestMapDialog.ContestMapDialogLis
                     endHourText.setText("$endHour:$endMinute")
                     setTimeButtonNewListener(
                         endHoursButton,
-                        contestCreationViewModel.startHour,
-                        contestCreationViewModel.startMinute,
-                        contestCreationViewModel::editStartHour,
-                        contestCreationViewModel::editStartMinute
+                        contestCreationViewModel.endHour,
+                        contestCreationViewModel.endMinute,
+                        contestCreationViewModel::editEndHour,
+                        contestCreationViewModel::editEndMinute
                     )
                 }
             }
         }
 
-        endHoursButton.setOnClickListener {
-            hourPicker.show(requireActivity().supportFragmentManager, "hourPicker")
-        }
-        hourPicker.addOnPositiveButtonClickListener {
-            val hour = hourPicker.hour
-            val minute = hourPicker.minute
-            endHourText.setText("$hour:$minute")
-        }
+        //endHoursButton.setOnClickListener {
+        //    hourPicker.show(requireActivity().supportFragmentManager, "hourPicker")
+        //}
+        //hourPicker.addOnPositiveButtonClickListener {
+        //    val hour = hourPicker.hour
+        //    val minute = hourPicker.minute
+        //    endHourText.setText("$hour:$minute")
+        //}
     }
 
     //------------------------------------Cancel/Confirm button------------------------------------
@@ -654,10 +657,7 @@ class ContestCreationFragment : Fragment(), ContestMapDialog.ContestMapDialogLis
         val confirmCreationButton = view.findViewById<Button>(R.id.contest_confirm_button)
         confirmCreationButton.setOnClickListener {
             if (contestCreationViewModel.isContestCreationValid()) {
-                //TODO: Call firebase to create the contest
                 lifecycleScope.launch {
-
-
                     eventService.createEvent(
                         Contest(
                             null,
