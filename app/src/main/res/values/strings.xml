@@ -86,5 +86,8 @@
     <string name="fragment_contests_add_contest_button_description">Button to create a new contest</string>
     <string name="contests">Contests</string>
     <string name="cant_update_contests_score">Location unavailable. Cannot update contest(s) score(s)</string>
-
+    <string name="unknown_user">Unknown user</string>
+    <string name="unknown_date">Unknown date</string>
+    <string name="no_category">No category</string>
+    <string name="post_date_and_category_info">%1$s | %2$s </string>
 </resources>

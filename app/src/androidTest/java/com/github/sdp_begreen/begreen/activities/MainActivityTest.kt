@@ -33,6 +33,7 @@ import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBitmap
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashCategory
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.models.event.Contest
 import com.github.sdp_begreen.begreen.models.event.Meeting
@@ -62,7 +63,8 @@ class MainActivityTest {
      * Initialize some constant to use in tests
      */
     companion object {
-        private val userPhotoMetadata = ProfilePhotoMetadata("user1_profile_picture")
+        private val profilePhotoMetadata = ProfilePhotoMetadata("user1_profile_picture")
+        private val trashPhotoMetadata = TrashPhotoMetadata("123", takenBy = "1234")
         private const val userId1 = "1234"
         private const val userId2 = "1235"
         private const val userId3 = "1236"
@@ -75,7 +77,7 @@ class MainActivityTest {
             "user 1 description",
             "123456789",
             "user1@email.com",
-            profilePictureMetadata = userPhotoMetadata
+            profilePictureMetadata = profilePhotoMetadata
         )
         private val user2 = User(
             userId2,
@@ -108,7 +110,8 @@ class MainActivityTest {
             runTest {
                 // setup basic get user and getProfilePicture use in multiple tests
                 whenever(db.getUser(userId1)).thenReturn(user1)
-                whenever(db.getUserProfilePicture(userPhotoMetadata, userId1))
+                whenever(db.getImage(trashPhotoMetadata)).thenReturn(fakePicture1)
+                whenever(db.getUserProfilePicture(profilePhotoMetadata, userId1))
                     .thenReturn(fakePicture1)
                 // add a small delay, just to be sure that it is triggered after initialization
                 // and arrive second, after the initial null value
@@ -175,9 +178,9 @@ class MainActivityTest {
         onView(withId(R.id.cameraUIFragment)).check(matches(isDisplayed()))
     }
 
-
     @Test
     fun pressFeedMenuDisplayFeedFragment() {
+
         onView(withId(R.id.bottomMenuFeed))
             .check(matches(isDisplayed()))
             .perform(click())
@@ -187,7 +190,7 @@ class MainActivityTest {
         // Go back to camera to test restore outline version of feed menu icon
         // Hard to compare icon in test
         onView(withId(R.id.bottomMenuCamera))
-            .perform(click())
+          .perform(click())
     }
 
     @Test
@@ -267,6 +270,7 @@ class MainActivityTest {
                 .check(matches(isDisplayed()))
         }
     }
+
 
     @Test
     fun contactUsIsDisplayedInDrawerMenu() {
@@ -662,7 +666,7 @@ class MainActivityTest {
     }
 
     @Test
-    fun clickOnCapturePhotoDontThrowsError() {
+    fun clickOnCapturePhotoDoesntThrowError() {
 
         activityRule.scenario.onActivity {
             val connectedUserViewModel by it.viewModels<ConnectedUserViewModel>()

@@ -91,7 +91,7 @@ class FirebaseDBTest {
     fun getUserProfilePictureBlankUserIdThrowIllegalArgument() {
         assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
-                FirebaseDB.getUserProfilePicture(profilePhotoMetaData, " ")
+                FirebaseDB.getUserProfilePicture(profilePhotoMetaData," ")
             }
         }
     }
