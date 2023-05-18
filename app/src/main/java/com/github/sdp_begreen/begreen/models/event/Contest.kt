@@ -15,7 +15,7 @@ data class Contest(
     override var startDateTime: Long? = null,
     override var endDateTime: Long? = null,
     override var startCoordinates: CustomLatLng? = null,
-    var radius: Long = 0,
+    var radius: Double = 0.0,
     var private: Boolean = false,
 ) : Event<Contest> {
 

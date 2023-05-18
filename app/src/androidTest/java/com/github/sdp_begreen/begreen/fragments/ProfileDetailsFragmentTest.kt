@@ -76,6 +76,20 @@ class ProfileDetailsFragmentTest {
             null,
             userProfilePicturePhotoMetadata
         )
+        val userId2 = "1243"
+        private val user2 = User(
+            userId2,
+            142,
+            "Alice",
+            56,
+            "Description poutou poutou",
+            "08920939459802",
+            "cc@gmail.com",
+            67,
+            null,
+            null,
+            userProfilePicturePhotoMetadata
+        )
         private val fakePicture1 = Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888)
         private val fakePicture2 = Bitmap.createBitmap(150, 150, Bitmap.Config.ARGB_8888)
         private val db: DB = mock(DB::class.java)
@@ -137,15 +151,29 @@ class ProfileDetailsFragmentTest {
 
     @Test
     fun testProfileDetailsFragmentFollowButton() {
+        fragmentScenario = launchFragmentInContainer(
+            Bundle().apply {
+                putParcelable(ARG_USER, user2)
+                putParcelableArrayList(ARG_RECENT_POSTS, photos)
+            }
+        )
         onView(withId(R.id.fragment_profile_details_follow_button)).perform(click())
         onView(withId(R.id.fragment_profile_details_follow_button)).check(matches(withText("Unfollow")))
+        fragmentScenario.close()
     }
 
     @Test
     fun testProfileDetailsFragmentFollowButton2() {
+        fragmentScenario = launchFragmentInContainer(
+            Bundle().apply {
+                putParcelable(ARG_USER, user2)
+                putParcelableArrayList(ARG_RECENT_POSTS, photos)
+            }
+        )
         onView(withId(R.id.fragment_profile_details_follow_button)).perform(click())
         onView(withId(R.id.fragment_profile_details_follow_button)).perform(click())
         onView(withId(R.id.fragment_profile_details_follow_button)).check(matches(withText("Follow")))
+        fragmentScenario.close()
     }
 
     @Test

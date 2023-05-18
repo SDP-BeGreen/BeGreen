@@ -23,6 +23,7 @@ import com.github.sdp_begreen.begreen.dialog.ContestMapDialog
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
 import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.models.event.Contest
+import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.github.sdp_begreen.begreen.viewModels.ContestCreationViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
@@ -44,7 +45,7 @@ import java.util.TimeZone
  * create an instance of this fragment.
  */
 class ContestCreationFragment : Fragment(), ContestMapDialog.ContestMapDialogListener {
-
+    private val connectedUserViewModel by viewModels<ConnectedUserViewModel>()
     private val contestCreationViewModel by viewModels<ContestCreationViewModel>()
     private val eventService by inject<EventService>()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -226,7 +227,7 @@ class ContestCreationFragment : Fragment(), ContestMapDialog.ContestMapDialogLis
         val radiusText = view.findViewById<TextInputEditText>(R.id.radius_contest_creation)
         radiusText.setOnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) {
-                if (contestCreationViewModel.editRadius(Integer.parseInt(radiusText.text.toString()))) {
+                if (contestCreationViewModel.editRadius(radiusText.text.toString().toDouble())) {
                     radiusText.setText(contestCreationViewModel.radius.value.toString())
                 }
             }
@@ -657,10 +658,20 @@ class ContestCreationFragment : Fragment(), ContestMapDialog.ContestMapDialogLis
                 lifecycleScope.launch {
 
 
-                    eventService.createEvent(Contest(
-                        null,
-                        ...
-                    ))
+                    eventService.createEvent(
+                        Contest(
+                            null,
+                            connectedUserViewModel.currentUser.value!!.id,
+                            contestCreationViewModel.contestTitle,
+                            "contestDescription",
+                            contestCreationViewModel.startDate.value,
+                            contestCreationViewModel.endDate.value,
+                            contestCreationViewModel.customLongLat.value,
+                            contestCreationViewModel.radius.value ?: 0.0,
+                            contestCreationViewModel.isPrivate
+
+                        )
+                    )
 
                     parentFragmentManager.commit {
                         setReorderingAllowed(true)

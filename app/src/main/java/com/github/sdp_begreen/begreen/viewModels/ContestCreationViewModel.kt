@@ -8,8 +8,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.inject
-import java.text.DateFormat
-import java.util.Calendar
 
 
 /**
@@ -30,7 +28,7 @@ class ContestCreationViewModel : ViewModel() {
     private var mutableCity = MutableStateFlow<String?>("Lausanne")
     private var mutableCountry = MutableStateFlow<String?>("Switzerland")
     private var mutablePostalCode = MutableStateFlow<String?>("1010")
-    private var mutableRadius = MutableStateFlow<Int?>(1000)
+    private var mutableRadius = MutableStateFlow<Double?>(1000.0)
     private var mutableLatLng = MutableStateFlow<CustomLatLng?>(null)
     private var mutableStartDate = MutableStateFlow<Long?>(null)
     private var mutableEndDate = MutableStateFlow<Long?>(null)
@@ -105,44 +103,44 @@ class ContestCreationViewModel : ViewModel() {
      */
     val customLongLat = mutableLatLng.asStateFlow()
 
-    fun editStartDate(date: Long?) : Boolean {
+    fun editStartDate(date: Long?): Boolean {
         if (date == null) return false
-        if(date < System.currentTimeMillis()) return false
+        if (date < System.currentTimeMillis()) return false
         mutableStartDate.value = date
         return true
     }
 
-    fun editEndDate(date: Long?) : Boolean {
+    fun editEndDate(date: Long?): Boolean {
         if (date == null) return false
-        if(date < System.currentTimeMillis()) return false
+        if (date < System.currentTimeMillis()) return false
         mutableEndDate.value = date
         return true
     }
 
-    fun editStartHour(hour: Int?) : Boolean {
+    fun editStartHour(hour: Int?): Boolean {
         if (hour == null) return false
-        if(hour < 0 || hour > 23) return false
+        if (hour < 0 || hour > 23) return false
         mutableStartHour.value = hour
         return true
     }
 
-    fun editStartMinute(minute: Int?) : Boolean {
+    fun editStartMinute(minute: Int?): Boolean {
         if (minute == null) return false
-        if(minute < 0 || minute > 59) return false
+        if (minute < 0 || minute > 59) return false
         mutableStartMinute.value = minute
         return true
     }
 
-    fun editEndHour(hour: Int?) : Boolean {
+    fun editEndHour(hour: Int?): Boolean {
         if (hour == null) return false
-        if(hour < 0 || hour > 23) return false
+        if (hour < 0 || hour > 23) return false
         mutableEndHour.value = hour
         return true
     }
 
-    fun editEndMinute(minute: Int?) : Boolean {
+    fun editEndMinute(minute: Int?): Boolean {
         if (minute == null) return false
-        if(minute < 0 || minute > 59) return false
+        if (minute < 0 || minute > 59) return false
         mutableEndMinute.value = minute
         return true
     }
@@ -186,7 +184,7 @@ class ContestCreationViewModel : ViewModel() {
     /**
      * Function to call to edit radius flow
      */
-    fun editRadius(radius: Int?): Boolean {
+    fun editRadius(radius: Double?): Boolean {
         if (radius == null) return false
         if (radius < 0) return false
         mutableRadius.value = radius
@@ -221,15 +219,15 @@ class ContestCreationViewModel : ViewModel() {
      * Function to call to check if the contest creation is valid
      */
     fun isContestCreationValid(): Boolean {
-        if(customLongLat.value == null) return false
-        if(contestTitle == null) return false
-        if(startDate.value == null) return false
-        if(endDate.value == null) return false
-        if(startHour.value == null) return false
-        if(startMinute.value == null) return false
-        if(endHour.value == null) return false
-        if(endMinute.value == null) return false
-        if(radius.value == null) return false
+        if (customLongLat.value == null) return false
+        if (contestTitle == null) return false
+        if (startDate.value == null) return false
+        if (endDate.value == null) return false
+        if (startHour.value == null) return false
+        if (startMinute.value == null) return false
+        if (endHour.value == null) return false
+        if (endMinute.value == null) return false
+        if (radius.value == null) return false
         return true
     }
 
