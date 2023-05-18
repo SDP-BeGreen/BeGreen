@@ -237,7 +237,7 @@ class ContestCreationViewModel : ViewModel() {
      * Function to call to change longLat if address is correct
      */
     private fun changeLatLongIfCorrectFromManualInput() {
-        val address = "${mutableCity.value} ${mutablePostalCode.value} ${mutableCountry.value}}"
+        val address = "${mutablePostalCode.value} ${mutableCity.value}, ${mutableCountry.value}}"
 
         viewModelScope.launch {
             geocodingApi.getLongLat(address)?.let {

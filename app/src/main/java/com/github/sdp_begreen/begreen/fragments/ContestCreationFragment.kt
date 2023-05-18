@@ -26,6 +26,8 @@ import com.google.android.material.timepicker.TimeFormat
 import com.hbb20.CountryPickerView
 import com.hbb20.countrypicker.models.CPCountry
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.koin.core.context.startKoin
 import java.text.DateFormat
@@ -69,6 +71,7 @@ class ContestCreationFragment : Fragment() {
         setupEndHoursButton(view)
         setupCancelCreationButton(view)
         setupConfirmCreationButton(view)
+        setupDateEditText(view)
         return view
     }
 
@@ -240,8 +243,9 @@ class ContestCreationFragment : Fragment() {
      */
     private fun fromFormattedDateToLong(date: String): Long {
         val formatter = SimpleDateFormat("dd/MM/yyyy")
-        val date = formatter.parse(date)
-        return date.time
+        if(date.contains(Regex("[a-zA-Z]"))) return 0
+        val datetmp = formatter.parse(date)
+        return datetmp?.time ?: 0
     }
 
     /**
@@ -255,11 +259,11 @@ class ContestCreationFragment : Fragment() {
     /**
      * Add a listener to the date edit text
      */
-    private fun addDateListener(text: EditText, viewModelTimeValue: StateFlow<Long?>) {
+    private fun addDateListener(text: EditText, viewModelTimeValue: StateFlow<Long?>, editFun : (input: Long) -> Unit) {
         text.setOnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) {
                 val timestamp = fromFormattedDateToLong(text.text.toString())
-                contestCreationViewModel.editStartDate(timestamp)
+                editFun(timestamp)
                 text.setText(viewModelTimeValue.value?.let {
                     fromLongToFormattedDate(
                         it
@@ -276,8 +280,8 @@ class ContestCreationFragment : Fragment() {
         val startDateText = view.findViewById<EditText>(R.id.start_date_contest_text)
         val endDateText = view.findViewById<EditText>(R.id.end_date_contest_text)
 
-        addDateListener(startDateText, contestCreationViewModel.startDate)
-        addDateListener(endDateText, contestCreationViewModel.endDate)
+        addDateListener(startDateText, contestCreationViewModel.startDate, contestCreationViewModel::editStartDate)
+        addDateListener(endDateText, contestCreationViewModel.endDate, contestCreationViewModel::editEndDate)
     }
 
     /**
@@ -285,6 +289,13 @@ class ContestCreationFragment : Fragment() {
      * @return the new date picker
      */
     private fun getNewDatePicker(): MaterialDatePicker<Pair<Long, Long>> {
+        if(contestCreationViewModel.startDate.value == null || contestCreationViewModel.endDate.value == null) {
+            contestCreationViewModel.editStartDate(System.currentTimeMillis())
+            contestCreationViewModel.editEndDate(System.currentTimeMillis())
+        }
+        if(contestCreationViewModel.startDate.value!! > contestCreationViewModel.endDate.value!!) {
+            contestCreationViewModel.editStartDate(contestCreationViewModel.endDate.value!!)
+        }
         val builder = MaterialDatePicker.Builder.dateRangePicker()
         builder.setTitleText("Select dates")
         builder.setSelection(
@@ -297,11 +308,29 @@ class ContestCreationFragment : Fragment() {
     }
 
     /**
+     * Add a listener to the date picker
+     * @param datePicker the date picker to setup
+     */
+    private fun addListenerOnDatePicker(datePicker: MaterialDatePicker<Pair<Long, Long>>) {
+        datePicker.addOnPositiveButtonClickListener {
+            val pair: Pair<Long, Long> =
+                datePicker.selection as Pair<Long, Long>
+            if (!contestCreationViewModel.editStartDate(pair.first)) {
+                Toast.makeText(context, "Start date not valid", Toast.LENGTH_SHORT).show()
+            }
+            if (!contestCreationViewModel.editEndDate(pair.second)) {
+                Toast.makeText(context, "End date not valid", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    /**
      * Setup the date button listener
      * @param button the button to setup
      */
     private fun setDateButtonNewListener(button: Button) {
         val datePicker = getNewDatePicker()
+       addListenerOnDatePicker(datePicker)
 
         button.setOnClickListener {
             datePicker.show(requireActivity().supportFragmentManager, "datePicker")
@@ -323,16 +352,11 @@ class ContestCreationFragment : Fragment() {
 
 
         lifecycleScope.launch {
-            contestCreationViewModel.startDate.flowWithLifecycle(lifecycle).collect {
-                if (it != null) {
-                    startDateText.setText(formatter.format(it))
-                    setDateButtonNewListener(startDateButton)
-                }
-
-            }
-            contestCreationViewModel.endDate.flowWithLifecycle(lifecycle).collect {
-                if (it != null) {
-                    endDateText.setText(formatter.format(it))
+            contestCreationViewModel.startDate.flowWithLifecycle(lifecycle).combine(contestCreationViewModel.endDate){
+                startDate, endDate ->
+                if(startDate != null && endDate != null) {
+                    startDateText.setText(formatter.format(startDate))
+                    endDateText.setText(formatter.format(endDate))
                     setDateButtonNewListener(startDateButton)
                 }
             }
@@ -342,16 +366,7 @@ class ContestCreationFragment : Fragment() {
             datePicker.show(requireActivity().supportFragmentManager, "datePicker")
         }
 
-        datePicker.addOnPositiveButtonClickListener {
-            val pair: Pair<Long, Long> =
-                datePicker.selection as Pair<Long, Long>
-            if (!contestCreationViewModel.editStartDate(pair.first)) {
-                Toast.makeText(context, "Start date not valid", Toast.LENGTH_SHORT).show()
-            }
-            if (!contestCreationViewModel.editEndDate(pair.second)) {
-                Toast.makeText(context, "End date not valid", Toast.LENGTH_SHORT).show()
-            }
-        }
+       addListenerOnDatePicker(datePicker)
     }
 
     /**
