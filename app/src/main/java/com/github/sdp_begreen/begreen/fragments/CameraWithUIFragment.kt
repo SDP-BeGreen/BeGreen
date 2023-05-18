@@ -186,12 +186,10 @@ class CameraWithUIFragment : Fragment() {
      * Retrieves the current user profile fragment
      */
     private suspend fun getProfile() : Fragment {
-        //TODO remove this after demo
-        //_______________________________________________________
-        val photos = listOf(
-            TrashPhotoMetadata("1", ParcelableDate.now, "Look at me cleaning!", "0", TrashCategory.ORGANIC),
-            TrashPhotoMetadata("1", ParcelableDate.now, "Look at me cleaning!", "0", TrashCategory.ORGANIC)
-        )
+
+        val user = connectedUserViewModel.currentUser.value
+        val photos = user?.trashPhotosMetadatasList ?: listOf()
+
         //_______________________________________________________
         return (connectedUserViewModel.currentUser.value?.let {
             ProfileDetailsFragment.newInstance(it, photos)
