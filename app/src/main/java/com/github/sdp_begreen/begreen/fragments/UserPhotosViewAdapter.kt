@@ -1,5 +1,6 @@
 package com.github.sdp_begreen.begreen.fragments
 
+import android.annotation.SuppressLint
 import android.content.res.Resources
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
@@ -46,21 +47,25 @@ class UserPhotosViewAdapter(
 
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
+        // Prefer this semantic instead of the .let { } so we don't have to embed too much blocks
+
+        val photos = photos ?: return
+        val photo = photos[position]
+        val userId = photo.takenBy ?: return
 
         lifecycleScope.launch {
 
-            val photo = photos?.get(position)
-            val userId = photo?.takenBy ?: return@launch
-
-            val user = db.getUser(userId)
+            val user = db.getUser(userId) ?: return@launch
 
             if (isFeed) {
 
                 holder.avatarView.visibility = View.VISIBLE
 
                 // Display avatar if on feed
-                user?.profilePictureMetadata?.also {
+                user.profilePictureMetadata?.also {
                     val avatarImage = db.getUserProfilePicture(it, userId)
                     holder.avatarView.setImageBitmap(avatarImage)
                 }
@@ -72,11 +77,12 @@ class UserPhotosViewAdapter(
             }
 
             // Display post content
-            holder.titleView.text = user?.displayName ?: resources.getString(R.string.unknown_user)
-            holder.subtitleView.text = (photo?.takenOn?.toString()
-                ?: resources.getString(R.string.unknown_date)) + " | " + (photo?.trashCategory?.title
-                ?: resources.getString(R.string.no_category))
-            holder.descriptionView.text = photo?.caption
+            val dateString = (photo.takenOn?.toString() ?: resources.getString(R.string.unknown_date))
+            val categoryString = (photo.trashCategory?.title ?: resources.getString(R.string.no_category))
+
+            holder.titleView.text = user.displayName ?: resources.getString(R.string.unknown_user)
+            holder.subtitleView.text = "$dateString | $categoryString"
+            holder.descriptionView.text = photo.caption
             holder.photoView.setImageBitmap(db.getImage(photo))
         }
     }
