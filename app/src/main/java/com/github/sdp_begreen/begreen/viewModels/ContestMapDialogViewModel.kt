@@ -6,7 +6,11 @@ import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.Marker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import com.github.sdp_begreen.begreen.dialog.ContestMapDialog
 
+/**
+ * View model to use with the [ContestMapDialog] class to handle the logic
+ */
 class ContestMapDialogViewModel: ViewModel() {
 
     private val mutableSelectedButton = MutableStateFlow(SelectedButton.LOCATION_BUTTON)
@@ -40,6 +44,13 @@ class ContestMapDialogViewModel: ViewModel() {
         }
     }
 
+    /**
+     * Add a new location marker
+     *
+     * If the new marker is null, keep the old marker and do nothing
+     *
+     * @param marker The new marker to add
+     */
     fun newLocationMarker(marker: Marker?) {
         // Only remove previous marker if new one is non null
         marker?.also { nonNullMarker ->
@@ -50,6 +61,13 @@ class ContestMapDialogViewModel: ViewModel() {
         }
     }
 
+    /**
+     * Add a new radius marker
+     *
+     * If the new marker is null, keep the old marker and do nothing
+     *
+     * @param marker The new marker to add
+     */
     fun newRadiusMarker(marker: Marker?) {
         // Only remove previous marker if new one is non null
         marker?.also { nonNullMarker ->
@@ -61,7 +79,7 @@ class ContestMapDialogViewModel: ViewModel() {
     }
 
     /**
-     * Enum that represents the two possible button
+     * Enum that represents the two button to add markers
      */
     enum class SelectedButton(val id: Int) {
         LOCATION_BUTTON(R.id.create_contest_location_button),

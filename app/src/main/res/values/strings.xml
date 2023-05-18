@@ -107,5 +107,7 @@
     <string name="contest_timezone">Contest Timezone</string>
     <string name="dd_mm_yyyy">dd/MM/yyyy</string>
     <string name="hour_format">H:M</string>
+    <string name="create_contest_map_dialog_cancel">Cancel</string>
+    <string name="create_contest_map_dialog_approve">Approve</string>
 
 </resources>
