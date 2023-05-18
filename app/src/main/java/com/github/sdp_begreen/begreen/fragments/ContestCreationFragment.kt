@@ -379,14 +379,19 @@ class ContestCreationFragment : Fragment() {
 
 
         lifecycleScope.launch {
-            contestCreationViewModel.startDate.flowWithLifecycle(lifecycle)
-                .combine(contestCreationViewModel.endDate) { startDate, endDate ->
-                    if (startDate != null && endDate != null) {
-                        startDateText.setText(formatter.format(startDate))
-                        endDateText.setText(formatter.format(endDate))
-                        setDateButtonNewListener(startDateButton)
-                    }
+            contestCreationViewModel.startDate.combine(contestCreationViewModel.endDate) { startDate, endDate ->
+                if (startDate != null && endDate != null) {
+                    startDate to endDate
+                } else {
+                    null
                 }
+            }.flowWithLifecycle(lifecycle).collect {
+                it?.let { (startDate, endDate) ->
+                    startDateText.setText(formatter.format(startDate))
+                    endDateText.setText(formatter.format(endDate))
+                    setDateButtonNewListener(startDateButton)
+                }
+            }
         }
 
         startDateButton.setOnClickListener {
