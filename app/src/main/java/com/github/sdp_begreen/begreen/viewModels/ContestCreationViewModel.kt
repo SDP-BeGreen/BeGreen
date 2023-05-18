@@ -202,9 +202,9 @@ class ContestCreationViewModel : ViewModel() {
         if (longLat.longitude!! < -180 || longLat.longitude!! > 180) return false
 
 
+        mutableLatLng.value = longLat
         viewModelScope.launch {
             geocodingApi.getAddresses(longLat, 1)?.let {
-                mutableLatLng.value = longLat
                 mutableCity.value = it[0].locality
                 mutablePostalCode.value = it[0].postalCode
                 mutableCountry.value = it[0].countryName

@@ -3,6 +3,7 @@ package com.github.sdp_begreen.begreen.viewModels
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
+import com.github.sdp_begreen.begreen.models.CustomLatLng
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.junit.Before
@@ -16,12 +17,6 @@ class ContestCreationViewModelTest {
 
     private lateinit var vm: ContestCreationViewModel
 
-    private fun fromFormattedDateToLong(date: String): Long {
-        val formatter = SimpleDateFormat("dd/MM/yyyy")
-        if (date.contains(Regex("[a-zA-Z]"))) return 0
-        val datetmp = formatter.parse(date)
-        return datetmp?.time ?: 0
-    }
 
     private fun fromLongToFormattedDate(date: Long): String {
         val formatter = SimpleDateFormat("dd/MM/yyyy")
@@ -121,6 +116,159 @@ class ContestCreationViewModelTest {
         assertThat(vm.editEndDate(date), `is`(false))
 
     }
+
+
+    @Test
+    fun isEditStartHourCorrect() {
+        val hour = 10
+        vm.editStartHour(hour)
+        assertThat(vm.startHour.value!!, `is`(hour))
+    }
+
+    @Test
+    fun isEditStartHourRefusingInvalidInput() {
+        val hour = 25
+        assertThat(vm.editStartHour(null), `is`(false))
+        assertThat(vm.editStartHour(hour), `is`(false))
+
+    }
+
+    @Test
+    fun isEditEndHourCorrect() {
+        val hour = 10
+        vm.editEndHour(hour)
+        assertThat(vm.endHour.value!!, `is`(hour))
+    }
+
+    @Test
+    fun isEditEndHourRefusingInvalidInput() {
+        val hour = 25
+        assertThat(vm.editEndHour(null), `is`(false))
+        assertThat(vm.editEndHour(hour), `is`(false))
+
+    }
+
+    @Test
+    fun isEditStartMinuteCorrect() {
+        val minutes = 10
+        vm.editStartMinute(minutes)
+        assertThat(vm.startMinute.value!!, `is`(minutes))
+    }
+
+    @Test
+    fun isEditStartMinuteRefusingInvalidInput() {
+        val minutes = 100
+        assertThat(vm.editStartMinute(null), `is`(false))
+        assertThat(vm.editStartMinute(minutes), `is`(false))
+
+    }
+
+    @Test
+    fun isEditEndMinuteCorrect() {
+        val minutes = 10
+        vm.editEndMinute(minutes)
+        assertThat(vm.endMinute.value!!, `is`(minutes))
+    }
+
+    @Test
+    fun isEditEndMinuteRefusingInvalidInput() {
+        val minutes = 100
+        assertThat(vm.editEndMinute(null), `is`(false))
+        assertThat(vm.editEndMinute(minutes), `is`(false))
+
+    }
+
+    @Test
+    fun isEditCityCorrect() {
+        val city = "Montreux"
+        vm.editCity(city)
+        assertThat(vm.city.value!!, `is`(city))
+    }
+
+    @Test
+    fun isEditCityRefusingInvalidInput() {
+        val city = "Montreux123"
+        assertThat(vm.editCity(null), `is`(false))
+        assertThat(vm.editCity(city), `is`(false))
+
+    }
+
+    @Test
+    fun isEditCountryCorrect() {
+        val country = "France"
+        vm.editCountry(country)
+        assertThat(vm.country.value!!, `is`(country))
+    }
+
+    @Test
+    fun isEditCountryRefusingInvalidInput() {
+        val country = "France123"
+        assertThat(vm.editCountry(null), `is`(false))
+        assertThat(vm.editCountry(country), `is`(false))
+
+    }
+
+    @Test
+    fun isEditPostalCodeCorrect() {
+        val postalCode = "1234"
+        vm.editPostalCode(postalCode)
+        assertThat(vm.postalCode.value!!, `is`(postalCode))
+    }
+
+    @Test
+    fun isEditPostalCodeRefusingInvalidInput() {
+        val postalCode = "1234a"
+        assertThat(vm.editPostalCode(null), `is`(false))
+        assertThat(vm.editPostalCode(postalCode), `is`(false))
+
+    }
+
+    @Test
+    fun isEditRadiusCorrect() {
+        val radius = 123.0
+        vm.editRadius(radius)
+        assertThat(vm.radius.value!!, `is`(radius))
+    }
+
+    @Test
+    fun isEditRadiusRefusingInvalidInput() {
+        val radius = -123.0
+        assertThat(vm.editRadius(null), `is`(false))
+        assertThat(vm.editRadius(radius), `is`(false))
+
+    }
+
+    @Test
+    fun isEditCustomLongLatCorrect() {
+        val longLat = CustomLatLng(43.0, 46.0)
+        vm.editLongLat(longLat)
+        assertThat(vm.customLongLat.value.toString()!!, `is`(longLat.toString()))
+    }
+
+    @Test
+    fun isEditCustomLongLatRefusingInvalidInput() {
+        val longLat = CustomLatLng(-200.0, -200.0)
+        assertThat(vm.editLongLat(null), `is`(false))
+        assertThat(vm.editLongLat(longLat), `is`(false))
+
+    }
+
+    @Test
+    fun isContestCreationValidCorrect(){
+        vm.editStartDate(System.currentTimeMillis()+100)
+        vm.editEndDate(System.currentTimeMillis()+100)
+        vm.editStartHour(10)
+        vm.editEndHour(10)
+        vm.editStartMinute(10)
+        vm.editEndMinute(10)
+        vm.editCity("Montreux")
+        vm.editCountry("France")
+        vm.editPostalCode("1234")
+        vm.editRadius(123.0)
+        vm.editLongLat(CustomLatLng(1.0, 1.0))
+        assertThat(vm.isContestCreationValid(), `is`(true))
+    }
+
 
 
 }

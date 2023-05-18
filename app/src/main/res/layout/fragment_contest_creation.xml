@@ -260,6 +260,7 @@
                 android:format12Hour="dd/MM/yyyy"
                 android:text="@string/dd_mm_yyyy"
                 android:inputType="date"
+                android:textSize="13sp"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="10dp"
                 android:layout_centerVertical="true">
@@ -275,6 +276,7 @@
                 android:layout_centerVertical="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="10dp"
+                android:textSize="13sp"
                 android:text="@string/dd_mm_yyyy">
             </EditText>
 
@@ -304,6 +306,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="10dp"
                 android:inputType="time"
+                android:textSize="15sp"
                 android:text="@string/hour_format">
             </EditText>
 
@@ -327,6 +330,7 @@
                 android:layout_toStartOf="@+id/end_hour_contest"
                 android:layout_marginEnd="10dp"
                 android:inputType="time"
+                android:textSize="15sp"
                 android:text="@string/hour_format">
             </EditText>
 
