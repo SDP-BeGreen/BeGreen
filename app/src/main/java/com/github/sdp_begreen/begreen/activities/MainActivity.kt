@@ -220,12 +220,10 @@ class MainActivity : AppCompatActivity() {
             R.id.mainNavDrawProfile -> {
                 connectedUserViewModel.currentUser.value?.also {
 
-                //    lifecycleScope.launch {
-                        // User own posts
-                        val photos = it.trashPhotosMetadatasList ?: listOf()
+                    // User own posts
+                    val photos = it.trashPhotosMetadatasList ?: listOf()
 
-                        replaceFragInMainContainer(ProfileDetailsFragment.newInstance(it, photos))
-                //    }
+                    replaceFragInMainContainer(ProfileDetailsFragment.newInstance(it, photos))
                 }
             }
             R.id.mainNavDrawFollowers -> {

@@ -274,6 +274,27 @@ class MainActivityTest {
         }
     }
 
+
+    @Test
+    fun pressDrawerMenuProfileExistingUserDisplayProfileDetailsFragment() {
+        runTest {
+
+            whenever(auth.getConnectedUserId())
+                .thenReturn(userId1)
+
+            // Open the navigation drawer
+            onView(withId(R.id.mainDrawerLayout))
+                .perform(DrawerActions.open(GravityCompat.END))
+
+            onView(withId(R.id.mainNavDrawProfile))
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+            onView(withId(R.id.fragment_profile_details))
+                .check(matches(isDisplayed()))
+        }
+    }
+
     @Test
     fun contactUsIsDisplayedInDrawerMenu() {
         runTest {

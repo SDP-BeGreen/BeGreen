@@ -29,6 +29,7 @@ import org.junit.runner.RunWith
 import org.koin.dsl.module
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.whenever
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
@@ -95,7 +96,6 @@ class CameraWithUIFragmentTest {
     fun setup() {
         fragmentScenario = launchFragmentInContainer()
     }
-
 
     @Test
     fun clickOnSwitchRedirectOnCamera() {

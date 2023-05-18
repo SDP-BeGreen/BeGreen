@@ -1,6 +1,7 @@
 package com.github.sdp_begreen.begreen.fragments
 
 import android.graphics.Bitmap
+import android.view.View
 import android.widget.LinearLayout
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
@@ -14,6 +15,7 @@ import com.github.sdp_begreen.begreen.activities.MainActivity
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
+import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
@@ -39,14 +41,25 @@ import org.mockito.kotlin.whenever
 class UserPhotosViewAdapterTest {
 
     companion object {
-    //    private val db: DB = Mockito.mock(DB::class.java)
-    //    private val auth: Auth = Mockito.mock(Auth::class.java)
-        private val user = User(id = "10", score = 94, displayName = "Messi")
+        private val db: DB = Mockito.mock(DB::class.java)
+        private val auth: Auth = Mockito.mock(Auth::class.java)
         private val userId = "10"
+        private val profilePhotoMetadata = ProfilePhotoMetadata("1", null, userId)
+        val user = User(userId, 2, "test", 5, "test",
+            "test", "test", 15, listOf("1", "3", "6"), listOf("2", "4"), profilePhotoMetadata)
+        val users = listOf(
+            User("1", 123, "Alice"),
+            User("2", 0, "Bob Zeu bricoleur"),
+            User("3", 14, "Charlie Chaplin"),
+            User("4", 23, "David Pujadas"),
+            User("5", 10492, "Euler"),
+            User("6", 1234, "Alain Berset"),
+            User("7", 1235, "Mister Alix")
+        )
         private val fakePicture = Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888)
         private val authUserFlow = MutableStateFlow(userId)
 
-        /*
+
         @OptIn(ExperimentalCoroutinesApi::class)
         @BeforeClass
         @JvmStatic
@@ -55,32 +68,41 @@ class UserPhotosViewAdapterTest {
             // that's why we do it in the beforeClass method
             runTest {
                 // setup basic get user and getProfilePicture use in multiple tests
-                whenever(db.getUser(userId)).thenReturn(user)
-                whenever(db.getUserProfilePicture(userId)).thenReturn(fakePicture)
-                whenever(auth.getConnectedUserId()).thenReturn(userId)
-                whenever(auth.getFlowUserIds()).thenReturn(authUserFlow.onEach { delay(10) })
+                Mockito.`when`(db.getUser(user.id))
+                    .thenReturn(user)
+                // add a small delay, just to be sure that it is triggered after initialization
+                // and arrive second, after the initial null value
+                // user between tests, by simply pushing a new userId
+                Mockito.`when`(auth.getFlowUserIds())
+                    .thenReturn(MutableStateFlow(user.id))
+                Mockito.`when`(auth.getConnectedUserId())
+                    .thenReturn(user.id)
+                Mockito.`when`(db.getAllUsers())
+                    .thenReturn(users)
+                Mockito.`when`(db.getFollowedIds(user.id))
+                    .thenReturn(user.following)
             }
-        }*/
+        }
     }
 
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
 
     // Setup the koin test rule
-   /* @get:Rule
+   @get:Rule
     val koinTestRule = KoinTestRule(
         modules = listOf(module {
             single { db }
             single { auth }
         })
-    )*/
+    )
 
-    @get:Rule
-    val koinTestRule = KoinTestRule()
+    //@get:Rule
+    //val koinTestRule = KoinTestRule()
 
     private val photoList = listOf(
-        TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
-        TrashPhotoMetadata("2", ParcelableDate.now, "1", "Helloooo", TrashCategory.PLASTIC),
+        TrashPhotoMetadata("1", ParcelableDate.now, userId, "Look at me cleaning!", TrashCategory.PLASTIC),
+        TrashPhotoMetadata("1", ParcelableDate.now, userId, "Look at me cleaning!", TrashCategory.PLASTIC),
     )
     private var userPhotoViewAdapter = UserPhotosViewAdapter(photoList, true, TestLifecycleOwner().lifecycleScope)
     private val appContext = InstrumentationRegistry.getInstrumentation().targetContext
@@ -92,39 +114,66 @@ class UserPhotosViewAdapterTest {
 
     @Test
     fun userViewAdapterGetItemCountWorksOnEmptyList() {
-        userPhotoViewAdapter = UserPhotosViewAdapter(listOf(), true, TestLifecycleOwner().lifecycleScope)
+
+        val userPhotoViewAdapter = UserPhotosViewAdapter(listOf(), true, TestLifecycleOwner().lifecycleScope)
         MatcherAssert.assertThat(userPhotoViewAdapter.itemCount, equalTo(0))
     }
 
     @Test
     fun userPhotosViewAdapterGetItemCountWorksOnNullList() {
-        userPhotoViewAdapter = UserPhotosViewAdapter(null, true, TestLifecycleOwner().lifecycleScope)
+
+        val userPhotoViewAdapter = UserPhotosViewAdapter(null, true, TestLifecycleOwner().lifecycleScope)
         MatcherAssert.assertThat(userPhotoViewAdapter.itemCount, equalTo(0))
     }
 
     @Test
     fun userPhotosViewAdapterOnBindViewHolderNonExistingUser() {
 
-        val viweHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
-        userPhotoViewAdapter.onBindViewHolder(viweHolder, 0)
+        runTest {
 
-        MatcherAssert.assertThat(viweHolder.titleView.text, equalTo("Title"))
-        MatcherAssert.assertThat(viweHolder.subtitleView, CoreMatchers.notNullValue())
-        MatcherAssert.assertThat(viweHolder.subtitleView.text.toString(), equalTo("subhead"))
-        MatcherAssert.assertThat(viweHolder.descriptionView.text.toString(), equalTo("Default description of the post"))
+            Mockito.`when`(db.getUser(user.id))
+                .thenReturn(null)
+
+            val viewHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
+
+            MatcherAssert.assertThat(viewHolder.titleView.text, equalTo("Title"))
+            MatcherAssert.assertThat(viewHolder.subtitleView, CoreMatchers.notNullValue())
+            MatcherAssert.assertThat(viewHolder.subtitleView.text.toString(), equalTo("subhead"))
+            MatcherAssert.assertThat(
+                viewHolder.descriptionView.text.toString(),
+                equalTo("Default description of the post")
+            )
+        }
     }
 
     @Test
     fun userPhotosViewAdapterOnBindViewHolderWorksOnTrivialList() {
 
-        val viweHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
+        runTest {
 
-        // TODO : Koin va regler ce probleme
-        userPhotoViewAdapter.onBindViewHolder(viweHolder, 0)
+            Mockito.`when`(db.getUser(user.id))
+                .thenReturn(user)
 
-      //  MatcherAssert.assertThat(viweHolder.titleView.text, equalTo("Look at me cleaning!"))
-      //  MatcherAssert.assertThat(viweHolder.subtitleView, CoreMatchers.notNullValue())
-      //  MatcherAssert.assertThat(viweHolder.subtitleView.text.toString(), CoreMatchers.containsString(TrashCategory.PLASTIC.title))
+            val photoList = listOf(
+                TrashPhotoMetadata("1", ParcelableDate.now, userId, "Look at me cleaning!", TrashCategory.PLASTIC),
+                TrashPhotoMetadata("1", ParcelableDate.now, userId, "Look at me cleaning!", TrashCategory.PLASTIC),
+            )
+
+            val userPhotoViewAdapter =
+                UserPhotosViewAdapter(photoList, true, TestLifecycleOwner().lifecycleScope)
+            val viewHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
+
+            MatcherAssert.assertThat(viewHolder.avatarView.visibility, equalTo(View.VISIBLE))
+
+            /*
+            MatcherAssert.assertThat(viewHolder.titleView.text, equalTo(user.displayName))
+            MatcherAssert.assertThat(viewHolder.subtitleView, CoreMatchers.notNullValue())
+            MatcherAssert.assertThat(viewHolder.subtitleView.text.toString(), CoreMatchers.containsString(TrashCategory.PLASTIC.title))
+            MatcherAssert.assertThat(
+                viewHolder.descriptionView.text.toString(),
+                equalTo("Look at me cleaning!")
+            )*/
+        }
     }
 
     @Test

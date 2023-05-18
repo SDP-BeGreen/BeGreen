@@ -187,8 +187,8 @@ class CameraWithUIFragment : Fragment() {
      */
     private suspend fun getProfile() : Fragment {
 
-        val user = connectedUserViewModel.currentUser.value!!
-        val photos = user.trashPhotosMetadatasList ?: listOf()
+        val user = connectedUserViewModel.currentUser.value
+        val photos = user?.trashPhotosMetadatasList ?: listOf()
 
         //_______________________________________________________
         return (connectedUserViewModel.currentUser.value?.let {
