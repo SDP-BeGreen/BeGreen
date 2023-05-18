@@ -1,13 +1,11 @@
 package com.github.sdp_begreen.begreen.firebase.eventServices
 
-import android.util.Log
 import com.github.sdp_begreen.begreen.FirebaseRef
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.getFlowOfObjects
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.getObjFromDb
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.removeObjFromDb
 import com.github.sdp_begreen.begreen.firebase.FirebaseUtils.setObjToDb
 import com.github.sdp_begreen.begreen.firebase.RootPath
-import com.github.sdp_begreen.begreen.models.event.ContestParticipant
 import com.github.sdp_begreen.begreen.models.event.EventParticipant
 import com.github.sdp_begreen.begreen.utils.checkArgument
 import com.github.sdp_begreen.begreen.utils.checkRootPathMatchParticipantClassImpl

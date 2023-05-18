@@ -56,7 +56,11 @@ interface EventParticipantService {
      * @throws IllegalArgumentException Throw if one of the argument does not match the requirement
      * @throws EventServiceException Throw if an error occurred while adding the participant
      */
-    suspend fun <T : EventParticipant> addParticipant(rootPath: RootPath,  eventId: String, participant: T): T
+    suspend fun <T : EventParticipant> addParticipant(
+        rootPath: RootPath,
+        eventId: String,
+        participant: T
+    ): T
 
     /**
      * Remove a participant from the event

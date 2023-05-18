@@ -6,23 +6,17 @@ import androidx.test.filters.MediumTest
 import com.github.sdp_begreen.begreen.exceptions.EventServiceException
 import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.matchers.ContainsWithSameOrder.Companion.inWithOrder
-import com.github.sdp_begreen.begreen.models.event.Contest
 import com.github.sdp_begreen.begreen.models.CustomLatLng
+import com.github.sdp_begreen.begreen.models.event.Contest
 import com.github.sdp_begreen.begreen.models.event.Meeting
 import com.github.sdp_begreen.begreen.rules.CoroutineTestRule
 import com.github.sdp_begreen.begreen.rules.FirebaseEmulatorRule
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.withContext
-import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.CoreMatchers.everyItem
-import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.*
 import org.hamcrest.Matchers.`in`
 import org.hamcrest.Matchers.not
 import org.junit.Assert.assertThrows
@@ -30,7 +24,7 @@ import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.Calendar
+import java.util.*
 
 /**
  * The event service will only be tested using [Meeting]s, but it would work the same

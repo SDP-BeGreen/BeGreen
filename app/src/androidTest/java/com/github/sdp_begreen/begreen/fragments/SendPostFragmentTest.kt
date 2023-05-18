@@ -19,7 +19,6 @@ import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantService
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
-import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.models.event.Contest

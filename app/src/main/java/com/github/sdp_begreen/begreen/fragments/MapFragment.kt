@@ -17,6 +17,8 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.models.TrashCategory
+import com.github.sdp_begreen.begreen.utils.Permissions
+import com.github.sdp_begreen.begreen.utils.Permissions.hasPermissions
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -163,21 +165,14 @@ class MapFragment : Fragment() {
         }
     }
 
-    private fun hasPermission() = ContextCompat.checkSelfPermission(
-        requireContext(),
-        Manifest.permission.ACCESS_FINE_LOCATION
-    ) == PackageManager.PERMISSION_GRANTED
-
-
     /**
      * Displays the user current location. Asks for permissions if needed.
      */
     private fun checkUserLocationPermissions() {
-        if (!hasPermission())
-            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-        else
+        if (hasPermissions(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION))
             displayUserLocation()
-
+        else
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
     /**
@@ -244,7 +239,7 @@ class MapFragment : Fragment() {
      */
     private fun addNewBin(trashCategory: TrashCategory) {
 
-        if (!hasPermission())
+        if (!hasPermissions(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION))
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         else {
 

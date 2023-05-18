@@ -71,6 +71,4 @@ class ContestTest {
 
         assertThat(contest.isInRange(userLocation), `is`(equalTo(false)))
     }
-
-
 }

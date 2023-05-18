@@ -2,7 +2,6 @@ package com.github.sdp_begreen.begreen.fragments
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
@@ -24,6 +22,8 @@ import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantSer
 import com.github.sdp_begreen.begreen.models.*
 import com.github.sdp_begreen.begreen.models.event.Contest
 import com.github.sdp_begreen.begreen.models.event.ContestParticipant
+import com.github.sdp_begreen.begreen.utils.Permissions
+import com.github.sdp_begreen.begreen.utils.Permissions.hasPermissions
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.github.sdp_begreen.begreen.viewModels.EventsFragmentViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -92,12 +92,9 @@ class SendPostFragment : Fragment() {
 
     private fun checkUserLocationPermissions() {
 
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-
+        if (hasPermissions(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION))
+            updateUserLocation()
+        else {
             registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
 
                 if (isGranted) {
@@ -110,9 +107,6 @@ class SendPostFragment : Fragment() {
                     ).show()
                 }
             }.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-
-        } else {
-            updateUserLocation()
         }
     }
 

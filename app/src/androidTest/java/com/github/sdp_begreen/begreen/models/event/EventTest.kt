@@ -56,19 +56,28 @@ class EventTest {
 
     @Test
     fun isActiveReturnsTrueWhenCurrentTimeIsInBetweenStartDateTimeAndEndDateTime() {
-        val event = Meeting(startDateTime = System.currentTimeMillis() - 10000, endDateTime = System.currentTimeMillis() + 10000)
+        val event = Meeting(
+            startDateTime = System.currentTimeMillis() - 10000,
+            endDateTime = System.currentTimeMillis() + 10000
+        )
         assertThat(event.isActive(), `is`(equalTo(true)))
     }
 
     @Test
     fun isActiveReturnsFalseWhenCurrentTimeIsSmallerThanStartDateTime() {
-        val event = Meeting(startDateTime = System.currentTimeMillis() + 10000, endDateTime = System.currentTimeMillis() + 50000)
+        val event = Meeting(
+            startDateTime = System.currentTimeMillis() + 10000,
+            endDateTime = System.currentTimeMillis() + 50000
+        )
         assertThat(event.isActive(), `is`(equalTo(false)))
     }
 
     @Test
     fun isActiveReturnsFalseWhenCurrentTimeIsBiggerThanEndDateTime() {
-        val event = Meeting(startDateTime = System.currentTimeMillis() - 50000, endDateTime = System.currentTimeMillis() - 10000)
+        val event = Meeting(
+            startDateTime = System.currentTimeMillis() - 50000,
+            endDateTime = System.currentTimeMillis() - 10000
+        )
         assertThat(event.isActive(), `is`(equalTo(false)))
     }
 }

@@ -35,6 +35,7 @@ import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
+import com.github.sdp_begreen.begreen.utils.Permissions.hasPermissions
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -335,9 +336,7 @@ class CameraWithUIFragment : Fragment() {
      * Check if all permissions are granted
      */
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(
-            requireContext(), it
-        ) == PackageManager.PERMISSION_GRANTED
+        hasPermissions(requireContext(), it)
     }
 
     override fun onDestroy() {
