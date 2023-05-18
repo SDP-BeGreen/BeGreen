@@ -38,6 +38,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 
+/**
+ * This class represent a dialog fragment used to display the map with the location of the contest
+ * and draw a circle with the radius. The dialog allow to easily select the location and
+ * the radius by placing markers.
+ */
 class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogFragment(),
     OnMapReadyCallback {
 
@@ -81,9 +86,6 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
         setupButtonBackgroundToggle(view)
         setupApproveButton(view)
         setupCancelButton(view)
-
-        // TODO add method to initialize map when creating fragment
-
         return view
     }
 
@@ -91,12 +93,15 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
         this.map = map
         // Start by checking that the user has the permission to use his location to center the map
         addUserLocationLayer()
-        setupAddLocationMarker()
+        setupAddMarker()
         setupRedrawCircleUponMarkerChange()
         setupDragMarkerListener()
         setupInitMarkerAndCircle()
     }
 
+    /**
+     * Helper function to initially draw the marker and the circle on the map
+     */
     private fun setupInitMarkerAndCircle() {
         var initLocation: LatLng? = null
         var initRadius = 0.0
@@ -112,6 +117,9 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
         }
     }
 
+    /**
+     * Helper function to add the user location, and request permission if not already granted
+     */
     private fun addUserLocationLayer() {
 
         if (ContextCompat.checkSelfPermission(
@@ -125,7 +133,10 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
         }
     }
 
-    private fun setupAddLocationMarker() {
+    /**
+     * Helper function to setup the possibility to add a marker
+     */
+    private fun setupAddMarker() {
         map.setOnMapClickListener {
             when (contestMapDialogViewModel.selectedButton.value) {
                 SelectedButton.LOCATION_BUTTON -> {
@@ -139,6 +150,9 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
         }
     }
 
+    /**
+     * Helper function to add a location marker
+     */
     private fun addLocationMarker(pos: LatLng) = contestMapDialogViewModel.newLocationMarker(
         map.addMarker(
             MarkerOptions().position(pos)
@@ -146,6 +160,9 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
         )
     )
 
+    /**
+     * Helper function to add a radius marker
+     */
     private fun addRadiusMarker(pos: LatLng) = contestMapDialogViewModel.newRadiusMarker(
         map.addMarker(
             MarkerOptions().position(pos)
@@ -154,6 +171,9 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
         )
     )
 
+    /**
+     * Helper function to setup the listener for dragging marker event
+     */
     private fun setupDragMarkerListener() {
         map.setOnMarkerDragListener(object : OnMarkerDragListener {
             override fun onMarkerDrag(marker: Marker) {
@@ -176,6 +196,10 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
         })
     }
 
+    /**
+     * Helper function to setup the flow collection to redraw the circle if one of the
+     * two marker have changed
+     */
     private fun setupRedrawCircleUponMarkerChange() {
         lifecycleScope.launch {
             contestMapDialogViewModel.locationMarker
@@ -191,6 +215,9 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
         }
     }
 
+    /**
+     * Helper function to draw the circle
+     */
     private fun drawCircle(centerPos: LatLng, radius: Double) {
         val circle = map.addCircle(
             CircleOptions()
@@ -201,12 +228,22 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
         contestMapDialogViewModel.drawnCircle = circle
     }
 
+    /**
+     * Helper function to calculate the radius (i.e. distance between two markers)
+     */
     private fun calculateRadius(centerPos: LatLng, borderPos: LatLng) =
         SphericalUtil.computeDistanceBetween(centerPos, borderPos)
 
+    /**
+     * Helper function to add a distance to a position, to get new position
+     */
     private fun addDistanceToPos(pos: LatLng, distance: Double) =
-        SphericalUtil.computeOffset(pos, distance, 0.0)
+        SphericalUtil.computeOffset(pos, distance, DEFAULT_HEADING)
 
+    /**
+     * Helper function to setup the background of the marker button to correctly mark
+     * the selected button
+     */
     private fun setupButtonBackgroundToggle(view: View) {
         lifecycleScope.launch {
             contestMapDialogViewModel.selectedButton.flowWithLifecycle(lifecycle)
@@ -235,6 +272,14 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
         }
     }
 
+    /**
+     * Helper function to setup the approve button
+     *
+     * It will simply call the listener function, to notify the create contest fragment about
+     * the new values
+     *
+     * And close the dialog
+     */
     private fun setupApproveButton(view: View) {
         view.findViewById<MaterialButton>(R.id.create_contest_map_approve_button)
             .setOnClickListener {
@@ -261,8 +306,13 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
             }
     }
 
-    // We can silent this warning, as this method is ensured to be called only
-    // in places where the permission have been granted
+
+    /**
+     * Helper function to setup the display location functionality
+     *
+     * We can silent this warning, as this method is ensured to be called only
+     * in places where the permission have been granted
+     */
     @SuppressLint("MissingPermission")
     private fun displayLocation() {
         map.isMyLocationEnabled = true
@@ -298,8 +348,13 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
 
         private const val LOCATION_ARG = "Location"
         private const val RADIUS_ARG = "Radius"
-        private const val INIT_ZOOM_FACTOR = 15F
+        private const val INIT_ZOOM_FACTOR = 11f
+        private const val DEFAULT_HEADING = 0.0
 
+        /**
+         * Method to create a new factory for this [DialogFragment], as it needs a special
+         * parameter
+         */
         fun factory(listener: ContestMapDialogListener): FragmentFactory =
             object : FragmentFactory() {
                 override fun instantiate(classLoader: ClassLoader, className: String): Fragment =
@@ -309,6 +364,9 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
                     }
             }
 
+        /**
+         * Function to easily create a new instance of [ContestMapDialog]
+         */
         fun newInstance(
             listener: ContestMapDialogListener,
             location: CustomLatLng? = null,
