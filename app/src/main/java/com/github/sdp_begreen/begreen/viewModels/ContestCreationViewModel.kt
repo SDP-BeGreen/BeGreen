@@ -1,6 +1,5 @@
 package com.github.sdp_begreen.begreen.viewModels
 
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.sdp_begreen.begreen.models.CustomLatLng
