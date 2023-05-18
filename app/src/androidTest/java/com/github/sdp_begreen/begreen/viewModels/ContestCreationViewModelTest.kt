@@ -1,26 +1,80 @@
 package com.github.sdp_begreen.begreen.viewModels
 
+import android.location.Address
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
+import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.CustomLatLng
+import com.github.sdp_begreen.begreen.services.GeocodingService
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.junit.Before
+import org.junit.BeforeClass
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.dsl.module
+import org.koin.test.KoinTestRule
+import org.mockito.Mockito
+import org.mockito.Mockito.any
+import org.mockito.Mockito.mock
 import java.text.SimpleDateFormat
 
 @RunWith(AndroidJUnit4::class)
 @SmallTest
 class ContestCreationViewModelTest {
 
-    private lateinit var vm: ContestCreationViewModel
+    companion object {
+
+        private val geo: GeocodingService = mock()
+        private lateinit var vm: ContestCreationViewModel
+
+        private val address = Address( null).apply {
+            adminArea = "Vaud"
+            countryCode = "CH"
+            locality = "Lausanne"
+            postalCode = "1010"
+            latitude = 46.519653
+            longitude = 6.632273
+        }
+
+        private val listOfAddress = listOf(address)
+
+        @OptIn(ExperimentalCoroutinesApi::class)
+        @BeforeClass
+        @JvmStatic
+        fun setUpGeo() {
+            // The implementation need to be provided before the rule is executed,
+            // that's why we do it in the beforeClass method
+            runTest {
+
+                Mockito.`when`(geo.getAddresses(any(), any()))
+                    .thenReturn(listOfAddress)
+
+                Mockito.`when`(geo.getLongLat(any()))
+                    .thenReturn(CustomLatLng(46.519653, 6.632273))
+
+            }
+        }
 
 
-    private fun fromLongToFormattedDate(date: Long): String {
-        val formatter = SimpleDateFormat("dd/MM/yyyy")
-        return formatter.format(date)
+        private fun fromLongToFormattedDate(date: Long): String {
+            val formatter = SimpleDateFormat("dd/MM/yyyy")
+            return formatter.format(date)
+        }
+    }
+
+    @get:Rule
+    val koinTestRule = KoinTestRule.create {
+        modules(module {
+            single { geo }
+        })
     }
 
     @Before
