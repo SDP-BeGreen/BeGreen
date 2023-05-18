@@ -255,6 +255,7 @@ class ContestCreationFragment : Fragment() {
 
     /**
      * Convert a formatted date to a timestamp
+     * @param date the formatted date
      */
     private fun fromFormattedDateToLong(date: String): Long {
         val formatter = SimpleDateFormat("dd/MM/yyyy")
@@ -265,6 +266,7 @@ class ContestCreationFragment : Fragment() {
 
     /**
      * Convert a timestamp to a formatted date
+     * @param date the timestamp
      */
     private fun fromLongToFormattedDate(date: Long): String {
         val formatter = SimpleDateFormat("dd/MM/yyyy")
@@ -273,6 +275,9 @@ class ContestCreationFragment : Fragment() {
 
     /**
      * Add a listener to the date edit text
+     * @param text the edit text
+     * @param viewModelTimeValue the time value in the view model
+     * @param editFun the function to edit the time value in the view model
      */
     private fun addDateListener(
         text: EditText,
@@ -294,6 +299,7 @@ class ContestCreationFragment : Fragment() {
 
     /**
      * Setup the start/end date edit button
+     * @param view the view of the fragment
      */
     private fun setupDateEditText(view: View) {
         val startDateText = view.findViewById<EditText>(R.id.start_date_contest_text)
@@ -402,6 +408,81 @@ class ContestCreationFragment : Fragment() {
     }
 
     //----------------------------------Hours--------------------------------------------
+
+    /**
+     * Add a listener to the hour edit text
+     * @param text the edit text to setup
+     * @param hour the hour state flow
+     * @param minute the minute state flow
+     * @param editHour the function to edit the hour state flow
+     * @param editMinute the function to edit the minute state flow
+     */
+    private fun addHourListener(
+        text : EditText,
+        hour : StateFlow<Int?>,
+        minute : StateFlow<Int?>,
+        editHour: (input: Int) -> Boolean,
+        editMinute: (input: Int) -> Boolean
+    ) {
+        text.setOnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus) {
+                val hourtmp = text.text.toString()
+                if (hourtmp.contains(Regex("[a-zA-Z]")) || !hourtmp.contains(":")) {
+                    val hourstr = hour.value
+                    val minutestr = minute.value
+                    text.setText("$hourstr:$minutestr")
+                }
+                val hourNext = hourtmp.split(":")[0].toInt()
+                val minuteNext = hourtmp.split(":")[1].toInt()
+                editHour(hourNext)
+                editMinute(minuteNext)
+            }
+        }
+    }
+
+    /**
+     * Setup the hour edit text
+     * @param view the view of the fragment
+     */
+    private fun setupHourEditText(view: View) {
+        val startHourText = view.findViewById<EditText>(R.id.start_hour_contest_text)
+        val endHourText = view.findViewById<EditText>(R.id.end_hour_contest_text)
+
+        addHourListener(
+            startHourText,
+            contestCreationViewModel.startHour,
+            contestCreationViewModel.startMinute,
+            contestCreationViewModel::editStartHour,
+            contestCreationViewModel::editStartMinute
+        )
+        addHourListener(
+            endHourText,
+            contestCreationViewModel.endHour,
+            contestCreationViewModel.endMinute,
+            contestCreationViewModel::editEndHour,
+            contestCreationViewModel::editEndMinute
+        )
+    }
+
+    /**
+     * Get a hour picker with flow hours
+     * @param hour the hour state flow
+     * @param minute the minute state flow
+     */
+    private fun getNewHourPicker(hour : StateFlow<Int?>, minute : StateFlow<Int?>): MaterialTimePicker {
+        if (contestCreationViewModel.startHour.value == null || contestCreationViewModel.endHour.value == null) {
+            contestCreationViewModel.editStartHour(12)
+            contestCreationViewModel.editStartMinute(0)
+            contestCreationViewModel.editEndHour(12)
+            contestCreationViewModel.editEndMinute(0)
+        }
+        val builder = MaterialTimePicker.Builder()
+        builder.setTimeFormat(TimeFormat.CLOCK_24H)
+        builder.setTitleText("Select hours")
+        builder.setHour(hour.value!!)
+        builder.setMinute(minute.value!!)
+        return builder.build()
+    }
 
     /**
      * Setup the start hour button
