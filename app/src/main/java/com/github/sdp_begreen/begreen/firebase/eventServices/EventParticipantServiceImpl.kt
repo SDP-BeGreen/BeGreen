@@ -60,7 +60,7 @@ object EventParticipantServiceImpl : EventParticipantService {
             dbRef.child(rootPath.path).child(eventId).child(PARTICIPANTS_PATH)
                 .child(participant.id!!),
             participant,
-            "Error while adding a participant"
+            "Error while adding the participant with id ${participant.id}"
         )
     }
 
@@ -77,7 +77,7 @@ object EventParticipantServiceImpl : EventParticipantService {
             dbRef.child(rootPath.path).child(eventId)
                 .child(PARTICIPANTS_PATH)
                 .child(participantId),
-            "Error while removing the participant"
+            "Error while removing the participant with id $participantId"
         )
     }
 }

@@ -272,7 +272,7 @@ class EventParticipantServiceTest {
     }
 
     @Test
-    fun getParticipantBlankParticipantIdIdShouldThrowIllegalArgumentException() {
+    fun getParticipantBlankParticipantIdShouldThrowIllegalArgumentException() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             runTest {
                 EventParticipantServiceImpl.getParticipant(

@@ -22,7 +22,6 @@ import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantSer
 import com.github.sdp_begreen.begreen.models.*
 import com.github.sdp_begreen.begreen.models.event.Contest
 import com.github.sdp_begreen.begreen.models.event.ContestParticipant
-import com.github.sdp_begreen.begreen.utils.Permissions
 import com.github.sdp_begreen.begreen.utils.Permissions.hasPermissions
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.github.sdp_begreen.begreen.viewModels.EventsFragmentViewModel
@@ -222,41 +221,46 @@ class SendPostFragment : Fragment() {
 
     private suspend fun contestsUpdateScores(
         trashCategory: TrashCategory,
-        location: CustomLatLng,
+        location: CustomLatLng
     ) {
+        val userId = connectedUserViewModel.currentUser.value?.id
+        val participationMap =
+            eventsFragmentViewModel.participationMap.dropWhile { it.isEmpty() }.first()
+        val contests = eventsFragmentViewModel.allEvents.dropWhile { it.isEmpty() }.first()
 
-        connectedUserViewModel.currentUser.value?.id?.also { participantId ->
-            val participationMap =
-                eventsFragmentViewModel.participationMap.dropWhile { it.isEmpty() }.first()
-
-            eventsFragmentViewModel.allEvents.dropWhile { it.isEmpty() }.first()
-                .forEach { contest ->
-
-                    // Check that the location is valid before checking if the user is in range
-                    location.toMapLocation()?.also {
-                        if (participationMap[contest.id] == true &&
-                            contest.isActive() == true &&
-                            contest.isInRange(it) == true
-                        ) {
-                            val updatedParticipant = eventParticipantService.getParticipant(
-                                RootPath.CONTESTS,
-                                contest.id!!,
-                                participantId,
-                                ContestParticipant::class.java
-                            )
-                            eventParticipantService.addParticipant(
-                                RootPath.CONTESTS,
-                                contest.id!!,
-                                updatedParticipant.copy(
-                                    score = updatedParticipant.score?.plus(trashCategory.value)
-                                        ?: trashCategory.value
-                                )
-                            )
-                        }
-                    }
-                }
+        contests.forEach { contest ->
+            processContest(contest, userId, participationMap, trashCategory, location)
         }
+    }
 
+    private suspend fun processContest(
+        contest: Contest,
+        userId: String?,
+        participationMap: Map<String, Boolean>,
+        trashCategory: TrashCategory,
+        location: CustomLatLng
+    ) {
+        location.toMapLocation()?.let {
+            if (participationMap[contest.id] == true &&
+                contest.isActive() == true &&
+                contest.isInRange(it) == true
+            ) {
+                val updatedParticipant = eventParticipantService.getParticipant(
+                    RootPath.CONTESTS,
+                    contest.id!!,
+                    userId!!,
+                    ContestParticipant::class.java
+                )
+                eventParticipantService.addParticipant(
+                    RootPath.CONTESTS,
+                    contest.id!!,
+                    updatedParticipant.copy(
+                        score = updatedParticipant.score?.plus(trashCategory.value)
+                            ?: trashCategory.value
+                    )
+                )
+            }
+        }
     }
 
     /**

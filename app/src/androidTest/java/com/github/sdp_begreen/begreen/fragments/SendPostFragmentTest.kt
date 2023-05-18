@@ -71,9 +71,6 @@ class SendPostFragmentTest {
                 // setup basic get user and getProfilePicture use in multiple tests
                 whenever(db.getUser(user.id))
                     .thenReturn(user)
-                // add a small delay, just to be sure that it is triggered after initialization
-                // and arrive second, after the initial null value
-                // user between tests, by simply pushing a new userId
                 whenever(auth.getFlowUserIds())
                     .thenReturn(MutableStateFlow(user.id))
                 whenever(auth.getConnectedUserId())

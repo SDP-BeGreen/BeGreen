@@ -15,6 +15,9 @@ import org.koin.java.KoinJavaComponent.inject
 
 object EventServiceImpl : EventService {
 
+    private const val START_DATE_TIME = "startDateTIme"
+    private const val END_DATE_TIME = "endDateTIme"
+
     private val dbRefs by inject<FirebaseRef>(FirebaseRef::class.java)
 
     private val dbRef = dbRefs.databaseReference
@@ -51,8 +54,8 @@ object EventServiceImpl : EventService {
     ): Flow<List<T>> {
         checkRootPathMatchEventClassImpl(rootPath, eventImplType)
         val orderBy = when (rootPath) {
-            RootPath.MEETINGS -> "startDateTime"
-            RootPath.CONTESTS -> "endDateTime"
+            RootPath.MEETINGS -> START_DATE_TIME
+            RootPath.CONTESTS -> END_DATE_TIME
         }
         return getFlowOfObjects(
             dbRef.child(rootPath.path).orderByChild(orderBy)
