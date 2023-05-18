@@ -4,9 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -232,30 +230,13 @@ class SendPostFragment : Fragment() {
         trashCategory: TrashCategory,
         location: CustomLatLng,
     ) {
-        Log.d("SendPostFragment", "User location: " + location)
-        Log.d("SendPostFragment", "Updating user's contest score")
-        Log.d("SendPostFragment", "User id: " + connectedUserViewModel.currentUser.value?.id)
 
         connectedUserViewModel.currentUser.value?.id?.also { participantId ->
             val participationMap =
                 eventsFragmentViewModel.participationMap.dropWhile { it.isEmpty() }.first()
-            Log.d("SendPostFragment", "Contest IDs: " + eventsFragmentViewModel.allEvents.value)
 
             eventsFragmentViewModel.allEvents.dropWhile { it.isEmpty() }.first()
                 .forEach { contest ->
-
-                    Log.d(
-                        "SendPostFragment",
-                        "ContestID: " + contest.id + " participates?: " + (participationMap[contest.id] == true) +
-                                " isActive?: " + contest.isActive()
-
-                    )
-                    location.toMapLocation()?.also {
-                        Log.d(
-                            "SendPostFragment",
-                            "Is in range? " + contest.isInRange(it)
-                        )
-                    }
 
                     // Check that the location is valid before checking if the user is in range
                     location.toMapLocation()?.also {
