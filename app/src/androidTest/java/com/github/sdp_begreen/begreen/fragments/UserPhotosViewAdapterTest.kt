@@ -191,6 +191,29 @@ class UserPhotosViewAdapterTest {
         userPhotoViewAdapter.onBindViewHolder(viewHolder, 0)
     }
 
+    fun userPhotosViewAdapterOnBindViewHolderDoesntCrashWithNullUser() {
+
+        runTest {
+
+            `when`(db.getUser(user.id))
+                .thenReturn(null)
+
+            userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
+        }
+    }
+
+    fun userPhotosViewAdapterOnBindViewHolderDoesntCrashWithNullTakenBy() {
+
+        val photoList = listOf(
+            TrashPhotoMetadata("1", null, null, "Look at me cleaning!", null),
+            TrashPhotoMetadata("2", null, null, "Look at me cleaning!", null),
+        )
+        val userPhotoViewAdapter =
+            UserPhotosViewAdapter(photoList, true, TestLifecycleOwner().lifecycleScope, resources)
+        val viewHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
+        userPhotoViewAdapter.onBindViewHolder(viewHolder, 0)
+    }
+
     @Test
     fun userPhotosViewAdapterOnBindViewHolderUserWithNullDisplayName() {
 
@@ -210,17 +233,6 @@ class UserPhotosViewAdapterTest {
             assertThat(viewHolder.titleView.text, equalTo(userDisplayNameString))
 
             */
-        }
-    }
-
-    fun userPhotosViewAdapterOnBindViewHolderDoesntCrashWithNullUser() {
-
-        runTest {
-
-            `when`(db.getUser(user.id))
-                .thenReturn(null)
-
-            userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
         }
     }
 
