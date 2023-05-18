@@ -1,7 +1,6 @@
 package com.github.sdp_begreen.begreen.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,15 +10,15 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Spinner
-import android.widget.TextClock
 import android.widget.Toast
+import androidx.core.util.Pair
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.viewModels.ContestCreationViewModel
-import com.github.sdp_begreen.begreen.viewModels.ProfileEditedValuesViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -145,7 +144,7 @@ class ContestCreationFragment : Fragment() {
         }
         lifecycleScope.launch {
             contestCreationViewModel.radius.flowWithLifecycle(lifecycle).collect {
-                radiusText.setText(it ?: 0)
+                radiusText.setText(it.toString() ?: "0")
             }
         }
     }
@@ -196,115 +195,153 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
+    private fun getNewDatePicker(): MaterialDatePicker<Pair<Long, Long>> {
+        val builder = MaterialDatePicker.Builder.dateRangePicker()
+        builder.setTitleText("Select dates")
+        builder.setSelection(
+            Pair(
+                contestCreationViewModel.startDate.value,
+                contestCreationViewModel.endDate.value
+            )
+        )
+        return builder.build()
+    }
+
     private fun setupDateButton(view: View) {
         val startDateButton = view.findViewById<Button>(R.id.date_period_contest)
         val startDateText = view.findViewById<EditText>(R.id.start_date_contest_text)
         val endDateText = view.findViewById<EditText>(R.id.end_date_contest_text)
-
-        val datePicker = MaterialDatePicker.Builder.dateRangePicker()
+        val formatter = SimpleDateFormat("dd/MM/yyyy")
+        var datePicker = MaterialDatePicker.Builder.dateRangePicker()
             .setTitleText("Select dates")
             .build()
+
+
+        lifecycleScope.launch {
+            contestCreationViewModel.startDate.flowWithLifecycle(lifecycle).collect {
+                if(it != null) {
+                    startDateText.setText(formatter.format(it))
+                    datePicker = getNewDatePicker()
+
+                    startDateButton.setOnClickListener {
+                        datePicker.show(requireActivity().supportFragmentManager, "datePicker")
+                    }
+                }
+
+            }
+            contestCreationViewModel.endDate.flowWithLifecycle(lifecycle).collect {
+                if(it != null) {
+                    endDateText.setText(formatter.format(it))
+                    datePicker = getNewDatePicker()
+
+                    startDateButton.setOnClickListener {
+                        datePicker.show(requireActivity().supportFragmentManager, "datePicker")
+                    }
+                }
+            }
+        }
 
         startDateButton.setOnClickListener {
             datePicker.show(requireActivity().supportFragmentManager, "datePicker")
         }
+
         datePicker.addOnPositiveButtonClickListener {
-            startDateText.setText(datePicker.headerText.toString())
-            val pair: androidx.core.util.Pair<Long, Long> =
-                datePicker.selection as androidx.core.util.Pair<Long, Long>
-            val formatter = SimpleDateFormat("dd/MM/yyyy")
-            val begin = formatter.format(pair.first)
-            val end = formatter.format(pair.second)
-            startDateText.setText(begin)
-            endDateText.setText(end)
-        }
-    }
-
-    private fun setupStartHoursButton(view: View) {
-        val startHourButton = view.findViewById<Button>(R.id.start_hour_contest)
-        val startHourText = view.findViewById<EditText>(R.id.start_hour_contest_text)
-        val hourPicker =
-            MaterialTimePicker.Builder()
-                .setTimeFormat(TimeFormat.CLOCK_24H)
-                .setHour(12)
-                .setMinute(10)
-                //.setTitle("Select Appointment time")
-                .build()
-
-        startHourButton.setOnClickListener {
-            hourPicker.show(requireActivity().supportFragmentManager, "hourPicker")
-        }
-        hourPicker.addOnPositiveButtonClickListener {
-            val hour = hourPicker.hour
-            val minute = hourPicker.minute
-            startHourText.setText("$hour:$minute")
-        }
-    }
-
-    private fun setupEndHoursButton(view: View) {
-        val endHoursButton = view.findViewById<Button>(R.id.end_hour_contest)
-        val endHourText = view.findViewById<EditText>(R.id.end_hour_contest_text)
-
-        val hourPicker =
-            MaterialTimePicker.Builder()
-                .setTimeFormat(TimeFormat.CLOCK_24H)
-                .setHour(12)
-                .setMinute(10)
-                //.setTitle("Select Appointment time")
-                .build()
-
-        endHoursButton.setOnClickListener {
-            hourPicker.show(requireActivity().supportFragmentManager, "hourPicker")
-        }
-        hourPicker.addOnPositiveButtonClickListener {
-            val hour = hourPicker.hour
-            val minute = hourPicker.minute
-            endHourText.setText("$hour:$minute")
-        }
-    }
-
-    private fun setupExpandButton(view: View) {
-        val expandButton = view.findViewById<ImageView>(R.id.contest_creation_location_expand)
-        val locationDetailsContainer =
-            view.findViewById<View>(R.id.contest_location_details_container)
-
-        locationDetailsContainer.visibility = View.GONE
-        expandButton.setImageResource(R.drawable.ic_chevron_up)
-
-        expandButton.setOnClickListener {
-            if (locationDetailsContainer.visibility == View.GONE) {
-                locationDetailsContainer.visibility = View.VISIBLE
-                expandButton.setImageResource(R.drawable.ic_chevron_down)
-            } else {
-                locationDetailsContainer.visibility = View.GONE
-                expandButton.setImageResource(R.drawable.ic_chevron_up)
+            val pair: Pair<Long, Long> =
+                datePicker.selection as Pair<Long, Long>
+            if(!contestCreationViewModel.editStartDate(pair.first)) {
+                Toast.makeText(context, "Start date not valid", Toast.LENGTH_SHORT).show()
+            }
+            if(!contestCreationViewModel.editEndDate(pair.second)) {
+                Toast.makeText(context, "End date not valid", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun populateAndUpdateTimeZone(view: View) {
-        val spinner = view.findViewById<Spinner>(R.id.contest_timezone_spinner)
-        val idArray = TimeZone.getAvailableIDs()
-        val idAdapter = ArrayAdapter<String>(
-            requireContext(), android.R.layout.simple_spinner_dropdown_item,
-            idArray
-        )
-        idAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.adapter = idAdapter;
+        private fun setupStartHoursButton(view: View) {
+            val startHourButton = view.findViewById<Button>(R.id.start_hour_contest)
+            val startHourText = view.findViewById<EditText>(R.id.start_hour_contest_text)
+            val hourPicker =
+                MaterialTimePicker.Builder()
+                    .setTimeFormat(TimeFormat.CLOCK_24H)
+                    .setHour(12)
+                    .setMinute(10)
+                    //.setTitle("Select Appointment time")
+                    .build()
 
-        // now set the spinner to default timezone from the time zone settings
-        for (i in idArray.indices) {
-            if (idArray[i] == TimeZone.getDefault().id) {
-                spinner.setSelection(i)
-                break
+            startHourButton.setOnClickListener {
+                hourPicker.show(requireActivity().supportFragmentManager, "hourPicker")
+            }
+            hourPicker.addOnPositiveButtonClickListener {
+                val hour = hourPicker.hour
+                val minute = hourPicker.minute
+                startHourText.setText("$hour:$minute")
             }
         }
-    }
 
-    companion object {
+        private fun setupEndHoursButton(view: View) {
+            val endHoursButton = view.findViewById<Button>(R.id.end_hour_contest)
+            val endHourText = view.findViewById<EditText>(R.id.end_hour_contest_text)
 
-        @JvmStatic
-        fun newInstance() =
-            ContestCreationFragment()
+            val hourPicker =
+                MaterialTimePicker.Builder()
+                    .setTimeFormat(TimeFormat.CLOCK_24H)
+                    .setHour(12)
+                    .setMinute(10)
+                    //.setTitle("Select Appointment time")
+                    .build()
+
+            endHoursButton.setOnClickListener {
+                hourPicker.show(requireActivity().supportFragmentManager, "hourPicker")
+            }
+            hourPicker.addOnPositiveButtonClickListener {
+                val hour = hourPicker.hour
+                val minute = hourPicker.minute
+                endHourText.setText("$hour:$minute")
+            }
+        }
+
+        private fun setupExpandButton(view: View) {
+            val expandButton = view.findViewById<ImageView>(R.id.contest_creation_location_expand)
+            val locationDetailsContainer =
+                view.findViewById<View>(R.id.contest_location_details_container)
+
+            locationDetailsContainer.visibility = View.GONE
+            expandButton.setImageResource(R.drawable.ic_chevron_up)
+
+            expandButton.setOnClickListener {
+                if (locationDetailsContainer.visibility == View.GONE) {
+                    locationDetailsContainer.visibility = View.VISIBLE
+                    expandButton.setImageResource(R.drawable.ic_chevron_down)
+                } else {
+                    locationDetailsContainer.visibility = View.GONE
+                    expandButton.setImageResource(R.drawable.ic_chevron_up)
+                }
+            }
+        }
+
+        private fun populateAndUpdateTimeZone(view: View) {
+            val spinner = view.findViewById<Spinner>(R.id.contest_timezone_spinner)
+            val idArray = TimeZone.getAvailableIDs()
+            val idAdapter = ArrayAdapter<String>(
+                requireContext(), android.R.layout.simple_spinner_dropdown_item,
+                idArray
+            )
+            idAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.adapter = idAdapter;
+
+            // now set the spinner to default timezone from the time zone settings
+            for (i in idArray.indices) {
+                if (idArray[i] == TimeZone.getDefault().id) {
+                    spinner.setSelection(i)
+                    break
+                }
+            }
+        }
+
+        companion object {
+
+            @JvmStatic
+            fun newInstance() =
+                ContestCreationFragment()
+        }
     }
-}

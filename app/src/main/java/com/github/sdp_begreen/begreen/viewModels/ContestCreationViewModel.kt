@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.inject
+import java.text.DateFormat
+import java.util.Calendar
 
 
 /**
@@ -103,6 +105,48 @@ class ContestCreationViewModel : ViewModel() {
      */
     val customLongLat = mutableLatLng.asStateFlow()
 
+    fun editStartDate(date: Long?) : Boolean {
+        if (date == null) return false
+        if(date < System.currentTimeMillis()) return false
+        mutableStartDate.value = date
+        return true
+    }
+
+    fun editEndDate(date: Long?) : Boolean {
+        if (date == null) return false
+        if(date < System.currentTimeMillis()) return false
+        mutableEndDate.value = date
+        return true
+    }
+
+    fun editStartHour(hour: Int?) : Boolean {
+        if (hour == null) return false
+        if(hour < 0 || hour > 23) return false
+        mutableStartHour.value = hour
+        return true
+    }
+
+    fun editStartMinute(minute: Int?) : Boolean {
+        if (minute == null) return false
+        if(minute < 0 || minute > 59) return false
+        mutableStartMinute.value = minute
+        return true
+    }
+
+    fun editEndHour(hour: Int?) : Boolean {
+        if (hour == null) return false
+        if(hour < 0 || hour > 23) return false
+        mutableEndHour.value = hour
+        return true
+    }
+
+    fun editEndMinute(minute: Int?) : Boolean {
+        if (minute == null) return false
+        if(minute < 0 || minute > 59) return false
+        mutableEndMinute.value = minute
+        return true
+    }
+
     /**
      * Function to call to edit city flow
      */
@@ -178,10 +222,21 @@ class ContestCreationViewModel : ViewModel() {
      */
     fun isContestCreationValid(): Boolean {
         if(customLongLat.value == null) return false
+        if(contestTitle == null) return false
+        if(startDate.value == null) return false
+        if(endDate.value == null) return false
+        if(startHour.value == null) return false
+        if(startMinute.value == null) return false
+        if(endHour.value == null) return false
+        if(endMinute.value == null) return false
+        if(radius.value == null) return false
         return true
     }
 
-    fun changeLatLongIfCorrectFromManualInput() {
+    /**
+     * Function to call to change longLat if address is correct
+     */
+    private fun changeLatLongIfCorrectFromManualInput() {
         val address = "${mutableCity.value} ${mutablePostalCode.value} ${mutableCountry.value}}"
 
         viewModelScope.launch {
