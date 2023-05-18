@@ -56,7 +56,15 @@ class SignInActivity : AppCompatActivity() {
         signInGoogleLayout =findViewById(R.id.signInGoogleLayout)
         firebaseAuth = FirebaseAuth.getInstance()
 
-        setUpSignInLayout()
+        // Check if firebaseAuth.currentUser is not null which means that User is already logged in
+        // This allow offline mode authentication
+        if(firebaseAuth.currentUser!=null) {
+            startActivity(Intent(this@SignInActivity, MainActivity::class.java))
+            finish()
+        }
+        else {
+            setUpSignInLayout()
+        }
     }
 
     /**
