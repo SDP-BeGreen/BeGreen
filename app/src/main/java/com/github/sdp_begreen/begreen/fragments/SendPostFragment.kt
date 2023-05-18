@@ -228,14 +228,16 @@ class SendPostFragment : Fragment() {
             eventsFragmentViewModel.participationMap.dropWhile { it.isEmpty() }.first()
         val contests = eventsFragmentViewModel.allEvents.dropWhile { it.isEmpty() }.first()
 
-        contests.forEach { contest ->
-            processContest(contest, userId, participationMap, trashCategory, location)
+        userId?.also {
+            contests.forEach { contest ->
+                processContest(contest, it, participationMap, trashCategory, location)
+            }
         }
     }
 
     private suspend fun processContest(
         contest: Contest,
-        userId: String?,
+        userId: String,
         participationMap: Map<String, Boolean>,
         trashCategory: TrashCategory,
         location: CustomLatLng
@@ -248,7 +250,7 @@ class SendPostFragment : Fragment() {
                 val updatedParticipant = eventParticipantService.getParticipant(
                     RootPath.CONTESTS,
                     contest.id!!,
-                    userId!!,
+                    userId,
                     ContestParticipant::class.java
                 )
                 eventParticipantService.addParticipant(
