@@ -117,6 +117,7 @@ class ContestCreationFragment : Fragment(), ContestMapDialog.ContestMapDialogLis
     private fun setupMapButton(view: View) {
         val mapButton = view.findViewById<ImageView>(R.id.contest_creation_location_map)
         mapButton.setOnClickListener {
+
             val contestMapDialog =
                 ContestMapDialog.newInstance(
                     this,
@@ -132,8 +133,12 @@ class ContestCreationFragment : Fragment(), ContestMapDialog.ContestMapDialogLis
     }
 
     override fun onDialogApprove(location: CustomLatLng?, radius: Double?) {
-        contestCreationViewModel.editLongLat(location)
-        contestCreationViewModel.editRadius(radius)
+        if(!contestCreationViewModel.editLongLat(location)) {
+            Toast.makeText(context, "Invalid location", Toast.LENGTH_SHORT).show()
+        }
+        if(!contestCreationViewModel.editRadius(radius)) {
+            Toast.makeText(context, "Invalid radius", Toast.LENGTH_SHORT).show()
+        }
     }
 
     /**

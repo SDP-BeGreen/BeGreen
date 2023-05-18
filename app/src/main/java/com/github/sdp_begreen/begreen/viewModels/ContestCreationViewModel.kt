@@ -1,5 +1,6 @@
 package com.github.sdp_begreen.begreen.viewModels
 
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.sdp_begreen.begreen.models.CustomLatLng
@@ -203,15 +204,14 @@ class ContestCreationViewModel : ViewModel() {
 
 
         viewModelScope.launch {
-            customLongLat.value?.let { customLongLat ->
-                geocodingApi.getAddresses(customLongLat, 1)?.let {
-                    mutableLatLng.value = longLat
-                    mutableCity.value = it[0].locality
-                    mutablePostalCode.value = it[0].postalCode
-                    mutableCountry.value = it[0].countryName
-                }
+            geocodingApi.getAddresses(longLat, 1)?.let {
+                mutableLatLng.value = longLat
+                mutableCity.value = it[0].locality
+                mutablePostalCode.value = it[0].postalCode
+                mutableCountry.value = it[0].countryName
             }
         }
+
         return true
     }
 
