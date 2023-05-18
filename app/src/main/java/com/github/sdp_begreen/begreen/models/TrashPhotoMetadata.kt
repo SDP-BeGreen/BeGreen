@@ -8,6 +8,7 @@ data class TrashPhotoMetadata(
     override val takenOn: ParcelableDate? = null,
     override val takenBy: String? = null,
     val caption: String? = null,
-    val trashCategory: TrashCategory? = null
+    val trashCategory: TrashCategory? = null,
+    val location: CustomLatLng? = null
 
 ) : PhotoMetadata()

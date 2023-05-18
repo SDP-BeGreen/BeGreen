@@ -11,7 +11,6 @@ import com.github.sdp_begreen.begreen.utils.checkArgument
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.koin.java.KoinJavaComponent
-import java.util.Calendar
 
 object MeetingCommentServiceImpl : MeetingCommentService {
 
@@ -31,7 +30,7 @@ object MeetingCommentServiceImpl : MeetingCommentService {
             COMMENTS_PATH
         )
         return commentReference.push().key?.let {
-            val currTime = Calendar.getInstance().timeInMillis
+            val currTime = System.currentTimeMillis()
             val commentWithId =
                 comment.copy(commentId = it, writtenAt = currTime, modifiedAt = currTime)
             setObjToDb(
@@ -65,7 +64,7 @@ object MeetingCommentServiceImpl : MeetingCommentService {
             dbRef.child(MEETINGS_PATH).child(meetingId)
                 .child(COMMENTS_PATH)
                 .child(comment.commentId!!),
-            comment.copy(modifiedAt = Calendar.getInstance().timeInMillis),
+            comment.copy(modifiedAt = System.currentTimeMillis()),
             "Error while modifying the comment"
         )
     }

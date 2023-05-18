@@ -60,7 +60,7 @@ class EventsFragmentViewModel<T : Event<T>, K : EventParticipant>(
     val participationMap = mutableParticipationMap.asStateFlow()
 
     /**
-     * Flow of all the events implementation we are interested in (i.e. Meetings or Contests)
+     * Flow of all not started Meetings, or not finished Contests, depending on <T>
      */
     val allEvents = flow {
         eventService.getAllEvents(rootPath, eventClass).collect {

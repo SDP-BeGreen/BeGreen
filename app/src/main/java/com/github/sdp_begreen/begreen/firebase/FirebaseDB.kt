@@ -39,7 +39,7 @@ object FirebaseDB: DB {
     private val connectedReference = dbRefs.database.getReference(".info/connected")
     private const val USERS_PATH = "users"
     private const val USER_PROFILE_PICTURE_METADATA = "profilePictureMetadata"
-    private const val USER_TRASH_PICTURE_METADATA = "posts"
+    private const val USER_POSTS = "posts"
     private const val USER_ID_ATTRIBUTE = "id"
     private const val BIN_LOCATION_PATH = "bin"
     private const val ADVICES_LOCATION_PATH = "advices"
@@ -130,9 +130,9 @@ object FirebaseDB: DB {
         var newPhotoMetadata = trashPhotoMetadata.copy(pictureId = null)
 
 
-        return storePicture(image, USER_TRASH_PICTURE_METADATA, newPhotoMetadata,
-            databaseReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_TRASH_PICTURE_METADATA),
-            storageReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_TRASH_PICTURE_METADATA))
+        return storePicture(image, USER_POSTS, newPhotoMetadata,
+            databaseReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_POSTS),
+            storageReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_POSTS))
     }
 
     override suspend fun userExists(userId: String, timeout: Long): Boolean {
@@ -149,7 +149,7 @@ object FirebaseDB: DB {
 
         return metadata.pictureId?.let {
             getPicture(storageReference.child(USERS_PATH).child(userId).child(
-                USER_TRASH_PICTURE_METADATA).child(it), timeout)
+                USER_POSTS).child(it), timeout)
         }
     }
 

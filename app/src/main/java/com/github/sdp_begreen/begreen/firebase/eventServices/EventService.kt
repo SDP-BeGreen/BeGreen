@@ -36,13 +36,15 @@ interface EventService {
      * @throws EventServiceException Throw if an error occurred while adding the event
      */
     suspend fun <T : Event<T>> modifyEvent(event: T, userId: String): T
+    
+    
 
     /**
      * Get all the event. Will get the events dynamically, list stay up to date
      * upon event changes.
      *
-     * The returned list of events only contains events that have not yet occurred,
-     * and they are ordered from soonest to latest.
+     * The returned list of events only contains meetings that have not yet started and
+     * contests that have not yet ended
      *
      * @param rootPath The enum object representing the path where to find the object we want
      * @param eventImplType The class of the object we expect to retrieve
