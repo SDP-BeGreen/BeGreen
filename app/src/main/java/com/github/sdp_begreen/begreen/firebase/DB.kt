@@ -116,6 +116,7 @@ interface DB {
     /**
      * Retrieves the profile image associated with the given [userId] and [metadata] from the database
      *
+     * @param metadata the metadata associated with the given image we want to retrieve
      * @param userId the ID of the user where we should find the image
      * @param timeout the maximum time we wait for the database to respond
      * @return the image, or null if no image was found

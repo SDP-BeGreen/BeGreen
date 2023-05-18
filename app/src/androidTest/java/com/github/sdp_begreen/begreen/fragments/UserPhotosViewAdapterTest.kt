@@ -21,28 +21,27 @@ import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.MatcherAssert
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.dsl.module
-import org.mockito.Mockito
-import org.mockito.kotlin.whenever
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class UserPhotosViewAdapterTest {
 
     companion object {
-        private val db: DB = Mockito.mock(DB::class.java)
-        private val auth: Auth = Mockito.mock(Auth::class.java)
+        private val db: DB = mock(DB::class.java)
+        private val auth: Auth = mock(Auth::class.java)
         private val userId = "10"
         private val profilePhotoMetadata = ProfilePhotoMetadata("1", null, userId)
         val user = User(userId, 2, "test", 5, "test",
@@ -56,11 +55,7 @@ class UserPhotosViewAdapterTest {
             User("6", 1234, "Alain Berset"),
             User("7", 1235, "Mister Alix")
         )
-        private val fakePicture = Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888)
-        private val authUserFlow = MutableStateFlow(userId)
 
-
-        @OptIn(ExperimentalCoroutinesApi::class)
         @BeforeClass
         @JvmStatic
         fun setUp() {
@@ -68,18 +63,15 @@ class UserPhotosViewAdapterTest {
             // that's why we do it in the beforeClass method
             runTest {
                 // setup basic get user and getProfilePicture use in multiple tests
-                Mockito.`when`(db.getUser(user.id))
+                `when`(db.getUser(user.id))
                     .thenReturn(user)
-                // add a small delay, just to be sure that it is triggered after initialization
-                // and arrive second, after the initial null value
-                // user between tests, by simply pushing a new userId
-                Mockito.`when`(auth.getFlowUserIds())
+                `when`(auth.getFlowUserIds())
                     .thenReturn(MutableStateFlow(user.id))
-                Mockito.`when`(auth.getConnectedUserId())
+                `when`(auth.getConnectedUserId())
                     .thenReturn(user.id)
-                Mockito.`when`(db.getAllUsers())
+                `when`(db.getAllUsers())
                     .thenReturn(users)
-                Mockito.`when`(db.getFollowedIds(user.id))
+                `when`(db.getFollowedIds(user.id))
                     .thenReturn(user.following)
             }
         }
@@ -97,33 +89,30 @@ class UserPhotosViewAdapterTest {
         })
     )
 
-    //@get:Rule
-    //val koinTestRule = KoinTestRule()
-
     private val photoList = listOf(
         TrashPhotoMetadata("1", ParcelableDate.now, userId, "Look at me cleaning!", TrashCategory.PLASTIC),
         TrashPhotoMetadata("1", ParcelableDate.now, userId, "Look at me cleaning!", TrashCategory.PLASTIC),
     )
-    private var userPhotoViewAdapter = UserPhotosViewAdapter(photoList, true, TestLifecycleOwner().lifecycleScope)
+    private var userPhotoViewAdapter = UserPhotosViewAdapter(photoList, true, TestLifecycleOwner().lifecycleScope, InstrumentationRegistry.getInstrumentation().targetContext.resources)
     private val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Test
     fun userViewAdapterGetItemCountWorksOnTrivialList() {
-        MatcherAssert.assertThat(userPhotoViewAdapter.itemCount, equalTo(2))
+        assertThat(userPhotoViewAdapter.itemCount, equalTo(2))
     }
 
     @Test
     fun userViewAdapterGetItemCountWorksOnEmptyList() {
 
-        val userPhotoViewAdapter = UserPhotosViewAdapter(listOf(), true, TestLifecycleOwner().lifecycleScope)
-        MatcherAssert.assertThat(userPhotoViewAdapter.itemCount, equalTo(0))
+        val userPhotoViewAdapter = UserPhotosViewAdapter(listOf(), true, TestLifecycleOwner().lifecycleScope, InstrumentationRegistry.getInstrumentation().targetContext.resources)
+        assertThat(userPhotoViewAdapter.itemCount, equalTo(0))
     }
 
     @Test
     fun userPhotosViewAdapterGetItemCountWorksOnNullList() {
 
-        val userPhotoViewAdapter = UserPhotosViewAdapter(null, true, TestLifecycleOwner().lifecycleScope)
-        MatcherAssert.assertThat(userPhotoViewAdapter.itemCount, equalTo(0))
+        val userPhotoViewAdapter = UserPhotosViewAdapter(null, true, TestLifecycleOwner().lifecycleScope, InstrumentationRegistry.getInstrumentation().targetContext.resources)
+        assertThat(userPhotoViewAdapter.itemCount, equalTo(0))
     }
 
     @Test
@@ -131,15 +120,14 @@ class UserPhotosViewAdapterTest {
 
         runTest {
 
-            Mockito.`when`(db.getUser(user.id))
+            `when`(db.getUser(user.id))
                 .thenReturn(null)
 
             val viewHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
 
-            MatcherAssert.assertThat(viewHolder.titleView.text, equalTo("Title"))
-            MatcherAssert.assertThat(viewHolder.subtitleView, CoreMatchers.notNullValue())
-            MatcherAssert.assertThat(viewHolder.subtitleView.text.toString(), equalTo("subhead"))
-            MatcherAssert.assertThat(
+            assertThat(viewHolder.titleView.text, equalTo("Title"))
+            assertThat(viewHolder.subtitleView.text.toString(), equalTo("subhead"))
+            assertThat(
                 viewHolder.descriptionView.text.toString(),
                 equalTo("Default description of the post")
             )
@@ -151,7 +139,7 @@ class UserPhotosViewAdapterTest {
 
         runTest {
 
-            Mockito.`when`(db.getUser(user.id))
+            `when`(db.getUser(user.id))
                 .thenReturn(user)
 
             val photoList = listOf(
@@ -160,16 +148,16 @@ class UserPhotosViewAdapterTest {
             )
 
             val userPhotoViewAdapter =
-                UserPhotosViewAdapter(photoList, true, TestLifecycleOwner().lifecycleScope)
+                UserPhotosViewAdapter(photoList, true, TestLifecycleOwner().lifecycleScope, InstrumentationRegistry.getInstrumentation().targetContext.resources)
             val viewHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
 
-            MatcherAssert.assertThat(viewHolder.avatarView.visibility, equalTo(View.VISIBLE))
+            assertThat(viewHolder.avatarView.visibility, equalTo(View.VISIBLE))
 
             /*
-            MatcherAssert.assertThat(viewHolder.titleView.text, equalTo(user.displayName))
-            MatcherAssert.assertThat(viewHolder.subtitleView, CoreMatchers.notNullValue())
-            MatcherAssert.assertThat(viewHolder.subtitleView.text.toString(), CoreMatchers.containsString(TrashCategory.PLASTIC.title))
-            MatcherAssert.assertThat(
+            assertThat(viewHolder.titleView.text, equalTo(user.displayName))
+            assertThat(viewHolder.subtitleView, CoreMatchers.notNullValue())
+            assertThat(viewHolder.subtitleView.text.toString(), CoreMatchers.containsString(TrashCategory.PLASTIC.title))
+            assertThat(
                 viewHolder.descriptionView.text.toString(),
                 equalTo("Look at me cleaning!")
             )*/

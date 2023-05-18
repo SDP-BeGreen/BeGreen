@@ -1,5 +1,6 @@
 package com.github.sdp_begreen.begreen.fragments
 
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.StrictMode
@@ -36,6 +37,7 @@ class UserPhotosViewAdapter(
     val photos: List<PhotoMetadata>?,
     private val isFeed: Boolean,
     val lifecycleScope: LifecycleCoroutineScope,
+    val resources: Resources
 ) : RecyclerView.Adapter<UserPhotosViewAdapter.ViewHolder>() {
 
     private val db by inject<DB>(DB::class.java)
@@ -70,9 +72,8 @@ class UserPhotosViewAdapter(
                 holder.avatarView.visibility = View.VISIBLE
 
                 // Display avatar if on feed
-                if (user?.profilePictureMetadata != null) {
-
-                    val avatarImage = db.getUserProfilePicture(user.profilePictureMetadata!!, userId)
+                user?.profilePictureMetadata?.also {
+                    val avatarImage = db.getUserProfilePicture(it, userId)
                     holder.avatarView.setImageBitmap(avatarImage)
                 }
 
@@ -86,10 +87,10 @@ class UserPhotosViewAdapter(
             if (photo is TrashPhotoMetadata) {
 
                 // Set default value
-                holder.titleView.text = user?.displayName ?: "Unknown user"
+                holder.titleView.text = user?.displayName ?: resources.getString(R.string.unknown_user)
                 holder.subtitleView.text = (photo?.takenOn?.toString()
-                    ?: "Unknown date") + " | " + (photo?.trashCategory?.title
-                    ?: "No category")
+                    ?: resources.getString(R.string.unknown_date)) + " | " + (photo?.trashCategory?.title
+                    ?: resources.getString(R.string.no_category))
                 holder.descriptionView.text = photo?.caption
                 holder.photoView.setImageBitmap(
                     db.getImage(photo)

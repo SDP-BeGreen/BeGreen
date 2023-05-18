@@ -47,7 +47,7 @@ class UserPhotoFragment : Fragment() {
                     else -> GridLayoutManager(context, columnCount)
                 }
                 
-                adapter = UserPhotosViewAdapter(photoList?: listOf(), isFeed, lifecycleScope)
+                adapter = UserPhotosViewAdapter(photoList?: listOf(), isFeed, lifecycleScope, resources)
             }
             if(!isFeed){
                 //If not in the feed display horizontally

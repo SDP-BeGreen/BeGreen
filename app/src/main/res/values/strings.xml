@@ -87,5 +87,8 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="fragment_contests_add_contest_button_description">Button to create a new contest</string>
     <string name="contests">Contests</string>
+    <string name="unknown_user">Unknown user</string>
+    <string name="unknown_date">Unknown date</string>
+    <string name="no_category">No category</string>
 
 </resources>
