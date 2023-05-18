@@ -1,8 +1,6 @@
 package com.github.sdp_begreen.begreen.fragments
 
 import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.view.LayoutInflater
@@ -10,31 +8,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.databinding.FragmentUserPhotoBinding
-import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
-import com.github.sdp_begreen.begreen.firebase.FirebaseDB
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
-import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
-import com.github.sdp_begreen.begreen.models.User
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
 import org.koin.java.KoinJavaComponent.inject
-import java.net.URL
 
 
 /**
  * [RecyclerView.Adapter] that can display a [Photo].
  */
 class UserPhotosViewAdapter(
-    val photos: List<PhotoMetadata>?,
+    val photos: List<TrashPhotoMetadata>?,
     private val isFeed: Boolean,
     val lifecycleScope: LifecycleCoroutineScope,
     val resources: Resources
@@ -84,18 +72,12 @@ class UserPhotosViewAdapter(
             }
 
             // Display post content
-            if (photo is TrashPhotoMetadata) {
-
-                // Set default value
-                holder.titleView.text = user?.displayName ?: resources.getString(R.string.unknown_user)
-                holder.subtitleView.text = (photo?.takenOn?.toString()
-                    ?: resources.getString(R.string.unknown_date)) + " | " + (photo?.trashCategory?.title
-                    ?: resources.getString(R.string.no_category))
-                holder.descriptionView.text = photo?.caption
-                holder.photoView.setImageBitmap(
-                    db.getImage(photo)
-                )
-            }
+            holder.titleView.text = user?.displayName ?: resources.getString(R.string.unknown_user)
+            holder.subtitleView.text = (photo?.takenOn?.toString()
+                ?: resources.getString(R.string.unknown_date)) + " | " + (photo?.trashCategory?.title
+                ?: resources.getString(R.string.no_category))
+            holder.descriptionView.text = photo?.caption
+            holder.photoView.setImageBitmap(db.getImage(photo))
         }
     }
 
