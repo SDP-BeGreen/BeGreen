@@ -136,15 +136,15 @@ class UserPhotosViewAdapterTest {
 
         /*
 
-        This test passes independently but once I add another test it fails, even if
-        the added test is completely unrelated with this one. I tried to declare all variables inside this method
-        in order to avoid to modify a shared state variable but it still doesn't work (including the ressource and appContext).
-        I tried to launch and close the activity inside this method but it's still not working.
-        When I comment back other tests, sometimes this one fails and sometimes it passes.
+        This test passes independently but once another test is added it fails, even if
+        the added test is completely unrelated with this one. Even declaring all variables inside this method
+        in order to avoid to modify a shared state variable still doesn't work (including the ressource and appContext).
+        Trying to launch and close the activity inside this method still doesn't solve the problem.
+        When we comment back other tests, sometimes this one fails and sometimes it passes.
         In other words, the way this test file is written makes this test non-determinisic.
-        But I preferred to keep these tests so we ensure that the app doesn't crash by trying several paths. Actually,
-        these tests helped me to debug by crashing the app when I made a mistake, so I think that they are relevant, and we could
-        improve them in the future by finding were the problem comes from (this is why I left some unused variable such as dateString).
+        By keeping these tests, we ensure that the app doesn't crash by trying several paths. Actually,
+        these tests helped to debug by crashing the app when a mistake was made, which makes them relevant.
+        We could improve them in the future by finding were the problem comes from (hence the unused variables such as dateString).
         It also increases the coverage by testing some non-trivial path to check that the app doesn't crash.
 
         assertThat(viewHolder.titleView.text, equalTo(user.displayName))
