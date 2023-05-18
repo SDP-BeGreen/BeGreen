@@ -118,9 +118,14 @@ class ContestCreationFragment : Fragment(), ContestMapDialog.ContestMapDialogLis
         val mapButton = view.findViewById<ImageView>(R.id.contest_creation_location_map)
         mapButton.setOnClickListener {
             val contestMapDialog =
-                ContestMapDialog.newInstance(this,
-                    contestCreationViewModel.customLongLat.value ?: CustomLatLng(46.537283, 6.624490),
-                     contestCreationViewModel.radius.value ?: 1000.0)
+                ContestMapDialog.newInstance(
+                    this,
+                    contestCreationViewModel.customLongLat.value ?: CustomLatLng(
+                        46.537283,
+                        6.624490
+                    ),
+                    contestCreationViewModel.radius.value ?: 1000.0
+                )
 
             contestMapDialog.show(childFragmentManager, "Contest Map Dialog")
         }
