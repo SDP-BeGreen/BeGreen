@@ -148,7 +148,7 @@ class UserPhotosViewAdapterTest {
         It also increases the coverage by testing some non-trivial path to check that the app doesn't crash.
 
         assertThat(viewHolder.titleView.text, equalTo(user.displayName))
-        assertThat(viewHolder.subtitleView.text.toString(), equalTo("$dateString | $categoryString"))
+        assertThat(viewHolder.subtitleView.text.toString(), equalTo(resources.getString(R.string.post_date_and_category_info, dateString, categoryString)))
         assertThat(viewHolder.descriptionView.text.toString(), equalTo("Look at me cleaning!"))
 
         */

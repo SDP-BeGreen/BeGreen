@@ -81,7 +81,7 @@ class UserPhotosViewAdapter(
             val categoryString = (photo.trashCategory?.title ?: resources.getString(R.string.no_category))
 
             holder.titleView.text = user.displayName ?: resources.getString(R.string.unknown_user)
-            holder.subtitleView.text = "$dateString | $categoryString"
+            holder.subtitleView.text = resources.getString(R.string.post_date_and_category_info, dateString, categoryString)
             holder.descriptionView.text = photo.caption
             holder.photoView.setImageBitmap(db.getImage(photo))
         }
