@@ -26,6 +26,7 @@ import com.google.android.material.timepicker.TimeFormat
 import com.hbb20.CountryPickerView
 import com.hbb20.countrypicker.models.CPCountry
 import kotlinx.coroutines.launch
+import org.koin.core.context.startKoin
 import java.text.SimpleDateFormat
 import java.util.TimeZone
 
@@ -68,6 +69,10 @@ class ContestCreationFragment : Fragment() {
         return view
     }
 
+    /**
+     * Setup the confirm creation button
+     * @param view the view of the fragment
+     */
     private fun setupConfirmCreationButton(view: View) {
         val confirmCreationButton = view.findViewById<Button>(R.id.contest_confirm_button)
         confirmCreationButton.setOnClickListener {
@@ -89,6 +94,10 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
+    /**
+     * Setup the cancel creation button
+     * @param view the view of the fragment
+     */
     private fun setupCancelCreationButton(view: View) {
         val cancelCreationButton = view.findViewById<Button>(R.id.contest_cancel_button)
         cancelCreationButton.setOnClickListener {
@@ -101,6 +110,10 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
+    /**
+     * Setup the city input of the contest
+     * @param view the view of the fragment
+     */
     private fun setupCity(view: View) {
         val cityText = view.findViewById<TextInputEditText>(R.id.city_contest_creation)
         cityText.setOnFocusChangeListener { v, hasFocus ->
@@ -117,6 +130,10 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
+    /**
+     * Setup the postal code input of the contest
+     * @param view the view of the fragment
+     */
     private fun setupPostalCode(view: View) {
         val postalCodeText = view.findViewById<TextInputEditText>(R.id.postal_code_contest_creation)
         postalCodeText.setOnFocusChangeListener { v, hasFocus ->
@@ -133,6 +150,10 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
+    /**
+     * Setup the radius of the contest input
+     * @param view the view of the fragment
+     */
     private fun setupRadius(view: View) {
         val radiusText = view.findViewById<TextInputEditText>(R.id.radius_contest_creation)
         radiusText.setOnFocusChangeListener { v, hasFocus ->
@@ -149,6 +170,10 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
+    /**
+     * Setup the country picker
+     * @param view the view of the fragment
+     */
     private fun setupCountryPicker(view: View) {
         val countryPicker =
             view.findViewById<CountryPickerView>(R.id.contest_creation_country_picker)
@@ -170,6 +195,10 @@ class ContestCreationFragment : Fragment() {
 
     }
 
+    /**
+     * Setup the title selection input
+     * @param view the view of the fragment
+     */
     private fun setupTitle(view: View) {
         val contestTitle = view.findViewById<TextInputEditText>(R.id.contest_creation_title)
         contestTitle.setText(contestCreationViewModel.contestTitle)
@@ -180,6 +209,10 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
+    /**
+     * Setup the private checkbox
+     * @param view the view of the fragment
+     */
     private fun setupPrivateCheckbox(view: View) {
         val privateCheckbox = view.findViewById<CheckBox>(R.id.private_contest_checkbox)
         privateCheckbox.isChecked = contestCreationViewModel.isPrivate
@@ -188,6 +221,10 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
+    /**
+     * Setup the Map image button
+     * @param view the view of the fragment
+     */
     private fun setupMapButton(view: View) {
         val mapButton = view.findViewById<ImageView>(R.id.contest_creation_location_map)
         mapButton.setOnClickListener {
@@ -195,6 +232,10 @@ class ContestCreationFragment : Fragment() {
         }
     }
 
+    /**
+     * Create a new date picker with the current start and end date
+     * @return the new date picker
+     */
     private fun getNewDatePicker(): MaterialDatePicker<Pair<Long, Long>> {
         val builder = MaterialDatePicker.Builder.dateRangePicker()
         builder.setTitleText("Select dates")
@@ -207,6 +248,22 @@ class ContestCreationFragment : Fragment() {
         return builder.build()
     }
 
+    /**
+     * Setup the date button listener
+     * @param button the button to setup
+     */
+    private fun setDateButtonNewListener( button : Button) {
+        val datePicker = getNewDatePicker()
+
+        button.setOnClickListener {
+            datePicker.show(requireActivity().supportFragmentManager, "datePicker")
+        }
+    }
+
+    /**
+     * Setup the date button and the date picker
+     * @param view the view of the fragment
+     */
     private fun setupDateButton(view: View) {
         val startDateButton = view.findViewById<Button>(R.id.date_period_contest)
         val startDateText = view.findViewById<EditText>(R.id.start_date_contest_text)
@@ -219,24 +276,16 @@ class ContestCreationFragment : Fragment() {
 
         lifecycleScope.launch {
             contestCreationViewModel.startDate.flowWithLifecycle(lifecycle).collect {
-                if(it != null) {
+                if (it != null) {
                     startDateText.setText(formatter.format(it))
-                    datePicker = getNewDatePicker()
-
-                    startDateButton.setOnClickListener {
-                        datePicker.show(requireActivity().supportFragmentManager, "datePicker")
-                    }
+                    setDateButtonNewListener(startDateButton)
                 }
 
             }
             contestCreationViewModel.endDate.flowWithLifecycle(lifecycle).collect {
-                if(it != null) {
+                if (it != null) {
                     endDateText.setText(formatter.format(it))
-                    datePicker = getNewDatePicker()
-
-                    startDateButton.setOnClickListener {
-                        datePicker.show(requireActivity().supportFragmentManager, "datePicker")
-                    }
+                    setDateButtonNewListener(startDateButton)
                 }
             }
         }
@@ -248,100 +297,119 @@ class ContestCreationFragment : Fragment() {
         datePicker.addOnPositiveButtonClickListener {
             val pair: Pair<Long, Long> =
                 datePicker.selection as Pair<Long, Long>
-            if(!contestCreationViewModel.editStartDate(pair.first)) {
+            if (!contestCreationViewModel.editStartDate(pair.first)) {
                 Toast.makeText(context, "Start date not valid", Toast.LENGTH_SHORT).show()
             }
-            if(!contestCreationViewModel.editEndDate(pair.second)) {
+            if (!contestCreationViewModel.editEndDate(pair.second)) {
                 Toast.makeText(context, "End date not valid", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-        private fun setupStartHoursButton(view: View) {
-            val startHourButton = view.findViewById<Button>(R.id.start_hour_contest)
-            val startHourText = view.findViewById<EditText>(R.id.start_hour_contest_text)
-            val hourPicker =
-                MaterialTimePicker.Builder()
-                    .setTimeFormat(TimeFormat.CLOCK_24H)
-                    .setHour(12)
-                    .setMinute(10)
-                    //.setTitle("Select Appointment time")
-                    .build()
+    /**
+     * Setup the start hour button
+     * @param view the view of the fragment
+     */
+    private fun setupStartHoursButton(view: View) {
+        val startHourButton = view.findViewById<Button>(R.id.start_hour_contest)
+        val startHourText = view.findViewById<EditText>(R.id.start_hour_contest_text)
+        val hourPicker =
+            MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setHour(12)
+                .setMinute(10)
+                //.setTitle("Select Appointment time")
+                .build()
 
-            startHourButton.setOnClickListener {
-                hourPicker.show(requireActivity().supportFragmentManager, "hourPicker")
-            }
-            hourPicker.addOnPositiveButtonClickListener {
-                val hour = hourPicker.hour
-                val minute = hourPicker.minute
-                startHourText.setText("$hour:$minute")
-            }
+        startHourButton.setOnClickListener {
+            hourPicker.show(requireActivity().supportFragmentManager, "hourPicker")
         }
-
-        private fun setupEndHoursButton(view: View) {
-            val endHoursButton = view.findViewById<Button>(R.id.end_hour_contest)
-            val endHourText = view.findViewById<EditText>(R.id.end_hour_contest_text)
-
-            val hourPicker =
-                MaterialTimePicker.Builder()
-                    .setTimeFormat(TimeFormat.CLOCK_24H)
-                    .setHour(12)
-                    .setMinute(10)
-                    //.setTitle("Select Appointment time")
-                    .build()
-
-            endHoursButton.setOnClickListener {
-                hourPicker.show(requireActivity().supportFragmentManager, "hourPicker")
-            }
-            hourPicker.addOnPositiveButtonClickListener {
-                val hour = hourPicker.hour
-                val minute = hourPicker.minute
-                endHourText.setText("$hour:$minute")
-            }
-        }
-
-        private fun setupExpandButton(view: View) {
-            val expandButton = view.findViewById<ImageView>(R.id.contest_creation_location_expand)
-            val locationDetailsContainer =
-                view.findViewById<View>(R.id.contest_location_details_container)
-
-            locationDetailsContainer.visibility = View.GONE
-            expandButton.setImageResource(R.drawable.ic_chevron_up)
-
-            expandButton.setOnClickListener {
-                if (locationDetailsContainer.visibility == View.GONE) {
-                    locationDetailsContainer.visibility = View.VISIBLE
-                    expandButton.setImageResource(R.drawable.ic_chevron_down)
-                } else {
-                    locationDetailsContainer.visibility = View.GONE
-                    expandButton.setImageResource(R.drawable.ic_chevron_up)
-                }
-            }
-        }
-
-        private fun populateAndUpdateTimeZone(view: View) {
-            val spinner = view.findViewById<Spinner>(R.id.contest_timezone_spinner)
-            val idArray = TimeZone.getAvailableIDs()
-            val idAdapter = ArrayAdapter<String>(
-                requireContext(), android.R.layout.simple_spinner_dropdown_item,
-                idArray
-            )
-            idAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner.adapter = idAdapter;
-
-            // now set the spinner to default timezone from the time zone settings
-            for (i in idArray.indices) {
-                if (idArray[i] == TimeZone.getDefault().id) {
-                    spinner.setSelection(i)
-                    break
-                }
-            }
-        }
-
-        companion object {
-
-            @JvmStatic
-            fun newInstance() =
-                ContestCreationFragment()
+        hourPicker.addOnPositiveButtonClickListener {
+            val hour = hourPicker.hour
+            val minute = hourPicker.minute
+            startHourText.setText("$hour:$minute")
         }
     }
+
+    /**
+     * Setup the end hour button
+     * @param view the view of the fragment
+     */
+    private fun setupEndHoursButton(view: View) {
+        val endHoursButton = view.findViewById<Button>(R.id.end_hour_contest)
+        val endHourText = view.findViewById<EditText>(R.id.end_hour_contest_text)
+
+        val hourPicker =
+            MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setHour(12)
+                .setMinute(10)
+                //.setTitle("Select Appointment time")
+                .build()
+
+        endHoursButton.setOnClickListener {
+            hourPicker.show(requireActivity().supportFragmentManager, "hourPicker")
+        }
+        hourPicker.addOnPositiveButtonClickListener {
+            val hour = hourPicker.hour
+            val minute = hourPicker.minute
+            endHourText.setText("$hour:$minute")
+        }
+    }
+
+    /**
+     * Setup the expand button for the location details
+     * @param view the view of the fragment
+     */
+    private fun setupExpandButton(view: View) {
+        val expandButton = view.findViewById<ImageView>(R.id.contest_creation_location_expand)
+        val locationDetailsContainer =
+            view.findViewById<View>(R.id.contest_location_details_container)
+
+        locationDetailsContainer.visibility = View.GONE
+        expandButton.setImageResource(R.drawable.ic_chevron_up)
+
+        expandButton.setOnClickListener {
+            if (locationDetailsContainer.visibility == View.GONE) {
+                locationDetailsContainer.visibility = View.VISIBLE
+                expandButton.setImageResource(R.drawable.ic_chevron_down)
+            } else {
+                locationDetailsContainer.visibility = View.GONE
+                expandButton.setImageResource(R.drawable.ic_chevron_up)
+            }
+        }
+    }
+
+    /**
+     * Populate the time zone spinner with the available time zones and set it to the default
+     * @param view the view of the fragment
+     */
+    private fun populateAndUpdateTimeZone(view: View) {
+        val spinner = view.findViewById<Spinner>(R.id.contest_timezone_spinner)
+        val idArray = TimeZone.getAvailableIDs()
+        val idAdapter = ArrayAdapter<String>(
+            requireContext(), android.R.layout.simple_spinner_dropdown_item,
+            idArray
+        )
+        idAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.adapter = idAdapter;
+
+        // now set the spinner to default timezone from the time zone settings
+        for (i in idArray.indices) {
+            if (idArray[i] == TimeZone.getDefault().id) {
+                spinner.setSelection(i)
+                break
+            }
+        }
+    }
+
+    /**
+     * Companion object to create the fragment
+     */
+    companion object {
+
+        @JvmStatic
+        fun newInstance() =
+            ContestCreationFragment()
+    }
+}
