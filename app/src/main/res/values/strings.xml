@@ -104,5 +104,8 @@
     <string name="create_contest_map_dialog_title">Contest Location</string>
     <string name="create_contest_map_dialog_location">Location</string>
     <string name="create_contest_map_dialog_radius">Radius</string>
+    <string name="contest_timezone">Contest Timezone</string>
+    <string name="dd_mm_yyyy">dd/MM/yyyy</string>
+    <string name="hour_format">H:M</string>
 
 </resources>
