@@ -75,7 +75,7 @@ class EventDataAdapterListenerImplTest {
                                     1683885151000,
                                     1686563551000,
                                     coordinates,
-                                    1000,
+                                    1000.0,
                                     false
                                 )
                             )
