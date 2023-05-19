@@ -77,13 +77,17 @@ class MainActivityTest {
             "user 1 description",
             "123456789",
             "user1@email.com",
-            profilePictureMetadata = profilePhotoMetadata
+            following = listOf(userId2, userId3),
+            profilePictureMetadata = profilePhotoMetadata,
+            trashPhotosMetadatasList = listOf(trashPhotoMetadata)
         )
         private val user2 = User(
             userId2,
             12,
             "User 2",
-            description = "user 2 description"
+            description = "user 2 description",
+            following = listOf(userId2, userId4),
+            trashPhotosMetadatasList = listOf(trashPhotoMetadata)
         )
         private val user3 = User(userId3, 10)
         private val fakePicture1 = Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888)
@@ -110,6 +114,8 @@ class MainActivityTest {
             runTest {
                 // setup basic get user and getProfilePicture use in multiple tests
                 whenever(db.getUser(userId1)).thenReturn(user1)
+                whenever(db.getUser(userId2)).thenReturn(user2)
+                whenever(db.getUser(userId3)).thenReturn(user3)
                 whenever(db.getImage(trashPhotoMetadata)).thenReturn(fakePicture1)
                 whenever(db.getUserProfilePicture(profilePhotoMetadata, userId1))
                     .thenReturn(fakePicture1)
@@ -190,8 +196,76 @@ class MainActivityTest {
         // Go back to camera to test restore outline version of feed menu icon
         // Hard to compare icon in test
         onView(withId(R.id.bottomMenuCamera))
-          .perform(click())
+            .perform(click())
     }
+
+    @Test
+    fun pressFeedMenuDisplayFeedFragmentWithNonAuthUserDisplaysFeed() {
+
+        runTest {
+
+            // non authenticated user
+            whenever(auth.getConnectedUserId())
+
+            onView(withId(R.id.bottomMenuFeed))
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+            onView(withId(R.id.feed_list)).check(matches(isDisplayed()))
+        }
+    }
+
+    @Test
+    fun pressFeedMenuDisplayFeedFragmentWithAuthUserWithFollowingsDisplaysFeed() {
+
+        runTest {
+
+            // sign in user. user1 follows user2 that has posts, and user3 that doesn't have posts
+            authUserFlow.emit(userId1)
+
+            onView(withId(R.id.bottomMenuFeed))
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+            onView(withId(R.id.feed_list)).check(matches(isDisplayed()))
+        }
+    }
+
+    @Test
+    fun pressFeedMenuDisplayFeedFragmentWithAuthUserWithoutFollowingsDisplaysFeed() {
+
+        runTest {
+
+            // sign in user. user3 has no followings
+            authUserFlow.emit(userId3)
+
+            onView(withId(R.id.bottomMenuFeed))
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+            onView(withId(R.id.feed_list)).check(matches(isDisplayed()))
+        }
+    }
+
+    @Test
+    fun pressFeedMenuDisplayFeedFragmentWithAuthUserWithWrongFollowingsDisplaysFeed() {
+
+        runTest {
+
+            // simulate not in db by returning a null user
+            whenever(db.getUser(userId4)).thenReturn(null)
+
+            // sign in user. user2 follows user4 which doesn't exist in db
+            authUserFlow.emit(userId2)
+
+            onView(withId(R.id.bottomMenuFeed))
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+            onView(withId(R.id.feed_list)).check(matches(isDisplayed()))
+        }
+    }
+
 
     @Test
     fun pressMapMenuDisplayMapFragment() {

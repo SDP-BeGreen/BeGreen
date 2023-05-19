@@ -183,6 +183,7 @@ class MainActivity : AppCompatActivity() {
                 item.setIcon(R.drawable.ic_baseline_feed)
 
                 // Feed posts
+                // Have some troubles to separate it in a private helper method that returns the feed post list.
                 runBlocking {
                     lifecycleScope.launch {
 
@@ -201,6 +202,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+
             R.id.bottomMenuMap -> {
                 item.setIcon(R.drawable.ic_baseline_map)
                 replaceFragInMainContainer(MapFragment())
