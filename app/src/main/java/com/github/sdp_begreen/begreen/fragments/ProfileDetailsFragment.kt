@@ -501,13 +501,12 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
             if (followButton.text == Actions.FOLLOW.text) {
                 followButton.text = Actions.UNFOLLOW.text
                 lifecycleScope.launch {
-                    //TODO : add currentUser
-                    user?.addFollower(User.currentUser)
+                    // TODO : follow in db and update current user here
                 }
             } else {
                 followButton.text = Actions.FOLLOW.text
                 lifecycleScope.launch {
-                    //user?.removeFollower(User.currentUser)
+                    // TODO : unfollow in db and update current user here
                 }
             }
         }

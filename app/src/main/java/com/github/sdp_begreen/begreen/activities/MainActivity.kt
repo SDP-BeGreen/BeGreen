@@ -198,6 +198,8 @@ class MainActivity : AppCompatActivity() {
 
                         }?.sortedByDescending { post -> post.takenOn } ?: emptyList()
 
+                        // feedPosts = connectedUserViewModel.currentUser.value!!.trashPhotosMetadatasList ?: emptyList()
+
                         replaceFragInMainContainer(UserPhotoFragment.newInstance(1, feedPosts, true))
                     }
                 }

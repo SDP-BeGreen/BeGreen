@@ -116,7 +116,7 @@ class CameraWithUIFragment : Fragment() {
         }
 
         val adapter = FollowingArrayAdapter(requireContext(),
-            android.R.layout.select_dialog_item, users, db, auth, lifecycleScope, following)
+            android.R.layout.select_dialog_item, users, db, auth, lifecycleScope, following, connectedUserViewModel.currentUser)
 
         val searchBtn = view?.findViewById<ImageView>(R.id.search_cam)
 

@@ -25,12 +25,16 @@ data class User(
     var trashPhotosMetadatasList: List<TrashPhotoMetadata>? = null,
 ) : Parcelable, Comparable<User> {
 
-    suspend fun addFollower(follower: User) {
-        //TODO : add the following to the database
+    fun follow(userId: String) {
+        following = following?.let { it + userId } ?: listOf(userId)
+    }
+
+    fun unfollow(userId: String) {
+        following = following?.let { it.filter { id -> id != userId }}
     }
 
     override fun compareTo(other: User): Int {
-        return this.score.compareTo(other.score)
+        return score.compareTo(other.score)
     }
 
     override fun toString(): String = displayName ?: "Username"
