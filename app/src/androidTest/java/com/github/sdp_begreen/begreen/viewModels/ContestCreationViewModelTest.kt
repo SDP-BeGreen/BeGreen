@@ -17,6 +17,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.dsl.module
 import org.mockito.Mockito
+import org.mockito.Mockito.anyString
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
 import java.text.SimpleDateFormat
@@ -61,6 +62,8 @@ class ContestCreationViewModelTest {
 
                 Mockito.`when`(geo.getLongLat(any()))
                     .thenReturn(customLatLng)
+
+                Mockito.`when`(geo.getLongLat(anyString())).thenReturn(null)
 
             }
         }
