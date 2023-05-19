@@ -184,7 +184,7 @@ class MainActivity : AppCompatActivity() {
 
                 // Feed posts
 
-                //runBlocking {
+                runBlocking {
                     lifecycleScope.launch {
 
                         var feedPosts: List<TrashPhotoMetadata> = listOf()
@@ -203,7 +203,7 @@ class MainActivity : AppCompatActivity() {
 
                         replaceFragInMainContainer(UserPhotoFragment.newInstance(1, feedPosts, true))
                     }
-                //}
+                }
             }
             R.id.bottomMenuMap -> {
                 item.setIcon(R.drawable.ic_baseline_map)
