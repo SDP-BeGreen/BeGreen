@@ -10,8 +10,7 @@ env:
 check_android_task:
   name: Run Android tests
   install_emulator_script:
-    sdkmanager --install "system-images;android-30;google_apis;x86"
-    sdkmanager --install "extras;google;google_play_services"
+    sdkmanager --install "system-images;android-30;google_apis;x86;extras;google;google_play_services"
   create_avd_script:
     echo no | avdmanager create avd --force
     --name emulator
