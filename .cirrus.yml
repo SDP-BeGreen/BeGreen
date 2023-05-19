@@ -14,7 +14,7 @@ check_android_task:
   create_avd_script:
     echo no | avdmanager create avd --force
     --name emulator
-    --package "system-images;android-30;google_apis;x86;google_play_services"
+    --package "system-images;android-30;google_apis;x86" "extras;google;google_play_services"
   start_avd_background_script:
     $ANDROID_HOME/emulator/emulator
     -avd emulator
