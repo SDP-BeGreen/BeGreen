@@ -87,7 +87,7 @@ class UserViewAdapter(
                     //Go to the profile details fragment
                     replace(
                         R.id.mainFragmentContainer,
-                        ProfileDetailsFragment.newInstance(user, user.trashPhotosMetadatasList ?: listOf())
+                        ProfileDetailsFragment.newInstance(user, user.trashPhotosMetadatasList?.sortedByDescending { post -> post.takenOn } ?: listOf())
                     )
                     addToBackStack(null)
                 }

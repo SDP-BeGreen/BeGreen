@@ -183,23 +183,19 @@ class MainActivity : AppCompatActivity() {
                 item.setIcon(R.drawable.ic_baseline_feed)
 
                 // Feed posts
-
                 runBlocking {
                     lifecycleScope.launch {
 
-                        var feedPosts: List<TrashPhotoMetadata> = listOf()
+                        var feedPosts: List<TrashPhotoMetadata> = connectedUserViewModel.currentUser.value?.let { user ->
 
-                        feedPosts = connectedUserViewModel.currentUser.value?.let { user ->
                             user.following?.flatMap { id ->
 
                                 val followingUser = db.getUser(id)
 
                                 followingUser?.trashPhotosMetadatasList ?: emptyList()
                             }
-                        } ?: emptyList()
 
-                        // Sort it by date
-                        feedPosts = feedPosts.sortedByDescending { post -> post.takenBy }
+                        }?.sortedByDescending { post -> post.takenOn } ?: emptyList()
 
                         replaceFragInMainContainer(UserPhotoFragment.newInstance(1, feedPosts, true))
                     }
@@ -237,7 +233,7 @@ class MainActivity : AppCompatActivity() {
                 connectedUserViewModel.currentUser.value?.also {
 
                     // User own posts
-                    val photos = it.trashPhotosMetadatasList ?: listOf()
+                    val photos = it.trashPhotosMetadatasList?.sortedByDescending { post -> post.takenOn } ?: listOf()
 
                     replaceFragInMainContainer(ProfileDetailsFragment.newInstance(it, photos))
                 }
