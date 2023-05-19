@@ -74,8 +74,7 @@
                         android:layout_centerInParent="true"
                         android:layout_toStartOf="@+id/fragment_profile_details_edit_profile"
                         android:text="@string/name"
-                        android:textAlignment="center"
-                        />
+                        android:textAlignment="center" />
 
                     <EditText
                         android:id="@+id/fragment_profile_details_profile_name_edit"
