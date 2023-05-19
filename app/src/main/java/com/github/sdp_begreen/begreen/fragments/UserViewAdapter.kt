@@ -33,17 +33,6 @@ class UserViewAdapter(
     //inject the database
     private val db by inject<DB>(DB::class.java)
 
-    //TODO----------------FOR DEMO------------------------
-    private val photos = List(5) {
-
-        TrashPhotoMetadata(
-            "erfs",
-            ParcelableDate.now,
-            "0",
-            "Look at me cleaning!",
-            TrashCategory.PLASTIC,
-        )}
-
     //----------------FOR DEMO-----------------------------
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -58,6 +47,7 @@ class UserViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val user: User = users?.get(position) ?: return
+
         //Set all attributes of the user
         holder.userScore.text = user.score.toString()
         holder.userName.text = user.displayName
@@ -97,7 +87,7 @@ class UserViewAdapter(
                     //Go to the profile details fragment
                     replace(
                         R.id.mainFragmentContainer,
-                        ProfileDetailsFragment.newInstance(user, photos)
+                        ProfileDetailsFragment.newInstance(user, user.trashPhotosMetadatasList ?: listOf())
                     )
                     addToBackStack(null)
                 }

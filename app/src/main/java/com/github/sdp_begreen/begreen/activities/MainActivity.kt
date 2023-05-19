@@ -183,11 +183,27 @@ class MainActivity : AppCompatActivity() {
                 item.setIcon(R.drawable.ic_baseline_feed)
 
                 // Feed posts
-                // TODO : For now, it displays the user own posts.
-                val user = connectedUserViewModel.currentUser.value
 
-                val photos = user?.trashPhotosMetadatasList ?: listOf()
-                replaceFragInMainContainer(UserPhotoFragment.newInstance(1, photos, true))
+                //runBlocking {
+                    lifecycleScope.launch {
+
+                        var feedPosts: List<TrashPhotoMetadata> = listOf()
+
+                        feedPosts = connectedUserViewModel.currentUser.value?.let { user ->
+                            user.following?.flatMap { id ->
+
+                                val followingUser = db.getUser(id)
+
+                                followingUser?.trashPhotosMetadatasList ?: emptyList()
+                            }
+                        } ?: emptyList()
+
+                        // Sort it by date
+                        feedPosts = feedPosts.sortedByDescending { post -> post.takenBy }
+
+                        replaceFragInMainContainer(UserPhotoFragment.newInstance(1, feedPosts, true))
+                    }
+                //}
             }
             R.id.bottomMenuMap -> {
                 item.setIcon(R.drawable.ic_baseline_map)
