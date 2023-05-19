@@ -183,26 +183,8 @@ class MainActivity : AppCompatActivity() {
                 item.setIcon(R.drawable.ic_baseline_feed)
 
                 // Feed posts
-                // Have some troubles to separate it in a private helper method that returns the feed post list.
-                runBlocking {
-                    lifecycleScope.launch {
-
-                        var feedPosts: List<TrashPhotoMetadata> = connectedUserViewModel.currentUser.value?.let { user ->
-
-                            user.following?.flatMap { id ->
-
-                                val followingUser = db.getUser(id)
-
-                                followingUser?.trashPhotosMetadatasList ?: emptyList()
-                            }
-
-                        }?.sortedByDescending { post -> post.takenOn } ?: emptyList()
-
-                        // feedPosts = connectedUserViewModel.currentUser.value!!.trashPhotosMetadatasList ?: emptyList()
-
-                        replaceFragInMainContainer(UserPhotoFragment.newInstance(1, feedPosts, true))
-                    }
-                }
+                val feedPosts = runBlocking { fetchFeedPosts() }
+                replaceFragInMainContainer(UserPhotoFragment.newInstance(1, feedPosts, true))
             }
 
             R.id.bottomMenuMap -> {
@@ -222,6 +204,18 @@ class MainActivity : AppCompatActivity() {
                 drawerLayout.openDrawer(GravityCompat.END)
             }
         }
+    }
+
+    /**
+     * Helper method to fetch feed post
+     */
+    private suspend fun fetchFeedPosts(): List<TrashPhotoMetadata> {
+        return connectedUserViewModel.currentUser.value?.let { user ->
+            user.following?.flatMap { id ->
+                val followingUser = db.getUser(id)
+                followingUser?.trashPhotosMetadatasList ?: emptyList()
+            }
+        }?.sortedByDescending { post -> post.takenOn } ?: emptyList()
     }
 
     /**
