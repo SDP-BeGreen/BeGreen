@@ -77,8 +77,7 @@ class UserViewAdapterTest {
         assertThat(vH.userScore.text, equalTo("0"))
         assertThat(vH.userName.text, equalTo("Test"))
     }
-
-   /* @Test WHY DOES IT FAILS ON CI FFS?
+    @Test
     fun userViewAdapterSetListenerWorks() {
         activityRule.scenario.onActivity {
             it.supportFragmentManager.commit {
@@ -91,5 +90,5 @@ class UserViewAdapterTest {
         onView(withId(R.id.user_fragment)).perform(RecyclerViewActions.actionOnItemAtPosition<UserViewAdapter.ViewHolder>(0, click()))
 
         onView(withId(R.id.fragment_profile_details_profile_name)).check(matches(withText("Bob")))
-    }*/
+    }
 }

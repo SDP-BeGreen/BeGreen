@@ -20,7 +20,7 @@ import org.koin.dsl.module
 import org.mockito.Mockito.mock
 import com.github.sdp_begreen.begreen.R
 
-/*
+
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class ContestCreationFragmentTest {
@@ -63,4 +63,4 @@ class ContestCreationFragmentTest {
         onView(withId(R.id.contest_creation_title)).perform(typeText("Test contest"))
     }
 
-}*/
+}
