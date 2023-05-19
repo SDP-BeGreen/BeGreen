@@ -22,15 +22,15 @@ class ContestTest {
 
     @Test
     fun isInRangeReturnsTrueWhenDistanceBetweenContestAndLocationIsSmallerThanRadius() {
-        testIsInRange(10000L, true)
+        testIsInRange(10000.0, true)
     }
 
     @Test
     fun isInRangeReturnsFalseWhenDistanceBetweenContestAndLocationIsBiggerThanRadius() {
-        testIsInRange(1000L, false)
+        testIsInRange(1000.0, false)
     }
 
-    private fun testIsInRange(contestRadius: Long, shouldBeInRange: Boolean) {
+    private fun testIsInRange(contestRadius: Double, shouldBeInRange: Boolean) {
         val contestLat = 4.32
         val contestLong = -6.32
         val contestLocation = Location(LocationManager.GPS_PROVIDER).apply {

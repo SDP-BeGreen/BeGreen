@@ -4,13 +4,9 @@ import android.location.Address
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
-import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.services.GeocodingService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
@@ -23,6 +19,8 @@ import org.koin.dsl.module
 import org.koin.test.KoinTestRule
 import org.mockito.Mockito
 import org.mockito.Mockito.any
+import org.mockito.Mockito.anyInt
+import org.mockito.Mockito.anyString
 import org.mockito.Mockito.mock
 import java.text.SimpleDateFormat
 
@@ -54,10 +52,10 @@ class ContestCreationViewModelTest {
             // that's why we do it in the beforeClass method
             runTest {
 
-                Mockito.`when`(geo.getAddresses(any(), any()))
+                Mockito.`when`(geo.getAddresses(any(CustomLatLng::class.java), anyInt()))
                     .thenReturn(listOfAddress)
 
-                Mockito.`when`(geo.getLongLat(any()))
+                Mockito.`when`(geo.getLongLat(anyString()))
                     .thenReturn(CustomLatLng(46.519653, 6.632273))
 
             }
