@@ -12,10 +12,11 @@ import com.github.sdp_begreen.begreen.utils.checkArgument
 import com.github.sdp_begreen.begreen.utils.checkRootPathMatchEventClassImpl
 import kotlinx.coroutines.flow.Flow
 import org.koin.java.KoinJavaComponent.inject
-import java.time.LocalDateTime
-import java.util.Calendar
 
 object EventServiceImpl : EventService {
+
+    private const val START_DATE_TIME = "startDateTime"
+    private const val END_DATE_TIME = "endDateTime"
 
     private val dbRefs by inject<FirebaseRef>(FirebaseRef::class.java)
 
@@ -52,13 +53,16 @@ object EventServiceImpl : EventService {
         eventImplType: Class<T>
     ): Flow<List<T>> {
         checkRootPathMatchEventClassImpl(rootPath, eventImplType)
+        val orderBy = when (rootPath) {
+            RootPath.MEETINGS -> START_DATE_TIME
+            RootPath.CONTESTS -> END_DATE_TIME
+        }
         return getFlowOfObjects(
-            dbRef.child(rootPath.path).orderByChild("startDateTime")
-                .startAt(Calendar.getInstance().timeInMillis.toDouble()),
+            dbRef.child(rootPath.path).orderByChild(orderBy)
+                .startAt(System.currentTimeMillis().toDouble()),
             eventImplType
         )
     }
-
 
     override suspend fun <T : Event<T>> getEvent(
         eventId: String,

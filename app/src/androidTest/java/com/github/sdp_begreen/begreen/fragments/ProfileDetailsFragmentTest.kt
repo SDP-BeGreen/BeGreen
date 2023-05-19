@@ -22,6 +22,7 @@ import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
@@ -47,22 +48,24 @@ import java.util.*
 @LargeTest
 class ProfileDetailsFragmentTest {
     companion object {
+
+        private const val userId1 = "1234"
+
         val photos = arrayListOf(
-            ProfilePhotoMetadata(
+            TrashPhotoMetadata(
                 "erfs",
                 ParcelableDate.now,
-                "0"
+                userId1
             ),
 
-            ProfilePhotoMetadata(
+            TrashPhotoMetadata(
                 "erfs",
                 ParcelableDate.now,
-                "0"
+                userId1
             )
         )
         private val userProfilePicturePhotoMetadata = ProfilePhotoMetadata("user1_profile_picture")
 
-        private const val userId1 = "1234"
         private val user1 = User(
             userId1,
             142,
@@ -499,6 +502,7 @@ class ProfileDetailsFragmentTest {
 
     @Test
     fun cancelEditedValuesCorrectlyResetValuesInEditableView() {
+
         val newUser = user1.copy(
             description = "My new description",
             displayName = "My new name",
@@ -506,10 +510,7 @@ class ProfileDetailsFragmentTest {
             email = "My new email address"
         )
 
-
-
         editUserValues(newUser)
-
 
         // cancel modifications
         onView(withId(R.id.fragment_profile_details_cancel_modification))

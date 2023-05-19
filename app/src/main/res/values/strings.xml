@@ -4,8 +4,6 @@
     <string name="settings_fragment_text">Fragment where we can display settings for the user%1$s%2$s</string>
     <string name="followers_fragment_text">Fragment where we can display the user\'s followers%1$s%2$s</string>
     <string name="user_details_level_text">%1$s\'s level</string>
-    <string name="get">Get</string>
-    <string name="set">Set</string>
     <string name="menuProfile">Profile</string>
     <string name="settings">Settings</string>
     <string name="profile">Profile</string>
@@ -87,6 +85,11 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="fragment_contests_add_contest_button_description">Button to create a new contest</string>
     <string name="contests">Contests</string>
+    <string name="cant_update_contests_score">Location unavailable. Cannot update contest(s) score(s)</string>
+    <string name="unknown_user">Unknown user</string>
+    <string name="unknown_date">Unknown date</string>
+    <string name="no_category">No category</string>
+    <string name="post_date_and_category_info">%1$s | %2$s </string>
     <string name="create_a_contest">Create a Contest</string>
     <string name="private_contest">Private Contest</string>
     <string name="contest_title">Contest Title</string>

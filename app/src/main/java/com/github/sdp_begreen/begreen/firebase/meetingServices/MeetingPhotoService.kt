@@ -30,7 +30,7 @@ interface MeetingPhotoService {
     ): TrashPhotoMetadata
 
     /**
-     * Get all the comments, retrieve the comment dynamically
+     * Get all photos, retrieve photos dynamically
      *
      * @param meetingId The id of the meeting from which to retrieve the list of photo metadata
      *

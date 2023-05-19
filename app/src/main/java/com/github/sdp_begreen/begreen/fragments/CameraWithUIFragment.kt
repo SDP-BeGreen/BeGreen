@@ -35,6 +35,7 @@ import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
+import com.github.sdp_begreen.begreen.utils.Permissions.hasPermissions
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -186,12 +187,10 @@ class CameraWithUIFragment : Fragment() {
      * Retrieves the current user profile fragment
      */
     private suspend fun getProfile() : Fragment {
-        //TODO remove this after demo
-        //_______________________________________________________
-        val photos = listOf(
-            TrashPhotoMetadata("1", ParcelableDate.now, "Look at me cleaning!", "0", TrashCategory.ORGANIC),
-            TrashPhotoMetadata("1", ParcelableDate.now, "Look at me cleaning!", "0", TrashCategory.ORGANIC)
-        )
+
+        val user = connectedUserViewModel.currentUser.value
+        val photos = user?.trashPhotosMetadatasList ?: listOf()
+
         //_______________________________________________________
         return (connectedUserViewModel.currentUser.value?.let {
             ProfileDetailsFragment.newInstance(it, photos)
@@ -335,9 +334,7 @@ class CameraWithUIFragment : Fragment() {
      * Check if all permissions are granted
      */
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(
-            requireContext(), it
-        ) == PackageManager.PERMISSION_GRANTED
+        hasPermissions(requireContext(), it)
     }
 
     override fun onDestroy() {

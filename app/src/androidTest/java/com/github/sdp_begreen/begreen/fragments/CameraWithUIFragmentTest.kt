@@ -60,9 +60,6 @@ class CameraWithUIFragmentTest {
                 // setup basic get user and getProfilePicture use in multiple tests
                 `when`(db.getUser(user.id))
                     .thenReturn(user)
-                // add a small delay, just to be sure that it is triggered after initialization
-                // and arrive second, after the initial null value
-                // user between tests, by simply pushing a new userId
                 `when`(auth.getFlowUserIds())
                     .thenReturn(MutableStateFlow(user.id))
                 `when`(auth.getConnectedUserId())
@@ -95,7 +92,6 @@ class CameraWithUIFragmentTest {
     fun setup() {
         fragmentScenario = launchFragmentInContainer()
     }
-
 
     @Test
     fun clickOnSwitchRedirectOnCamera() {

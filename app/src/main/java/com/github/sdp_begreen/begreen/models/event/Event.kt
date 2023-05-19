@@ -22,4 +22,29 @@ interface Event<T> : CopyableWithId<T>, Parcelable {
     val rootPath: RootPath
 
     override fun equals(other: Any?): Boolean
+
+    /**
+     * Function to tell whether the event has started
+     * @return true if the event has started, null if the starting date is null and false otherwise
+     */
+    fun isStarted(): Boolean? {
+        return startDateTime?.let { it < System.currentTimeMillis() }
+    }
+
+    /**
+     * Function to tell whether the event is finished
+     * @return true if the event is finished, null if the ending date is null and false otherwise
+     */
+    fun isFinished(): Boolean? {
+        return endDateTime?.let { it < System.currentTimeMillis() }
+    }
+
+    /**
+     * Function to tell whether the event is currently active
+     * @return true if the event has started and is not finished yet,
+     * null if the starting date or the ending date is null and false otherwise
+     */
+    fun isActive(): Boolean? {
+        return isStarted()?.let { started -> isFinished()?.let { finished -> started && !finished } }
+    }
 }

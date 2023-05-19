@@ -6,23 +6,17 @@ import androidx.test.filters.MediumTest
 import com.github.sdp_begreen.begreen.exceptions.EventServiceException
 import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.matchers.ContainsWithSameOrder.Companion.inWithOrder
-import com.github.sdp_begreen.begreen.models.event.Contest
 import com.github.sdp_begreen.begreen.models.CustomLatLng
+import com.github.sdp_begreen.begreen.models.event.Contest
 import com.github.sdp_begreen.begreen.models.event.Meeting
 import com.github.sdp_begreen.begreen.rules.CoroutineTestRule
 import com.github.sdp_begreen.begreen.rules.FirebaseEmulatorRule
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.withContext
-import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.CoreMatchers.everyItem
-import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.*
 import org.hamcrest.Matchers.`in`
 import org.hamcrest.Matchers.not
 import org.junit.Assert.assertThrows
@@ -30,7 +24,7 @@ import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.Calendar
+import java.util.*
 
 /**
  * The event service will only be tested using [Meeting]s, but it would work the same
@@ -253,7 +247,7 @@ class EventServiceImplTest {
 
         runTest {
             val list = EventServiceImpl.getAllEvents(RootPath.MEETINGS, Meeting::class.java).first()
-            // As its hard to now exactly how many meetings are going to be in the database when
+            // As its hard to know exactly how many meetings are going to be in the database when
             // we run this test, as test are executed in any order, some new meetings may have
             // been added in between, we check that at least all the meetings from the list `meetings`
             // are in the retrieved list
@@ -555,4 +549,61 @@ class EventServiceImplTest {
             assertThat(exception.message, `is`(equalTo("Data not found, or could not be parsed")))
         }
     }
+
+    @Test
+    fun getAllContestsShouldContainExactlyAllUnfinishedContestsAndInTheRightOrder() {
+        // not finished event
+        val contest1 = Contest(
+            null,
+            "creator1",
+            "contest 1",
+            "some description for contest 1",
+            1,
+            Calendar.getInstance().timeInMillis.plus(999999)
+        )
+        // not finished event
+        val contest2 = Contest(
+            null,
+            "creator2",
+            "contest 2",
+            "some description for contest 2",
+            1,
+            Calendar.getInstance().timeInMillis.plus(777777)
+        )
+        // not finished event
+        val contest3 = Contest(
+            null,
+            "creator3",
+            "contest 3",
+            "some description for contest 3",
+            1,
+            Calendar.getInstance().timeInMillis.plus(888888)
+        )
+        // finshed event
+        val contest4 = Contest(
+            null,
+            "creator4",
+            "contest 4",
+            "some description for contest 4",
+            1,
+            Calendar.getInstance().timeInMillis.minus(999999)
+        )
+        runTest {
+            val newContest1 = EventServiceImpl.createEvent(contest1)
+            val newContest2 = EventServiceImpl.createEvent(contest2)
+            val newContest3 = EventServiceImpl.createEvent(contest3)
+            val newContest4 = EventServiceImpl.createEvent(contest4)
+
+
+            val contests =
+                EventServiceImpl.getAllEvents(RootPath.CONTESTS, Contest::class.java).first()
+
+            // check that the three new contests are in the correct order
+            assertThat(listOf(newContest2, newContest3, newContest1), `is`(inWithOrder(contests)))
+
+            // check that the fourth contest is not returned as it has already ended
+            assertThat(newContest4, `is`(not(`in`(contests))))
+        }
+    }
+
 }

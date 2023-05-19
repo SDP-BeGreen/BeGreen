@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import kotlin.collections.ArrayList
@@ -45,7 +46,8 @@ class UserPhotoFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = UserPhotosViewAdapter(photoList?: listOf(), isFeed)
+                
+                adapter = UserPhotosViewAdapter(photoList?: listOf(), isFeed, lifecycleScope, resources)
             }
             if(!isFeed){
                 //If not in the feed display horizontally

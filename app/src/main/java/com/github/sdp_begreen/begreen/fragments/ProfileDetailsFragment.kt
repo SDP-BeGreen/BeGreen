@@ -2,7 +2,6 @@ package com.github.sdp_begreen.begreen.fragments
 
 import android.Manifest
 import android.content.Context
-import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
@@ -11,19 +10,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.RatingBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
-import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -32,18 +23,14 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.DB
-import com.github.sdp_begreen.begreen.models.Actions
-import com.github.sdp_begreen.begreen.models.ParcelableDate
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
-import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
-import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
-import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.models.*
 import com.github.sdp_begreen.begreen.utils.BitmapsUtils
+import com.github.sdp_begreen.begreen.utils.Permissions.hasPermissions
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.github.sdp_begreen.begreen.viewModels.ProfileEditedValuesViewModel
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
-import java.util.Date
+import java.util.*
 
 
 /**
@@ -51,8 +38,8 @@ import java.util.Date
  * Use the [ProfileDetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultRegistry? = null)
-    : Fragment() {
+class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultRegistry? = null) :
+    Fragment() {
     private var user: User? = null
     private var recentPosts: List<TrashPhotoMetadata>? = null
 
@@ -66,7 +53,8 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         arguments?.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 user = it.getParcelable(ARG_USER, User::class.java)
-                recentPosts = it.getParcelableArrayList(ARG_RECENT_POSTS, TrashPhotoMetadata::class.java)
+                recentPosts =
+                    it.getParcelableArrayList(ARG_RECENT_POSTS, TrashPhotoMetadata::class.java)
             } else {
                 user = it.getParcelable(ARG_USER)
                 recentPosts = it.getParcelableArrayList(ARG_RECENT_POSTS)
@@ -88,14 +76,19 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         val sendButton: Button = view.findViewById(R.id.fragment_profile_details_msg_button)
         val editButton: Button = view.findViewById(R.id.fragment_profile_details_edit_profile)
         val saveButton: Button = view.findViewById(R.id.fragment_profile_details_save_profile)
-        val cancelButton: Button = view.findViewById(R.id.fragment_profile_details_cancel_modification)
+        val cancelButton: Button =
+            view.findViewById(R.id.fragment_profile_details_cancel_modification)
         val takePictureButton: ImageButton =
             view.findViewById(R.id.fragment_profile_details_take_picture)
         rating.rating = user?.score?.toFloat() ?: 0.0f
         userProgressBar.progress = user?.progression ?: 0
 
         activity?.supportFragmentManager?.beginTransaction()
-            ?.replace(R.id.fragment_recent_profile_photo, UserPhotoFragment.newInstance(1, recentPosts, false), "")
+            ?.replace(
+                R.id.fragment_recent_profile_photo,
+                UserPhotoFragment.newInstance(1, recentPosts, false),
+                ""
+            )
             ?.commit()
 
         setUpUserInfo(view)
@@ -154,9 +147,11 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         val name: TextView = view.findViewById(R.id.fragment_profile_details_profile_name)
         val nameEdit: EditText = view.findViewById(R.id.fragment_profile_details_profile_name_edit)
         val profilePhone: TextView = view.findViewById(R.id.fragment_profile_details_profile_phone)
-        val phoneEdit: EditText = view.findViewById(R.id.fragment_profile_details_profile_phone_edit)
+        val phoneEdit: EditText =
+            view.findViewById(R.id.fragment_profile_details_profile_phone_edit)
         val profileEmail: TextView = view.findViewById(R.id.fragment_profile_details_profile_email)
-        val emailEdit: EditText = view.findViewById(R.id.fragment_profile_details_profile_email_edit)
+        val emailEdit: EditText =
+            view.findViewById(R.id.fragment_profile_details_profile_email_edit)
         val userTextLevel: TextView = view.findViewById(R.id.fragment_profile_details_level)
         setupEditableUserInfoListener(nameEdit, phoneEdit, emailEdit, descriptionEdit)
 
@@ -168,15 +163,15 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
                     profileDescription.text =
                         userToUse?.description ?: getString(R.string.nav_drawer_user_description)
                     descriptionEdit.setText(
-                        profileEditedValuesViewModel.description ?:
-                        userToUse?.description ?:
-                        getString(R.string.nav_drawer_user_description)
+                        profileEditedValuesViewModel.description ?: userToUse?.description
+                        ?: getString(R.string.nav_drawer_user_description)
                     )
                     name.text = userToUse?.displayName ?: getString(R.string.nav_drawer_username)
                     nameEdit.setText(
                         profileEditedValuesViewModel.displayName ?: // priority to edited name
                         userToUse?.displayName
-                        ?: getString(R.string.fragment_profile_details_username_placeholder))
+                        ?: getString(R.string.fragment_profile_details_username_placeholder)
+                    )
                     profilePhone.text = userToUse?.phone
                     phoneEdit.setText(profileEditedValuesViewModel.phone ?: userToUse?.phone)
                     profileEmail.text = userToUse?.email
@@ -198,7 +193,8 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
      * @param descriptionEdit The editText that contains the description
      */
     private fun setupEditableUserInfoListener(
-        nameEdit: EditText, phoneEdit: EditText, emailEdit: EditText, descriptionEdit: EditText) {
+        nameEdit: EditText, phoneEdit: EditText, emailEdit: EditText, descriptionEdit: EditText
+    ) {
         nameEdit.addTextChangedListener {
             profileEditedValuesViewModel.displayName = it.toString()
         }
@@ -228,21 +224,31 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
                     if (connectedUserViewModel.currentUser.value?.id == user?.id) {
                         val img = it ?: BitmapFactory.decodeResource(
                             resources,
-                            R.drawable.blank_profile_picture)
-                        profileImgView.setImageBitmap(BitmapsUtils.rescaleImage(img,
-                            PROFILE_PICTURE_DIM,
-                            PROFILE_PICTURE_DIM
-                        ))
+                            R.drawable.blank_profile_picture
+                        )
+                        profileImgView.setImageBitmap(
+                            BitmapsUtils.rescaleImage(
+                                img,
+                                PROFILE_PICTURE_DIM,
+                                PROFILE_PICTURE_DIM
+                            )
+                        )
                     } else {
                         val img = user?.let { user ->
-                            user.profilePictureMetadata?.let { pMetadata->
+                            user.profilePictureMetadata?.let { pMetadata ->
                                 db.getUserProfilePicture(pMetadata, user.id)
                             }
-                        } ?: BitmapFactory.decodeResource(resources, R.drawable.blank_profile_picture)
-                        profileImgView.setImageBitmap(BitmapsUtils.rescaleImage(img,
-                            PROFILE_PICTURE_DIM,
-                            PROFILE_PICTURE_DIM
-                        ))
+                        } ?: BitmapFactory.decodeResource(
+                            resources,
+                            R.drawable.blank_profile_picture
+                        )
+                        profileImgView.setImageBitmap(
+                            BitmapsUtils.rescaleImage(
+                                img,
+                                PROFILE_PICTURE_DIM,
+                                PROFILE_PICTURE_DIM
+                            )
+                        )
                     }
                 }
         }
@@ -306,8 +312,9 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
             connectedUserViewModel.currentUser.value?.apply {
                 requireView()
                     .findViewById<EditText>(R.id.fragment_profile_details_profile_description_edit)
-                    .setText(description ?:
-                    getString(R.string.nav_drawer_user_description))
+                    .setText(
+                        description ?: getString(R.string.nav_drawer_user_description)
+                    )
 
                 requireView()
                     .findViewById<EditText>(R.id.fragment_profile_details_profile_name_edit)
@@ -341,7 +348,7 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
                 .collect {
                     if (it?.id != user?.id || !shouldBeVisible()) {
                         button.visibility = View.GONE
-                    } else if(shouldBeVisible()) {
+                    } else if (shouldBeVisible()) {
                         button.visibility = View.VISIBLE
                     }
                 }
@@ -352,7 +359,8 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
      * Helper function to hide the soft keyboard
      */
     private fun hideKeyboard() {
-        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(requireView().windowToken, 0)
     }
 
@@ -361,7 +369,7 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
      *
      * and also set the new values to the currentUser
      */
-    private fun saveEditedField () {
+    private fun saveEditedField() {
         connectedUserViewModel.currentUser.value?.apply {
             // make a copy with edited value, or let old if unchanged (i.e. null)
             val newUser = copy(
@@ -382,7 +390,8 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
 
             lifecycleScope.launch {
                 val metadata = profileEditedValuesViewModel.profilePicture?.let {
-                    db.storeUserProfilePicture(it, id,
+                    db.storeUserProfilePicture(
+                        it, id,
                         ProfilePhotoMetadata(takenBy = id, takenOn = ParcelableDate(Date()))
                     )
                 }
@@ -468,13 +477,10 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         val requestPermissionLauncher = registerRequestCameraPermission(takePicture)
 
         button.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(), Manifest.permission.CAMERA
-                ) == PackageManager.PERMISSION_GRANTED) {
+            if (hasPermissions(requireContext(), Manifest.permission.CAMERA))
                 takePicture.launch()
-            } else {
+            else
                 requestPermissionLauncher.launch(Manifest.permission.CAMERA)
-            }
         }
     }
 
@@ -499,8 +505,9 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
         private const val ARG_USER = "USER"
         private const val PROFILE_PICTURE_DIM = 400
+
         // View that should be displayed when simply displaying user info
-        private val DISPLAY_RELATED_VIEW= listOf(
+        private val DISPLAY_RELATED_VIEW = listOf(
             R.id.fragment_profile_details_edit_profile,
             R.id.fragment_profile_details_profile_image,
             R.id.fragment_profile_details_profile_name,
@@ -508,8 +515,9 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
             R.id.fragment_profile_details_profile_phone,
             R.id.fragment_profile_details_profile_description
         )
+
         // View that should be displayed when editing
-        private val EDIT_RELATED_VIEW= listOf(
+        private val EDIT_RELATED_VIEW = listOf(
             R.id.fragment_profile_details_save_profile,
             R.id.fragment_profile_details_cancel_modification,
             R.id.fragment_profile_details_take_picture,

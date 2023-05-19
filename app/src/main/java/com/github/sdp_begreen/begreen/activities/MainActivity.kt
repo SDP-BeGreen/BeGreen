@@ -179,12 +179,14 @@ class MainActivity : AppCompatActivity() {
     private fun handleBottomMenuItemClicked(item: MenuItem, drawerLayout: DrawerLayout) {
         when (item.itemId) {
             R.id.bottomMenuFeed -> {
+
                 item.setIcon(R.drawable.ic_baseline_feed)
-                val photos = listOf(
-                    TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
-                    TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
-                    TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
-                    TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC))
+
+                // Feed posts
+                // TODO : For now, it displays the user own posts.
+                val user = connectedUserViewModel.currentUser.value
+
+                val photos = user?.trashPhotosMetadatasList ?: listOf()
                 replaceFragInMainContainer(UserPhotoFragment.newInstance(1, photos, true))
             }
             R.id.bottomMenuMap -> {
@@ -213,15 +215,13 @@ class MainActivity : AppCompatActivity() {
      * @param item The menu item that has been pressed
      */
     private fun handleDrawerMenuItemClick(item: MenuItem) {
+
         when (item.itemId) {
             R.id.mainNavDrawProfile -> {
                 connectedUserViewModel.currentUser.value?.also {
 
-                    val photos = listOf(
-                        TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
-                        TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
-                        TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC),
-                        TrashPhotoMetadata("1", ParcelableDate.now, "0", "Look at me cleaning!", TrashCategory.PLASTIC))
+                    // User own posts
+                    val photos = it.trashPhotosMetadatasList ?: listOf()
 
                     replaceFragInMainContainer(ProfileDetailsFragment.newInstance(it, photos))
                 }

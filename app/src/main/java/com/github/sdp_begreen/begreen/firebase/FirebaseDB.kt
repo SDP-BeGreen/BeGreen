@@ -39,7 +39,6 @@ object FirebaseDB: DB {
     private val connectedReference = dbRefs.database.getReference(".info/connected")
     private const val USERS_PATH = "users"
     private const val USER_PROFILE_PICTURE_METADATA = "profilePictureMetadata"
-    private const val USER_TRASH_PICTURE_METADATA = "trashPictureMetadata"
     private const val USER_POSTS = "posts"
     private const val USER_ID_ATTRIBUTE = "id"
     private const val BIN_LOCATION_PATH = "bin"
@@ -47,6 +46,7 @@ object FirebaseDB: DB {
     private const val FOLLOWERS_PATH = "followers"
     private const val FOLLOWING_PATH = "following"
     private const val FEEDBACK_PATH = "contact_us"
+    private const val USER_PROFILE_PICTURE_ID_SUFFIX = "_profile_picture"
 
     // Logs (in the console) the connections and disconnections with the Firebase database
     // We might want to provide a new constructor that takes code to execute on connections/disconnections
@@ -107,7 +107,7 @@ object FirebaseDB: DB {
         if (userId.isBlank())
             throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
 
-        metadata.pictureId = "${userId}_profile_picture"
+        metadata.pictureId = "${userId}${USER_PROFILE_PICTURE_ID_SUFFIX}"
 
         return storePicture(image, USER_PROFILE_PICTURE_METADATA, metadata,
             databaseReference.child(USERS_PATH).child(userId),
@@ -145,20 +145,25 @@ object FirebaseDB: DB {
 
     override suspend fun getImage(metadata: PhotoMetadata, timeout: Long): Bitmap? {
 
-        // Points to the node where we the image SHOULD be
-        // The path will change when we will actually stores the real pictures
+        val userId = metadata.takenBy ?: return null
+
         return metadata.pictureId?.let {
-            getPicture(storageReference.child("userId").child(
-                metadata.takenBy!!).child(it), timeout)
+            getPicture(storageReference.child(USERS_PATH).child(userId).child(
+                USER_POSTS).child(it), timeout)
         }
     }
 
     override suspend fun getUserProfilePicture(metadata: ProfilePhotoMetadata, userId: String, timeout: Long): Bitmap? {
+
         if (userId.isBlank())
             throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
+
         return metadata.pictureId?.let {
-            getPicture(storageReference.child(USERS_PATH).child(userId).child(
-                USER_PROFILE_PICTURE_METADATA).child(it), timeout)
+            getPicture(
+                storageReference.child(USERS_PATH).child(userId).child(
+                    USER_PROFILE_PICTURE_METADATA
+                ).child(it), timeout
+            )
         }
     }
 

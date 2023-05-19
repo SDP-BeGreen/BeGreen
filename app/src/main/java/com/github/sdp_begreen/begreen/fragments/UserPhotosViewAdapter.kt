@@ -1,6 +1,7 @@
 package com.github.sdp_begreen.begreen.fragments
 
-import android.graphics.BitmapFactory
+import android.annotation.SuppressLint
+import android.content.res.Resources
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.view.LayoutInflater
@@ -8,23 +9,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.toBitmap
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.recyclerview.widget.RecyclerView
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.databinding.FragmentUserPhotoBinding
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
-import java.net.URL
+import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent.inject
 
 
 /**
  * [RecyclerView.Adapter] that can display a [Photo].
  */
 class UserPhotosViewAdapter(
-    val photos: List<PhotoMetadata>?,
-    private val isFeed: Boolean
+    val photos: List<TrashPhotoMetadata>?,
+    private val isFeed: Boolean,
+    val lifecycleScope: LifecycleCoroutineScope,
+    val resources: Resources
 ) : RecyclerView.Adapter<UserPhotosViewAdapter.ViewHolder>() {
+
+    private val db by inject<DB>(DB::class.java)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         //TODO-------------------FOR DEMO---------------------
@@ -42,43 +47,43 @@ class UserPhotosViewAdapter(
 
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val photo = photos?.get(position)
+        // Prefer this semantic instead of the .let { } so we don't have to embed too much blocks
 
-        if(isFeed) {
+        val photos = photos ?: return
+        val photo = photos[position]
+        val userId = photo.takenBy ?: return
 
-            // Display avatar if on feed
-            val drawable = ContextCompat.getDrawable(holder.avatarView.context, R.drawable.ic_baseline_person)
-            val defaultAvatar = drawable?.toBitmap()
-            // holder.avatarView.setImageBitmap(getFromDB(photo) ?: defaultAvatar)
-            holder.avatarView.setImageBitmap( defaultAvatar)
+        lifecycleScope.launch {
 
-        }else{
-            // Do not display avatar if not on feed
-            holder.avatarView.visibility = View.GONE
-        }
+            val user = db.getUser(userId) ?: return@launch
 
-        if (photo is TrashPhotoMetadata) {
-            // use the photo variable as a TrashPhotoMetadata instance
+            if (isFeed) {
 
-            //Set default value
-            holder.titleView.text = photo?.caption ?: "No title"
-            holder.subtitleView.text = (photo?.takenOn?.toString()
-                ?: "Unknown date") + " | " + (photo?.trashCategory?.title
-                ?: "No category")
-            //holder.photoView.setImageBitmap(photo.getPhotoFromDataBase())
-            //TODO------------FOR DEMO -----------------
-            val url = URL("https://picsum.photos/400")
-            holder.photoView.setImageBitmap(
-                BitmapFactory.decodeStream(
-                    url.openConnection().getInputStream()
-                )
-            )
-            //------------FOR DEMO -----------------
+                holder.avatarView.visibility = View.VISIBLE
 
-            // TODO : to change
-            holder.descriptionView.text = photo?.caption
+                // Display avatar if on feed
+                user.profilePictureMetadata?.also {
+                    val avatarImage = db.getUserProfilePicture(it, userId)
+                    holder.avatarView.setImageBitmap(avatarImage)
+                }
+
+            } else {
+
+                // Do not display avatar if not on feed
+                holder.avatarView.visibility = View.GONE
+            }
+
+            // Display post content
+            val dateString = (photo.takenOn?.toString() ?: resources.getString(R.string.unknown_date))
+            val categoryString = (photo.trashCategory?.title ?: resources.getString(R.string.no_category))
+
+            holder.titleView.text = user.displayName ?: resources.getString(R.string.unknown_user)
+            holder.subtitleView.text = resources.getString(R.string.post_date_and_category_info, dateString, categoryString)
+            holder.descriptionView.text = photo.caption
+            holder.photoView.setImageBitmap(db.getImage(photo))
         }
     }
 
