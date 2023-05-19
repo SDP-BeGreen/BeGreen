@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_marginHorizontal="10dp"
+    android:id="@+id/contest_creation_fragment"
+    tools:context=".fragments.ContestCreationFragment">
+
+    <TextView
+        android:id="@+id/contest_creation_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/create_a_contest"
+        android:gravity="center"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:paddingTop="25dp"
+        android:paddingBottom="10dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/contest_creation_title_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginHorizontal="10dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/contest_creation_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/contest_title"
+                android:maxLength="40"
+                android:textAlignment="center" />
+        </com.google.android.material.textfield.TextInputLayout>
+    <CheckBox
+        android:id="@+id/private_contest_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:gravity="center"
+        android:layout_gravity="end"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:text="@string/private_contest"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/contest_creation_location_expand"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_chevron_down"
+            android:contentDescription="@string/chevron_to_expand_location_parameters" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0.5"
+            android:layout_marginStart="20dp"
+            android:text="@string/location"
+            android:textSize="24sp"
+            android:textStyle="bold"/>
+        <ImageView
+            android:id="@+id/contest_creation_location_map"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="right"
+            android:layout_marginEnd="40dp"
+            android:layout_weight="0.2"
+            android:src="@drawable/ic_map"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:contentDescription="@string/map_button_to_open_map_and_select_coordinates" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/contest_location_details_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/first_line_contest_location_details_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/city_contest_creation_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_gravity="center_horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/postal_code_contest_creation_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/city_contest_creation"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:hint="@string/city"
+                    android:maxLength="15"
+                    android:textSize="11sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/postal_code_contest_creation_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/city_contest_creation_container"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/postal_code_contest_creation"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:hint="@string/postal_code"
+                    android:maxLength="6"
+                    android:textSize="11sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/second_line_contest_location_details_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.hbb20.CountryPickerView
+                android:id="@+id/contest_creation_country_picker"
+                app:cp_initialSelectionMode="autoDetectCounty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/radius_contest_creation_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/radius_contest_creation_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/contest_creation_country_picker"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/radius_contest_creation"
+                    android:layout_width="105dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:inputType="number"
+                    android:hint="@string/radius_in_meters"
+                    android:maxLength="6"
+                    android:textSize="11sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/contest_timezone"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp">
+        </TextView>
+
+        <Spinner
+            android:id="@+id/contest_timezone_spinner"
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+        </Spinner>
+
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/start_date"
+                android:layout_marginEnd="100dp">
+
+            </TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/end_date">
+            </TextView>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:orientation="vertical">
+        <RelativeLayout
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/date_period_contest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/ic_calendar"
+                android:text="@string/date"
+                android:inset="0dp"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                android:layout_centerHorizontal="true"
+                app:shapeAppearanceOverlay="@style/Circular">
+            </Button>
+
+            <EditText
+                android:id="@+id/start_date_contest_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:format12Hour="dd/MM/yyyy"
+                android:text="@string/dd_mm_yyyy"
+                android:inputType="date"
+                android:textSize="13sp"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="10dp"
+                android:layout_centerVertical="true">
+            </EditText>
+
+
+            <EditText
+                android:id="@+id/end_date_contest_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:format12Hour="dd/MM/yyyy"
+                android:inputType="date"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="10dp"
+                android:textSize="13sp"
+                android:text="@string/dd_mm_yyyy">
+            </EditText>
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+           <Button
+               android:id="@+id/start_hour_contest"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="@string/hour"
+               app:icon="@drawable/ic_clock"
+               android:inset="0dp"
+               app:iconGravity="textStart"
+               app:iconPadding="0dp"
+               app:shapeAppearanceOverlay="@style/Circular"
+               android:layout_alignParentStart="true">
+           </Button>
+            <EditText
+                android:id="@+id/start_hour_contest_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/start_hour_contest"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:inputType="time"
+                android:textSize="15sp"
+                android:text="@string/hour_format">
+            </EditText>
+
+            <Button
+                android:id="@+id/end_hour_contest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/ic_clock"
+                android:text="@string/hour"
+                android:inset="0dp"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:shapeAppearanceOverlay="@style/Circular"
+                android:layout_alignParentEnd="true">
+            </Button>
+            <EditText
+                android:id="@+id/end_hour_contest_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/end_hour_contest"
+                android:layout_marginEnd="10dp"
+                android:inputType="time"
+                android:textSize="15sp"
+                android:text="@string/hour_format">
+            </EditText>
+
+        </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="40dp"
+            android:gravity="center">
+            <Button
+                android:id="@+id/contest_cancel_button"
+                android:layout_gravity="center"
+                android:layout_width="150dp"
+                android:layout_marginEnd="40dp"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/ic_cancel"
+                android:text="@string/cancel"
+                android:textAlignment="center"
+                android:backgroundTint="@color/green_triadic_light_blue">
+            </Button>
+
+            <Button
+            android:id="@+id/contest_confirm_button"
+            android:layout_gravity="center"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/ic_arrow_right"
+            android:text="@string/confirm"
+            android:textAlignment="center"
+            android:backgroundTint="@color/green_500">
+
+        </Button>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

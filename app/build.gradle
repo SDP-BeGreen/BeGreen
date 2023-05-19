@@ -108,6 +108,8 @@ dependencies {
     // Googlemaps
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'com.google.maps.android:android-maps-utils:0.6.2'
+    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.3.0-alpha03'
 
     // Camera X
 
@@ -126,6 +128,9 @@ dependencies {
 
     // Picasso
     implementation("com.squareup.picasso:picasso:2.8")
+
+    // Country picker
+    implementation("com.hbb20:android-country-picker:0.0.7")
 
 }
 

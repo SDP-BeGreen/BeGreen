@@ -90,4 +90,27 @@
     <string name="unknown_date">Unknown date</string>
     <string name="no_category">No category</string>
     <string name="post_date_and_category_info">%1$s | %2$s </string>
+    <string name="create_a_contest">Create a Contest</string>
+    <string name="private_contest">Private Contest</string>
+    <string name="contest_title">Contest Title</string>
+    <string name="location">Location</string>
+    <string name="postal_code">Postal Code</string>
+    <string name="city">City</string>
+    <string name="radius_in_meters">Radius in meters</string>
+    <string name="start_date">Start date</string>
+    <string name="end_date">End Date</string>
+    <string name="confirm">Confirm</string>
+    <string name="date">Date</string>
+    <string name="hour">Hour</string>
+    <string name="chevron_to_expand_location_parameters">Chevron to expand location parameters</string>
+    <string name="map_button_to_open_map_and_select_coordinates">Map button to open map and select coordinates</string>
+    <string name="create_contest_map_dialog_title">Contest Location</string>
+    <string name="create_contest_map_dialog_location">Location</string>
+    <string name="create_contest_map_dialog_radius">Radius</string>
+    <string name="contest_timezone">Contest Timezone</string>
+    <string name="dd_mm_yyyy">dd/MM/yyyy</string>
+    <string name="hour_format">H:M</string>
+    <string name="create_contest_map_dialog_cancel">Cancel</string>
+    <string name="create_contest_map_dialog_approve">Approve</string>
+
 </resources>

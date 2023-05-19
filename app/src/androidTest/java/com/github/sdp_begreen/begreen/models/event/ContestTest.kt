@@ -3,7 +3,9 @@ package com.github.sdp_begreen.begreen.models.event
 import android.location.Location
 import android.location.LocationManager
 import com.github.sdp_begreen.begreen.models.CustomLatLng
-import org.hamcrest.CoreMatchers.*
+import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 
@@ -22,15 +24,15 @@ class ContestTest {
 
     @Test
     fun isInRangeReturnsTrueWhenDistanceBetweenContestAndLocationIsSmallerThanRadius() {
-        testIsInRange(10000L, true)
+        testIsInRange(10000.0, true)
     }
 
     @Test
     fun isInRangeReturnsFalseWhenDistanceBetweenContestAndLocationIsBiggerThanRadius() {
-        testIsInRange(1000L, false)
+        testIsInRange(1000.0, false)
     }
 
-    private fun testIsInRange(contestRadius: Long, shouldBeInRange: Boolean) {
+    private fun testIsInRange(contestRadius: Double, shouldBeInRange: Boolean) {
         val contestLat = 4.32
         val contestLong = -6.32
         val contestLocation = Location(LocationManager.GPS_PROVIDER).apply {

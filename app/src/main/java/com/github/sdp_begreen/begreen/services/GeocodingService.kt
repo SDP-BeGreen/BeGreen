@@ -21,4 +21,16 @@ interface GeocodingService {
      */
     @Throws(IOException::class)
     suspend fun getAddresses(latLng: CustomLatLng, maxResult: Int): List<Address>?
+
+    /**
+     * Function to retrieve coordinates given an address
+     *
+     * @param address The address to lookup to find the coordinates
+     *
+     * @return The coordinates of the received address
+     *
+     * @throws IOException Throws if an error occurred while geocoding the address
+     */
+    @Throws(IOException::class)
+    suspend fun getLongLat(address: String): CustomLatLng?
 }

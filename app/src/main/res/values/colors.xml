@@ -3,6 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="light_grey">#F7F7F7</color>
+    <color name="middle_light_grey">#BABABA</color>
     <color name="grey">#858585</color>
     <color name="border_color">#FFD3D3D3</color>
     <color name="green_200">#acf0a7</color>
@@ -19,4 +20,5 @@
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
+    <color name="contestAreaOverlay">#4D393939</color>
 </resources>

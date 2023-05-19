@@ -10,7 +10,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.RatingBar
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,14 +30,19 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.DB
-import com.github.sdp_begreen.begreen.models.*
+import com.github.sdp_begreen.begreen.models.Actions
+import com.github.sdp_begreen.begreen.models.ParcelableDate
+import com.github.sdp_begreen.begreen.models.PhotoMetadata
+import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
+import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
+import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.utils.BitmapsUtils
 import com.github.sdp_begreen.begreen.utils.Permissions.hasPermissions
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.github.sdp_begreen.begreen.viewModels.ProfileEditedValuesViewModel
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
-import java.util.*
+import java.util.Date
 
 
 /**
@@ -73,6 +85,7 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         val userProgressBar: ProgressBar =
             view.findViewById(R.id.fragment_profile_details_user_progress)
         val followButton: Button = view.findViewById(R.id.fragment_profile_details_follow_button)
+        val sendButton: Button = view.findViewById(R.id.fragment_profile_details_msg_button)
         val editButton: Button = view.findViewById(R.id.fragment_profile_details_edit_profile)
         val saveButton: Button = view.findViewById(R.id.fragment_profile_details_save_profile)
         val cancelButton: Button =
@@ -98,7 +111,15 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         setupSaveButton(saveButton)
         setupCancelButton(cancelButton)
         setupTakePictureButton(takePictureButton)
+        deactivateFollowButtonIfOwnProfile(followButton, sendButton)
         return view
+    }
+
+    fun deactivateFollowButtonIfOwnProfile(followButton: Button, sendButton: Button) {
+        if (connectedUserViewModel.currentUser.value!!.id == user!!.id) {
+            sendButton.visibility = View.GONE
+            followButton.visibility = View.GONE
+        }
     }
 
     /**

@@ -16,7 +16,7 @@ import java.util.Calendar
  * @param eventDataAdapterListeners An implementation of the interface [EventDataAdapterListeners]
  * that provide the required method for this adapter to correctly display the [Event] elements
  */
-class EventsListAdapter<T: Event<T>>(
+class EventsListAdapter<T : Event<T>>(
     private val eventDataAdapterListeners: EventDataAdapterListeners,
 ) : ListAdapter<T, EventsListAdapter<T>.ViewHolder>(DiffEvent<T>()) {
 
@@ -70,7 +70,7 @@ class EventsListAdapter<T: Event<T>>(
     /**
      * private class to tell how to compare events to compute diff
      */
-    private class DiffEvent<T: Event<T>> : DiffUtil.ItemCallback<T>() {
+    private class DiffEvent<T : Event<T>> : DiffUtil.ItemCallback<T>() {
         override fun areItemsTheSame(oldItem: T, newItem: T) =
             oldItem.id == newItem.id
 

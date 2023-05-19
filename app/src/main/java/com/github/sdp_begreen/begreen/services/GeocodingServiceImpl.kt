@@ -27,4 +27,15 @@ class GeocodingServiceImpl(context: Context) : GeocodingService {
 
         return mutableListOf()
     }
+
+    override suspend fun getLongLat(address: String): CustomLatLng? {
+        val addressList = geocoder.getFromLocationName(address, 1)
+
+        if (addressList?.isEmpty() ?: true) {
+            return null
+        }
+
+        val currAddress = addressList!!.get(0);
+        return CustomLatLng(currAddress.latitude, currAddress.longitude)
+    }
 }

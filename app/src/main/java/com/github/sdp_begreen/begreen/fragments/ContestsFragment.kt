@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.adapters.setUpEventListAdapter
@@ -17,6 +19,7 @@ import com.github.sdp_begreen.begreen.services.GeocodingService
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.github.sdp_begreen.begreen.viewModels.EventsFragmentViewModel
 import com.google.android.material.button.MaterialButton
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 /**
@@ -64,8 +67,12 @@ class ContestsFragment : Fragment() {
      */
     private fun setUpAddContestButton(btn: MaterialButton) {
         btn.setOnClickListener {
-            // TODO link with given fragment once done implementing it, and remove log
-            Log.d("Temp tag add contest button", "Button correctly pressed")
+            lifecycleScope.launch {
+                requireActivity().supportFragmentManager.commit {
+                    setReorderingAllowed(true)
+                    replace(R.id.mainFragmentContainer, ContestCreationFragment.newInstance())
+                }
+            }
         }
     }
 }
