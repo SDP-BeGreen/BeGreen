@@ -133,10 +133,10 @@ class ContestCreationFragment : Fragment(), ContestMapDialog.ContestMapDialogLis
     }
 
     override fun onDialogApprove(location: CustomLatLng?, radius: Double?) {
-        if(!contestCreationViewModel.editLongLat(location)) {
+        if (!contestCreationViewModel.editLongLat(location)) {
             Toast.makeText(context, "Invalid location", Toast.LENGTH_SHORT).show()
         }
-        if(!contestCreationViewModel.editRadius(radius)) {
+        if (!contestCreationViewModel.editRadius(radius)) {
             Toast.makeText(context, "Invalid radius", Toast.LENGTH_SHORT).show()
         }
     }
@@ -598,16 +598,6 @@ class ContestCreationFragment : Fragment(), ContestMapDialog.ContestMapDialogLis
                 }
             }
         }
-
-        //startHourButton.setOnClickListener {
-        //    hourPicker.show(requireActivity().supportFragmentManager, "hourPicker")
-        //}
-
-        //hourPicker.addOnPositiveButtonClickListener {
-        //    val hour = hourPicker.hour
-        //    val minute = hourPicker.minute
-        //    startHourText.setText("$hour:$minute")
-        //}
     }
 
     /**
@@ -646,15 +636,6 @@ class ContestCreationFragment : Fragment(), ContestMapDialog.ContestMapDialogLis
                 }
             }
         }
-
-        //endHoursButton.setOnClickListener {
-        //    hourPicker.show(requireActivity().supportFragmentManager, "hourPicker")
-        //}
-        //hourPicker.addOnPositiveButtonClickListener {
-        //    val hour = hourPicker.hour
-        //    val minute = hourPicker.minute
-        //    endHourText.setText("$hour:$minute")
-        //}
     }
 
     //------------------------------------Cancel/Confirm button------------------------------------

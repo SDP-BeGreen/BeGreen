@@ -3,7 +3,9 @@ package com.github.sdp_begreen.begreen.models.event
 import android.location.Location
 import android.location.LocationManager
 import com.github.sdp_begreen.begreen.models.CustomLatLng
-import org.hamcrest.CoreMatchers.*
+import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 

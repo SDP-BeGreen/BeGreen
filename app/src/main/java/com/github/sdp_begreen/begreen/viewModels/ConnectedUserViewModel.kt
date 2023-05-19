@@ -10,7 +10,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import org.koin.java.KoinJavaComponent.inject
 
-class ConnectedUserViewModel: ViewModel() {
+class ConnectedUserViewModel : ViewModel() {
 
     private val db by inject<DB>(DB::class.java)
     private val auth by inject<Auth>(Auth::class.java)
