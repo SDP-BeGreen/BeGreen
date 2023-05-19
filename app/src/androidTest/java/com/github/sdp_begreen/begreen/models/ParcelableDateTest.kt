@@ -2,9 +2,12 @@ package com.github.sdp_begreen.begreen.models
 
 import android.os.Parcel
 import com.github.sdp_begreen.begreen.models.ParcelableDate
+import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
+import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.*
 
 class ParcelableDateTest {
@@ -57,5 +60,37 @@ class ParcelableDateTest {
         val newDate = Date()
         date.date = newDate
         assertThat(date.date?.time, equalTo(newDate.time))
+    }
+
+
+    @Test
+    fun parcelableDateComparableReturnsTrueForNewestDate() {
+
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+
+        val dateString1 = "2023-05-01"
+        val date1: Date = dateFormat.parse(dateString1)
+
+        val dateString2 = "2023-05-10"
+        val date2: Date = dateFormat.parse(dateString2)
+
+        val parcelableDate1 = ParcelableDate(date1)
+        val parcelableDate2 = ParcelableDate(date2)
+
+        assertTrue(parcelableDate1 < parcelableDate2)
+    }
+
+    @Test
+    fun toStringReturnsExpectedValue() {
+
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+
+        val dateString1 = "2023-05-01"
+        val date: Date = dateFormat.parse(dateString1)
+        val parcelableDate = ParcelableDate(date)
+
+        val expected = date.toString().substring(4,16)
+
+        assertThat(parcelableDate.toString(), equalTo(expected))
     }
 }
