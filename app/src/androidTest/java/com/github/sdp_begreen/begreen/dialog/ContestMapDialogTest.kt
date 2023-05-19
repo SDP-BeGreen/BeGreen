@@ -217,9 +217,9 @@ class ContestMapDialogTest {
                 R.id.create_contest_map
             )
 
-        //val map = device.findObject(UiSelector().resourceId(mapId))
         // place location marker
         device.findObject(UiSelector().resourceId(mapId)).click()
+        device.waitForIdle(20000)
 
         // select radius button
         onView(withId(R.id.create_contest_radius_button))
@@ -228,6 +228,7 @@ class ContestMapDialogTest {
 
         // place radius marker
         device.findObject(UiSelector().resourceId(mapId)).click()
+        device.waitForIdle(20000)
 
         val circle1 = viewModel.drawnCircle
         assertThat(circle1, `is`(notNullValue()))
@@ -236,7 +237,9 @@ class ContestMapDialogTest {
 
         // place other radius marker
         device.findObject(UiSelector().resourceId(mapId)).swipeDown(10)
+        device.waitForIdle(20000)
         device.findObject(UiSelector().resourceId(mapId)).click()
+        device.waitForIdle(20000)
 
         val circle2 = viewModel.drawnCircle
         assertThat(circle2, `is`(notNullValue()))
