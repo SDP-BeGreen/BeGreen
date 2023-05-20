@@ -25,19 +25,19 @@ import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.Marker
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
+import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.CoreMatchers.sameInstance
+import org.hamcrest.Matchers.closeTo
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -52,11 +52,11 @@ class ContestMapDialogTest {
     private lateinit var mapId: String
 
 
-    private val listenerChannel = Channel<Boolean>(1)
+    private val listenerChannel = Channel<Pair<CustomLatLng?, Double?>>(1)
 
     private val contestMapDialogListener = object : ContestMapDialog.ContestMapDialogListener {
         override fun onDialogApprove(location: CustomLatLng?, radius: Double?) {
-            listenerChannel.trySend(true)
+            listenerChannel.trySend(location to radius)
         }
     }
 
@@ -112,12 +112,26 @@ class ContestMapDialogTest {
 
     @Test
     fun clickingApproveButtonCorrectlyNotifyListenerAndCloseDialog() {
+        val location = CustomLatLng(46.518078, 6.561769)
+        val radius = 1506.8
+        val args = ContestMapDialog.newInstance(
+            contestMapDialogListener,
+            location,
+            radius
+        ).arguments
+        launchFragmentInContainer<ContestMapDialog>(
+            args,
+            factory = ContestMapDialog.factory(contestMapDialogListener)
+        )
         runTest {
             onView(withId(R.id.create_contest_map_approve_button))
                 .check(matches(isDisplayed()))
                 .perform(click())
 
-            assertTrue(listenerChannel.receive())
+            val receivedValues = listenerChannel.receive()
+
+            assertThat(receivedValues.first, `is`(equalTo(location)))
+            assertThat(receivedValues.second, `is`(closeTo(radius, 0.1)))
 
             onView(withId(R.id.create_contest_map_layout))
                 .check(doesNotExist())
@@ -147,6 +161,11 @@ class ContestMapDialogTest {
                     }
                 }
             }
+
+            // select location button
+            onView(withId(R.id.create_contest_location_button))
+                .check(matches(isDisplayed()))
+                .perform(click())
 
             // first value should be null (initial value)
             assertThat(locationChannel.receive(), `is`(nullValue()))
@@ -215,15 +234,6 @@ class ContestMapDialogTest {
 
             val circle1 = circleChannel.receive()
             assertThat(circle1, `is`(notNullValue()))
-
-            // place other radius marker should have change circle
-
-            //device.findObject(UiSelector().resourceId(mapId)).swipeDown(10)
-            //device.findObject(UiSelector().resourceId(mapId)).click()
-//
-            //val circle2 = circleChannel.receive()
-            //assertThat(circle2, `is`(notNullValue()))
-            //assertThat(circle1, `is`(not(sameInstance(circle2))))
         }
     }
 
