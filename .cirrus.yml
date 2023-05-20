@@ -28,7 +28,6 @@ check_android_task:
     chmod +x gradlew
     ./gradlew assembleDebugAndroidTest
   wait_for_avd_script: |
-    adb logcat
     adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 10; done; input keyevent 82'
   disable_animations_script: |
     adb shell settings put global window_animation_scale 0.0
