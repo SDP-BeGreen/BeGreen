@@ -118,7 +118,6 @@ class MainActivityTest {
 
                 // setup basic get user and getProfilePicture use in multiple tests
                 whenever(db.getUser(userId1)).thenReturn(user1)
-                whenever(db.getUser(userIdD)).thenReturn(null)
                 whenever(db.getImage(trashPhotoMetadata)).thenReturn(fakePicture1)
                 whenever(db.getUserProfilePicture(profilePhotoMetadata, userId1))
                     .thenReturn(fakePicture1)
@@ -258,7 +257,6 @@ class MainActivityTest {
         }
     }
 
-    /*
     @Test
     fun pressFeedMenuDisplayFeedFragmentWithAuthUserWithoutFollowingsDisplaysFeed() {
 
@@ -301,7 +299,7 @@ class MainActivityTest {
 
             onView(withId(R.id.feed_list)).check(matches(isDisplayed()))
         }
-    }*/
+    }
 
     @Test
     fun pressMapMenuDisplayMapFragment() {
