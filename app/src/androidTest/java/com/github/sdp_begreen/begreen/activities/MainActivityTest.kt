@@ -238,12 +238,17 @@ class MainActivityTest {
             userA.follow(userIdC)
             userB.follow(userIdD)
 
-            userA.addPhotoMetadata(trashPhotoMetadata)
-            userB.addPhotoMetadata(trashPhotoMetadata)
+            val trashPhotoMetadataA = TrashPhotoMetadata("AA", takenBy = "AAA")
+            val trashPhotoMetadataB = TrashPhotoMetadata("BB", takenBy = "BBB")
+
+            userA.addPhotoMetadata(trashPhotoMetadataA)
+            userB.addPhotoMetadata(trashPhotoMetadataB)
 
             whenever(db.getUser(userIdA)).thenReturn(userA)
             whenever(db.getUser(userIdB)).thenReturn(userB)
             whenever(db.getUser(userIdC)).thenReturn(userC)
+            whenever(db.getImage(trashPhotoMetadataA)).thenReturn(fakePicture1)
+            whenever(db.getImage(trashPhotoMetadataA)).thenReturn(fakePicture1)
 
             // sign in userA. userA follows userB that has posts, and userC that doesn't have posts
             authUserFlow.emit(userIdA)
@@ -255,11 +260,15 @@ class MainActivityTest {
             onView(withId(R.id.feed_list)).check(matches(isDisplayed()))
         }
     }
-/*
+
     @Test
     fun pressFeedMenuDisplayFeedFragmentWithAuthUserWithoutFollowingsDisplaysFeed() {
 
         runTest {
+
+            val userC = User(userIdC, 10)
+
+            whenever(db.getUser(userIdC)).thenReturn(userC)
 
             // sign in user. userC has no followings
             authUserFlow.emit(userIdC)
@@ -277,6 +286,12 @@ class MainActivityTest {
 
         runTest {
 
+            val userB = User(userId2, 12)
+
+            userB.follow(userIdD)
+            userB.addPhotoMetadata(trashPhotoMetadata)
+
+            whenever(db.getUser(userIdB)).thenReturn(userB)
             // simulate not in db by returning a null user
             whenever(db.getUser(userIdD)).thenReturn(null)
 
@@ -289,8 +304,7 @@ class MainActivityTest {
 
             onView(withId(R.id.feed_list)).check(matches(isDisplayed()))
         }
-    }*/
-
+    }
 
     @Test
     fun pressMapMenuDisplayMapFragment() {
