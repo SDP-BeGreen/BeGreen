@@ -61,7 +61,7 @@ class ContestMapDialogViewModelTest {
 
     @Test
     fun drawnCircleShouldInitiallyBeNull() {
-        assertThat(viewModel.drawnCircle, `is`(nullValue()))
+        assertThat(viewModel.drawnCircle.value, `is`(nullValue()))
     }
 
     @Test
@@ -168,21 +168,41 @@ class ContestMapDialogViewModelTest {
 
     @Test
     fun updateDrawnCircleShouldCorrectlyUpdateIt() {
-        val circle = Circle(zzl)
+        val channel = Channel<Circle?>(1)
+        runTest {
+            backgroundScope.launch {
+                viewModel.drawnCircle.collect {
+                    channel.send(it)
+                }
+            }
+            val circle = Circle(zzl)
 
-        viewModel.drawnCircle = circle
+            viewModel.newCircle(circle)
+            assertThat(channel.receive(), sameInstance(circle))
 
-        assertThat(viewModel.drawnCircle, sameInstance(circle))
+            val circle2 = Circle(zzl)
+
+            viewModel.newCircle(circle2)
+            assertThat(channel.receive(), sameInstance(circle2))
+        }
     }
 
     @Test
     fun updateDrawnCircleNullValueShouldKeepOldCircle() {
-        val circle = Circle(zzl)
+        val channel = Channel<Circle?>(1)
+        runTest {
+            backgroundScope.launch {
+                viewModel.drawnCircle.collect {
+                    channel.send(it)
+                }
+            }
+            val circle = Circle(zzl)
 
-        viewModel.drawnCircle = circle
-        assertThat(viewModel.drawnCircle, sameInstance(circle))
+            viewModel.newCircle(circle)
+            assertThat(channel.receive(), sameInstance(circle))
 
-        viewModel.drawnCircle = null
-        assertThat(viewModel.drawnCircle, sameInstance(circle))
+            viewModel.newCircle(null)
+            assertTrue(channel.isEmpty)
+        }
     }
 }

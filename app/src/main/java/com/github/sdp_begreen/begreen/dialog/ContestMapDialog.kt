@@ -225,7 +225,7 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
                 .radius(radius)
                 .fillColor(requireContext().getColor(R.color.contestAreaOverlay))
         )
-        contestMapDialogViewModel.drawnCircle = circle
+        contestMapDialogViewModel.newCircle(circle)
     }
 
     /**
