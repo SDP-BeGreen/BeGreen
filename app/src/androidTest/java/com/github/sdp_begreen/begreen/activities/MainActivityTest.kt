@@ -242,7 +242,7 @@ class MainActivityTest {
             whenever(db.getUser(userIdA)).thenReturn(userA)
             whenever(db.getUser(userIdB)).thenReturn(userB)
             whenever(db.getUser(userIdC)).thenReturn(userC)
-/*
+
             // sign in userA. userA follows userB that has posts, and userC that doesn't have posts
             authUserFlow.emit(userIdA)
 
@@ -250,9 +250,7 @@ class MainActivityTest {
                 .check(matches(isDisplayed()))
                 .perform(click())
 
-            onView(withId(R.id.feed_list)).check(matches(isDisplayed()))*/
-
-            assertTrue(true)
+            onView(withId(R.id.feed_list)).check(matches(isDisplayed()))
         }
     }
 /*
