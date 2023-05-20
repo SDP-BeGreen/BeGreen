@@ -94,22 +94,6 @@ class MainActivityTest {
             description = "user 2 description"
         )
 
-        private var userA = User(
-            userIdA,
-            0,
-            //    following = listOf(userIdB, userIdC),
-            // trashPhotosMetadatasList = listOf(trashPhotoMetadataA)
-        )
-
-        private var userB = User(
-            userId2,
-            12,
-            "User 2",
-            description = "user 2 description",
-            //     following = listOf(userId4)
-            //trashPhotosMetadatasList = listOf(trashPhotoMetadataB)
-        )
-
         private val userC = User(userIdC, 10)
 
         private val user3 = User(userId3, 10)
@@ -251,6 +235,22 @@ class MainActivityTest {
     fun pressFeedMenuDisplayFeedFragmentWithAuthUserWithFollowingsDisplaysFeed() {
 
         runTest {
+
+            var userA = User(
+                userIdA,
+                0,
+                //    following = listOf(userIdB, userIdC),
+                // trashPhotosMetadatasList = listOf(trashPhotoMetadataA)
+            )
+
+            var userB = User(
+                userId2,
+                12,
+                "User 2",
+                description = "user 2 description",
+                //     following = listOf(userId4)
+                //trashPhotosMetadatasList = listOf(trashPhotoMetadataB)
+            )
 
             userA.follow(userIdB)
             userA.follow(userIdC)
