@@ -122,8 +122,6 @@ class MainActivityTest {
 
                 // setup basic get user and getProfilePicture use in multiple tests
                 whenever(db.getUser(userId1)).thenReturn(user1)
-              //  whenever(db.getUser(userIdA)).thenReturn(userA)
-             //   whenever(db.getUser(userIdB)).thenReturn(userB)
                 whenever(db.getUser(userIdC)).thenReturn(userC)
                 whenever(db.getUser(userIdD)).thenReturn(null)
                 whenever(db.getImage(trashPhotoMetadata)).thenReturn(fakePicture1)
@@ -239,8 +237,8 @@ class MainActivityTest {
             var userA = User(
                 userIdA,
                 0,
-                //    following = listOf(userIdB, userIdC),
-                // trashPhotosMetadatasList = listOf(trashPhotoMetadataA)
+                following = listOf(userIdB, userIdC),
+                trashPhotosMetadatasList = listOf(trashPhotoMetadataA)
             )
 
             var userB = User(
@@ -248,14 +246,17 @@ class MainActivityTest {
                 12,
                 "User 2",
                 description = "user 2 description",
-                //     following = listOf(userId4)
-                //trashPhotosMetadatasList = listOf(trashPhotoMetadataB)
+                following = listOf(userId4),
+                trashPhotosMetadatasList = listOf(trashPhotoMetadataB)
             )
 
-            userA.follow(userIdB)
+            whenever(db.getUser(userIdA)).thenReturn(userA)
+            whenever(db.getUser(userIdB)).thenReturn(userB)
+
+            /*userA.follow(userIdB)
             userA.follow(userIdC)
 
-            userB.follow(userIdD)
+            userB.follow(userIdD)*/
 /*
             // sign in userA. userA follows userB that has posts, and userC that doesn't have posts
             authUserFlow.emit(userIdA)
