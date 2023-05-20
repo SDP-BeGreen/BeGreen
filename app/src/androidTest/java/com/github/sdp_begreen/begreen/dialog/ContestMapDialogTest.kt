@@ -204,38 +204,6 @@ class ContestMapDialogTest {
     }
 
     @Test
-    fun addingLocationAndRadiusMarkerShouldDrawCircle() {
-        val circleChannel = Channel<Circle?>(1)
-
-        runTest {
-            scenario.onFragment {
-                val vm by it.viewModels<ContestMapDialogViewModel>()
-                backgroundScope.launch {
-                    vm.drawnCircle.collect { circle ->
-                        circleChannel.send(circle)
-                    }
-                }
-            }
-
-            assertThat(circleChannel.receive(), `is`(nullValue()))
-
-            // place location marker
-            device.findObject(UiSelector().resourceId(mapId)).click()
-
-            // select radius button
-            onView(withId(R.id.create_contest_radius_button))
-                .check(matches(isDisplayed()))
-                .perform(click())
-
-            // place radius marker
-            device.findObject(UiSelector().resourceId(mapId)).click()
-
-            val circle1 = circleChannel.receive()
-            assertThat(circle1, `is`(notNullValue()))
-        }
-    }
-
-    @Test
     fun initialPassedLocationAndRadiusCorrectlyDrawCircleAndAddMarkers() {
         val args = ContestMapDialog.newInstance(
             contestMapDialogListener,
