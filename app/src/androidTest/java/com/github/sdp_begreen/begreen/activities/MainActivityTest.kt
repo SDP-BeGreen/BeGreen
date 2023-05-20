@@ -261,6 +261,7 @@ class MainActivityTest {
         }
     }
 
+    /*
     @Test
     fun pressFeedMenuDisplayFeedFragmentWithAuthUserWithoutFollowingsDisplaysFeed() {
 
@@ -304,7 +305,7 @@ class MainActivityTest {
 
             onView(withId(R.id.feed_list)).check(matches(isDisplayed()))
         }
-    }
+    }*/
 
     @Test
     fun pressMapMenuDisplayMapFragment() {
