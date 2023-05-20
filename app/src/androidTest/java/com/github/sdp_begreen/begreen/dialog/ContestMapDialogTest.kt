@@ -25,6 +25,7 @@ import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.Marker
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
@@ -44,12 +45,7 @@ import kotlin.test.assertTrue
 class ContestMapDialogTest {
 
     @get:Rule
-    val fineLocationPermissionRule: GrantPermissionRule =
-        GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION)
-
-    @get:Rule
-    val coarseLocationPermissionRule: GrantPermissionRule =
-        GrantPermissionRule.grant(Manifest.permission.ACCESS_COARSE_LOCATION)
+    val locationPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
 
     private lateinit var scenario: FragmentScenario<ContestMapDialog>
     private lateinit var device: UiDevice
@@ -230,4 +226,46 @@ class ContestMapDialogTest {
             //assertThat(circle1, `is`(not(sameInstance(circle2))))
         }
     }
+
+    @Test
+    fun initialPassedLocationAndRadiusCorrectlyDrawCircleAndAddMarkers() {
+        val args = ContestMapDialog.newInstance(
+            contestMapDialogListener,
+            CustomLatLng(46.518078, 6.561769),
+            1506.8
+        ).arguments
+        val mapDialogScenario = launchFragmentInContainer<ContestMapDialog>(
+            args,
+            factory = ContestMapDialog.factory(contestMapDialogListener)
+        )
+        val locationChannel = Channel<Marker?>(1)
+        val radiusChannel = Channel<Marker?>(1)
+        val circleChannel = Channel<Circle?>(1)
+        runTest {
+            mapDialogScenario.onFragment {
+                val vm by it.viewModels<ContestMapDialogViewModel>()
+                backgroundScope.launch {
+                    vm.locationMarker.collect { location ->
+                        locationChannel.send(location)
+                    }
+                }
+                backgroundScope.launch {
+                    vm.radiusMarker.collect { radius ->
+                        radiusChannel.send(radius)
+                    }
+                }
+                backgroundScope.launch {
+                    vm.drawnCircle.collect { circle ->
+                        circleChannel.send(circle)
+                    }
+                }
+            }
+
+            // assert that should initially directly contains a value
+            assertThat(locationChannel.receive(), `is`(notNullValue()))
+            assertThat(radiusChannel.receive(), `is`(notNullValue()))
+            assertThat(circleChannel.receive(), `is`(notNullValue()))
+        }
+    }
+
 }
