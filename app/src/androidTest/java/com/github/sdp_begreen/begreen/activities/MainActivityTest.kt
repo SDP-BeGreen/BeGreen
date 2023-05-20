@@ -77,17 +77,17 @@ class MainActivityTest {
             "user 1 description",
             "123456789",
             "user1@email.com",
-            following = listOf(userId2, userId3),
-            profilePictureMetadata = profilePhotoMetadata,
-            trashPhotosMetadatasList = listOf(trashPhotoMetadata)
+        //    following = listOf(userId2, userId3),
+            profilePictureMetadata = profilePhotoMetadata//,
+        //    trashPhotosMetadatasList = listOf(trashPhotoMetadata)
         )
         private val user2 = User(
             userId2,
             12,
             "User 2",
-            description = "user 2 description",
-            following = listOf(userId2, userId4),
-            trashPhotosMetadatasList = listOf(trashPhotoMetadata)
+            description = "user 2 description"//,
+       //     following = listOf(userId2, userId4),
+         //   trashPhotosMetadatasList = listOf(trashPhotoMetadata)
         )
         private val user3 = User(userId3, 10)
         private val fakePicture1 = Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888)
@@ -114,8 +114,8 @@ class MainActivityTest {
             runTest {
                 // setup basic get user and getProfilePicture use in multiple tests
                 whenever(db.getUser(userId1)).thenReturn(user1)
-                whenever(db.getUser(userId2)).thenReturn(user2)
-                whenever(db.getUser(userId3)).thenReturn(user3)
+         //       whenever(db.getUser(userId2)).thenReturn(user2)
+         //       whenever(db.getUser(userId3)).thenReturn(user3)
                 whenever(db.getImage(trashPhotoMetadata)).thenReturn(fakePicture1)
                 whenever(db.getUserProfilePicture(profilePhotoMetadata, userId1))
                     .thenReturn(fakePicture1)
