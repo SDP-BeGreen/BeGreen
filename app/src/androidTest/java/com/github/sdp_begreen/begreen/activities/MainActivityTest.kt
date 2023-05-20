@@ -247,8 +247,8 @@ class MainActivityTest {
             whenever(db.getUser(userIdA)).thenReturn(userA)
             whenever(db.getUser(userIdB)).thenReturn(userB)
             whenever(db.getUser(userIdC)).thenReturn(userC)
-            whenever(db.getImage(trashPhotoMetadataA)).thenReturn(fakePicture1)
-            whenever(db.getImage(trashPhotoMetadataA)).thenReturn(fakePicture1)
+            whenever(db.getImage(trashPhotoMetadataA)).thenReturn(Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888))
+            whenever(db.getImage(trashPhotoMetadataA)).thenReturn(Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888))
 
             // sign in userA. userA follows userB that has posts, and userC that doesn't have posts
             authUserFlow.emit(userIdA)
