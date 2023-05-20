@@ -2,14 +2,12 @@ package com.github.sdp_begreen.begreen.dialog
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
@@ -18,6 +16,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.models.CustomLatLng
+import com.github.sdp_begreen.begreen.utils.Permissions.hasPermissions
 import com.github.sdp_begreen.begreen.viewModels.ContestMapDialogViewModel
 import com.github.sdp_begreen.begreen.viewModels.ContestMapDialogViewModel.SelectedButton
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -78,11 +77,13 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
-        val locationButton = view.findViewById<MaterialButton>(R.id.create_contest_location_button)
-        val radiusButton = view.findViewById<MaterialButton>(R.id.create_contest_radius_button)
+        view.findViewById<MaterialButton>(R.id.create_contest_location_button).setOnClickListener {
+            contestMapDialogViewModel.selectButton(SelectedButton.LOCATION_BUTTON)
+        }
+        view.findViewById<MaterialButton>(R.id.create_contest_radius_button).setOnClickListener {
+            contestMapDialogViewModel.selectButton(SelectedButton.RADIUS_BUTTON)
+        }
 
-        setupLocationButton(locationButton)
-        setupRadiusButton(radiusButton)
         setupButtonBackgroundToggle(view)
         setupApproveButton(view)
         setupCancelButton(view)
@@ -112,7 +113,7 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
 
         if (initLocation != null && initRadius > 0.0) {
             addLocationMarker(initLocation!!)
-            addRadiusMarker(addDistanceToPos(initLocation!!, initRadius))
+            addRadiusMarker(SphericalUtil.computeOffset(initLocation!!, initRadius, DEFAULT_HEADING))
             drawCircle(initLocation!!, initRadius)
         }
     }
@@ -121,15 +122,10 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
      * Helper function to add the user location, and request permission if not already granted
      */
     private fun addUserLocationLayer() {
-
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-        } else {
+        if (hasPermissions(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)) {
             displayLocation()
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
     }
 
@@ -142,7 +138,6 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
                 SelectedButton.LOCATION_BUTTON -> {
                     addLocationMarker(it)
                 }
-
                 SelectedButton.RADIUS_BUTTON -> {
                     addRadiusMarker(it)
                 }
@@ -176,22 +171,16 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
      */
     private fun setupDragMarkerListener() {
         map.setOnMarkerDragListener(object : OnMarkerDragListener {
-            override fun onMarkerDrag(marker: Marker) {
-                // do nothing
-            }
-
+            override fun onMarkerDrag(marker: Marker) {}
+            override fun onMarkerDragStart(marker: Marker) {}
             override fun onMarkerDragEnd(marker: Marker) {
                 // it is only possible to drag the radius marker, so take position of
                 // location marker as in viewModel
 
                 // if location marker not yet set, do nothing
                 contestMapDialogViewModel.locationMarker.value?.position?.also {
-                    drawCircle(it, calculateRadius(it, marker.position))
+                    drawCircle(it, SphericalUtil.computeDistanceBetween(it, marker.position))
                 }
-            }
-
-            override fun onMarkerDragStart(marker: Marker) {
-                // do nothing
             }
         })
     }
@@ -208,7 +197,7 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
                 }.flowWithLifecycle(lifecycle).collect {
                     it.first?.position?.also { locationPos ->
                         it.second?.position?.also { radiusPos ->
-                            drawCircle(locationPos, calculateRadius(locationPos, radiusPos))
+                            drawCircle(locationPos, SphericalUtil.computeDistanceBetween(locationPos, radiusPos))
                         }
                     }
                 }
@@ -227,18 +216,6 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
         )
         contestMapDialogViewModel.newCircle(circle)
     }
-
-    /**
-     * Helper function to calculate the radius (i.e. distance between two markers)
-     */
-    private fun calculateRadius(centerPos: LatLng, borderPos: LatLng) =
-        SphericalUtil.computeDistanceBetween(centerPos, borderPos)
-
-    /**
-     * Helper function to add a distance to a position, to get new position
-     */
-    private fun addDistanceToPos(pos: LatLng, distance: Double) =
-        SphericalUtil.computeOffset(pos, distance, DEFAULT_HEADING)
 
     /**
      * Helper function to setup the background of the marker button to correctly mark
@@ -260,18 +237,6 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
         }
     }
 
-    private fun setupLocationButton(locationButton: MaterialButton) {
-        locationButton.setOnClickListener {
-            contestMapDialogViewModel.selectButton(SelectedButton.LOCATION_BUTTON)
-        }
-    }
-
-    private fun setupRadiusButton(radiusButton: MaterialButton) {
-        radiusButton.setOnClickListener {
-            contestMapDialogViewModel.selectButton(SelectedButton.RADIUS_BUTTON)
-        }
-    }
-
     /**
      * Helper function to setup the approve button
      *
@@ -286,14 +251,12 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
                 val location = contestMapDialogViewModel.locationMarker.value?.position?.let {
                     CustomLatLng.fromMapLatLng(it)
                 }
-
                 val radius =
                     contestMapDialogViewModel.locationMarker.value?.position?.let { locationPos ->
                         contestMapDialogViewModel.radiusMarker.value?.position?.let { radiusPos ->
-                            calculateRadius(locationPos, radiusPos)
+                            SphericalUtil.computeDistanceBetween(locationPos, radiusPos)
                         }
                     }
-
                 listener.onDialogApprove(location, radius)
                 dismiss()
             }
@@ -301,9 +264,7 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
 
     private fun setupCancelButton(view: View) {
         view.findViewById<MaterialButton>(R.id.create_contest_map_cancel_button)
-            .setOnClickListener {
-                dismiss()
-            }
+            .setOnClickListener { dismiss() }
     }
 
 

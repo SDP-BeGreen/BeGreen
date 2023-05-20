@@ -29,10 +29,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.not
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.CoreMatchers.nullValue
-import org.hamcrest.CoreMatchers.sameInstance
 import org.hamcrest.Matchers.closeTo
 import org.junit.Before
 import org.junit.Rule
