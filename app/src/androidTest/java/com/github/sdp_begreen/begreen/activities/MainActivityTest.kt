@@ -94,8 +94,6 @@ class MainActivityTest {
             description = "user 2 description"
         )
 
-        private val userC = User(userIdC, 10)
-
         private val user3 = User(userId3, 10)
         private val fakePicture1 = Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888)
         private val db: DB = mock(DB::class.java)
@@ -122,7 +120,6 @@ class MainActivityTest {
 
                 // setup basic get user and getProfilePicture use in multiple tests
                 whenever(db.getUser(userId1)).thenReturn(user1)
-                whenever(db.getUser(userIdC)).thenReturn(userC)
                 whenever(db.getUser(userIdD)).thenReturn(null)
                 whenever(db.getImage(trashPhotoMetadata)).thenReturn(fakePicture1)
                 whenever(db.getUserProfilePicture(profilePhotoMetadata, userId1))
@@ -234,29 +231,17 @@ class MainActivityTest {
 
         runTest {
 
-            var userA = User(
-                userIdA,
-                0,
-                //    following = listOf(userIdB, userIdC),
-                // trashPhotosMetadatasList = listOf(trashPhotoMetadataA)
-            )
-
-            var userB = User(
-                userId2,
-                12,
-                "User 2",
-                description = "user 2 description",
-                //     following = listOf(userId4)
-                //trashPhotosMetadatasList = listOf(trashPhotoMetadataB)
-            )
-
-            whenever(db.getUser(userIdA)).thenReturn(userA)
-            whenever(db.getUser(userIdB)).thenReturn(userB)
+            val userA = User(userIdA, 0)
+            val userB = User(userId2, 12, "User 2", description = "user 2 description")
+            val userC = User(userIdC, 10)
 
             userA.follow(userIdB)
             userA.follow(userIdC)
-
             userB.follow(userIdD)
+
+            whenever(db.getUser(userIdA)).thenReturn(userA)
+            whenever(db.getUser(userIdB)).thenReturn(userB)
+            whenever(db.getUser(userIdC)).thenReturn(userC)
 /*
             // sign in userA. userA follows userB that has posts, and userC that doesn't have posts
             authUserFlow.emit(userIdA)
