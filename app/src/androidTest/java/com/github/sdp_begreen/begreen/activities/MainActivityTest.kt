@@ -66,8 +66,6 @@ class MainActivityTest {
     companion object {
         private val profilePhotoMetadata = ProfilePhotoMetadata("user1_profile_picture")
         private val trashPhotoMetadata = TrashPhotoMetadata("123", takenBy = "1234")
-        private val trashPhotoMetadataA = TrashPhotoMetadata("AAA", takenBy = "A")
-        private val trashPhotoMetadataB = TrashPhotoMetadata("BBB", takenBy = "B")
         private const val userId1 = "1234"
         private const val userId2 = "1235"
         private const val userId3 = "1236"
@@ -231,13 +229,17 @@ class MainActivityTest {
 
         runTest {
 
+            // For no reason, the init of a user with its followings and posts doesn't pass on CI.
             val userA = User(userIdA, 0)
-            val userB = User(userId2, 12, "User 2", description = "user 2 description")
+            val userB = User(userId2, 12)
             val userC = User(userIdC, 10)
 
             userA.follow(userIdB)
             userA.follow(userIdC)
             userB.follow(userIdD)
+
+            userA.addPhotoMetadata(trashPhotoMetadata)
+            userB.addPhotoMetadata(trashPhotoMetadata)
 
             whenever(db.getUser(userIdA)).thenReturn(userA)
             whenever(db.getUser(userIdB)).thenReturn(userB)
