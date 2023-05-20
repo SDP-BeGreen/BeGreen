@@ -96,17 +96,17 @@ class MainActivityTest {
         private val userA = User(
             userIdA,
             0,
-            //    following = listOf(userId2, userId3),
-            // trashPhotosMetadatasList = listOf(trashPhotoMetadataA)
+            //    following = listOf(userIdB, userIdC),
+             trashPhotosMetadatasList = listOf(trashPhotoMetadataA)
         )
 
         private val userB = User(
             userId2,
             12,
             "User 2",
-            description = "user 2 description"//,
-            //     following = listOf(userId2, userId4),
-            //   trashPhotosMetadatasList = listOf(trashPhotoMetadata)
+            description = "user 2 description",
+            //     following = listOf(userId4)
+            trashPhotosMetadatasList = listOf(trashPhotoMetadataB)
         )
 
         private val userC = User(userIdC, 10)
