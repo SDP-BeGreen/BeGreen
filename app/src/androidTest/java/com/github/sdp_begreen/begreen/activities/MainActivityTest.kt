@@ -97,7 +97,7 @@ class MainActivityTest {
             userIdA,
             0,
             //    following = listOf(userIdB, userIdC),
-             // trashPhotosMetadatasList = listOf(trashPhotoMetadataA)
+            // trashPhotosMetadatasList = listOf(trashPhotoMetadataA)
         )
 
         private val userB = User(
@@ -106,7 +106,7 @@ class MainActivityTest {
             "User 2",
             description = "user 2 description",
             //     following = listOf(userId4)
-            // trashPhotosMetadatasList = listOf(trashPhotoMetadataB)
+            //trashPhotosMetadatasList = listOf(trashPhotoMetadataB)
         )
 
         private val userC = User(userIdC, 10)
@@ -250,8 +250,8 @@ class MainActivityTest {
 
         runTest {
 
-            // sign in user. user1 follows user2 that has posts, and user3 that doesn't have posts
-            authUserFlow.emit(userId1)
+            // sign in userA. userA follows userB that has posts, and userC that doesn't have posts
+            authUserFlow.emit(userIdA)
 
             onView(withId(R.id.bottomMenuFeed))
                 .check(matches(isDisplayed()))
@@ -266,8 +266,8 @@ class MainActivityTest {
 
         runTest {
 
-            // sign in user. user3 has no followings
-            authUserFlow.emit(userId3)
+            // sign in user. userC has no followings
+            authUserFlow.emit(userIdC)
 
             onView(withId(R.id.bottomMenuFeed))
                 .check(matches(isDisplayed()))
@@ -283,10 +283,10 @@ class MainActivityTest {
         runTest {
 
             // simulate not in db by returning a null user
-            whenever(db.getUser(userId4)).thenReturn(null)
+            whenever(db.getUser(userIdD)).thenReturn(null)
 
-            // sign in user. user2 follows user4 which doesn't exist in db
-            authUserFlow.emit(userId2)
+            // sign in user. userB follows userD which doesn't exist in db
+            authUserFlow.emit(userIdB)
 
             onView(withId(R.id.bottomMenuFeed))
                 .check(matches(isDisplayed()))
