@@ -23,10 +23,12 @@ import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.viewModels.ContestMapDialogViewModel
 import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.Marker
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
@@ -36,6 +38,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+
+private const val MAP_INITIALIZATION_DELAY = 10000L
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -160,6 +164,11 @@ class ContestMapDialogTest {
                 }
             }
 
+            withContext(Dispatchers.IO) {
+                // Add some arbitrary delay to let time to the map to initialize
+                Thread.sleep(MAP_INITIALIZATION_DELAY)
+            }
+
             // select location button
             onView(withId(R.id.create_contest_location_button))
                 .check(matches(isDisplayed()))
@@ -191,6 +200,11 @@ class ContestMapDialogTest {
 
             // first value should be null (initial value)
             assertThat(radiusChannel.receive(), `is`(nullValue()))
+
+            withContext(Dispatchers.IO) {
+                // Add some arbitrary delay to let time to the map to initialize
+                Thread.sleep(MAP_INITIALIZATION_DELAY)
+            }
 
             // select radius button
             onView(withId(R.id.create_contest_radius_button))
