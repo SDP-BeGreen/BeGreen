@@ -77,17 +77,17 @@ class MainActivityTest {
             "user 1 description",
             "123456789",
             "user1@email.com",
-        //    following = listOf(userId2, userId3),
-            profilePictureMetadata = profilePhotoMetadata//,
-        //    trashPhotosMetadatasList = listOf(trashPhotoMetadata)
+          //  following = listOf(userId2, userId3),
+            profilePictureMetadata = profilePhotoMetadata,
+            trashPhotosMetadatasList = listOf(trashPhotoMetadata)
         )
         private val user2 = User(
             userId2,
             12,
             "User 2",
-            description = "user 2 description"//,
+            description = "user 2 description",
        //     following = listOf(userId2, userId4),
-         //   trashPhotosMetadatasList = listOf(trashPhotoMetadata)
+            trashPhotosMetadatasList = listOf(trashPhotoMetadata)
         )
         private val user3 = User(userId3, 10)
         private val fakePicture1 = Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888)
