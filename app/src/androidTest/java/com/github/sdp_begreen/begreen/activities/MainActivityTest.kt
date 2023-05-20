@@ -202,8 +202,9 @@ class MainActivityTest {
     }
 
 /*
-
-    This test doesn't pass on CI
+    This test passes locally but not on CI for no reason. CI doesn't explicitly say that the problem comes from
+    this test but when its uncommented it works.
+    Surprisingly, removing it doesn't affect the coverage locally at all.
 
     @Test
     fun pressFeedMenuDisplayFeedFragmentWithNonAuthUserDisplaysFeed() {
