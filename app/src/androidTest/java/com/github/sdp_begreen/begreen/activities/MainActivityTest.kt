@@ -65,10 +65,17 @@ class MainActivityTest {
     companion object {
         private val profilePhotoMetadata = ProfilePhotoMetadata("user1_profile_picture")
         private val trashPhotoMetadata = TrashPhotoMetadata("123", takenBy = "1234")
+        private val trashPhotoMetadataA = TrashPhotoMetadata("AAA", takenBy = "A")
+        private val trashPhotoMetadataB = TrashPhotoMetadata("BBB", takenBy = "B")
         private const val userId1 = "1234"
         private const val userId2 = "1235"
         private const val userId3 = "1236"
         private const val userId4 = "1237"
+        private const val userIdA = "A"
+        private const val userIdB = "B"
+        private const val userIdC = "C"
+        private const val userIdD = "D"
+
         private val user1 = User(
             userId1,
             12,
@@ -77,18 +84,33 @@ class MainActivityTest {
             "user 1 description",
             "123456789",
             "user1@email.com",
-        //    following = listOf(userId2, userId3),
-            profilePictureMetadata = profilePhotoMetadata//,
-        //    trashPhotosMetadatasList = listOf(trashPhotoMetadata)
+            profilePictureMetadata = profilePhotoMetadata
         )
         private val user2 = User(
             userId2,
             12,
             "User 2",
-            description = "user 2 description"//,
-       //     following = listOf(userId2, userId4),
-         //   trashPhotosMetadatasList = listOf(trashPhotoMetadata)
+            description = "user 2 description"
         )
+
+        private val userA = User(
+            userIdA,
+            0,
+            //    following = listOf(userId2, userId3),
+            // trashPhotosMetadatasList = listOf(trashPhotoMetadataA)
+        )
+
+        private val userB = User(
+            userId2,
+            12,
+            "User 2",
+            description = "user 2 description"//,
+            //     following = listOf(userId2, userId4),
+            //   trashPhotosMetadatasList = listOf(trashPhotoMetadata)
+        )
+
+        private val userC = User(userIdC, 10)
+
         private val user3 = User(userId3, 10)
         private val fakePicture1 = Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888)
         private val db: DB = mock(DB::class.java)
@@ -114,8 +136,10 @@ class MainActivityTest {
             runTest {
                 // setup basic get user and getProfilePicture use in multiple tests
                 whenever(db.getUser(userId1)).thenReturn(user1)
-         //       whenever(db.getUser(userId2)).thenReturn(user2)
-         //       whenever(db.getUser(userId3)).thenReturn(user3)
+                whenever(db.getUser(userIdA)).thenReturn(userA)
+                whenever(db.getUser(userIdB)).thenReturn(userB)
+                whenever(db.getUser(userIdC)).thenReturn(userC)
+                whenever(db.getUser(userIdD)).thenReturn(null)
                 whenever(db.getImage(trashPhotoMetadata)).thenReturn(fakePicture1)
                 whenever(db.getUserProfilePicture(profilePhotoMetadata, userId1))
                     .thenReturn(fakePicture1)
