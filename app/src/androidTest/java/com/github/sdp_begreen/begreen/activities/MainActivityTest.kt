@@ -135,10 +135,10 @@ class MainActivityTest {
             // that's why we do it in the beforeClass method
             runTest {
 
-                userA.follow(userIdB)
+                /*userA.follow(userIdB)
                 userA.follow(userIdC)
 
-                userB.follow(userIdD)
+                userB.follow(userIdD)*/
 
                 // setup basic get user and getProfilePicture use in multiple tests
                 whenever(db.getUser(userId1)).thenReturn(user1)
