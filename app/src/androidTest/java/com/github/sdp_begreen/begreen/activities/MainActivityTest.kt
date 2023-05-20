@@ -201,10 +201,6 @@ class MainActivityTest {
             .perform(click())
     }
 
-    /*
-
-    This test works locally but not on CI. Its an edge case so it's not very important.
-    It was only to have a full coverage.
 
     @Test
     fun pressFeedMenuDisplayFeedFragmentWithNonAuthUserDisplaysFeed() {
@@ -212,7 +208,7 @@ class MainActivityTest {
         runTest {
 
             // non authenticated user
-            whenever(auth.getConnectedUserId())
+            whenever(auth.getConnectedUserId()).thenReturn(null)
 
             onView(withId(R.id.bottomMenuFeed))
                 .check(matches(isDisplayed()))
@@ -220,7 +216,7 @@ class MainActivityTest {
 
             onView(withId(R.id.feed_list)).check(matches(isDisplayed()))
         }
-    }*/
+    }
 
 
     @Test
