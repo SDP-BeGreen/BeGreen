@@ -122,8 +122,8 @@ class MainActivityTest {
 
                 // setup basic get user and getProfilePicture use in multiple tests
                 whenever(db.getUser(userId1)).thenReturn(user1)
-                whenever(db.getUser(userIdA)).thenReturn(userA)
-                whenever(db.getUser(userIdB)).thenReturn(userB)
+              //  whenever(db.getUser(userIdA)).thenReturn(userA)
+             //   whenever(db.getUser(userIdB)).thenReturn(userB)
                 whenever(db.getUser(userIdC)).thenReturn(userC)
                 whenever(db.getUser(userIdD)).thenReturn(null)
                 whenever(db.getImage(trashPhotoMetadata)).thenReturn(fakePicture1)
