@@ -96,7 +96,7 @@ class MainActivityTest {
         private val userA = User(
             userIdA,
             0,
-            following = listOf("B", "C"),
+            //    following = listOf(userIdB, userIdC),
             // trashPhotosMetadatasList = listOf(trashPhotoMetadataA)
         )
 
@@ -105,7 +105,7 @@ class MainActivityTest {
             12,
             "User 2",
             description = "user 2 description",
-            following = listOf("D")
+            //     following = listOf(userId4)
             //trashPhotosMetadatasList = listOf(trashPhotoMetadataB)
         )
 
@@ -134,6 +134,12 @@ class MainActivityTest {
             // The implementation need to be provided before the rule is executed,
             // that's why we do it in the beforeClass method
             runTest {
+
+                userA.follow(userIdB)
+                userA.follow(userIdC)
+
+                userB.follow(userIdD)
+
                 // setup basic get user and getProfilePicture use in multiple tests
                 whenever(db.getUser(userId1)).thenReturn(user1)
                 whenever(db.getUser(userIdA)).thenReturn(userA)
