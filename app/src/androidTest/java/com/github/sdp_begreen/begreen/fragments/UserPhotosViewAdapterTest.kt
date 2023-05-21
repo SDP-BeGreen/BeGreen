@@ -129,7 +129,7 @@ class UserPhotosViewAdapterTest {
         val viewHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
         userPhotoViewAdapter.onBindViewHolder(viewHolder, 0)
 
-        assertThat(viewHolder.avatarView.visibility, equalTo(View.VISIBLE))
+        assertThat(viewHolder.avatarMaskView.visibility, equalTo(View.VISIBLE))
 
         val dateString = date.toString()
         val categoryString = TrashCategory.PLASTIC.title
@@ -166,7 +166,7 @@ class UserPhotosViewAdapterTest {
        val viewHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
        userPhotoViewAdapter.onBindViewHolder(viewHolder, 0)
 
-       assertThat(viewHolder.avatarView.visibility, equalTo(View.VISIBLE))
+       assertThat(viewHolder.avatarMaskView.visibility, equalTo(View.VISIBLE))
 
        val dateString = resources.getString(R.string.unknown_date)
        val categoryString = resources.getString(R.string.no_category)
@@ -244,7 +244,7 @@ class UserPhotosViewAdapterTest {
         val viewHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
         userPhotoViewAdapter.onBindViewHolder(viewHolder, 0)
 
-        assertThat(viewHolder.avatarView.visibility, equalTo(View.VISIBLE))
+        assertThat(viewHolder.avatarMaskView.visibility, equalTo(View.VISIBLE))
     }
 
     @Test
@@ -262,11 +262,11 @@ class UserPhotosViewAdapterTest {
 
         /*
 
-        This test is well scanned but for no reason it fails. In other words, the viewHolder.avatarView.visibility is
+        This test is well scanned but for no reason it fails. In other words, the viewHolder.avatarMaskView.visibility is
         correctly set to GONE, but this test doesn't detect it. I think that if we manage to solve the problem previous
         explained, this test should pass
 
-        assertThat(viewHolder.avatarView.visibility, equalTo(View.GONE))
+        assertThat(viewHolder.avatarMaskView.visibility, equalTo(View.GONE))
 
         */
     }
