@@ -56,8 +56,4 @@ data class User(
         trashPhotosMetadatasList =
             trashPhotosMetadatasList?.let { it + metadata } ?: listOf(metadata)
     }
-
-    companion object {
-        var currentUser = User("0", 2)
-    }
 }

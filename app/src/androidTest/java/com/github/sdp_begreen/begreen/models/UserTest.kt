@@ -95,12 +95,6 @@ class UserTest {
 
 
     @Test
-    fun userGetCurrentUserReturnsCorrectValues() {
-        User.currentUser = user
-        assertThat(User.currentUser, equalTo(user))
-    }
-
-    @Test
     fun addFirstTrashPhotoMetadataWhenListWasNull() {
 
         val user2 = user.copy(trashPhotosMetadatasList = null)
