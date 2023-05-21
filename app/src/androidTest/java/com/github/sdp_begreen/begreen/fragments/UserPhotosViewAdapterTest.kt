@@ -46,7 +46,7 @@ class UserPhotosViewAdapterTest {
         private val auth: Auth = mock(Auth::class.java)
         private val userId = "10"
         private val profilePhotoMetadata = ProfilePhotoMetadata("1", null, userId)
-        val user = User(userId, 2, "test", 5, "test",
+        val user = User(userId, 2, "test", "test",
             "test", "test", 15, listOf("1", "3", "6"), listOf("2", "4"), profilePhotoMetadata)
         val users = listOf(
             User("1", 123, "Alice"),

@@ -27,7 +27,6 @@ class UserTest {
         "1",
         0,
         "Test",
-        0,
         "desc",
         "phone",
         "email",
@@ -41,7 +40,6 @@ class UserTest {
         "1",
         33,
         "Alice",
-        1,
         "Description poutou poutou",
         "08920939459802",
         "cc@gmail.com",
@@ -85,7 +83,6 @@ class UserTest {
         assertThat(user.id, equalTo("1"))
         assertThat(user.score, equalTo(0))
         assertThat(user.displayName, equalTo("Test"))
-        assertThat(user.rating, equalTo(0))
         assertThat(user.description, equalTo("desc"))
         assertThat(user.phone, equalTo("phone"))
         assertThat(user.email, equalTo("email"))
@@ -141,7 +138,6 @@ class UserTest {
         val user2 = user.copy()
 
         user2.score = 123
-        user2.rating = 123
         user2.description = "test"
         user2.phone = "test"
         user2.email = "test"

@@ -15,7 +15,6 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.ProgressBar
-import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -81,18 +80,15 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         // Inflate the layout for this fragment
 
         val view = inflater.inflate(R.layout.fragment_profile_details, container, false)
-        val rating: RatingBar = view.findViewById(R.id.fragment_profile_details_profile_rating)
         val userProgressBar: ProgressBar =
             view.findViewById(R.id.fragment_profile_details_user_progress)
         val followButton: Button = view.findViewById(R.id.fragment_profile_details_follow_button)
-        val sendButton: Button = view.findViewById(R.id.fragment_profile_details_msg_button)
         val editButton: Button = view.findViewById(R.id.fragment_profile_details_edit_profile)
         val saveButton: Button = view.findViewById(R.id.fragment_profile_details_save_profile)
         val cancelButton: Button =
             view.findViewById(R.id.fragment_profile_details_cancel_modification)
         val takePictureButton: ImageButton =
             view.findViewById(R.id.fragment_profile_details_take_picture)
-        rating.rating = user?.score?.toFloat() ?: 0.0f
         userProgressBar.progress = user?.progression ?: 0
 
         activity?.supportFragmentManager?.beginTransaction()
@@ -112,13 +108,12 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         setupCancelButton(cancelButton)
         setupTakePictureButton(takePictureButton)
         updateFollowButtonText(followButton)
-        deactivateFollowButtonIfOwnProfile(followButton, sendButton)
+        deactivateFollowButtonIfOwnProfile(followButton)
         return view
     }
 
-    fun deactivateFollowButtonIfOwnProfile(followButton: Button, sendButton: Button) {
+    fun deactivateFollowButtonIfOwnProfile(followButton: Button) {
         if (connectedUserViewModel.currentUser.value!!.id == user!!.id) {
-            sendButton.visibility = View.GONE
             followButton.visibility = View.GONE
         }
     }

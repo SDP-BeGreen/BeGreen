@@ -15,7 +15,6 @@ data class User(
     val id: String,
     var score: Int,
     val displayName: String? = null,
-    var rating: Int = 0,
     var description: String? = null,
     var phone: String? = null,
     var email: String? = null,
