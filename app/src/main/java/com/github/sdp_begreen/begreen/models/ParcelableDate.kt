@@ -6,7 +6,7 @@ import android.os.Parcelable.Creator
 import java.util.*
 
 
-class ParcelableDate() : Parcelable {
+class ParcelableDate() : Parcelable, Comparable<ParcelableDate> {
 
     var date: Date? = null
 
@@ -25,6 +25,10 @@ class ParcelableDate() : Parcelable {
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
         dest.writeLong(date?.time ?: -1)
+    }
+
+    override fun compareTo(other: ParcelableDate): Int {
+        return date?.compareTo(other.date) ?: 0
     }
 
     override fun toString(): String {

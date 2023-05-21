@@ -20,8 +20,6 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.fragments.*
-import com.github.sdp_begreen.begreen.models.ParcelableDate
-import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
@@ -29,7 +27,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 import java.text.SimpleDateFormat
 import java.util.*
@@ -183,12 +180,12 @@ class MainActivity : AppCompatActivity() {
                 item.setIcon(R.drawable.ic_baseline_feed)
 
                 // Feed posts
-                // TODO : For now, it displays the user own posts.
-                val user = connectedUserViewModel.currentUser.value
-
-                val photos = user?.trashPhotosMetadatasList ?: listOf()
-                replaceFragInMainContainer(UserPhotoFragment.newInstance(1, photos, true))
+                lifecycleScope.launch {
+                    val feedPosts = fetchFeedPosts()
+                    replaceFragInMainContainer(UserPhotoFragment.newInstance(1, feedPosts, true))
+                }
             }
+
             R.id.bottomMenuMap -> {
                 item.setIcon(R.drawable.ic_baseline_map)
                 replaceFragInMainContainer(MapFragment())
@@ -209,6 +206,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
+     * Helper method to fetch feed post
+     */
+    private suspend fun fetchFeedPosts(): List<TrashPhotoMetadata> {
+        return connectedUserViewModel.currentUser.value?.let { user ->
+            user.following?.flatMap { id ->
+                val followingUser = db.getUser(id)
+                followingUser?.trashPhotosMetadatasList ?: emptyList()
+            }
+        }?.sortedByDescending { post -> post.takenOn } ?: emptyList()
+    }
+
+    /**
      * Helper function to perform the correct action given that a menu item from
      * the drawer menu has been pressed
      *
@@ -221,22 +230,26 @@ class MainActivity : AppCompatActivity() {
                 connectedUserViewModel.currentUser.value?.also {
 
                     // User own posts
-                    val photos = it.trashPhotosMetadatasList ?: listOf()
+                    val photos = it.trashPhotosMetadatasList?.sortedByDescending { post -> post.takenOn } ?: listOf()
 
                     replaceFragInMainContainer(ProfileDetailsFragment.newInstance(it, photos))
                 }
             }
             R.id.mainNavDrawFollowers -> {
-                val followers = auth.getConnectedUserId()?.let {
-                    runBlocking { db.getFollowers(it) }
-                } ?: listOf()
-                replaceFragInMainContainer(FollowersFragment.newInstance(1, ArrayList(followers)))
+
+                lifecycleScope.launch {
+                    val followers = auth.getConnectedUserId()?.let { db.getFollowers(it) } ?: listOf()
+                    replaceFragInMainContainer(FollowersFragment.newInstance(1, ArrayList(followers)))
+                }
             }
             //------------------------FOR DEMO PURPOSES ONLY------------------------
             //TODO Remove this when demo will be over
             R.id.mainNavDrawUserList -> {
-                val userList = runBlocking { db.getAllUsers() }
-                replaceFragInMainContainer(UserFragment.newInstance(1, userList.toCollection(ArrayList()), true))
+
+                lifecycleScope.launch {
+                    val userList = db.getAllUsers()
+                    replaceFragInMainContainer(UserFragment.newInstance(1, userList.toCollection(ArrayList()), true))
+                }
             }
             R.id.mainNavDrawMeetings -> {
                 replaceFragInMainContainer(MeetingsFragment())

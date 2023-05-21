@@ -5,6 +5,7 @@ import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.models.event.Contest
 import com.github.sdp_begreen.begreen.models.event.Event
 import com.github.sdp_begreen.begreen.models.event.Meeting
+import com.github.sdp_begreen.begreen.utils.checkArgument
 import kotlinx.parcelize.Parcelize
 
 // Need to be Parcelable to be passed as an argument to a fragment
@@ -25,12 +26,22 @@ data class User(
     var trashPhotosMetadatasList: List<TrashPhotoMetadata>? = null,
 ) : Parcelable, Comparable<User> {
 
-    suspend fun addFollower(follower: User) {
-        //TODO : add the following to the database
+    fun follow(userId: String) {
+
+        checkArgument(userId.isNotBlank(), "The userId cannot be blank")
+
+        following = following?.let { it + userId } ?: listOf(userId)
+    }
+
+    fun unfollow(userId: String) {
+
+        checkArgument(userId.isNotBlank(), "The userId cannot be blank")
+
+        following = following?.let { it.filter { id -> id != userId }}
     }
 
     override fun compareTo(other: User): Int {
-        return this.score.compareTo(other.score)
+        return score.compareTo(other.score)
     }
 
     override fun toString(): String = displayName ?: "Username"

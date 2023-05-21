@@ -280,8 +280,7 @@ object FirebaseDB: DB {
 
         photoMetadata.pictureId = pictureId
 
-        val compressedImage = ByteArrayOutputStream()
-        image.compress(Bitmap.CompressFormat.JPEG, 100, compressedImage)
+        val compressedImage = compressImage(image, ONE_MEGABYTE)
 
         return try {
             storageNode.child(pictureId).putBytes(compressedImage.toByteArray()).await()
@@ -290,6 +289,28 @@ object FirebaseDB: DB {
         } catch (e: Error) {
             null
         }
+    }
+
+    /**
+     * Helper method to compress image so its less than [maxSizeBytes]
+     */
+    private fun compressImage(image: Bitmap, maxSizeBytes: Long): ByteArrayOutputStream {
+
+        // Iteratively compress the 'image' until its less than 'maxSizeBytes'
+
+        val outputStream = ByteArrayOutputStream()
+        var quality = 100
+        val step = 5
+        image.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
+
+        // Compress the image in a loop until it fits within the desired file size
+        while (outputStream.toByteArray().size >= maxSizeBytes && quality > 0) {
+            outputStream.reset()
+            quality -= step
+            image.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
+        }
+
+        return outputStream
     }
 
     // Returns the node in the database at the given [path], and timeouts after [timeout] ms

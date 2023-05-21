@@ -50,7 +50,7 @@ class UserPhotoFragment : Fragment() {
                 adapter = UserPhotosViewAdapter(photoList?: listOf(), isFeed, lifecycleScope, resources)
             }
             if(!isFeed){
-                //If not in the feed display horizontally
+                // If not in the feed display horizontally
                 view.layoutManager= LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             }
         }
