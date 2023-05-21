@@ -8,6 +8,7 @@ import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import java.util.*
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -320,5 +321,46 @@ class UserTest {
         user.follow(followingId)
 
         assertThat(user.following, equalTo(oldFollowings))
+    }
+
+    @Test
+    fun testIsFollowingTrivialUserReturnsTrue() {
+
+        val followingId = "2"
+        val user = User("1", 5, following = listOf(followingId))
+
+        assertTrue(user.isFollowing(followingId))
+    }
+
+    @Test
+    fun testIsFollowingTrivialUserReturnsFalse() {
+
+        val user = User("1", 5, following = listOf("2"))
+
+        assertFalse(user.isFollowing("3"))
+    }
+
+    @Test
+    fun testIsFollowingTrivialUserReturnsFalseIfFollowingsIsNull() {
+
+        val user = User("1", 5)
+
+        assertFalse(user.isFollowing("3"))
+    }
+
+    @Test
+    fun testIsFollowingBlankUserThrowsIllegalArgumentException() {
+
+        val user = User("1", 5, following = listOf("2"))
+
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+
+            user.isFollowing("")
+        }
+
+        assertThat(
+            exception.message,
+            `is`(equalTo("The userId cannot be blank"))
+        )
     }
 }

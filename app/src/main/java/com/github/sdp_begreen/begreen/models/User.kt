@@ -40,6 +40,13 @@ data class User(
         following = following?.let { it.filter { id -> id != userId }}
     }
 
+    fun isFollowing(userId: String) : Boolean {
+
+        checkArgument(userId.isNotBlank(), "The userId cannot be blank")
+
+        return following?.contains(userId) ?: false
+    }
+
     override fun compareTo(other: User): Int {
         return score.compareTo(other.score)
     }

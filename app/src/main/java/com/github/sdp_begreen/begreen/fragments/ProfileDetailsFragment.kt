@@ -111,6 +111,7 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         setupSaveButton(saveButton)
         setupCancelButton(cancelButton)
         setupTakePictureButton(takePictureButton)
+        updateFollowButtonText(followButton)
         deactivateFollowButtonIfOwnProfile(followButton, sendButton)
         return view
     }
@@ -496,18 +497,45 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         }
     }
 
+    private fun updateFollowButtonText(followButton: Button) {
+
+        val currentUser = connectedUserViewModel.currentUser.value!!
+        val followed = user!!
+
+        if (currentUser.isFollowing(followed.id)) {
+            followButton.text = Actions.UNFOLLOW.text
+        } else {
+            followButton.text = Actions.FOLLOW.text
+        }
+    }
+
     private fun setupFollowListener(followButton: Button) {
+
         followButton.setOnClickListener {
-            if (followButton.text == Actions.FOLLOW.text) {
-                followButton.text = Actions.UNFOLLOW.text
-                lifecycleScope.launch {
-                    // TODO : follow in db and update current user here
+
+            lifecycleScope.launch {
+
+                val currentUser = connectedUserViewModel.currentUser.value!!
+                val followed = user!!
+
+                if (!currentUser.isFollowing(followed.id)) {
+
+                    // Update in db
+                    db.follow(currentUser.id, followed.id)
+
+                    // Update current user for consistency
+                    currentUser.follow(followed.id)
+
+                } else {
+
+                    // Update in db
+                    db.unfollow(currentUser.id, followed.id)
+
+                    // Update current user for consistency
+                    currentUser.unfollow(followed.id)
                 }
-            } else {
-                followButton.text = Actions.FOLLOW.text
-                lifecycleScope.launch {
-                    // TODO : unfollow in db and update current user here
-                }
+
+                updateFollowButtonText(followButton)
             }
         }
     }
