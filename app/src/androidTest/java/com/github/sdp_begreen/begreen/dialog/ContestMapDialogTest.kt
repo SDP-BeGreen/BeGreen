@@ -16,19 +16,19 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.Until
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.viewModels.ContestMapDialogViewModel
 import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.Marker
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.withContext
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
@@ -38,8 +38,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.test.assertTrue
 
-private const val MAP_INITIALIZATION_DELAY = 10000L
+private const val MAP_INITIALIZATION_TIMEOUT = 10000L
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -47,7 +48,10 @@ private const val MAP_INITIALIZATION_DELAY = 10000L
 class ContestMapDialogTest {
 
     @get:Rule
-    val locationPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+    val locationPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    )
 
     private lateinit var scenario: FragmentScenario<ContestMapDialog>
     private lateinit var device: UiDevice
@@ -164,10 +168,13 @@ class ContestMapDialogTest {
                 }
             }
 
-            withContext(Dispatchers.IO) {
-                // Add some arbitrary delay to let time to the map to initialize
-                Thread.sleep(MAP_INITIALIZATION_DELAY)
-            }
+            // wait until map is ready
+            assertTrue(
+                device.wait(
+                    Until.hasObject(By.desc("Contest Map Ready")),
+                    MAP_INITIALIZATION_TIMEOUT
+                )
+            )
 
             // select location button
             onView(withId(R.id.create_contest_location_button))
@@ -201,10 +208,13 @@ class ContestMapDialogTest {
             // first value should be null (initial value)
             assertThat(radiusChannel.receive(), `is`(nullValue()))
 
-            withContext(Dispatchers.IO) {
-                // Add some arbitrary delay to let time to the map to initialize
-                Thread.sleep(MAP_INITIALIZATION_DELAY)
-            }
+            // wait until map ready
+            assertTrue(
+                device.wait(
+                    Until.hasObject(By.desc("Contest Map Ready")),
+                    MAP_INITIALIZATION_TIMEOUT
+                )
+            )
 
             // select radius button
             onView(withId(R.id.create_contest_radius_button))

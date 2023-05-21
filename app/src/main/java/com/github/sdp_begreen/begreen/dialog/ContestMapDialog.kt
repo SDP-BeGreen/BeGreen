@@ -92,6 +92,7 @@ class ContestMapDialog(private val listener: ContestMapDialogListener) : DialogF
 
     override fun onMapReady(map: GoogleMap) {
         this.map = map
+        map.setContentDescription(getString(R.string.contest_map_ready))
         // Start by checking that the user has the permission to use his location to center the map
         addUserLocationLayer()
         setupAddMarker()
