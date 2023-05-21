@@ -213,7 +213,7 @@ class ProfileDetailsFragmentTest {
 
             fragmentScenario.close()
         }
-    }
+    }*/
 
     @Test
     fun testProfileDetailsFragmentFollowButtonCorrectlyToggles() {
@@ -244,7 +244,7 @@ class ProfileDetailsFragmentTest {
 
             fragmentScenario.close()
         }
-    }*/
+    }
 
     @Test
     fun testProfileDetailsFragmentFollowButton2() {
