@@ -268,29 +268,20 @@ class MainActivity : AppCompatActivity() {
             // handle the "Logout" button in the navigation drawer of the app responsible for
             // logging out a user who has signed in with Google Sign-In
             R.id.mainNavDrawLogout -> {
-                logout()
+                auth.signOutCurrentUser(this, getString(R.string.default_web_client_id))
+                    .addOnCompleteListener {
+                        val intent = Intent(this, SignInActivity::class.java)
+
+                        // short toast message to the user indicating that they are being logged out
+                        Toast.makeText(this, getString(R.string.toast_logout_info), Toast.LENGTH_SHORT).show()
+
+                        // When the sign-out operation is complete, it starts SignInActivity again<
+                        startActivity(intent)
+
+                        finish()
+                    }
             }
         }
-    }
-
-    /**
-     * Helper method to logout
-     */
-    private fun logout() {
-
-        auth.signOutCurrentUser(this, getString(R.string.default_web_client_id))
-            .addOnCompleteListener {
-
-                val intent = Intent(this, SignInActivity::class.java)
-
-                // short toast message to the user indicating that they are being logged out
-                Toast.makeText(this, getString(R.string.toast_logout_info), Toast.LENGTH_SHORT).show()
-
-                // When the sign-out operation is complete, it starts SignInActivity again<
-                startActivity(intent)
-
-                finish()
-            }
     }
 
     private fun showContactUsBottomSheet() {
