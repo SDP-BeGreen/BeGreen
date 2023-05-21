@@ -58,6 +58,12 @@ class ContestCreationFragmentTest {
         fragmentScenario = launchFragmentInContainer()
     }
 
+    @AfterTest
+    fun tearDown() {
+        Mockito.reset(eventServiceApi)
+        fragmentScenario.close()
+    }
+
     @Test
     fun testCreateContest() {
         onView(withId(R.id.contest_creation_title)).perform(typeText("Test contest"))
