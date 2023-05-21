@@ -14,6 +14,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import com.google.firebase.auth.FirebaseAuth
+import org.junit.Before
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
@@ -25,6 +26,11 @@ class SignInActivityTest {
     @get:Rule
     val koinTestRule = KoinTestRule()
 
+    @Before
+    fun signOutCurrentUser() {
+        FirebaseAuth.getInstance().signOut()
+    }
+
     @Test
     fun testSignInWithCurrentUser() {
         // Simulate a signed-in user
@@ -32,11 +38,9 @@ class SignInActivityTest {
             // Perform a click on the button that triggers the code snippet
             onView(withId(R.id.signInGoogleLayout)).perform(click())
         }
-        FirebaseAuth.getInstance().signOut()
     }
     @Test
     fun onCreate() {
-        FirebaseAuth.getInstance().signOut()
         onView(withId(R.id.signInGoogleLayout))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }

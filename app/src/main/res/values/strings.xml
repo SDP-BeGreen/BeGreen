@@ -112,5 +112,6 @@
     <string name="hour_format">H:M</string>
     <string name="create_contest_map_dialog_cancel">Cancel</string>
     <string name="create_contest_map_dialog_approve">Approve</string>
+    <string name="contest_map_ready">Contest Map Ready</string>
 
 </resources>

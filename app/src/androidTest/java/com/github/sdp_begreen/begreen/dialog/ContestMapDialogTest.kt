@@ -16,26 +16,33 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.Until
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.viewModels.ContestMapDialogViewModel
+import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.Marker
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
+import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.not
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.CoreMatchers.nullValue
-import org.hamcrest.CoreMatchers.sameInstance
+import org.hamcrest.Matchers.closeTo
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import kotlin.test.assertTrue
+
+private const val MAP_INITIALIZATION_TIMEOUT = 10000L
+private val INITIAL_LOCATION = CustomLatLng(46.518078, 6.561769)
+private const val INITIAL_RADIUS = 1506.8
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -43,21 +50,21 @@ import kotlin.test.assertTrue
 class ContestMapDialogTest {
 
     @get:Rule
-    val fineLocationPermissionRule: GrantPermissionRule =
-        GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION)
-
-    @get:Rule
-    val coarseLocationPermissionRule: GrantPermissionRule =
-        GrantPermissionRule.grant(Manifest.permission.ACCESS_COARSE_LOCATION)
+    val locationPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    )
 
     private lateinit var scenario: FragmentScenario<ContestMapDialog>
     private lateinit var device: UiDevice
+    private lateinit var mapId: String
 
-    private val listenerChannel = Channel<Boolean>(1)
+
+    private val listenerChannel = Channel<Pair<CustomLatLng?, Double?>>(1)
 
     private val contestMapDialogListener = object : ContestMapDialog.ContestMapDialogListener {
         override fun onDialogApprove(location: CustomLatLng?, radius: Double?) {
-            listenerChannel.trySend(true)
+            listenerChannel.trySend(location to radius)
         }
     }
 
@@ -71,6 +78,8 @@ class ContestMapDialogTest {
             factory = ContestMapDialog.factory(contestMapDialogListener)
         )
         device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        mapId = InstrumentationRegistry.getInstrumentation().targetContext.resources
+            .getResourceName(R.id.create_contest_map)
     }
 
     @Test
@@ -111,12 +120,24 @@ class ContestMapDialogTest {
 
     @Test
     fun clickingApproveButtonCorrectlyNotifyListenerAndCloseDialog() {
+        val args = ContestMapDialog.newInstance(
+            contestMapDialogListener,
+            INITIAL_LOCATION,
+            INITIAL_RADIUS
+        ).arguments
+        launchFragmentInContainer<ContestMapDialog>(
+            args,
+            factory = ContestMapDialog.factory(contestMapDialogListener)
+        )
         runTest {
             onView(withId(R.id.create_contest_map_approve_button))
                 .check(matches(isDisplayed()))
                 .perform(click())
 
-            assertTrue(listenerChannel.receive())
+            val receivedValues = listenerChannel.receive()
+
+            assertThat(receivedValues.first, `is`(equalTo(INITIAL_LOCATION)))
+            assertThat(receivedValues.second, `is`(closeTo(INITIAL_RADIUS, 0.1)))
 
             onView(withId(R.id.create_contest_map_layout))
                 .check(doesNotExist())
@@ -133,7 +154,6 @@ class ContestMapDialogTest {
             .check(doesNotExist())
     }
 
-    /*
     @Test
     fun clickingOnMapAddLocationMarkerLocationButtonSelected() {
         val locationChannel = Channel<Marker?>(1)
@@ -148,23 +168,29 @@ class ContestMapDialogTest {
                 }
             }
 
+            // wait until map is ready
+            assertTrue(
+                device.wait(
+                    Until.hasObject(By.desc("Contest Map Ready")),
+                    MAP_INITIALIZATION_TIMEOUT
+                )
+            )
+
+            // select location button
+            onView(withId(R.id.create_contest_location_button))
+                .check(matches(isDisplayed()))
+                .perform(click())
+
             // first value should be null (initial value)
             assertThat(locationChannel.receive(), `is`(nullValue()))
 
-            val mapId =
-                InstrumentationRegistry.getInstrumentation().targetContext.resources.getResourceName(
-                    R.id.create_contest_map
-                )
-
-            val map = device.findObject(UiSelector().resourceId(mapId))
-            map.click()
+            device.findObject(UiSelector().resourceId(mapId)).click()
 
             // second value should not be null
             assertThat(locationChannel.receive(), `is`(notNullValue()))
         }
-    }*/
+    }
 
-    /*
     @Test
     fun clickingOnMapAddRadiusMarkerRadiusButtonSelected() {
         val radiusChannel = Channel<Marker?>(1)
@@ -182,65 +208,64 @@ class ContestMapDialogTest {
             // first value should be null (initial value)
             assertThat(radiusChannel.receive(), `is`(nullValue()))
 
+            // wait until map ready
+            assertTrue(
+                device.wait(
+                    Until.hasObject(By.desc("Contest Map Ready")),
+                    MAP_INITIALIZATION_TIMEOUT
+                )
+            )
+
             // select radius button
             onView(withId(R.id.create_contest_radius_button))
                 .check(matches(isDisplayed()))
                 .perform(click())
 
-            val mapId =
-                InstrumentationRegistry.getInstrumentation().targetContext.resources.getResourceName(
-                    R.id.create_contest_map
-                )
-
-            val map = device.findObject(UiSelector().resourceId(mapId))
-            map.click()
+            device.findObject(UiSelector().resourceId(mapId)).click()
 
             assertThat(radiusChannel.receive(), `is`(notNullValue()))
         }
-    }*/
+    }
 
-    /*
     @Test
-    fun addingLocationAndRadiusMarkerShouldDrawCircle() {
+    fun initialPassedLocationAndRadiusCorrectlyDrawCircleAndAddMarkers() {
+        val args = ContestMapDialog.newInstance(
+            contestMapDialogListener,
+            INITIAL_LOCATION,
+            INITIAL_RADIUS
+        ).arguments
+        val mapDialogScenario = launchFragmentInContainer<ContestMapDialog>(
+            args,
+            factory = ContestMapDialog.factory(contestMapDialogListener)
+        )
+        val locationChannel = Channel<Marker?>(1)
+        val radiusChannel = Channel<Marker?>(1)
+        val circleChannel = Channel<Circle?>(1)
+        runTest {
+            mapDialogScenario.onFragment {
+                val vm by it.viewModels<ContestMapDialogViewModel>()
+                backgroundScope.launch {
+                    vm.locationMarker.collect { location ->
+                        locationChannel.send(location)
+                    }
+                }
+                backgroundScope.launch {
+                    vm.radiusMarker.collect { radius ->
+                        radiusChannel.send(radius)
+                    }
+                }
+                backgroundScope.launch {
+                    vm.drawnCircle.collect { circle ->
+                        circleChannel.send(circle)
+                    }
+                }
+            }
 
-        var viewModel = ContestMapDialogViewModel() // only to initialize, will be modified
-        scenario.onFragment {
-            val vm by it.viewModels<ContestMapDialogViewModel>()
-            viewModel = vm
+            // assert that should initially directly contains a value
+            assertThat(locationChannel.receive(), `is`(notNullValue()))
+            assertThat(radiusChannel.receive(), `is`(notNullValue()))
+            assertThat(circleChannel.receive(), `is`(notNullValue()))
         }
-
-        // initially circle should be null
-        assertThat(viewModel.drawnCircle, `is`(nullValue()))
-
-        val mapId =
-            InstrumentationRegistry.getInstrumentation().targetContext.resources.getResourceName(
-                R.id.create_contest_map
-            )
-
-        //val map = device.findObject(UiSelector().resourceId(mapId))
-        // place location marker
-        device.findObject(UiSelector().resourceId(mapId)).click()
-
-        // select radius button
-        onView(withId(R.id.create_contest_radius_button))
-            .check(matches(isDisplayed()))
-            .perform(click())
-
-        // place radius marker
-        device.findObject(UiSelector().resourceId(mapId)).click()
-
-        val circle1 = viewModel.drawnCircle
-        assertThat(circle1, `is`(notNullValue()))
-
-        // place other radius marker should have change circle
-
-        // place other radius marker
-        device.findObject(UiSelector().resourceId(mapId)).swipeDown(10)
-        device.findObject(UiSelector().resourceId(mapId)).click()
-
-        val circle2 = viewModel.drawnCircle
-        assertThat(circle2, `is`(notNullValue()))
-        assertThat(circle1, `is`(not(sameInstance(circle2))))
-    }*/
+    }
 
 }
