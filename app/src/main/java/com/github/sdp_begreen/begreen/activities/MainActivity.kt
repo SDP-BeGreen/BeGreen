@@ -20,8 +20,6 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.fragments.*
-import com.github.sdp_begreen.begreen.models.ParcelableDate
-import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
@@ -240,11 +238,7 @@ class MainActivity : AppCompatActivity() {
             R.id.mainNavDrawFollowers -> {
 
                 lifecycleScope.launch {
-
-                    val followers = auth.getConnectedUserId()?.let {
-                        db.getFollowers(it)
-                    } ?: listOf()
-
+                    val followers = auth.getConnectedUserId()?.let { db.getFollowers(it) } ?: listOf()
                     replaceFragInMainContainer(FollowersFragment.newInstance(1, ArrayList(followers)))
                 }
             }
