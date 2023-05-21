@@ -151,7 +151,7 @@ class ProfileDetailsFragmentTest {
         onView(withId(R.id.fragment_profile_details)).check(matches(isDisplayed()))
     }
 
-/*
+
 
     @Test
     fun testFollowButtonCorrectlyInitializedWhenNotFollowingUser() {
@@ -181,7 +181,7 @@ class ProfileDetailsFragmentTest {
         }
     }
 
-
+/*
 
      The reason behind the failure of this test is unknown. The expected result is visible on the screen.
      After debugging the code, it appears that the problem stems from the test's inability to detect the user's
