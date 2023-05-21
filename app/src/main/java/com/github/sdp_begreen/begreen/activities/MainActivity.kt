@@ -29,7 +29,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 import java.text.SimpleDateFormat
 import java.util.*
@@ -183,8 +182,10 @@ class MainActivity : AppCompatActivity() {
                 item.setIcon(R.drawable.ic_baseline_feed)
 
                 // Feed posts
-                val feedPosts = runBlocking { fetchFeedPosts() }
-                replaceFragInMainContainer(UserPhotoFragment.newInstance(1, feedPosts, true))
+                lifecycleScope.launch {
+                    val feedPosts = fetchFeedPosts()
+                    replaceFragInMainContainer(UserPhotoFragment.newInstance(1, feedPosts, true))
+                }
             }
 
             R.id.bottomMenuMap -> {
@@ -237,16 +238,24 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             R.id.mainNavDrawFollowers -> {
-                val followers = auth.getConnectedUserId()?.let {
-                    runBlocking { db.getFollowers(it) }
-                } ?: listOf()
-                replaceFragInMainContainer(FollowersFragment.newInstance(1, ArrayList(followers)))
+
+                lifecycleScope.launch {
+
+                    val followers = auth.getConnectedUserId()?.let {
+                        db.getFollowers(it)
+                    } ?: listOf()
+
+                    replaceFragInMainContainer(FollowersFragment.newInstance(1, ArrayList(followers)))
+                }
             }
             //------------------------FOR DEMO PURPOSES ONLY------------------------
             //TODO Remove this when demo will be over
             R.id.mainNavDrawUserList -> {
-                val userList = runBlocking { db.getAllUsers() }
-                replaceFragInMainContainer(UserFragment.newInstance(1, userList.toCollection(ArrayList()), true))
+
+                lifecycleScope.launch {
+                    val userList = db.getAllUsers()
+                    replaceFragInMainContainer(UserFragment.newInstance(1, userList.toCollection(ArrayList()), true))
+                }
             }
             R.id.mainNavDrawMeetings -> {
                 replaceFragInMainContainer(MeetingsFragment())

@@ -4,6 +4,7 @@ import android.os.Parcel
 import com.github.sdp_begreen.begreen.matchers.ContainsPropertyMatcher.Companion.hasProp
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import java.util.*
@@ -259,5 +260,65 @@ class UserTest {
 
         // Check that the user followings are still null after unfollowing
         assertNull(user.following)
+    }
+
+    @Test
+    fun testFollowBlankUserIdThrowsIllegalArgumentException() {
+
+        val user = User("1", 5)
+
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+
+            user.follow("")
+        }
+
+        assertThat(
+            exception.message,
+            `is`(equalTo("The userId cannot be blank"))
+        )
+    }
+
+    @Test
+    fun testUnfollowBlankUserIdThrowsIllegalArgumentException() {
+
+        val user = User("1", 5)
+
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+
+            user.unfollow("")
+        }
+
+        assertThat(
+            exception.message,
+            `is`(equalTo("The userId cannot be blank"))
+        )
+    }
+
+    @Test
+    fun testFollowThenUnfollowWorksCorrectly() {
+
+        val user = User("1", 5, following = listOf("2"))
+
+        val oldFollowings = user.following
+        val newUserId = "3"
+
+        user.follow(newUserId)
+        user.unfollow(newUserId)
+
+        assertThat(user.following, equalTo(oldFollowings))
+    }
+
+    @Test
+    fun testUnfollowThenFollowWorksCorrectly() {
+
+        val followingId = "2"
+        val user = User("1", 5, following = listOf(followingId))
+
+        val oldFollowings = user.following
+
+        user.unfollow(followingId)
+        user.follow(followingId)
+
+        assertThat(user.following, equalTo(oldFollowings))
     }
 }
