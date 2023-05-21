@@ -41,6 +41,8 @@ import org.junit.runner.RunWith
 import kotlin.test.assertTrue
 
 private const val MAP_INITIALIZATION_TIMEOUT = 10000L
+private val INITIAL_LOCATION = CustomLatLng(46.518078, 6.561769)
+private const val INITIAL_RADIUS = 1506.8
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -118,12 +120,10 @@ class ContestMapDialogTest {
 
     @Test
     fun clickingApproveButtonCorrectlyNotifyListenerAndCloseDialog() {
-        val location = CustomLatLng(46.518078, 6.561769)
-        val radius = 1506.8
         val args = ContestMapDialog.newInstance(
             contestMapDialogListener,
-            location,
-            radius
+            INITIAL_LOCATION,
+            INITIAL_RADIUS
         ).arguments
         launchFragmentInContainer<ContestMapDialog>(
             args,
@@ -136,8 +136,8 @@ class ContestMapDialogTest {
 
             val receivedValues = listenerChannel.receive()
 
-            assertThat(receivedValues.first, `is`(equalTo(location)))
-            assertThat(receivedValues.second, `is`(closeTo(radius, 0.1)))
+            assertThat(receivedValues.first, `is`(equalTo(INITIAL_LOCATION)))
+            assertThat(receivedValues.second, `is`(closeTo(INITIAL_RADIUS, 0.1)))
 
             onView(withId(R.id.create_contest_map_layout))
                 .check(doesNotExist())
@@ -231,8 +231,8 @@ class ContestMapDialogTest {
     fun initialPassedLocationAndRadiusCorrectlyDrawCircleAndAddMarkers() {
         val args = ContestMapDialog.newInstance(
             contestMapDialogListener,
-            CustomLatLng(46.518078, 6.561769),
-            1506.8
+            INITIAL_LOCATION,
+            INITIAL_RADIUS
         ).arguments
         val mapDialogScenario = launchFragmentInContainer<ContestMapDialog>(
             args,
