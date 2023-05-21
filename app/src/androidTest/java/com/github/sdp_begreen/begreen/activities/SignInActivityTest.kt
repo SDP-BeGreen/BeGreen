@@ -13,6 +13,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import com.google.firebase.auth.FirebaseAuth
+import org.junit.Before
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
@@ -20,6 +21,11 @@ class SignInActivityTest {
 
     @get:Rule
     val activityRule = ActivityScenarioRule(SignInActivity::class.java)
+
+    @Before
+    fun signOutCurrentUser() {
+        FirebaseAuth.getInstance().signOut()
+    }
 
     @Test
     fun testSignInWithCurrentUser() {
