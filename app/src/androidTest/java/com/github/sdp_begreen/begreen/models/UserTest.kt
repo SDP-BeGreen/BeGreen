@@ -4,9 +4,12 @@ import android.os.Parcel
 import com.github.sdp_begreen.begreen.matchers.ContainsPropertyMatcher.Companion.hasProp
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import java.util.*
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 //Need to be in Android Test to use Parcel
@@ -110,9 +113,20 @@ class UserTest {
     }
 
     @Test
-    fun addTrashPhotoMetadataWhenListWasNotNull() {
+    fun addTrashPhotoMetadataWhenListWasNotNullAndNotEmpty() {
 
         val user2 = user.copy(trashPhotosMetadatasList = mutableListOf(trashPhotoMetadata))
+        val newTrashPhotoMetadata = TrashPhotoMetadata("2")
+
+        assertThat(user2.trashPhotosMetadatasList, not(hasItem(newTrashPhotoMetadata)))
+        user2.addPhotoMetadata(newTrashPhotoMetadata)
+        assertThat(user2.trashPhotosMetadatasList, hasItem(newTrashPhotoMetadata))
+    }
+
+    @Test
+    fun addTrashPhotoMetadataWhenListWasEmpty() {
+
+        val user2 = user.copy(trashPhotosMetadatasList = mutableListOf())
         val newTrashPhotoMetadata = TrashPhotoMetadata("2")
 
         assertThat(user2.trashPhotosMetadatasList, not(hasItem(newTrashPhotoMetadata)))
@@ -150,5 +164,161 @@ class UserTest {
                 hasProp("trashPhotosMetadatasList", `is`(nullValue())),
             )
         )
+    }
+
+    @Test
+    fun testFollowNonFollowedUserAndNonNullList() {
+        val user = User("1", 5, following = listOf("3"))
+
+        // Check that the user is not following user with id "2"
+        assertThat(user.following, not(hasItem("2")))
+
+        user.follow("2")
+
+        // Check that the user is now following user with id "2"
+        assertThat(user.following, hasItem("2"))
+    }
+
+    @Test
+    fun testFollowAlreadyFollowedUser() {
+        val user = User("1", 5, following = listOf("2"))
+
+        // Check that the user is already following user with id "2"
+        assertThat(user.following, hasItem("2"))
+
+        user.follow("2")
+
+        // Check that the user is still following user with id "2"
+        assertThat(user.following, hasItem("2"))
+    }
+
+    @Test
+    fun testFollowWithEmptyFollowings() {
+        val user = User("1", 5, following = listOf())
+
+        // Check that the user is already following user with id "2"
+        assertNotNull(user.following)
+        assertTrue(user.following!!.isEmpty())
+
+        user.follow("2")
+
+        // Check that the user is still following user with id "2"
+        assertThat(user.following, hasItem("2"))
+    }
+
+    @Test
+    fun testUnfollowAlreadyFollowedUser() {
+
+        val user = User("1", 5, following = listOf("2"))
+
+        // Check that the user is already following user with id "2"
+        assertThat(user.following, hasItem("2"))
+
+        user.unfollow("2")
+
+        // Check that the user is no more following user with id "2"
+        assertThat(user.following, not(hasItem("2")))
+    }
+
+    @Test
+    fun testUnfollowNonFollowedUserAndNonNullFollowings() {
+
+        val user = User("1", 5, following = listOf("3"))
+
+        // Check that the user is already following user with id "2"
+        assertThat(user.following, not(hasItem("2")))
+
+        user.unfollow("2")
+
+        // Check that the user is no more following user with id "2"
+        assertThat(user.following, not(hasItem("2")))
+    }
+
+    @Test
+    fun testFollowWithNullFollowings() {
+
+        val user = User("1", 5)
+
+        // Check that the user followings are indeed null
+        assertNull(user.following)
+
+        user.follow("2")
+
+        // Check that the user is now following user with id "2"
+        assertThat(user.following, hasItem("2"))
+    }
+
+    @Test
+    fun testUnfollowWithNullFollowings() {
+
+        val user = User("1", 5)
+
+        // Check that the user followings are indeed null
+        assertNull(user.following)
+
+        user.unfollow("2")
+
+        // Check that the user followings are still null after unfollowing
+        assertNull(user.following)
+    }
+
+    @Test
+    fun testFollowBlankUserIdThrowsIllegalArgumentException() {
+
+        val user = User("1", 5)
+
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+
+            user.follow("")
+        }
+
+        assertThat(
+            exception.message,
+            `is`(equalTo("The userId cannot be blank"))
+        )
+    }
+
+    @Test
+    fun testUnfollowBlankUserIdThrowsIllegalArgumentException() {
+
+        val user = User("1", 5)
+
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+
+            user.unfollow("")
+        }
+
+        assertThat(
+            exception.message,
+            `is`(equalTo("The userId cannot be blank"))
+        )
+    }
+
+    @Test
+    fun testFollowThenUnfollowWorksCorrectly() {
+
+        val user = User("1", 5, following = listOf("2"))
+
+        val oldFollowings = user.following
+        val newUserId = "3"
+
+        user.follow(newUserId)
+        user.unfollow(newUserId)
+
+        assertThat(user.following, equalTo(oldFollowings))
+    }
+
+    @Test
+    fun testUnfollowThenFollowWorksCorrectly() {
+
+        val followingId = "2"
+        val user = User("1", 5, following = listOf(followingId))
+
+        val oldFollowings = user.following
+
+        user.unfollow(followingId)
+        user.follow(followingId)
+
+        assertThat(user.following, equalTo(oldFollowings))
     }
 }

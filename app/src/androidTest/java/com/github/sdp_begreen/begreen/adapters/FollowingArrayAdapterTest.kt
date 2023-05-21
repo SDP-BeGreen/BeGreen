@@ -13,6 +13,7 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.User
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.mockito.Mockito.mock
@@ -20,6 +21,9 @@ import org.mockito.Mockito.mock
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class FollowingArrayAdapterTest {
+
+    private val initiallyConnectedUser = User("123456", 10, "User 1")
+    private val currentUser: MutableStateFlow<User?> = MutableStateFlow(initiallyConnectedUser)
 
     @Test
     fun testGetView() {
@@ -31,7 +35,8 @@ class FollowingArrayAdapterTest {
             mock(DB::class.java),
             mock(Auth::class.java),
             mock(LifecycleCoroutineScope::class.java),
-            listOf(false, false)
+            listOf(false, false),
+            currentUser
         )
 
         val view = adapter.getView(0, null,  LinearLayout(context))

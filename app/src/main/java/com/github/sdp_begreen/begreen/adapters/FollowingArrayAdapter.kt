@@ -6,14 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleCoroutineScope
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.google.android.material.button.MaterialButton
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 // This adapter is responsible for displaying the users that matches a string written by the User
@@ -24,7 +28,9 @@ class FollowingArrayAdapter(context: Context,
                             private val db: DB,
                             private val auth: Auth,
                             private val lifeCycle: LifecycleCoroutineScope,
-                            following: List<Boolean>)
+                            following: List<Boolean>,
+                            private val connectedUser: StateFlow<User?>)
+
     : ArrayAdapter<User>(context, resource, users) {
 
     // The boolean at index i is "true" <=> the current user follows user at index i in [users]
@@ -74,9 +80,10 @@ class FollowingArrayAdapter(context: Context,
         }
     }
 
-    // Changes the icon of the button and commits changes to the db
     private fun switchButtonIconAndSendToDB(button: MaterialButton, isFollowing: Boolean,
                                             followerId: String, followedId: String){
+
+        // Changes the icon of the follow button and commits changes to the db
         if (isFollowing) {
             // If the current user already follows this user, unfollow it
             button.icon = ContextCompat.getDrawable(context, R.drawable.baseline_person_add_24)
@@ -85,6 +92,16 @@ class FollowingArrayAdapter(context: Context,
             // If the current user does not already follow this user, follow it
             button.icon = ContextCompat.getDrawable(context, R.drawable.baseline_person_add_disabled_24)
             lifeCycle.launch { db.follow(followerId, followedId) }
+        }
+
+        // Update current user for consistency.
+        connectedUser.value?.also {
+
+            if (isFollowing) {
+                it.unfollow(followedId)
+            } else {
+                it.follow(followedId)
+            }
         }
     }
 }
