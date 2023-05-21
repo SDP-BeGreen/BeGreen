@@ -1,5 +1,5 @@
 package com.github.sdp_begreen.begreen.viewModels
-/*
+
 import android.location.Address
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -327,4 +327,4 @@ class ContestCreationViewModelTest {
     //}
 
 
-}*/
+}
