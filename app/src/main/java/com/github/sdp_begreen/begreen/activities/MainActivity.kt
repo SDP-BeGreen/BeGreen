@@ -270,18 +270,26 @@ class MainActivity : AppCompatActivity() {
             R.id.mainNavDrawLogout -> {
                 auth.signOutCurrentUser(this, getString(R.string.default_web_client_id))
                     .addOnCompleteListener {
-                        val intent = Intent(this, SignInActivity::class.java)
-
-                        // short toast message to the user indicating that they are being logged out
-                        Toast.makeText(this, getString(R.string.toast_logout_info), Toast.LENGTH_SHORT).show()
-
-                        // When the sign-out operation is complete, it starts SignInActivity again<
-                        startActivity(intent)
-
-                        finish()
+                        logout()
                     }
             }
         }
+    }
+
+    /**
+     * Helper method to logout
+     */
+    private fun logout() {
+
+        val intent = Intent(this, SignInActivity::class.java)
+
+        // short toast message to the user indicating that they are being logged out
+        Toast.makeText(this, getString(R.string.toast_logout_info), Toast.LENGTH_SHORT).show()
+
+        // When the sign-out operation is complete, it starts SignInActivity again<
+        startActivity(intent)
+
+        finish()
     }
 
     private fun showContactUsBottomSheet() {
