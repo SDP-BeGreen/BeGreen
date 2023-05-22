@@ -842,7 +842,7 @@ class MainActivityTest {
             connectedUserViewModel.setCurrentUser(user1)
 
             it.supportFragmentManager.beginTransaction()
-                .replace(R.id.mainCameraFragmentContainer, ContestCreationFragment())
+                .replace(R.id.mainFragmentContainer, ContestCreationFragment())
                 .commit()
         }
         onView(withId(R.id.contest_cancel_button)).perform(click())
@@ -857,7 +857,7 @@ class MainActivityTest {
             connectedUserViewModel.setCurrentUser(user1)
 
             it.supportFragmentManager.beginTransaction()
-                .replace(R.id.mainCameraFragmentContainer, ContestCreationFragment())
+                .replace(R.id.mainFragmentContainer, ContestCreationFragment())
                 .commit()
         }
         onView(withId(R.id.contest_confirm_button)).perform(click())
