@@ -20,6 +20,7 @@ import org.koin.dsl.module
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
 import org.mockito.kotlin.whenever
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -77,6 +78,7 @@ class ContestCreationViewModelGeoTest {
         setUpGeo()
     }
 
+    // Throws koinapplication has not started error for no reason !?
     //@Test
     //fun isEditCityCorrect() {
     //    val city = "Montreux"
@@ -119,6 +121,6 @@ class ContestCreationViewModelGeoTest {
         vm.editPostalCode("1234")
         vm.editRadius(123.0)
         vm.editLongLat(customLatLng)
-        assertThat(vm.isContestCreationValid(), `is`(true))
+        assertTrue(vm.isContestCreationValid())
     }
 }

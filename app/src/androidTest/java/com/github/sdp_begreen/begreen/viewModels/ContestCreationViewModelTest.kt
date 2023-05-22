@@ -4,13 +4,13 @@ import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.github.sdp_begreen.begreen.models.CustomLatLng
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.text.SimpleDateFormat
+import kotlin.test.assertFalse
 
 
 @RunWith(AndroidJUnit4::class)
@@ -24,7 +24,6 @@ class ContestCreationViewModelTest {
 
     companion object {
         private lateinit var vm: ContestCreationViewModel
-
     }
 
 
@@ -101,8 +100,8 @@ class ContestCreationViewModelTest {
     fun isEditStartDateRefusingInvalidInput() {
         val mili = System.currentTimeMillis() - 10000000000000
         val date = null
-        assertThat(vm.editStartDate(mili), `is`(false))
-        assertThat(vm.editStartDate(date), `is`(false))
+        assertFalse(vm.editStartDate(mili))
+        assertFalse(vm.editStartDate(date))
 
     }
 
@@ -118,8 +117,8 @@ class ContestCreationViewModelTest {
     fun isEditEndDateRefusingInvalidInput() {
         val mili = System.currentTimeMillis() - 10000000000000
         val date = null
-        assertThat(vm.editEndDate(mili), `is`(false))
-        assertThat(vm.editEndDate(date), `is`(false))
+        assertFalse(vm.editEndDate(mili))
+        assertFalse(vm.editEndDate(date))
 
     }
 
@@ -134,8 +133,8 @@ class ContestCreationViewModelTest {
     @Test
     fun isEditStartHourRefusingInvalidInput() {
         val hour = 25
-        assertThat(vm.editStartHour(null), `is`(false))
-        assertThat(vm.editStartHour(hour), `is`(false))
+        assertFalse(vm.editStartHour(null))
+        assertFalse(vm.editStartHour(hour))
 
     }
 
@@ -149,8 +148,8 @@ class ContestCreationViewModelTest {
     @Test
     fun isEditEndHourRefusingInvalidInput() {
         val hour = 25
-        assertThat(vm.editEndHour(null), `is`(false))
-        assertThat(vm.editEndHour(hour), `is`(false))
+        assertFalse(vm.editEndHour(null))
+        assertFalse(vm.editEndHour(hour))
 
     }
 
@@ -164,8 +163,8 @@ class ContestCreationViewModelTest {
     @Test
     fun isEditStartMinuteRefusingInvalidInput() {
         val minutes = 100
-        assertThat(vm.editStartMinute(null), `is`(false))
-        assertThat(vm.editStartMinute(minutes), `is`(false))
+        assertFalse(vm.editStartMinute(null))
+        assertFalse(vm.editStartMinute(minutes))
 
     }
 
@@ -179,16 +178,16 @@ class ContestCreationViewModelTest {
     @Test
     fun isEditEndMinuteRefusingInvalidInput() {
         val minutes = 100
-        assertThat(vm.editEndMinute(null), `is`(false))
-        assertThat(vm.editEndMinute(minutes), `is`(false))
+        assertFalse(vm.editEndMinute(null))
+        assertFalse(vm.editEndMinute(minutes))
 
     }
 
     @Test
     fun isEditCityRefusingInvalidInput() {
         val city = "Montreux123"
-        assertThat(vm.editCity(null), `is`(false))
-        assertThat(vm.editCity(city), `is`(false))
+        assertFalse(vm.editCity(null))
+        assertFalse(vm.editCity(city))
 
     }
 
@@ -196,8 +195,8 @@ class ContestCreationViewModelTest {
     @Test
     fun isEditCountryRefusingInvalidInput() {
         val country = "France123"
-        assertThat(vm.editCountry(null), `is`(false))
-        assertThat(vm.editCountry(country), `is`(false))
+        assertFalse(vm.editCountry(null))
+        assertFalse(vm.editCountry(country))
 
     }
 
@@ -205,8 +204,8 @@ class ContestCreationViewModelTest {
     @Test
     fun isEditPostalCodeRefusingInvalidInput() {
         val postalCode = "1234a"
-        assertThat(vm.editPostalCode(null), `is`(false))
-        assertThat(vm.editPostalCode(postalCode), `is`(false))
+        assertFalse(vm.editPostalCode(null))
+        assertFalse(vm.editPostalCode(postalCode))
 
     }
 
@@ -220,8 +219,8 @@ class ContestCreationViewModelTest {
     @Test
     fun isEditRadiusRefusingInvalidInput() {
         val radius = -123.0
-        assertThat(vm.editRadius(null), `is`(false))
-        assertThat(vm.editRadius(radius), `is`(false))
+        assertFalse(vm.editRadius(null))
+        assertFalse(vm.editRadius(radius))
 
     }
 
@@ -229,8 +228,8 @@ class ContestCreationViewModelTest {
     @Test
     fun isEditCustomLongLatRefusingInvalidInput() {
         val longLat = CustomLatLng(-200.0, -200.0)
-        assertThat(vm.editLongLat(null), `is`(false))
-        assertThat(vm.editLongLat(longLat), `is`(false))
+        assertFalse(vm.editLongLat(null))
+        assertFalse(vm.editLongLat(longLat))
 
     }
 }
