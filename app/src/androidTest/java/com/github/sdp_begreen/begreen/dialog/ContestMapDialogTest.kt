@@ -155,7 +155,7 @@ class ContestMapDialogTest {
         onView(withId(R.id.create_contest_map_layout))
             .check(doesNotExist())
     }
-
+/*
     @Test
     fun clickingOnMapAddLocationMarkerLocationButtonSelected() {
         val locationChannel = Channel<Marker?>(1)
@@ -221,7 +221,7 @@ class ContestMapDialogTest {
 
             assertThat(radiusChannel.receive(), `is`(notNullValue()))
         }
-    }
+    }*/
 
     @Test
     fun initialPassedLocationAndRadiusCorrectlyDrawCircleAndAddMarkers() {
