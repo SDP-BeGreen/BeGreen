@@ -77,7 +77,6 @@ class ProfileDetailsFragmentTest {
             "cc@gmail.com",
             67,
             null,
-            null,
             listOf(userId2),
             userProfilePicturePhotoMetadata
         )
