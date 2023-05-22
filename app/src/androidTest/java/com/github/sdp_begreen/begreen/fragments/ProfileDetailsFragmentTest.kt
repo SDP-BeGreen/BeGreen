@@ -111,9 +111,6 @@ class ProfileDetailsFragmentTest {
                     .thenReturn(user2)
                 whenever(db.getUserProfilePicture(userProfilePicturePhotoMetadata, userId1))
                     .thenReturn(fakePicture1)
-                // add a small delay, just to be sure that it is triggered after initialization
-                // and arrive second, after the initial null value
-                // user between tests, by simply pushing a new userId
                 whenever(auth.getFlowUserIds())
                     .thenReturn(MutableStateFlow(userId1))
             }
