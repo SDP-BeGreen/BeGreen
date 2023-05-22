@@ -7,8 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
@@ -76,6 +75,21 @@ class SendPostFragment : Fragment() {
         initView()
     }
 
+    /**
+     * Helper function to setup the behavior of the trash category selector
+     */
+    private fun setUpTrashCategorySpinner(trashCategorySelector: Spinner) {
+
+        // Type selector
+        val adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            TrashCategory.values().map { trash -> trash.title }
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item)
+        trashCategorySelector.adapter = adapter
+    }
+
 
     /**
      * Displays the user current location assuming that location permissions are granted
@@ -113,8 +127,11 @@ class SendPostFragment : Fragment() {
         //load image
         Picasso.Builder(requireContext()).build().load(paramUri)
             .into(view?.findViewById(R.id.preview))
+        val trashCategorySelector: Spinner =
+            requireView().findViewById(R.id.post_trash_category_selector)
+        setUpTrashCategorySpinner(trashCategorySelector)
         setUpCancel()
-        setUpShare()
+        setUpShare(trashCategorySelector)
     }
 
     private fun setUpCancel() {
@@ -134,7 +151,7 @@ class SendPostFragment : Fragment() {
         }
     }
 
-    private fun setUpShare() {
+    private fun setUpShare(trashCategorySelector: Spinner) {
         val shareBtn = view?.findViewById<ImageView>(R.id.send_post)
         shareBtn?.setOnClickListener {
 
@@ -149,8 +166,8 @@ class SendPostFragment : Fragment() {
 
                     val caption = it?.text.toString()
 
-                    // TODO : Let the user choose the category like what we did in googlemap for the bin category
-                    val category = TrashCategory.ORGANIC
+                    val category: TrashCategory =
+                        TrashCategory.values()[trashCategorySelector.selectedItemPosition]
 
                     val location = userLocation?.let { loc -> CustomLatLng.fromLocation(loc) }
 

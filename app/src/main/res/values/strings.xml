@@ -113,5 +113,8 @@
     <string name="create_contest_map_dialog_cancel">Cancel</string>
     <string name="create_contest_map_dialog_approve">Approve</string>
     <string name="contest_map_ready">Contest Map Ready</string>
+    <string name="change_trash_category">change trash category</string>
+    <string name="trash_category">Trash Category:</string>
+    <string name="select_trash_category">Select trash category</string>
 
 </resources>

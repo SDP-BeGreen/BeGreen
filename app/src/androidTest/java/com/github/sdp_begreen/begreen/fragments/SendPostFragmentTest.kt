@@ -6,6 +6,7 @@ import android.widget.ImageView
 import androidx.fragment.app.commit
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
+import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -19,6 +20,7 @@ import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantService
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
+import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.models.event.Contest
@@ -27,6 +29,7 @@ import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
+import org.hamcrest.CoreMatchers.*
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
@@ -138,9 +141,9 @@ class SendPostFragmentTest {
     }
 
     @Test
-    fun categoryIsDisplayed() {
+    fun trashCategorySelectorIsDisplayed() {
         // Check if the category input is displayed
-        onView(withId(R.id.post_category)).check(
+        onView(withId(R.id.post_trash_category_selector)).check(
             matches(
                 isDisplayed()
             )
@@ -178,10 +181,14 @@ class SendPostFragmentTest {
     }
 
     @Test
-    fun typeInCategoryWorks() {
+    fun changeTrashCategoryWorks() {
         // Check the category input
-        onView(withId(R.id.post_category)).perform(typeText("test"))
-        onView(withId(R.id.post_category)).check(matches(withText("test")))
+        onView(withId(R.id.post_trash_category_selector)).perform(click())
+        val trashCategoryText = TrashCategory.values()[TrashCategory.values().size - 1].title
+        onData(allOf(`is`(instanceOf(String::class.java)), `is`(trashCategoryText)))
+            .perform(click())
+        onView(withId(R.id.post_trash_category_selector))
+            .check(matches(withSpinnerText(trashCategoryText)))
     }
 
     @Test
@@ -209,8 +216,11 @@ class SendPostFragmentTest {
                 imageView.setImageBitmap(postImage)
             }
 
-            onView(withId(R.id.post_category))
-                .perform(typeText("category"), closeSoftKeyboard())
+            onView(withId(R.id.post_trash_category_selector)).perform(click())
+            val trashCategoryText = TrashCategory.values()[TrashCategory.values().size - 1].title
+            onData(allOf(`is`(instanceOf(String::class.java)), `is`(trashCategoryText)))
+                .perform(click())
+
             onView(withId(R.id.post_description))
                 .perform(typeText("description"), closeSoftKeyboard())
             // Click to send the photo
@@ -218,7 +228,7 @@ class SendPostFragmentTest {
 
             // Check that we correctly tried to post the photo
             verify(db, times(1)).addTrashPhoto(eq(postImage), any())
-            // Check that we did update anything on the database, since we could not post the image
+            // Check that we did not update anything on the database, since we could not post the image
             verify(db, never()).addUser(any(), any())
         }
 
@@ -249,7 +259,7 @@ class SendPostFragmentTest {
                 imageView.setImageBitmap(postImage)
             }
 
-            onView(withId(R.id.post_category))
+            onView(withId(R.id.post_trash_category_selector))
                 .perform(typeText("category"), closeSoftKeyboard())
             onView(withId(R.id.post_description))
                 .perform(typeText("description"), closeSoftKeyboard())
