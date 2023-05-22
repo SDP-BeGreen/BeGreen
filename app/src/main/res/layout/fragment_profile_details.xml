@@ -69,7 +69,7 @@
                 android:orientation="vertical"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="24dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -145,29 +145,23 @@
                         />
                 </RelativeLayout>
 
+                <Button
+                    android:id="@+id/fragment_profile_details_follow_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/follow" />
+
             </LinearLayout>
 
         </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <Button
-                android:id="@+id/fragment_profile_details_follow_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:layout_marginHorizontal="6dp"
-                android:text="@string/follow" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp">
+            android:layout_marginTop="16dp"
+            android:layout_marginHorizontal="16dp">
+
             <TextView
                 android:id="@+id/fragment_profile_details_profile_description"
                 android:layout_width="385dp"
