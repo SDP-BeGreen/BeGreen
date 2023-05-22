@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.recyclerview.widget.RecyclerView
 import com.github.sdp_begreen.begreen.R
@@ -62,7 +63,7 @@ class UserPhotosViewAdapter(
 
             if (isFeed) {
 
-                holder.avatarView.visibility = View.VISIBLE
+                holder.avatarMaskView.visibility = View.VISIBLE
 
                 // Display avatar if on feed
                 user.profilePictureMetadata?.also {
@@ -73,7 +74,7 @@ class UserPhotosViewAdapter(
             } else {
 
                 // Do not display avatar if not on feed
-                holder.avatarView.visibility = View.GONE
+                holder.avatarMaskView.visibility = View.GONE
             }
 
             // Display post content
@@ -91,6 +92,7 @@ class UserPhotosViewAdapter(
 
     inner class ViewHolder(binding: FragmentUserPhotoBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        val avatarMaskView: CardView = binding.avatarMask
         val avatarView: ImageView = binding.avatarImage
         val titleView: TextView = binding.titleText
         val subtitleView: TextView = binding.subtitleText
