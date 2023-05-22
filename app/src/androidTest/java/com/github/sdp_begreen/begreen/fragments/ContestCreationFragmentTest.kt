@@ -30,6 +30,7 @@ import org.koin.dsl.module
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
 import org.mockito.kotlin.whenever
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 
@@ -161,5 +162,80 @@ class ContestCreationFragmentTest {
 
         onView(withId(R.id.radius_contest_creation)).check(matches(withText(radius)))
     }
+
+    @Test
+    fun createContestTimeZoneIsDisplayed() {
+
+        onView(withId(R.id.contest_timezone_spinner)).perform(click()).check(matches(isDisplayed()))
+
+    }
+
+    @Test
+    fun createContestStartDateIsDisplayed() {
+        val date = "25/04/2030"
+
+        onView(withId(R.id.start_date_contest_text)).perform(replaceText(date)).check(matches(isDisplayed()))
+        onView(withId(R.id.start_date_contest_text)).check(matches(withText(date)))
+    }
+
+    @Test
+    fun createContestEndDateIsDisplayed() {
+        val date = "25/04/2030"
+
+        onView(withId(R.id.end_date_contest_text)).perform(replaceText(date)).check(matches(isDisplayed()))
+        onView(withId(R.id.end_date_contest_text)).check(matches(withText(date)))
+    }
+
+
+    @Test
+    fun createContestStartTimeIsDisplayed() {
+        val time = "12:00"
+
+        onView(withId(R.id.start_hour_contest_text)).perform(replaceText(time)).check(matches(isDisplayed()))
+        onView(withId(R.id.start_hour_contest_text)).check(matches(withText(time)))
+    }
+
+    @Test
+    fun createContestEndTimeIsDisplayed() {
+        val time = "12:00"
+
+        onView(withId(R.id.end_hour_contest_text)).perform(replaceText(time)).check(matches(isDisplayed()))
+        onView(withId(R.id.end_hour_contest_text)).check(matches(withText(time)))
+    }
+
+    @Test
+    fun createContestDatePickerIsDisplaying() {
+        onView(withId(R.id.date_period_contest)).perform(click())
+
+        assertFalse(ccvm.editStartDate(100L))
+    }
+
+    @Test
+    fun createContestStartHourPickerIsDisplaying() {
+        onView(withId(R.id.start_hour_contest)).perform(click())
+
+        assertTrue(ccvm.editStartHour(10))
+    }
+
+    @Test
+    fun createContestEndHourPickerIsDisplaying() {
+        onView(withId(R.id.end_hour_contest)).perform(click())
+
+        assertTrue(ccvm.editEndHour(10))
+    }
+
+    @Test
+    fun createContestMapButtonWorks() {
+        onView(withId(R.id.contest_creation_location_map)).perform(click())
+
+        onView(withId(R.id.create_contest_map_layout))
+            .check(matches(isDisplayed()))
+
+        onView(withId(R.id.create_contest_map_approve_button)).perform(click())
+
+        onView(withId(R.id.contest_creation_location_map)).check(matches(isDisplayed()))
+
+    }
+
 
 }

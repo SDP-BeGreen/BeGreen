@@ -28,6 +28,7 @@ import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantService
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
+import com.github.sdp_begreen.begreen.fragments.ContestCreationFragment
 import com.github.sdp_begreen.begreen.fragments.SendPostFragment
 import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBitmap
@@ -831,5 +832,35 @@ class MainActivityTest {
         onView(withId(R.id.cancel_post)).perform(click())
         withId(R.layout.fragment_camera_with_ui).matches(isDisplayed())
 
+    }
+
+    @Test
+    fun createContestCancelRedirectToListCorrectly() {
+
+        activityRule.scenario.onActivity {
+            val connectedUserViewModel by it.viewModels<ConnectedUserViewModel>()
+            connectedUserViewModel.setCurrentUser(user1)
+
+            it.supportFragmentManager.beginTransaction()
+                .replace(R.id.mainCameraFragmentContainer, ContestCreationFragment())
+                .commit()
+        }
+        onView(withId(R.id.contest_cancel_button)).perform(click())
+        withId(R.layout.fragment_contests_list).matches(isDisplayed())
+    }
+
+    @Test
+    fun createContestConfirmDoNotRedirectToListIfNotInit() {
+
+        activityRule.scenario.onActivity {
+            val connectedUserViewModel by it.viewModels<ConnectedUserViewModel>()
+            connectedUserViewModel.setCurrentUser(user1)
+
+            it.supportFragmentManager.beginTransaction()
+                .replace(R.id.mainCameraFragmentContainer, ContestCreationFragment())
+                .commit()
+        }
+        onView(withId(R.id.contest_confirm_button)).perform(click())
+        withId(R.layout.fragment_contest_creation).matches(isDisplayed())
     }
 }
