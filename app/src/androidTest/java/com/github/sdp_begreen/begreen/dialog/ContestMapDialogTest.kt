@@ -154,7 +154,19 @@ class ContestMapDialogTest {
             .check(doesNotExist())
     }
 
-    @Test
+    /**
+     * Those tests have to be commented, because they cannot run on the CI.
+     *
+     * They need the map of Google map, but for that the device need to have
+     * google_play_services enable, which is not the case in the device we have on the CI
+     *
+     * We tried to change the device on the CI, but it resulted in flaky behavior, tests were
+     * passing 40% of the time.
+     *
+     * We decided to let them here commented, if someday we find a way to run them on the CI.
+     */
+
+    /*@Test
     fun clickingOnMapAddLocationMarkerLocationButtonSelected() {
         val locationChannel = Channel<Marker?>(1)
 
@@ -266,6 +278,6 @@ class ContestMapDialogTest {
             assertThat(radiusChannel.receive(), `is`(notNullValue()))
             assertThat(circleChannel.receive(), `is`(notNullValue()))
         }
-    }
+    }*/
 
 }
