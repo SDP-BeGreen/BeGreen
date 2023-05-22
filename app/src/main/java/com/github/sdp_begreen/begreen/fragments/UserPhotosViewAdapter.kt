@@ -63,7 +63,7 @@ class UserPhotosViewAdapter(
 
             if (isFeed) {
 
-                holder.avatarMaskView.visibility = View.VISIBLE
+                holder.avatarView.visibility = View.VISIBLE
 
                 // Display avatar if on feed
                 user.profilePictureMetadata?.also {

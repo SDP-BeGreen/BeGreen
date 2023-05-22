@@ -85,7 +85,7 @@ class UserPhotosViewAdapterTest {
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
 
     // Setup the koin test rule
-   @get:Rule
+    @get:Rule
     val koinTestRule = KoinTestRule(
         modules = listOf(module {
             single { db }
@@ -154,33 +154,33 @@ class UserPhotosViewAdapterTest {
         */
     }
 
-   @Test
-   fun userPhotosViewAdapterOnBindViewHolderWorksOnListWithNullDateAndCategory() {
+    @Test
+    fun userPhotosViewAdapterOnBindViewHolderWorksOnListWithNullDateAndCategory() {
 
-       val photoList = listOf(
-           TrashPhotoMetadata("1", null, userId, "Look at me cleaning!", null),
-           TrashPhotoMetadata("2", null, userId, "Look at me cleaning!", null),
-       )
-       val userPhotoViewAdapter =
-           UserPhotosViewAdapter(photoList, true, TestLifecycleOwner().lifecycleScope, resources)
-       val viewHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
-       userPhotoViewAdapter.onBindViewHolder(viewHolder, 0)
+        val photoList = listOf(
+            TrashPhotoMetadata("1", null, userId, "Look at me cleaning!", null),
+            TrashPhotoMetadata("2", null, userId, "Look at me cleaning!", null),
+        )
+        val userPhotoViewAdapter =
+            UserPhotosViewAdapter(photoList, true, TestLifecycleOwner().lifecycleScope, resources)
+        val viewHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
+        userPhotoViewAdapter.onBindViewHolder(viewHolder, 0)
 
-       assertThat(viewHolder.avatarView.visibility, equalTo(View.VISIBLE))
+        assertThat(viewHolder.avatarMaskView.visibility, equalTo(View.VISIBLE))
 
-       val dateString = resources.getString(R.string.unknown_date)
-       val categoryString = resources.getString(R.string.no_category)
+        val dateString = resources.getString(R.string.unknown_date)
+        val categoryString = resources.getString(R.string.no_category)
 
-       /*
+        /*
 
-       Please see explanation above
+        Please see explanation above
 
-       assertThat(viewHolder.titleView.text, equalTo(user.displayName))
-       assertThat(viewHolder.subtitleView.text.toString(), equalTo("$dateString | $categoryString"))
-       assertThat(viewHolder.descriptionView.text.toString(), equalTo("Look at me cleaning!"))
+        assertThat(viewHolder.titleView.text, equalTo(user.displayName))
+        assertThat(viewHolder.subtitleView.text.toString(), equalTo("$dateString | $categoryString"))
+        assertThat(viewHolder.descriptionView.text.toString(), equalTo("Look at me cleaning!"))
 
-       */
-   }
+        */
+    }
 
     @Test
     fun userPhotosViewAdapterOnBindViewHolderDoesntCrashOnNullList() {

@@ -33,8 +33,8 @@ class UserTest {
         50,
         null,
         null,
-    null,
-    null)
+        null,
+        null)
 
     var user1: User = User(
         "1",

@@ -157,8 +157,8 @@
                 android:id="@+id/fragment_profile_details_follow_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginHorizontal="6dp"
                 android:text="@string/follow" />
 
         </RelativeLayout>

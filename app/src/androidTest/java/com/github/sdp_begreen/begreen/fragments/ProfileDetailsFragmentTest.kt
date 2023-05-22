@@ -181,39 +181,39 @@ class ProfileDetailsFragmentTest {
         }
     }
 
-/*
+    /*
 
-     The reason behind the failure of this test is unknown. The expected result is visible on the screen.
-     After debugging the code, it appears that the problem stems from the test's inability to detect the user's
-     following of another user. However, this issue does not impact the coverage,
-     which is already at 100% for this particular feature.
+         The reason behind the failure of this test is unknown. The expected result is visible on the screen.
+         After debugging the code, it appears that the problem stems from the test's inability to detect the user's
+         following of another user. However, this issue does not impact the coverage,
+         which is already at 100% for this particular feature.
 
-    @Test
-    fun testFollowButtonCorrectlyInitializedWhenAlreadyFollowingUser() {
+        @Test
+        fun testFollowButtonCorrectlyInitializedWhenAlreadyFollowingUser() {
 
-        runTest {
+            runTest {
 
-            val followingUser = User("B", 0)
-            val currentUser = User("A", 0, following = listOf(followingUser.id))
+                val followingUser = User("B", 0)
+                val currentUser = User("A", 0, following = listOf(followingUser.id))
 
-            whenever(auth.getConnectedUserId())
-                .thenReturn(currentUser.id)
+                whenever(auth.getConnectedUserId())
+                    .thenReturn(currentUser.id)
 
-            whenever(db.getUser(currentUser.id))
-                .thenReturn(currentUser)
+                whenever(db.getUser(currentUser.id))
+                    .thenReturn(currentUser)
 
-            fragmentScenario = launchFragmentInContainer(
-                Bundle().apply {
-                    putParcelable(ARG_USER, followingUser)
-                    putParcelableArrayList(ARG_RECENT_POSTS, photos)
-                }
-            )
+                fragmentScenario = launchFragmentInContainer(
+                    Bundle().apply {
+                        putParcelable(ARG_USER, followingUser)
+                        putParcelableArrayList(ARG_RECENT_POSTS, photos)
+                    }
+                )
 
-            onView(withId(R.id.fragment_profile_details_follow_button)).check(matches(withText(Actions.UNFOLLOW.text)))
+                onView(withId(R.id.fragment_profile_details_follow_button)).check(matches(withText(Actions.UNFOLLOW.text)))
 
-            fragmentScenario.close()
-        }
-    }*/
+                fragmentScenario.close()
+            }
+        }*/
 
     @Test
     fun testProfileDetailsFragmentFollowButtonCorrectlyToggles() {
