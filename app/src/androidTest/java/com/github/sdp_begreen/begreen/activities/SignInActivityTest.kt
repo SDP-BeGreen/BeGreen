@@ -9,6 +9,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,6 +22,9 @@ class SignInActivityTest {
 
     @get:Rule
     val activityRule = ActivityScenarioRule(SignInActivity::class.java)
+
+    @get:Rule
+    val koinTestRule = KoinTestRule()
 
     @Before
     fun signOutCurrentUser() {
