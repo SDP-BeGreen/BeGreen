@@ -58,7 +58,6 @@ class ProfileDetailsFragmentTest {
                 ParcelableDate.now,
                 userId1
             ),
-
             TrashPhotoMetadata(
                 "erfs",
                 ParcelableDate.now,
