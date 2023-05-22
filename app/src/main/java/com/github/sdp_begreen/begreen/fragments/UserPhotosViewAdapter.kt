@@ -74,7 +74,7 @@ class UserPhotosViewAdapter(
             } else {
 
                 // Do not display avatar if not on feed
-                holder.avatarView.visibility = View.GONE
+                holder.avatarMaskView.visibility = View.GONE
             }
 
             // Display post content
