@@ -39,7 +39,7 @@ class CameraContainerTest {
     //Companion object to mock the DB and Auth
     companion object {
         val user = User(
-            "test", 2, "test", 5, "test",
+            "test", 2, "test", "test",
             "test", "test", 15, listOf("1", "3", "6"), listOf("2", "4")
         )
         private val db: DB = Mockito.mock(DB::class.java)

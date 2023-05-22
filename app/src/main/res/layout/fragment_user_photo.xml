@@ -13,21 +13,35 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp">
 
-        <ImageView
-            android:id="@+id/avatar_image"
-            android:layout_width="70dp"
+        <androidx.cardview.widget.CardView
+
+            android:id="@+id/avatar_mask"
+            android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="16dp"
             android:layout_marginStart="10dp"
-            android:padding="4dp"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/ic_baseline_person"
+            app:cardCornerRadius="250dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/media_image"
-            app:layout_constraintVertical_chainStyle="packed" />
+            app:layout_constraintVertical_chainStyle="packed">
+
+            <ImageView
+                android:id="@+id/avatar_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="4dp"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/ic_baseline_person"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/media_image"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+        </androidx.cardview.widget.CardView>
 
         <TextView
             android:id="@+id/title_text"
@@ -39,8 +53,8 @@
             android:text="@string/title"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textColor="@color/black"
-            app:layout_constraintTop_toTopOf="@+id/avatar_image"
-            app:layout_constraintStart_toEndOf="@+id/avatar_image"
+            app:layout_constraintTop_toTopOf="@+id/avatar_mask"
+            app:layout_constraintStart_toEndOf="@+id/avatar_mask"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <TextView
@@ -53,9 +67,9 @@
             android:text="@string/subhead"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textColor="@color/grey"
-            app:layout_constraintStart_toEndOf="@+id/avatar_image"
+            app:layout_constraintStart_toEndOf="@+id/avatar_mask"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="@+id/avatar_image" />
+            app:layout_constraintBottom_toBottomOf="@+id/avatar_mask" />
 
         <ImageView
             android:id="@+id/media_image"
@@ -66,14 +80,14 @@
             android:adjustViewBounds="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             android:scaleType="centerCrop"
             android:contentDescription="@string/desc_publication"
             app:srcCompat="@android:color/darker_gray"
             app:layout_constraintDimensionRatio="H,16:9"
-            app:layout_constraintTop_toBottomOf="@+id/title_text"
+            app:layout_constraintTop_toBottomOf="@+id/avatar_mask"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/avatar_mask"
             app:layout_constraintBottom_toTopOf="@+id/supporting_text"/>
 
         <TextView
@@ -81,6 +95,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:lineSpacingExtra="8dp"

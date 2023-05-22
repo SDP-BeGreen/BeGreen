@@ -46,7 +46,7 @@ class UserPhotosViewAdapterTest {
         private val auth: Auth = mock(Auth::class.java)
         private val userId = "10"
         private val profilePhotoMetadata = ProfilePhotoMetadata("1", null, userId)
-        val user = User(userId, 2, "test", 5, "test",
+        val user = User(userId, 2, "test", "test",
             "test", "test", 15, listOf("1", "3", "6"), listOf("2", "4"), profilePhotoMetadata)
         val users = listOf(
             User("1", 123, "Alice"),
@@ -85,7 +85,7 @@ class UserPhotosViewAdapterTest {
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
 
     // Setup the koin test rule
-   @get:Rule
+    @get:Rule
     val koinTestRule = KoinTestRule(
         modules = listOf(module {
             single { db }
@@ -99,7 +99,7 @@ class UserPhotosViewAdapterTest {
         TrashPhotoMetadata("1", date, userId, "Look at me cleaning!", TrashCategory.PLASTIC),
         TrashPhotoMetadata("2", date, userId, "Look at me cleaning!", TrashCategory.PLASTIC),
     )
-    private var userPhotoViewAdapter = UserPhotosViewAdapter(photoList, true, TestLifecycleOwner().lifecycleScope, resources)
+    private var userPhotoViewAdapter = UserPhotosViewAdapter(photoList, TestLifecycleOwner().lifecycleScope, resources)
     private val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Test
@@ -110,14 +110,14 @@ class UserPhotosViewAdapterTest {
     @Test
     fun userViewAdapterGetItemCountWorksOnEmptyList() {
 
-        val userPhotoViewAdapter = UserPhotosViewAdapter(listOf(), true, TestLifecycleOwner().lifecycleScope, resources)
+        val userPhotoViewAdapter = UserPhotosViewAdapter(listOf(), TestLifecycleOwner().lifecycleScope, resources)
         assertThat(userPhotoViewAdapter.itemCount, equalTo(0))
     }
 
     @Test
     fun userPhotosViewAdapterGetItemCountWorksOnNullList() {
 
-        val userPhotoViewAdapter = UserPhotosViewAdapter(null, true, TestLifecycleOwner().lifecycleScope, resources)
+        val userPhotoViewAdapter = UserPhotosViewAdapter(null, TestLifecycleOwner().lifecycleScope, resources)
         assertThat(userPhotoViewAdapter.itemCount, equalTo(0))
     }
 
@@ -125,11 +125,9 @@ class UserPhotosViewAdapterTest {
     fun userPhotosViewAdapterOnBindViewHolderWorksOnTrivialList() {
 
         val userPhotoViewAdapter =
-            UserPhotosViewAdapter(photoList, true, TestLifecycleOwner().lifecycleScope, resources)
+            UserPhotosViewAdapter(photoList, TestLifecycleOwner().lifecycleScope, resources)
         val viewHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
         userPhotoViewAdapter.onBindViewHolder(viewHolder, 0)
-
-        assertThat(viewHolder.avatarView.visibility, equalTo(View.VISIBLE))
 
         val dateString = date.toString()
         val categoryString = TrashCategory.PLASTIC.title
@@ -154,38 +152,36 @@ class UserPhotosViewAdapterTest {
         */
     }
 
-   @Test
-   fun userPhotosViewAdapterOnBindViewHolderWorksOnListWithNullDateAndCategory() {
+    @Test
+    fun userPhotosViewAdapterOnBindViewHolderWorksOnListWithNullDateAndCategory() {
 
-       val photoList = listOf(
-           TrashPhotoMetadata("1", null, userId, "Look at me cleaning!", null),
-           TrashPhotoMetadata("2", null, userId, "Look at me cleaning!", null),
-       )
-       val userPhotoViewAdapter =
-           UserPhotosViewAdapter(photoList, true, TestLifecycleOwner().lifecycleScope, resources)
-       val viewHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
-       userPhotoViewAdapter.onBindViewHolder(viewHolder, 0)
+        val photoList = listOf(
+            TrashPhotoMetadata("1", null, userId, "Look at me cleaning!", null),
+            TrashPhotoMetadata("2", null, userId, "Look at me cleaning!", null),
+        )
+        val userPhotoViewAdapter =
+            UserPhotosViewAdapter(photoList, TestLifecycleOwner().lifecycleScope, resources)
+        val viewHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
+        userPhotoViewAdapter.onBindViewHolder(viewHolder, 0)
 
-       assertThat(viewHolder.avatarView.visibility, equalTo(View.VISIBLE))
+        val dateString = resources.getString(R.string.unknown_date)
+        val categoryString = resources.getString(R.string.no_category)
 
-       val dateString = resources.getString(R.string.unknown_date)
-       val categoryString = resources.getString(R.string.no_category)
+        /*
 
-       /*
+        Please see explanation above
 
-       Please see explanation above
+        assertThat(viewHolder.titleView.text, equalTo(user.displayName))
+        assertThat(viewHolder.subtitleView.text.toString(), equalTo("$dateString | $categoryString"))
+        assertThat(viewHolder.descriptionView.text.toString(), equalTo("Look at me cleaning!"))
 
-       assertThat(viewHolder.titleView.text, equalTo(user.displayName))
-       assertThat(viewHolder.subtitleView.text.toString(), equalTo("$dateString | $categoryString"))
-       assertThat(viewHolder.descriptionView.text.toString(), equalTo("Look at me cleaning!"))
-
-       */
-   }
+        */
+    }
 
     @Test
     fun userPhotosViewAdapterOnBindViewHolderDoesntCrashOnNullList() {
 
-        val userPhotoViewAdapter = UserPhotosViewAdapter(null, true, TestLifecycleOwner().lifecycleScope, resources)
+        val userPhotoViewAdapter = UserPhotosViewAdapter(null, TestLifecycleOwner().lifecycleScope, resources)
 
         val viewHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
         userPhotoViewAdapter.onBindViewHolder(viewHolder, 0)
@@ -209,7 +205,7 @@ class UserPhotosViewAdapterTest {
             TrashPhotoMetadata("2", null, null, "Look at me cleaning!", null),
         )
         val userPhotoViewAdapter =
-            UserPhotosViewAdapter(photoList, true, TestLifecycleOwner().lifecycleScope, resources)
+            UserPhotosViewAdapter(photoList, TestLifecycleOwner().lifecycleScope, resources)
         val viewHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
         userPhotoViewAdapter.onBindViewHolder(viewHolder, 0)
     }
@@ -236,40 +232,6 @@ class UserPhotosViewAdapterTest {
         }
     }
 
-    @Test
-    fun userPhotosViewAdapterOnBindViewHolderShowsAvatarOnFeed() {
-
-        val userPhotoViewAdapter =
-            UserPhotosViewAdapter(photoList, true, TestLifecycleOwner().lifecycleScope, resources)
-        val viewHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
-        userPhotoViewAdapter.onBindViewHolder(viewHolder, 0)
-
-        assertThat(viewHolder.avatarView.visibility, equalTo(View.VISIBLE))
-    }
-
-    @Test
-    fun userPhotosViewAdapterOnBindViewHolderHidesAvatarNotOnFeed() {
-
-        val userPhotoViewAdapter =
-            UserPhotosViewAdapter(
-                photoList,
-                false,
-                TestLifecycleOwner().lifecycleScope,
-                resources
-            )
-        val viewHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
-        userPhotoViewAdapter.onBindViewHolder(viewHolder, 0)
-
-        /*
-
-        This test is well scanned but for no reason it fails. In other words, the viewHolder.avatarView.visibility is
-        correctly set to GONE, but this test doesn't detect it. I think that if we manage to solve the problem previous
-        explained, this test should pass
-
-        assertThat(viewHolder.avatarView.visibility, equalTo(View.GONE))
-
-        */
-    }
 
     @Test
     // This test will be useful for the next task (show image in big)

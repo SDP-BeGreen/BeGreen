@@ -15,7 +15,6 @@ data class User(
     val id: String,
     var score: Int,
     val displayName: String? = null,
-    var rating: Int = 0,
     var description: String? = null,
     var phone: String? = null,
     var email: String? = null,
@@ -40,6 +39,13 @@ data class User(
         following = following?.let { it.filter { id -> id != userId }}
     }
 
+    fun isFollowing(userId: String) : Boolean {
+
+        checkArgument(userId.isNotBlank(), "The userId cannot be blank")
+
+        return following?.contains(userId) ?: false
+    }
+
     override fun compareTo(other: User): Int {
         return score.compareTo(other.score)
     }
@@ -49,9 +55,5 @@ data class User(
     fun addPhotoMetadata(metadata: TrashPhotoMetadata) {
         trashPhotosMetadatasList =
             trashPhotosMetadatasList?.let { it + metadata } ?: listOf(metadata)
-    }
-
-    companion object {
-        var currentUser = User("0", 2)
     }
 }

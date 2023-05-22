@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.recyclerview.widget.RecyclerView
 import com.github.sdp_begreen.begreen.R
@@ -24,7 +25,6 @@ import org.koin.java.KoinJavaComponent.inject
  */
 class UserPhotosViewAdapter(
     val photos: List<TrashPhotoMetadata>?,
-    private val isFeed: Boolean,
     val lifecycleScope: LifecycleCoroutineScope,
     val resources: Resources
 ) : RecyclerView.Adapter<UserPhotosViewAdapter.ViewHolder>() {
@@ -60,20 +60,9 @@ class UserPhotosViewAdapter(
 
             val user = db.getUser(userId) ?: return@launch
 
-            if (isFeed) {
-
-                holder.avatarView.visibility = View.VISIBLE
-
-                // Display avatar if on feed
-                user.profilePictureMetadata?.also {
-                    val avatarImage = db.getUserProfilePicture(it, userId)
-                    holder.avatarView.setImageBitmap(avatarImage)
-                }
-
-            } else {
-
-                // Do not display avatar if not on feed
-                holder.avatarView.visibility = View.GONE
+            user.profilePictureMetadata?.also {
+                val avatarImage = db.getUserProfilePicture(it, userId)
+                holder.avatarView.setImageBitmap(avatarImage)
             }
 
             // Display post content

@@ -20,6 +20,7 @@ import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.*
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
+import com.github.sdp_begreen.begreen.models.Actions
 import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
@@ -57,7 +58,6 @@ class ProfileDetailsFragmentTest {
                 ParcelableDate.now,
                 userId1
             ),
-
             TrashPhotoMetadata(
                 "erfs",
                 ParcelableDate.now,
@@ -65,26 +65,24 @@ class ProfileDetailsFragmentTest {
             )
         )
         private val userProfilePicturePhotoMetadata = ProfilePhotoMetadata("user1_profile_picture")
+        val userId2 = "1243"
 
         private val user1 = User(
             userId1,
             142,
             "Alice",
-            56,
             "Description poutou poutou",
             "08920939459802",
             "cc@gmail.com",
             67,
             null,
-            null,
+            listOf(userId2),
             userProfilePicturePhotoMetadata
         )
-        val userId2 = "1243"
         private val user2 = User(
             userId2,
             142,
             "Alice",
-            56,
             "Description poutou poutou",
             "08920939459802",
             "cc@gmail.com",
@@ -105,14 +103,13 @@ class ProfileDetailsFragmentTest {
             // that's why we do it in the beforeClass method
             runTest {
                 // setup basic get user and getProfilePicture use in multiple tests
-                `when`(db.getUser(userId1))
+                whenever(db.getUser(userId1))
                     .thenReturn(user1)
-                `when`(db.getUserProfilePicture(userProfilePicturePhotoMetadata, userId1))
+                whenever(db.getUser(userId2))
+                    .thenReturn(user2)
+                whenever(db.getUserProfilePicture(userProfilePicturePhotoMetadata, userId1))
                     .thenReturn(fakePicture1)
-                // add a small delay, just to be sure that it is triggered after initialization
-                // and arrive second, after the initial null value
-                // user between tests, by simply pushing a new userId
-                `when`(auth.getFlowUserIds())
+                whenever(auth.getFlowUserIds())
                     .thenReturn(MutableStateFlow(userId1))
             }
         }
@@ -152,31 +149,72 @@ class ProfileDetailsFragmentTest {
         onView(withId(R.id.fragment_profile_details)).check(matches(isDisplayed()))
     }
 
+
+
     @Test
-    fun testProfileDetailsFragmentFollowButton() {
-        fragmentScenario = launchFragmentInContainer(
-            Bundle().apply {
-                putParcelable(ARG_USER, user2)
-                putParcelableArrayList(ARG_RECENT_POSTS, photos)
-            }
-        )
-        onView(withId(R.id.fragment_profile_details_follow_button)).perform(click())
-        onView(withId(R.id.fragment_profile_details_follow_button)).check(matches(withText("Unfollow")))
-        fragmentScenario.close()
+    fun testFollowButtonCorrectlyInitializedWhenNotFollowingUser() {
+
+        runTest {
+
+            // user1 doesn't follow this user. Therefore
+            val notFollowedUser = User("B", 0)
+
+            fragmentScenario = launchFragmentInContainer(
+                Bundle().apply {
+                    putParcelable(ARG_USER, notFollowedUser)
+                    putParcelableArrayList(ARG_RECENT_POSTS, photos)
+                }
+            )
+
+
+            onView(withId(R.id.fragment_profile_details_follow_button)).check(matches(withText(Actions.FOLLOW.text)))
+
+            fragmentScenario.close()
+        }
     }
 
     @Test
-    fun testProfileDetailsFragmentFollowButton2() {
-        fragmentScenario = launchFragmentInContainer(
-            Bundle().apply {
-                putParcelable(ARG_USER, user2)
-                putParcelableArrayList(ARG_RECENT_POSTS, photos)
-            }
-        )
-        onView(withId(R.id.fragment_profile_details_follow_button)).perform(click())
-        onView(withId(R.id.fragment_profile_details_follow_button)).perform(click())
-        onView(withId(R.id.fragment_profile_details_follow_button)).check(matches(withText("Follow")))
-        fragmentScenario.close()
+    fun testFollowButtonCorrectlyInitializedWhenAlreadyFollowingUser() {
+
+        runTest {
+
+            // user1 is following user2
+
+            fragmentScenario = launchFragmentInContainer(
+                Bundle().apply {
+                    putParcelable(ARG_USER, user2)
+                    putParcelableArrayList(ARG_RECENT_POSTS, photos)
+                }
+            )
+
+            onView(withId(R.id.fragment_profile_details_follow_button)).check(matches(withText(Actions.UNFOLLOW.text)))
+
+            fragmentScenario.close()
+        }
+    }
+
+    @Test
+    fun testProfileDetailsFragmentFollowButtonCorrectlyToggles() {
+
+        runTest {
+
+            val notFollowedUser = User("B", 0)
+
+            fragmentScenario = launchFragmentInContainer(
+                Bundle().apply {
+                    putParcelable(ARG_USER, notFollowedUser)
+                    putParcelableArrayList(ARG_RECENT_POSTS, photos)
+                }
+            )
+
+            onView(withId(R.id.fragment_profile_details_follow_button)).check(matches(withText(Actions.FOLLOW.text)))
+            onView(withId(R.id.fragment_profile_details_follow_button)).perform(click())
+            onView(withId(R.id.fragment_profile_details_follow_button)).check(matches(withText(Actions.UNFOLLOW.text)))
+            onView(withId(R.id.fragment_profile_details_follow_button)).perform(click())
+            onView(withId(R.id.fragment_profile_details_follow_button)).check(matches(withText(Actions.FOLLOW.text)))
+
+            fragmentScenario.close()
+        }
     }
 
     @Test
@@ -537,6 +575,7 @@ class ProfileDetailsFragmentTest {
 
     @Test
     fun correctValueDisplayedAfterProfileEdited() {
+
         val newUser = user1.copy(
             description = "My new description",
             displayName = "My new name",
