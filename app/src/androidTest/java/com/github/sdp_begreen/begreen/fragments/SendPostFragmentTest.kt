@@ -40,6 +40,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.*
 import java.util.*
+import kotlin.random.Random
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -182,9 +183,14 @@ class SendPostFragmentTest {
 
     @Test
     fun changeTrashCategoryWorks() {
-        // Check the category input
+
+        // Pick a trash category at random
         onView(withId(R.id.post_trash_category_selector)).perform(click())
-        val trashCategoryText = TrashCategory.values()[TrashCategory.values().size - 1].title
+        val trashCategoryText = TrashCategory.values()[
+                Random.nextInt(TrashCategory.values().size)
+        ].title
+
+        // Check that the trash category we chose is correctly displayed
         onData(allOf(`is`(instanceOf(String::class.java)), `is`(trashCategoryText)))
             .perform(click())
         onView(withId(R.id.post_trash_category_selector))
@@ -216,8 +222,11 @@ class SendPostFragmentTest {
                 imageView.setImageBitmap(postImage)
             }
 
+            // Pick a trash category at random
             onView(withId(R.id.post_trash_category_selector)).perform(click())
-            val trashCategoryText = TrashCategory.values()[TrashCategory.values().size - 1].title
+            val trashCategoryText = TrashCategory.values()[
+                    Random.nextInt(TrashCategory.values().size)
+            ].title
             onData(allOf(`is`(instanceOf(String::class.java)), `is`(trashCategoryText)))
                 .perform(click())
 
@@ -259,8 +268,14 @@ class SendPostFragmentTest {
                 imageView.setImageBitmap(postImage)
             }
 
-            onView(withId(R.id.post_trash_category_selector))
-                .perform(typeText("category"), closeSoftKeyboard())
+            // Pick a trash category at random
+            onView(withId(R.id.post_trash_category_selector)).perform(click())
+            val trashCategory = TrashCategory.values()[
+                    Random.nextInt(TrashCategory.values().size)
+            ]
+
+            onData(allOf(`is`(instanceOf(String::class.java)), `is`(trashCategory.title)))
+                .perform(click())
             onView(withId(R.id.post_description))
                 .perform(typeText("description"), closeSoftKeyboard())
             // Click to send the photo
