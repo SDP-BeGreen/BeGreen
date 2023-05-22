@@ -66,6 +66,7 @@ class ProfileDetailsFragmentTest {
             )
         )
         private val userProfilePicturePhotoMetadata = ProfilePhotoMetadata("user1_profile_picture")
+        val userId2 = "1243"
 
         private val user1 = User(
             userId1,
@@ -76,10 +77,9 @@ class ProfileDetailsFragmentTest {
             "cc@gmail.com",
             67,
             null,
-            null,
+            listOf(userId2),
             userProfilePicturePhotoMetadata
         )
-        val userId2 = "1243"
         private val user2 = User(
             userId2,
             142,
@@ -104,14 +104,16 @@ class ProfileDetailsFragmentTest {
             // that's why we do it in the beforeClass method
             runTest {
                 // setup basic get user and getProfilePicture use in multiple tests
-                `when`(db.getUser(userId1))
+                whenever(db.getUser(userId1))
                     .thenReturn(user1)
-                `when`(db.getUserProfilePicture(userProfilePicturePhotoMetadata, userId1))
+                whenever(db.getUser(userId2))
+                    .thenReturn(user2)
+                whenever(db.getUserProfilePicture(userProfilePicturePhotoMetadata, userId1))
                     .thenReturn(fakePicture1)
                 // add a small delay, just to be sure that it is triggered after initialization
                 // and arrive second, after the initial null value
                 // user between tests, by simply pushing a new userId
-                `when`(auth.getFlowUserIds())
+                whenever(auth.getFlowUserIds())
                     .thenReturn(MutableStateFlow(userId1))
             }
         }
@@ -158,18 +160,12 @@ class ProfileDetailsFragmentTest {
 
         runTest {
 
-            val followingUser = User("B", 0)
-            val currentUser = User("A", 0)
-
-            whenever(auth.getConnectedUserId())
-                .thenReturn(currentUser.id)
-
-            whenever(db.getUser(currentUser.id))
-                .thenReturn(currentUser)
+            // user1 doesn't follow this user. Therefore
+            val notFollowedUser = User("B", 0)
 
             fragmentScenario = launchFragmentInContainer(
                 Bundle().apply {
-                    putParcelable(ARG_USER, followingUser)
+                    putParcelable(ARG_USER, notFollowedUser)
                     putParcelableArrayList(ARG_RECENT_POSTS, photos)
                 }
             )
@@ -181,57 +177,36 @@ class ProfileDetailsFragmentTest {
         }
     }
 
-    /*
+    @Test
+    fun testFollowButtonCorrectlyInitializedWhenAlreadyFollowingUser() {
 
-         The reason behind the failure of this test is unknown. The expected result is visible on the screen.
-         After debugging the code, it appears that the problem stems from the test's inability to detect the user's
-         following of another user. However, this issue does not impact the coverage,
-         which is already at 100% for this particular feature.
+        runTest {
 
-        @Test
-        fun testFollowButtonCorrectlyInitializedWhenAlreadyFollowingUser() {
+            // user1 is following user2
 
-            runTest {
+            fragmentScenario = launchFragmentInContainer(
+                Bundle().apply {
+                    putParcelable(ARG_USER, user2)
+                    putParcelableArrayList(ARG_RECENT_POSTS, photos)
+                }
+            )
 
-                val followingUser = User("B", 0)
-                val currentUser = User("A", 0, following = listOf(followingUser.id))
+            onView(withId(R.id.fragment_profile_details_follow_button)).check(matches(withText(Actions.UNFOLLOW.text)))
 
-                whenever(auth.getConnectedUserId())
-                    .thenReturn(currentUser.id)
-
-                whenever(db.getUser(currentUser.id))
-                    .thenReturn(currentUser)
-
-                fragmentScenario = launchFragmentInContainer(
-                    Bundle().apply {
-                        putParcelable(ARG_USER, followingUser)
-                        putParcelableArrayList(ARG_RECENT_POSTS, photos)
-                    }
-                )
-
-                onView(withId(R.id.fragment_profile_details_follow_button)).check(matches(withText(Actions.UNFOLLOW.text)))
-
-                fragmentScenario.close()
-            }
-        }*/
+            fragmentScenario.close()
+        }
+    }
 
     @Test
     fun testProfileDetailsFragmentFollowButtonCorrectlyToggles() {
 
         runTest {
 
-            val followingUser = User("B", 0)
-            val currentUser = User("A", 0)
-
-            whenever(auth.getConnectedUserId())
-                .thenReturn(currentUser.id)
-
-            whenever(db.getUser(currentUser.id))
-                .thenReturn(currentUser)
+            val notFollowedUser = User("B", 0)
 
             fragmentScenario = launchFragmentInContainer(
                 Bundle().apply {
-                    putParcelable(ARG_USER, followingUser)
+                    putParcelable(ARG_USER, notFollowedUser)
                     putParcelableArrayList(ARG_RECENT_POSTS, photos)
                 }
             )
@@ -244,20 +219,6 @@ class ProfileDetailsFragmentTest {
 
             fragmentScenario.close()
         }
-    }
-
-    @Test
-    fun testProfileDetailsFragmentFollowButton2() {
-        fragmentScenario = launchFragmentInContainer(
-            Bundle().apply {
-                putParcelable(ARG_USER, user2)
-                putParcelableArrayList(ARG_RECENT_POSTS, photos)
-            }
-        )
-        onView(withId(R.id.fragment_profile_details_follow_button)).perform(click())
-        onView(withId(R.id.fragment_profile_details_follow_button)).perform(click())
-        onView(withId(R.id.fragment_profile_details_follow_button)).check(matches(withText("Follow")))
-        fragmentScenario.close()
     }
 
     @Test
@@ -618,6 +579,7 @@ class ProfileDetailsFragmentTest {
 
     @Test
     fun correctValueDisplayedAfterProfileEdited() {
+
         val newUser = user1.copy(
             description = "My new description",
             displayName = "My new name",
