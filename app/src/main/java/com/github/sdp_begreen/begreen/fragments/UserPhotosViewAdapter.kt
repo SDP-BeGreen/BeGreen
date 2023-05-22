@@ -25,7 +25,6 @@ import org.koin.java.KoinJavaComponent.inject
  */
 class UserPhotosViewAdapter(
     val photos: List<TrashPhotoMetadata>?,
-    private val isFeed: Boolean,
     val lifecycleScope: LifecycleCoroutineScope,
     val resources: Resources
 ) : RecyclerView.Adapter<UserPhotosViewAdapter.ViewHolder>() {

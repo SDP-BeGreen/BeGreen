@@ -99,7 +99,7 @@ class UserPhotosViewAdapterTest {
         TrashPhotoMetadata("1", date, userId, "Look at me cleaning!", TrashCategory.PLASTIC),
         TrashPhotoMetadata("2", date, userId, "Look at me cleaning!", TrashCategory.PLASTIC),
     )
-    private var userPhotoViewAdapter = UserPhotosViewAdapter(photoList, true, TestLifecycleOwner().lifecycleScope, resources)
+    private var userPhotoViewAdapter = UserPhotosViewAdapter(photoList, TestLifecycleOwner().lifecycleScope, resources)
     private val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Test
@@ -110,14 +110,14 @@ class UserPhotosViewAdapterTest {
     @Test
     fun userViewAdapterGetItemCountWorksOnEmptyList() {
 
-        val userPhotoViewAdapter = UserPhotosViewAdapter(listOf(), true, TestLifecycleOwner().lifecycleScope, resources)
+        val userPhotoViewAdapter = UserPhotosViewAdapter(listOf(), TestLifecycleOwner().lifecycleScope, resources)
         assertThat(userPhotoViewAdapter.itemCount, equalTo(0))
     }
 
     @Test
     fun userPhotosViewAdapterGetItemCountWorksOnNullList() {
 
-        val userPhotoViewAdapter = UserPhotosViewAdapter(null, true, TestLifecycleOwner().lifecycleScope, resources)
+        val userPhotoViewAdapter = UserPhotosViewAdapter(null, TestLifecycleOwner().lifecycleScope, resources)
         assertThat(userPhotoViewAdapter.itemCount, equalTo(0))
     }
 
@@ -125,7 +125,7 @@ class UserPhotosViewAdapterTest {
     fun userPhotosViewAdapterOnBindViewHolderWorksOnTrivialList() {
 
         val userPhotoViewAdapter =
-            UserPhotosViewAdapter(photoList, true, TestLifecycleOwner().lifecycleScope, resources)
+            UserPhotosViewAdapter(photoList, TestLifecycleOwner().lifecycleScope, resources)
         val viewHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
         userPhotoViewAdapter.onBindViewHolder(viewHolder, 0)
 
@@ -160,7 +160,7 @@ class UserPhotosViewAdapterTest {
             TrashPhotoMetadata("2", null, userId, "Look at me cleaning!", null),
         )
         val userPhotoViewAdapter =
-            UserPhotosViewAdapter(photoList, true, TestLifecycleOwner().lifecycleScope, resources)
+            UserPhotosViewAdapter(photoList, TestLifecycleOwner().lifecycleScope, resources)
         val viewHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
         userPhotoViewAdapter.onBindViewHolder(viewHolder, 0)
 
@@ -181,7 +181,7 @@ class UserPhotosViewAdapterTest {
     @Test
     fun userPhotosViewAdapterOnBindViewHolderDoesntCrashOnNullList() {
 
-        val userPhotoViewAdapter = UserPhotosViewAdapter(null, true, TestLifecycleOwner().lifecycleScope, resources)
+        val userPhotoViewAdapter = UserPhotosViewAdapter(null, TestLifecycleOwner().lifecycleScope, resources)
 
         val viewHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
         userPhotoViewAdapter.onBindViewHolder(viewHolder, 0)
@@ -205,7 +205,7 @@ class UserPhotosViewAdapterTest {
             TrashPhotoMetadata("2", null, null, "Look at me cleaning!", null),
         )
         val userPhotoViewAdapter =
-            UserPhotosViewAdapter(photoList, true, TestLifecycleOwner().lifecycleScope, resources)
+            UserPhotosViewAdapter(photoList, TestLifecycleOwner().lifecycleScope, resources)
         val viewHolder = userPhotoViewAdapter.onCreateViewHolder(LinearLayout(appContext), 0)
         userPhotoViewAdapter.onBindViewHolder(viewHolder, 0)
     }
