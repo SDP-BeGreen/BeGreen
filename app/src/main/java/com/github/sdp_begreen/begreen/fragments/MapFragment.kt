@@ -2,7 +2,6 @@ package com.github.sdp_begreen.begreen.fragments
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,14 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.models.TrashCategory
-import com.github.sdp_begreen.begreen.utils.Permissions
 import com.github.sdp_begreen.begreen.utils.Permissions.hasPermissions
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -110,7 +107,7 @@ class MapFragment : Fragment() {
     }
 
     /**
-     * Helper function to setup the behavior of the "Add new post" button and its type selector
+     * Helper function to setup the behavior of the "Add new bin" button and its type selector
      */
     private fun setupAddBinBtnAndSelector() {
 
