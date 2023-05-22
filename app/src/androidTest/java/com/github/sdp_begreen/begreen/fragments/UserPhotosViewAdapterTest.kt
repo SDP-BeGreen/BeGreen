@@ -39,7 +39,7 @@ import org.mockito.Mockito.`when`
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 @LargeTest
-class UserPhotosViewAdapterTest{
+class UserPhotosViewAdapterTest {
 
     companion object {
         private val db: DB = mock(DB::class.java)
