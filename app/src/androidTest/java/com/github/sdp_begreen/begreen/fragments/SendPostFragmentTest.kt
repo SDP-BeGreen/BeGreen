@@ -50,7 +50,7 @@ class SendPostFragmentTest {
 
     //Companion object to mock the DB and Auth
     companion object {
-        val user = User("test", 2, "test", 5, "test", "test", "test", 15)
+        val user = User("test", 2, "test", "test", "test", "test", 15)
         private val db: DB = mock(DB::class.java)
         private val auth: Auth = mock(Auth::class.java)
         private val eventParticipantService: EventParticipantService =

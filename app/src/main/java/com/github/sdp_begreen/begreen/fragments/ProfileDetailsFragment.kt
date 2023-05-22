@@ -15,7 +15,6 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.ProgressBar
-import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -81,18 +80,15 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         // Inflate the layout for this fragment
 
         val view = inflater.inflate(R.layout.fragment_profile_details, container, false)
-        val rating: RatingBar = view.findViewById(R.id.fragment_profile_details_profile_rating)
         val userProgressBar: ProgressBar =
             view.findViewById(R.id.fragment_profile_details_user_progress)
         val followButton: Button = view.findViewById(R.id.fragment_profile_details_follow_button)
-        val sendButton: Button = view.findViewById(R.id.fragment_profile_details_msg_button)
         val editButton: Button = view.findViewById(R.id.fragment_profile_details_edit_profile)
         val saveButton: Button = view.findViewById(R.id.fragment_profile_details_save_profile)
         val cancelButton: Button =
             view.findViewById(R.id.fragment_profile_details_cancel_modification)
         val takePictureButton: ImageButton =
             view.findViewById(R.id.fragment_profile_details_take_picture)
-        rating.rating = user?.score?.toFloat() ?: 0.0f
         userProgressBar.progress = user?.progression ?: 0
 
         activity?.supportFragmentManager?.beginTransaction()
@@ -111,13 +107,13 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         setupSaveButton(saveButton)
         setupCancelButton(cancelButton)
         setupTakePictureButton(takePictureButton)
-        deactivateFollowButtonIfOwnProfile(followButton, sendButton)
+        updateFollowButtonText(followButton)
+        deactivateFollowButtonIfOwnProfile(followButton)
         return view
     }
 
-    fun deactivateFollowButtonIfOwnProfile(followButton: Button, sendButton: Button) {
+    fun deactivateFollowButtonIfOwnProfile(followButton: Button) {
         if (connectedUserViewModel.currentUser.value!!.id == user!!.id) {
-            sendButton.visibility = View.GONE
             followButton.visibility = View.GONE
         }
     }
@@ -496,18 +492,45 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         }
     }
 
+    private fun updateFollowButtonText(followButton: Button) {
+
+        val currentUser = connectedUserViewModel.currentUser.value!!
+        val followed = user!!
+
+        if (currentUser.isFollowing(followed.id)) {
+            followButton.text = Actions.UNFOLLOW.text
+        } else {
+            followButton.text = Actions.FOLLOW.text
+        }
+    }
+
     private fun setupFollowListener(followButton: Button) {
+
         followButton.setOnClickListener {
-            if (followButton.text == Actions.FOLLOW.text) {
-                followButton.text = Actions.UNFOLLOW.text
-                lifecycleScope.launch {
-                    // TODO : follow in db and update current user here
+
+            lifecycleScope.launch {
+
+                val currentUser = connectedUserViewModel.currentUser.value!!
+                val followed = user!!
+
+                if (!currentUser.isFollowing(followed.id)) {
+
+                    // Update in db
+                    db.follow(currentUser.id, followed.id)
+
+                    // Update current user for consistency
+                    currentUser.follow(followed.id)
+
+                } else {
+
+                    // Update in db
+                    db.unfollow(currentUser.id, followed.id)
+
+                    // Update current user for consistency
+                    currentUser.unfollow(followed.id)
                 }
-            } else {
-                followButton.text = Actions.FOLLOW.text
-                lifecycleScope.launch {
-                    // TODO : unfollow in db and update current user here
-                }
+
+                updateFollowButtonText(followButton)
             }
         }
     }

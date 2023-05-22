@@ -80,7 +80,6 @@ class MainActivityTest {
             userId1,
             12,
             "User 1",
-            5,
             "user 1 description",
             "123456789",
             "user1@email.com",

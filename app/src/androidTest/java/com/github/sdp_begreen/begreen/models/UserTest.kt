@@ -8,6 +8,7 @@ import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import java.util.*
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -26,21 +27,19 @@ class UserTest {
         "1",
         0,
         "Test",
-        0,
         "desc",
         "phone",
         "email",
         50,
         null,
         null,
-    null,
-    null)
+        null,
+        null)
 
     var user1: User = User(
         "1",
         33,
         "Alice",
-        1,
         "Description poutou poutou",
         "08920939459802",
         "cc@gmail.com",
@@ -84,7 +83,6 @@ class UserTest {
         assertThat(user.id, equalTo("1"))
         assertThat(user.score, equalTo(0))
         assertThat(user.displayName, equalTo("Test"))
-        assertThat(user.rating, equalTo(0))
         assertThat(user.description, equalTo("desc"))
         assertThat(user.phone, equalTo("phone"))
         assertThat(user.email, equalTo("email"))
@@ -95,12 +93,6 @@ class UserTest {
         assertThat(user.trashPhotosMetadatasList, equalTo(null))
     }
 
-
-    @Test
-    fun userGetCurrentUserReturnsCorrectValues() {
-        User.currentUser = user
-        assertThat(User.currentUser, equalTo(user))
-    }
 
     @Test
     fun addFirstTrashPhotoMetadataWhenListWasNull() {
@@ -140,7 +132,6 @@ class UserTest {
         val user2 = user.copy()
 
         user2.score = 123
-        user2.rating = 123
         user2.description = "test"
         user2.phone = "test"
         user2.email = "test"
@@ -153,7 +144,6 @@ class UserTest {
         assertThat(
             user2, allOf(
                 hasProp("score", equalTo(123)),
-                hasProp("rating", equalTo(123)),
                 hasProp("description", equalTo("test")),
                 hasProp("phone", equalTo("test")),
                 hasProp("email", equalTo("test")),
@@ -320,5 +310,46 @@ class UserTest {
         user.follow(followingId)
 
         assertThat(user.following, equalTo(oldFollowings))
+    }
+
+    @Test
+    fun testIsFollowingTrivialUserReturnsTrue() {
+
+        val followingId = "2"
+        val user = User("1", 5, following = listOf(followingId))
+
+        assertTrue(user.isFollowing(followingId))
+    }
+
+    @Test
+    fun testIsFollowingTrivialUserReturnsFalse() {
+
+        val user = User("1", 5, following = listOf("2"))
+
+        assertFalse(user.isFollowing("3"))
+    }
+
+    @Test
+    fun testIsFollowingTrivialUserReturnsFalseIfFollowingsIsNull() {
+
+        val user = User("1", 5)
+
+        assertFalse(user.isFollowing("3"))
+    }
+
+    @Test
+    fun testIsFollowingBlankUserThrowsIllegalArgumentException() {
+
+        val user = User("1", 5, following = listOf("2"))
+
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+
+            user.isFollowing("")
+        }
+
+        assertThat(
+            exception.message,
+            `is`(equalTo("The userId cannot be blank"))
+        )
     }
 }
