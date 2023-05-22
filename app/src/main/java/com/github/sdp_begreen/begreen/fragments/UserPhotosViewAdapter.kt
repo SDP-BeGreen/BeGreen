@@ -61,20 +61,9 @@ class UserPhotosViewAdapter(
 
             val user = db.getUser(userId) ?: return@launch
 
-            if (isFeed) {
-
-                holder.avatarView.visibility = View.VISIBLE
-
-                // Display avatar if on feed
-                user.profilePictureMetadata?.also {
-                    val avatarImage = db.getUserProfilePicture(it, userId)
-                    holder.avatarView.setImageBitmap(avatarImage)
-                }
-
-            } else {
-
-                // Do not display avatar if not on feed
-                holder.avatarMaskView.visibility = View.GONE
+            user.profilePictureMetadata?.also {
+                val avatarImage = db.getUserProfilePicture(it, userId)
+                holder.avatarView.setImageBitmap(avatarImage)
             }
 
             // Display post content
@@ -92,7 +81,6 @@ class UserPhotosViewAdapter(
 
     inner class ViewHolder(binding: FragmentUserPhotoBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        val avatarMaskView: CardView = binding.avatarMask
         val avatarView: ImageView = binding.avatarImage
         val titleView: TextView = binding.titleText
         val subtitleView: TextView = binding.subtitleText
