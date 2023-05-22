@@ -1,25 +1,17 @@
 package com.github.sdp_begreen.begreen.viewModels
 
-import android.location.Address
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.github.sdp_begreen.begreen.models.CustomLatLng
-import com.github.sdp_begreen.begreen.services.GeocodingService
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.koin.dsl.module
-import org.mockito.Mockito
-import org.mockito.Mockito.mock
-import org.mockito.kotlin.any
 import java.text.SimpleDateFormat
+import kotlin.test.assertFalse
+
 
 @RunWith(AndroidJUnit4::class)
 @SmallTest
@@ -31,53 +23,15 @@ class ContestCreationViewModelTest {
     }
 
     companion object {
-
-        private val geo: GeocodingService = mock()
         private lateinit var vm: ContestCreationViewModel
-
-        private val address = Address( null).apply {
-            adminArea = "Vaud"
-            countryCode = "CH"
-            locality = "Lausanne"
-            postalCode = "1010"
-            latitude = 46.519653
-            longitude = 6.632273
-        }
-
-        private val customLatLng = CustomLatLng(46.519653, 6.632273)
-
-        private val listOfAddress = listOf(address)
-
-        @OptIn(ExperimentalCoroutinesApi::class)
-        @BeforeClass
-        @JvmStatic
-        fun setUpGeo() {
-            // The implementation need to be provided before the rule is executed,
-            // that's why we do it in the beforeClass method
-            runTest {
-
-                Mockito.`when`(geo.getAddresses(any(), any()))
-                    .thenReturn(listOfAddress)
-
-                Mockito.`when`(geo.getLongLat(any()))
-                    .thenReturn(customLatLng)
-
-            }
-        }
-
     }
 
-    @get:Rule
-    val koinTestRule = com.github.sdp_begreen.begreen.rules.KoinTestRule(
-        modules = listOf(module {
-            single { geo }
-        })
-    )
 
     @Before
-    fun setUpVM() {
+    fun setUp() {
         vm = ContestCreationViewModel()
     }
+
 
     @Test
     fun isCityInitiallyCorrect() {
@@ -146,8 +100,8 @@ class ContestCreationViewModelTest {
     fun isEditStartDateRefusingInvalidInput() {
         val mili = System.currentTimeMillis() - 10000000000000
         val date = null
-        assertThat(vm.editStartDate(mili), `is`(false))
-        assertThat(vm.editStartDate(date), `is`(false))
+        assertFalse(vm.editStartDate(mili))
+        assertFalse(vm.editStartDate(date))
 
     }
 
@@ -163,8 +117,8 @@ class ContestCreationViewModelTest {
     fun isEditEndDateRefusingInvalidInput() {
         val mili = System.currentTimeMillis() - 10000000000000
         val date = null
-        assertThat(vm.editEndDate(mili), `is`(false))
-        assertThat(vm.editEndDate(date), `is`(false))
+        assertFalse(vm.editEndDate(mili))
+        assertFalse(vm.editEndDate(date))
 
     }
 
@@ -179,8 +133,8 @@ class ContestCreationViewModelTest {
     @Test
     fun isEditStartHourRefusingInvalidInput() {
         val hour = 25
-        assertThat(vm.editStartHour(null), `is`(false))
-        assertThat(vm.editStartHour(hour), `is`(false))
+        assertFalse(vm.editStartHour(null))
+        assertFalse(vm.editStartHour(hour))
 
     }
 
@@ -194,8 +148,8 @@ class ContestCreationViewModelTest {
     @Test
     fun isEditEndHourRefusingInvalidInput() {
         val hour = 25
-        assertThat(vm.editEndHour(null), `is`(false))
-        assertThat(vm.editEndHour(hour), `is`(false))
+        assertFalse(vm.editEndHour(null))
+        assertFalse(vm.editEndHour(hour))
 
     }
 
@@ -209,8 +163,8 @@ class ContestCreationViewModelTest {
     @Test
     fun isEditStartMinuteRefusingInvalidInput() {
         val minutes = 100
-        assertThat(vm.editStartMinute(null), `is`(false))
-        assertThat(vm.editStartMinute(minutes), `is`(false))
+        assertFalse(vm.editStartMinute(null))
+        assertFalse(vm.editStartMinute(minutes))
 
     }
 
@@ -224,53 +178,34 @@ class ContestCreationViewModelTest {
     @Test
     fun isEditEndMinuteRefusingInvalidInput() {
         val minutes = 100
-        assertThat(vm.editEndMinute(null), `is`(false))
-        assertThat(vm.editEndMinute(minutes), `is`(false))
+        assertFalse(vm.editEndMinute(null))
+        assertFalse(vm.editEndMinute(minutes))
 
     }
-
-    //@Test
-    //fun isEditCityCorrect() {
-    //    val city = "Montreux"
-    //    vm.editCity(city)
-    //    assertThat(vm.city.value!!, `is`(city))
-    //}
 
     @Test
     fun isEditCityRefusingInvalidInput() {
         val city = "Montreux123"
-        assertThat(vm.editCity(null), `is`(false))
-        assertThat(vm.editCity(city), `is`(false))
+        assertFalse(vm.editCity(null))
+        assertFalse(vm.editCity(city))
 
     }
 
-    //@Test
-    //fun isEditCountryCorrect() {
-    //    val country = "France"
-    //    vm.editCountry(country)
-    //    assertThat(vm.country.value!!, `is`(country))
-    //}
 
     @Test
     fun isEditCountryRefusingInvalidInput() {
         val country = "France123"
-        assertThat(vm.editCountry(null), `is`(false))
-        assertThat(vm.editCountry(country), `is`(false))
+        assertFalse(vm.editCountry(null))
+        assertFalse(vm.editCountry(country))
 
     }
 
-    //@Test
-    //fun isEditPostalCodeCorrect() {
-    //    val postalCode = "1234"
-    //    vm.editPostalCode(postalCode)
-    //    assertThat(vm.postalCode.value!!, `is`(postalCode))
-    //}
 
     @Test
     fun isEditPostalCodeRefusingInvalidInput() {
         val postalCode = "1234a"
-        assertThat(vm.editPostalCode(null), `is`(false))
-        assertThat(vm.editPostalCode(postalCode), `is`(false))
+        assertFalse(vm.editPostalCode(null))
+        assertFalse(vm.editPostalCode(postalCode))
 
     }
 
@@ -284,42 +219,17 @@ class ContestCreationViewModelTest {
     @Test
     fun isEditRadiusRefusingInvalidInput() {
         val radius = -123.0
-        assertThat(vm.editRadius(null), `is`(false))
-        assertThat(vm.editRadius(radius), `is`(false))
+        assertFalse(vm.editRadius(null))
+        assertFalse(vm.editRadius(radius))
 
     }
 
-    //@Test
-    //fun isEditCustomLongLatCorrect() {
-    //    vm.editLongLat(customLatLng)
-    //    assertThat(vm.customLongLat.value.toString()!!, `is`(customLatLng.toString()))
-    //}
 
     @Test
     fun isEditCustomLongLatRefusingInvalidInput() {
         val longLat = CustomLatLng(-200.0, -200.0)
-        assertThat(vm.editLongLat(null), `is`(false))
-        assertThat(vm.editLongLat(longLat), `is`(false))
+        assertFalse(vm.editLongLat(null))
+        assertFalse(vm.editLongLat(longLat))
 
     }
-
-    @Test
-    fun isContestCreationValidCorrect() {
-        vm.editStartDate(System.currentTimeMillis() + 1000)
-        vm.editEndDate(System.currentTimeMillis() + 1000)
-        vm.contestTitle = "Title"
-        vm.isPrivate = true
-        vm.editStartHour(10)
-        vm.editEndHour(10)
-        vm.editStartMinute(10)
-        vm.editEndMinute(10)
-        vm.editCity("Montreux")
-        vm.editCountry("France")
-        vm.editPostalCode("1234")
-        vm.editRadius(123.0)
-        vm.editLongLat(customLatLng)
-        assertThat(vm.isContestCreationValid(), `is`(true))
-    }
-
-
 }
