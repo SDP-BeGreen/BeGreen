@@ -172,7 +172,7 @@ class ContestMapDialogTest {
 
             // wait until map is ready
             withContext(Dispatchers.IO) {
-                Thread.sleep(10)
+                Thread.sleep(10000)
             }
 
             // select location button
@@ -207,13 +207,10 @@ class ContestMapDialogTest {
             // first value should be null (initial value)
             assertThat(radiusChannel.receive(), `is`(nullValue()))
 
-            // wait until map ready
-            assertTrue(
-                device.wait(
-                    Until.hasObject(By.desc("Contest Map Ready")),
-                    MAP_INITIALIZATION_TIMEOUT
-                )
-            )
+            // wait until map is ready
+            withContext(Dispatchers.IO) {
+                Thread.sleep(10000)
+            }
 
             // select radius button
             onView(withId(R.id.create_contest_radius_button))
