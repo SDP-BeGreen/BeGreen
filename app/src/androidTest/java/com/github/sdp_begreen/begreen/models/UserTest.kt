@@ -144,6 +144,7 @@ class UserTest {
         assertThat(
             user2, allOf(
                 hasProp("score", equalTo(123)),
+                hasProp("rating", equalTo(123)),
                 hasProp("description", equalTo("test")),
                 hasProp("phone", equalTo("test")),
                 hasProp("email", equalTo("test")),
