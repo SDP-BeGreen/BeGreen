@@ -78,7 +78,7 @@ class ProfileDetailsFragmentTest {
             67,
             null,
             null,
-          //  listOf(userId2),
+            listOf(userId2),
             userProfilePicturePhotoMetadata
         )
         private val user2 = User(
@@ -174,7 +174,7 @@ class ProfileDetailsFragmentTest {
             fragmentScenario.close()
         }
     }
-/*
+
     @Test
     fun testFollowButtonCorrectlyInitializedWhenAlreadyFollowingUser() {
 
@@ -193,7 +193,7 @@ class ProfileDetailsFragmentTest {
 
             fragmentScenario.close()
         }
-    }*/
+    }
 
     @Test
     fun testProfileDetailsFragmentFollowButtonCorrectlyToggles() {
