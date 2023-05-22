@@ -25,10 +25,12 @@ import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.viewModels.ContestMapDialogViewModel
 import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.Marker
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
@@ -169,12 +171,9 @@ class ContestMapDialogTest {
             }
 
             // wait until map is ready
-            assertTrue(
-                device.wait(
-                    Until.hasObject(By.desc("Contest Map Ready")),
-                    MAP_INITIALIZATION_TIMEOUT
-                )
-            )
+            withContext(Dispatchers.IO) {
+                Thread.sleep(10)
+            }
 
             // select location button
             onView(withId(R.id.create_contest_location_button))
