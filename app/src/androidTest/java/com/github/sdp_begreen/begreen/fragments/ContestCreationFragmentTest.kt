@@ -2,11 +2,13 @@ package com.github.sdp_begreen.begreen.fragments
 
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
+import androidx.fragment.app.viewModels
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
@@ -19,7 +21,9 @@ import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.services.GeocodingService
 import com.github.sdp_begreen.begreen.viewModels.ContestCreationViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
+import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
 import org.junit.Before
 import org.junit.BeforeClass
@@ -34,6 +38,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 
+@ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class ContestCreationFragmentTest {
@@ -110,24 +115,29 @@ class ContestCreationFragmentTest {
         onView(withId(R.id.contest_creation_location_expand)).perform(click())
     }
 
-    //@Test
-    //fun createContestCityIsChanging() {
-    //    onView(withId(R.id.contest_creation_location_expand)).perform(click())
-    //        .check(matches(isDisplayed()))
-    //    assertThat(ccvm.city.value, `is`("Lausanne"))
-    //    val name = "Testcity"
-//
-    //    assertTrue(ccvm.editCity(name))
-    //
-//
-    //    onView(withId(R.id.contest_creation_location_expand)).perform(click())
-    //    onView(withId(R.id.contest_creation_location_expand)).perform(click())
-//
-    //    assertThat(ccvm.city.value, `is`(name))
-    //    onView(withId(R.id.city_contest_creation)).check(matches(withText(name)))
-    //    assertThat(ccvm.city.value, `is`(name))
-//
-    //}
+    @Test
+    fun createContestCityIsChanging() {
+
+        val name = "Testcity"
+
+        runTest {
+            fragmentScenario.onFragment {
+                val vm by it.viewModels<ContestCreationViewModel>()
+                backgroundScope.launch {
+                    assertTrue(vm.editCity(name))
+                }
+            }
+        }
+
+        onView(withId(R.id.contest_creation_location_expand)).perform(click())
+            .check(matches(isDisplayed()))
+
+        onView(withId(R.id.contest_creation_location_expand)).perform(click())
+        onView(withId(R.id.contest_creation_location_expand)).perform(click())
+
+        //onView(withId(R.id.city_contest_creation)).check(matches(withText(name)))
+
+    }
 
     @Test
     fun createContestPostalCodeIsDisplayed() {

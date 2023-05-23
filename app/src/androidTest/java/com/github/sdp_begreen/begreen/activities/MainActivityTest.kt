@@ -846,6 +846,7 @@ class MainActivityTest {
                 .replace(R.id.mainFragmentContainer, ContestCreationFragment())
                 .commit()
         }
+        BaseRobot().assertOnView(withId(R.id.contest_cancel_button), matches(isDisplayed()))
         onView(withId(R.id.contest_cancel_button)).perform(click())
         withId(R.layout.fragment_contests_list).matches(isDisplayed())
     }
@@ -861,6 +862,7 @@ class MainActivityTest {
                 .replace(R.id.mainFragmentContainer, ContestCreationFragment())
                 .commit()
         }
+        BaseRobot().assertOnView(withId(R.id.contest_confirm_button), matches(isDisplayed()))
         onView(withId(R.id.contest_confirm_button)).perform(click())
         withId(R.layout.fragment_contest_creation).matches(isDisplayed())
     }
