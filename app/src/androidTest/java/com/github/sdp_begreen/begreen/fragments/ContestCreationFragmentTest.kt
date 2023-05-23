@@ -124,18 +124,21 @@ class ContestCreationFragmentTest {
             fragmentScenario.onFragment {
                 val vm by it.viewModels<ContestCreationViewModel>()
                 backgroundScope.launch {
-                    assertTrue(vm.editCity(name))
+                    assertTrue(vm.editCity(name+"1"))
                 }
             }
         }
 
         onView(withId(R.id.contest_creation_location_expand)).perform(click())
             .check(matches(isDisplayed()))
+        onView(withId(R.id.city_contest_creation)).perform(replaceText(name))
 
+        onView(withId(R.id.postal_code_contest_creation)).perform(replaceText(name))
+        onView(withId(R.id.city_contest_creation)).perform(replaceText(name))
         onView(withId(R.id.contest_creation_location_expand)).perform(click())
         onView(withId(R.id.contest_creation_location_expand)).perform(click())
 
-        //onView(withId(R.id.city_contest_creation)).check(matches(withText(name)))
+        onView(withId(R.id.city_contest_creation)).check(matches(withText(name)))
 
     }
 
