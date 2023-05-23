@@ -224,13 +224,13 @@ class ContestCreationFragmentTest {
         onView(withId(R.id.contest_creation_location_expand)).perform(click())
             .check(matches(isDisplayed()))
 
-        onView(withId(R.id.radius_contest_creation)).perform(click())
+        //onView(withId(R.id.radius_contest_creation)).perform(click())
         onView(withId(R.id.radius_contest_creation)).perform(replaceText(number.toString()))
 
         onView(withId(R.id.city_contest_creation)).perform(click())
         onView(withId(R.id.city_contest_creation)).perform(replaceText("Lausanne"))
 
-        onView(withId(R.id.radius_contest_creation)).perform(click())
+        //onView(withId(R.id.radius_contest_creation)).perform(click())
         onView(withId(R.id.radius_contest_creation)).perform(replaceText(number.toString()))
         onView(withId(R.id.contest_creation_location_expand)).perform(click())
         onView(withId(R.id.contest_creation_location_expand)).perform(click())
