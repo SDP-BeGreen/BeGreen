@@ -28,7 +28,6 @@ import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantService
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
-import com.github.sdp_begreen.begreen.fragments.ContestCreationFragment
 import com.github.sdp_begreen.begreen.fragments.ContestsFragment
 import com.github.sdp_begreen.begreen.fragments.SendPostFragment
 import com.github.sdp_begreen.begreen.map.Bin
@@ -55,7 +54,6 @@ import org.junit.runner.RunWith
 import org.koin.dsl.module
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.*
-import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -202,26 +200,26 @@ class MainActivityTest {
             .perform(click())
     }
 
-/*
-    This test passes locally but not on CI for no reason. CI doesn't explicitly say that the problem comes from
-    this test but when its uncommented it works.
-    Surprisingly, removing it doesn't affect the coverage locally at all.
+    /*
+        This test passes locally but not on CI for no reason. CI doesn't explicitly say that the problem comes from
+        this test but when its uncommented it works.
+        Surprisingly, removing it doesn't affect the coverage locally at all.
 
-    @Test
-    fun pressFeedMenuDisplayFeedFragmentWithNonAuthUserDisplaysFeed() {
+        @Test
+        fun pressFeedMenuDisplayFeedFragmentWithNonAuthUserDisplaysFeed() {
 
-        runTest {
+            runTest {
 
-            // non authenticated user
-            whenever(auth.getConnectedUserId()).thenReturn(null)
+                // non authenticated user
+                whenever(auth.getConnectedUserId()).thenReturn(null)
 
-            onView(withId(R.id.bottomMenuFeed))
-                .check(matches(isDisplayed()))
-                .perform(click())
+                onView(withId(R.id.bottomMenuFeed))
+                    .check(matches(isDisplayed()))
+                    .perform(click())
 
-            onView(withId(R.id.feed_list)).check(matches(isDisplayed()))
-        }
-    }*/
+                onView(withId(R.id.feed_list)).check(matches(isDisplayed()))
+            }
+        }*/
 
 
     @Test
@@ -245,7 +243,13 @@ class MainActivityTest {
             whenever(db.getUser(userIdA)).thenReturn(userA)
             whenever(db.getUser(userIdB)).thenReturn(userB)
             whenever(db.getUser(userIdC)).thenReturn(userC)
-            whenever(db.getImage(trashPhotoMetadataB)).thenReturn(Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888))
+            whenever(db.getImage(trashPhotoMetadataB)).thenReturn(
+                Bitmap.createBitmap(
+                    120,
+                    120,
+                    Bitmap.Config.ARGB_8888
+                )
+            )
 
             // sign in userA. userA follows userB that has posts, and userC that doesn't have posts
             authUserFlow.emit(userIdA)
