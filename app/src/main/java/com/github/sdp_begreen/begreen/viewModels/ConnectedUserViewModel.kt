@@ -1,7 +1,6 @@
 package com.github.sdp_begreen.begreen.viewModels
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.sdp_begreen.begreen.firebase.Auth
@@ -25,7 +24,6 @@ class ConnectedUserViewModel : ViewModel() {
     private val userFromAuth = auth.getFlowUserIds().map {
         it?.let { db.getUser(it) }
     }.onEach {
-        Log.d("TESTESTEST2", it?.id.toString())
         // upon new connection, start by resetting the profile picture to be sure to not keep an
         // old picture, if the new authenticated person doesn't have a profile picture for example
         mutableCurrentUserProfilePicture.value = null

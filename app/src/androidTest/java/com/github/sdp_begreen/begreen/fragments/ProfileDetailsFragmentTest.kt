@@ -27,13 +27,8 @@ import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
-import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModelTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.Matcher
@@ -123,8 +118,7 @@ class ProfileDetailsFragmentTest {
     @get:Rule
     val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
 
-    private val ARG_USER = "USER"
-    //private val ARG_RECENT_POSTS = "recent_posts"
+    private val ARG_USER_ID = "USER_ID"
     private lateinit var fragmentScenario: FragmentScenario<ProfileDetailsFragment>
 
     @get:Rule
@@ -142,9 +136,7 @@ class ProfileDetailsFragmentTest {
         // https://github.com/android/android-test/issues/442
         fragmentScenario = launchFragmentInContainer(
             Bundle().apply {
-                putString(ARG_USER, user1.id)
-                //putParcelable(ARG_USER, user1)
-                //putParcelableArrayList(ARG_RECENT_POSTS, photos)
+                putString(ARG_USER_ID, user1.id)
             }
         )
     }
@@ -167,9 +159,7 @@ class ProfileDetailsFragmentTest {
 
             fragmentScenario = launchFragmentInContainer(
                 Bundle().apply {
-                    putString(ARG_USER, notFollowedUser.id)
-                    /*putParcelable(ARG_USER, notFollowedUser)
-                    putParcelableArrayList(ARG_RECENT_POSTS, photos)*/
+                    putString(ARG_USER_ID, notFollowedUser.id)
                 }
             )
 
@@ -191,8 +181,6 @@ class ProfileDetailsFragmentTest {
             fragmentScenario = launchFragmentInContainer(
                 Bundle().apply {
                     putString(ARG_USER, user2.id)
-                    /*putParcelable(ARG_USER, user2)
-                    putParcelableArrayList(ARG_RECENT_POSTS, photos)*/
                 }
             )
 
@@ -213,8 +201,6 @@ class ProfileDetailsFragmentTest {
             fragmentScenario = launchFragmentInContainer(
                 Bundle().apply {
                     putString(ARG_USER, notFollowedUser.id)
-                    /*putParcelable(ARG_USER, notFollowedUser)
-                    putParcelableArrayList(ARG_RECENT_POSTS, photos)*/
                 }
             )
 
@@ -254,9 +240,7 @@ class ProfileDetailsFragmentTest {
             whenever(db.getUser("1")).thenReturn(user)
             whenever(db.getUser("2")).thenReturn(user2)
 
-
-            //val bundle = Bundle().apply { putParcelable(ARG_USER, user) }
-            val bundle = Bundle().apply { putString(ARG_USER, user.id) }
+            val bundle = Bundle().apply { putString(ARG_USER_ID, user.id) }
             val frag = launchFragmentInContainer<ProfileDetailsFragment>(bundle)
 
             frag.onFragment {
@@ -384,9 +368,7 @@ class ProfileDetailsFragmentTest {
         runTest {
             whenever(db.getUser(user.id)).thenReturn(user)
 
-
-            val bundle = Bundle().apply { putString(ARG_USER, user.id) }
-            //val bundle = Bundle().apply { putParcelable(ARG_USER, user) }
+            val bundle = Bundle().apply { putString(ARG_USER_ID, user.id) }
 
             // fake test registry for testing camera
             val testRegistry = object : ActivityResultRegistry() {
@@ -449,8 +431,7 @@ class ProfileDetailsFragmentTest {
 
             whenever(db.getUser(user.id)).thenReturn(user)
 
-            val bundle = Bundle().apply { putString(ARG_USER, user.id) }
-            //val bundle = Bundle().apply { putParcelable(ARG_USER, user) }
+            val bundle = Bundle().apply { putString(ARG_USER_ID, user.id) }
 
             // fake test registry for testing camera
             val testRegistry = object : ActivityResultRegistry() {
@@ -640,9 +621,8 @@ class ProfileDetailsFragmentTest {
 
             whenever(db.getUser(user.id)).thenReturn(user)
 
-            val bundle = Bundle().apply { putString(ARG_USER, user.id) }
+            val bundle = Bundle().apply { putString(ARG_USER_ID, user.id) }
 
-            //val bundle = Bundle().apply { putParcelable(ARG_USER, user) }
             val frag = launchFragmentInContainer<ProfileDetailsFragment>(bundle)
 
             checkViewsContainsText(

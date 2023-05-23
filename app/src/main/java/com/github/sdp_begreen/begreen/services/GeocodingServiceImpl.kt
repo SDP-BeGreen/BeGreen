@@ -3,9 +3,6 @@ package com.github.sdp_begreen.begreen.services
 import android.content.Context
 import android.location.Address
 import android.location.Geocoder
-import android.util.Log
-import android.widget.Toast
-import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.models.CustomLatLng
 import java.io.IOException
 

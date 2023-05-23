@@ -67,9 +67,9 @@ object FirebaseDB: DB {
         })
     }
 
-    override suspend fun get(key: String, timeout: Long): String? {
+    override suspend fun get(key: String): String? {
 
-        return getNode(key, timeout).value?.let {
+        return getNode(key).value?.let {
             it as? String
         }
     }
@@ -88,17 +88,17 @@ object FirebaseDB: DB {
         databaseReference.child(USERS_PATH).child(userId).setValue(FirebaseUser(user)).await()
     }
 
-    override suspend fun getUser(userId: String, timeout: Long): User? {
+    override suspend fun getUser(userId: String): User? {
 
         if (userId.isBlank())
             throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
 
-        return getNode("$USERS_PATH/$userId", timeout).getValue(FirebaseUser::class.java)?.toUser()
+        return getNode("$USERS_PATH/$userId").getValue(FirebaseUser::class.java)?.toUser()
     }
 
-    override suspend fun getAllUsers(timeout: Long): List<User> {
+    override suspend fun getAllUsers(): List<User> {
 
-        return getNode(USERS_PATH, timeout).children.mapNotNull {
+        return getNode(USERS_PATH).children.mapNotNull {
             it.getValue(FirebaseUser::class.java)?.toUser()
         }
     }
@@ -127,33 +127,33 @@ object FirebaseDB: DB {
             "The user doesn't exist in the database"
         )
 
-        var newPhotoMetadata = trashPhotoMetadata.copy(pictureId = null)
+        val newPhotoMetadata = trashPhotoMetadata.copy(pictureId = null)
 
 
         return storePicture(image, USER_POSTS, newPhotoMetadata,
             databaseReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_POSTS),
-            storageReference.child(USERS_PATH).child(newPhotoMetadata.takenBy!!).child(USER_POSTS))
+            storageReference.child(USERS_PATH).child(newPhotoMetadata.takenBy).child(USER_POSTS))
     }
 
-    override suspend fun userExists(userId: String, timeout: Long): Boolean {
+    override suspend fun userExists(userId: String): Boolean {
 
         if (userId.isBlank())
             throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
 
-        return getNode("$USERS_PATH/$userId/$USER_ID_ATTRIBUTE", timeout).exists()
+        return getNode("$USERS_PATH/$userId/$USER_ID_ATTRIBUTE").exists()
     }
 
-    override suspend fun getImage(metadata: PhotoMetadata, timeout: Long): Bitmap? {
+    override suspend fun getImage(metadata: PhotoMetadata): Bitmap? {
 
         val userId = metadata.takenBy ?: return null
 
         return metadata.pictureId?.let {
             getPicture(storageReference.child(USERS_PATH).child(userId).child(
-                USER_POSTS).child(it), timeout)
+                USER_POSTS).child(it))
         }
     }
 
-    override suspend fun getUserProfilePicture(metadata: ProfilePhotoMetadata, userId: String, timeout: Long): Bitmap? {
+    override suspend fun getUserProfilePicture(metadata: ProfilePhotoMetadata, userId: String): Bitmap? {
 
         if (userId.isBlank())
             throw java.lang.IllegalArgumentException("The userId cannot be a blank string")
@@ -162,7 +162,7 @@ object FirebaseDB: DB {
             getPicture(
                 storageReference.child(USERS_PATH).child(userId).child(
                     USER_PROFILE_PICTURE_METADATA
-                ).child(it), timeout
+                ).child(it)
             )
         }
     }
@@ -183,21 +183,21 @@ object FirebaseDB: DB {
         databaseReference.child(BIN_LOCATION_PATH).child(binId).removeValue().await()
     }
 
-    override suspend fun getAllBins(timeout: Long): List<Bin> {
+    override suspend fun getAllBins(): List<Bin> {
 
-        return getNode(BIN_LOCATION_PATH, timeout).children.mapNotNull {
+        return getNode(BIN_LOCATION_PATH).children.mapNotNull {
             it.getValue(Bin::class.java)
         }
     }
 
-    override suspend fun getAdvices(timeout: Long): Set<String> {
+    override suspend fun getAdvices(): Set<String> {
 
-        return getNode(ADVICES_LOCATION_PATH, timeout).children.mapNotNull {
+        return getNode(ADVICES_LOCATION_PATH).children.mapNotNull {
             it.value as? String
         }.toSet()
     }
 
-    override suspend fun follow(followerId: String, followedId: String, timeout: Long) {
+    override suspend fun follow(followerId: String, followedId: String) {
         if (!userExists(followerId) || !userExists(followedId)) return
 
         // Add the "followed" user to the list of followed users of the follower
@@ -206,8 +206,8 @@ object FirebaseDB: DB {
         databaseReference.child(USERS_PATH).child(followedId).child(FOLLOWERS_PATH).child(followerId).setValue(true).await()
     }
 
-    override suspend fun unfollow(followerId: String, followedId: String, timeout: Long) {
-        if (!userExists(followerId, timeout) || !userExists(followedId, timeout)) return
+    override suspend fun unfollow(followerId: String, followedId: String) {
+        if (!userExists(followerId) || !userExists(followedId)) return
 
         // Add the "followed" user to the list of followed users of the follower
         databaseReference.child(USERS_PATH).child(followerId).child(FOLLOWING_PATH).child(followedId).removeValue().await()
@@ -215,25 +215,25 @@ object FirebaseDB: DB {
         databaseReference.child(USERS_PATH).child(followedId).child(FOLLOWERS_PATH).child(followerId).removeValue().await()
     }
 
-    override suspend fun getFollowedIds(userId: String, timeout: Long): List<String> {
+    override suspend fun getFollowedIds(userId: String): List<String> {
         if (!userExists(userId)) return listOf()
 
-        return getNode("$USERS_PATH/$userId/$FOLLOWING_PATH", timeout).children.mapNotNull {
+        return getNode("$USERS_PATH/$userId/$FOLLOWING_PATH").children.mapNotNull {
             it.key
         }
     }
 
-    override suspend fun getFollowerIds(userId: String, timeout: Long): List<String> {
+    override suspend fun getFollowerIds(userId: String): List<String> {
         if (!userExists(userId)) return listOf()
 
-        return getNode("$USERS_PATH/$userId/$FOLLOWERS_PATH", timeout).children.mapNotNull {
+        return getNode("$USERS_PATH/$userId/$FOLLOWERS_PATH").children.mapNotNull {
             it.key
         }
     }
 
-    override suspend fun getFollowers(userId: String, timeout: Long): List<User> {
-        val users = getAllUsers(timeout)
-        val followerIds = getFollowerIds(userId, timeout)
+    override suspend fun getFollowers(userId: String): List<User> {
+        val users = getAllUsers()
+        val followerIds = getFollowerIds(userId)
         return users.filter { followerIds.contains(it.id) }
     }
 
@@ -241,15 +241,12 @@ object FirebaseDB: DB {
      * Helper function to perform the actual call to the database to retrieve the image
      *
      * @param storageNode the node from which to retrieve the image
-     * @param timeout the maximum time we wait for the database to respond
      * @return the retrieved [Bitmap] or null if an error occured
      */
-    private suspend fun getPicture(storageNode: StorageReference, timeout: Long): Bitmap? {
+    private suspend fun getPicture(storageNode: StorageReference): Bitmap? {
         return try {
-                val compressedImage = storageNode.getBytes(ONE_MEGABYTE).await()
-                BitmapFactory.decodeByteArray(compressedImage, 0, compressedImage.size)
-
-
+            val compressedImage = storageNode.getBytes(ONE_MEGABYTE).await()
+            BitmapFactory.decodeByteArray(compressedImage, 0, compressedImage.size)
         } catch (storageEx: StorageException) {
             Log.d(TAG, "Failed with error message: ${storageEx.message}")
             throw storageEx
@@ -310,24 +307,20 @@ object FirebaseDB: DB {
         return outputStream
     }
 
-    // Returns the node in the database at the given [path], and timeouts after [timeout] ms
-    private suspend fun getNode(path: String, timeout: Long): DataSnapshot{
+    // Returns the node in the database at the given [path]
+    private suspend fun getNode(path: String): DataSnapshot{
         return try {
-                databaseReference.child(path).get().await()
-
-
+            databaseReference.child(path).get().await()
         } catch (databaseEx: DatabaseException) {
             Log.d(TAG, "Failed with error message: ${databaseEx.message}")
             throw databaseEx
         }
     }
 
-    override suspend fun addFeedback(feedback: String, userId: String, date: String, timeout: Long) {
+    override suspend fun addFeedback(feedback: String, userId: String, date: String) {
         try {
-                databaseReference.child(FEEDBACK_PATH).child(userId).child(date).setValue(feedback)
+            databaseReference.child(FEEDBACK_PATH).child(userId).child(date).setValue(feedback)
                     .await()
-
-
         } catch (databaseEx: DatabaseException) {
             Log.d(TAG, "Failed with error message: ${databaseEx.message}")
             throw databaseEx

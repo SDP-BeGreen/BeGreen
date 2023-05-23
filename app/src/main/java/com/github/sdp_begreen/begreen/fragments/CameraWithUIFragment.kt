@@ -174,11 +174,9 @@ class CameraWithUIFragment : Fragment() {
         val profileBtn = view?.findViewById<ImageView>(R.id.profile_cam)
         profileBtn?.setOnClickListener {
             // Create a transaction to replace the current fragment by the profile fragment
-            lifecycleScope.launch {
-                requireActivity().supportFragmentManager.commit {
-                    setReorderingAllowed(true)
-                    replace(R.id.mainFragmentContainer, getProfile())
-                }
+            requireActivity().supportFragmentManager.commit {
+                setReorderingAllowed(true)
+                replace(R.id.mainFragmentContainer, getProfile())
             }
         }
     }
@@ -186,19 +184,8 @@ class CameraWithUIFragment : Fragment() {
     /**
      * Retrieves the current user profile fragment
      */
-    private suspend fun getProfile() : Fragment {
-
-        val user = connectedUserViewModel.currentUser.value
-        val photos = user?.trashPhotosMetadatasList ?: listOf()
-
-        return ProfileDetailsFragment.newInstance(connectedUserViewModel.currentUser.value?.id)
-
-        //_______________________________________________________
-        /*return (connectedUserViewModel.currentUser.value?.let {
-            ProfileDetailsFragment.newInstance(it, photos)
-        } ?: auth.getConnectedUserId().let { db.getUser(it!!) }
-            ?.let { ProfileDetailsFragment.newInstance(it, photos) })!!*/
-    }
+    private fun getProfile() =
+        ProfileDetailsFragment.newInstance(connectedUserViewModel.currentUser.value?.id)
 
     /**
      *  Handles the clicks on the switch button

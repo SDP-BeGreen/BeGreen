@@ -3,7 +3,6 @@ package com.github.sdp_begreen.begreen.fragments
 import android.Manifest
 import android.content.Context
 import android.graphics.BitmapFactory
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -31,7 +30,6 @@ import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.Actions
 import com.github.sdp_begreen.begreen.models.ParcelableDate
-import com.github.sdp_begreen.begreen.models.PhotoMetadata
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
@@ -63,15 +61,7 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            userId = it.getString(ARG_USER)
-            /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                user = it.getParcelable(ARG_USER, User::class.java)
-                recentPosts =
-                    it.getParcelableArrayList(ARG_RECENT_POSTS, TrashPhotoMetadata::class.java)
-            } else {
-                user = it.getParcelable(ARG_USER)
-                recentPosts = it.getParcelableArrayList(ARG_RECENT_POSTS)
-            }*/
+            userId = it.getString(ARG_USER_ID)
         }
     }
 
@@ -95,14 +85,12 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
         setupTakePictureButton(takePictureButton)
 
         lifecycleScope.launch {
-            Log.d("TESTESTEST3", userId.toString())
             userId?.also {
                 user = db.getUser(it)
                 recentPosts =
                     user?.trashPhotosMetadatasList?.sortedByDescending { post -> post.takenOn }
                         ?: listOf()
             }
-            Log.d("TESTESTEST", user?.followers.toString())
             userProgressBar.progress = user?.progression ?: 0
 
             activity?.supportFragmentManager?.beginTransaction()
@@ -123,8 +111,6 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
             updateFollowButtonText(followButton)
             deactivateFollowButtonIfOwnProfile(followButton)
         }
-
-
 
         return view
     }
@@ -512,10 +498,6 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
 
     private fun updateFollowButtonText(followButton: Button) {
 
-        Log.d("TESTESTEST1", connectedUserViewModel.currentUser.value.toString())
-
-        Log.d("TESTESTEST", connectedUserViewModel.currentUser.value?.following.toString())
-
         connectedUserViewModel.currentUser.value?.also {currentUser ->
             user?.also {
 
@@ -564,7 +546,7 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
 
     companion object {
         // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-        private const val ARG_USER = "USER"
+        private const val ARG_USER_ID = "USER_ID"
         private const val PROFILE_PICTURE_DIM = 400
 
         // View that should be displayed when simply displaying user info
@@ -587,23 +569,19 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
             R.id.fragment_profile_details_profile_phone_edit,
             R.id.fragment_profile_details_profile_description_edit
         )
-        private const val ARG_RECENT_POSTS = "recent_posts"
 
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param user user to show details.
-         * @param photos recent posts of the user.
+         * @param userId the id of the user whose details will be displayed.
          * @return A new instance of fragment ProfileDetailsFragment.
          */
         @JvmStatic
-        fun newInstance(userId: String?/*user: User, photos: List<PhotoMetadata>*/) =
+        fun newInstance(userId: String?) =
             ProfileDetailsFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_USER, userId)
-                    //putParcelable(ARG_USER, user)
-                    //putParcelableArrayList(ARG_RECENT_POSTS, photos.toCollection(ArrayList()))
+                    putString(ARG_USER_ID, userId)
                 }
             }
     }
