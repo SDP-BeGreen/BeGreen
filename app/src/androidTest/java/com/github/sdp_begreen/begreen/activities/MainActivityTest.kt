@@ -7,6 +7,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.core.view.GravityCompat
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
@@ -28,10 +29,12 @@ import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantService
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
+import com.github.sdp_begreen.begreen.fragments.ContestCreationFragment
 import com.github.sdp_begreen.begreen.fragments.ContestsFragment
 import com.github.sdp_begreen.begreen.fragments.SendPostFragment
 import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBitmap
+import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
@@ -41,6 +44,7 @@ import com.github.sdp_begreen.begreen.models.event.Meeting
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.services.GeocodingService
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
+import com.github.sdp_begreen.begreen.viewModels.ContestCreationViewModel
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.DatabaseException
 import kotlinx.coroutines.*
@@ -108,6 +112,8 @@ class MainActivityTest {
             Bin("3", TrashCategory.CLOTHES, 6.0, 9.0)
         )
 
+        private val customLatLng = CustomLatLng(46.519653, 6.632273)
+
         @BeforeClass
         @JvmStatic
         fun setUp() {
@@ -145,6 +151,12 @@ class MainActivityTest {
                 ).thenReturn(flowOf())
                 whenever(db.getFollowers("current user id")).thenReturn(listOf())
                 whenever(db.getFollowedIds("current user id")).thenReturn(listOf())
+
+                whenever(eventService.createEvent<Contest>(any())).thenReturn(null)
+
+                whenever(geocodingService.getLongLat(any())).thenReturn(
+                    customLatLng
+                )
             }
         }
     }
@@ -887,5 +899,48 @@ class MainActivityTest {
             .perform(click())
 
         onView(withId(R.id.contest_creation_fragment)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun createContestConfirmButtonWorksWhenValid() {
+
+        activityRule.scenario.onActivity {
+            val connectedUserViewModel by it.viewModels<ConnectedUserViewModel>()
+            connectedUserViewModel.setCurrentUser(user1)
+
+            it.supportFragmentManager.beginTransaction()
+                .replace(R.id.mainFragmentContainer, ContestCreationFragment())
+                .commit()
+            val vm by it.viewModels<ContestCreationViewModel>()
+
+            vm.editCountry("Switzerland")
+            vm.editCity("Lausanne")
+            vm.editStartHour(10)
+            vm.editEndHour(12)
+            vm.editStartMinute(15)
+            vm.editEndMinute(30)
+
+        }
+
+        val date = "01/01/2040"
+        val date2 = "02/01/2040"
+        onView(withId(R.id.contest_creation_title)).perform(typeText("Test contest"))
+
+        onView(withId(R.id.start_date_contest_text)).perform(click())
+        onView(withId(R.id.start_date_contest_text)).perform(replaceText(date))
+            .check(matches(isDisplayed()))
+        onView(withId(R.id.start_date_contest_text)).check(matches(withText(date)))
+
+
+        onView(withId(R.id.end_date_contest_text)).perform(click())
+        onView(withId(R.id.end_date_contest_text)).perform(replaceText(date2))
+            .check(matches(isDisplayed()))
+
+        onView(withId(R.id.start_date_contest_text)).perform(click())
+
+
+        Espresso.closeSoftKeyboard()
+        onView(withId(R.id.contest_confirm_button)).perform(click())
+
     }
 }

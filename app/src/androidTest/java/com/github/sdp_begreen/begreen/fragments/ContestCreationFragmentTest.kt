@@ -3,6 +3,7 @@ package com.github.sdp_begreen.begreen.fragments
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.fragment.app.viewModels
+import androidx.test.espresso.Espresso.closeSoftKeyboard
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.replaceText
@@ -15,6 +16,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
+import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.models.event.Contest
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.services.GeocodingService
@@ -46,6 +48,8 @@ class ContestCreationFragmentTest {
         private val geoServiceApi: GeocodingService = mock()
         private lateinit var ccvm: ContestCreationViewModel
 
+        private val customLatLng = CustomLatLng(46.519653, 6.632273)
+
         @OptIn(ExperimentalCoroutinesApi::class)
         @JvmStatic
         @BeforeClass
@@ -53,6 +57,9 @@ class ContestCreationFragmentTest {
             runTest {
                 // Initial setup of getAllMeetings
                 whenever(eventServiceApi.createEvent<Contest>(any())).thenReturn(null)
+
+                whenever(geoServiceApi.getLongLat(any())).thenReturn(customLatLng)
+
             }
         }
     }
@@ -224,13 +231,15 @@ class ContestCreationFragmentTest {
         onView(withId(R.id.contest_creation_location_expand)).perform(click())
             .check(matches(isDisplayed()))
 
-        //onView(withId(R.id.radius_contest_creation)).perform(click())
+        closeSoftKeyboard()
+        onView(withId(R.id.radius_contest_creation)).perform(click())
         onView(withId(R.id.radius_contest_creation)).perform(replaceText(number.toString()))
 
         onView(withId(R.id.city_contest_creation)).perform(click())
         onView(withId(R.id.city_contest_creation)).perform(replaceText("Lausanne"))
 
-        //onView(withId(R.id.radius_contest_creation)).perform(click())
+        closeSoftKeyboard()
+        onView(withId(R.id.radius_contest_creation)).perform(click())
         onView(withId(R.id.radius_contest_creation)).perform(replaceText(number.toString()))
         onView(withId(R.id.contest_creation_location_expand)).perform(click())
         onView(withId(R.id.contest_creation_location_expand)).perform(click())
@@ -387,11 +396,4 @@ class ContestCreationFragmentTest {
         onView(withId(R.id.contest_creation_location_map)).check(matches(isDisplayed()))
 
     }
-
-    //@Test
-    //fun createContestConfirmButtonWorksWhenValid() {
-    //
-    //}
-
-
 }
