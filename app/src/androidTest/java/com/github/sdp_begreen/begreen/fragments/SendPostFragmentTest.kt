@@ -185,16 +185,10 @@ class SendPostFragmentTest {
     fun changeTrashCategoryWorks() {
 
         // Pick a trash category at random
-        onView(withId(R.id.post_trash_category_selector)).perform(click())
-        val trashCategoryText = TrashCategory.values()[
-                Random.nextInt(TrashCategory.values().size)
-        ].title
+        val trashCategory = selectRandomTrashCategory()
 
-        // Check that the trash category we chose is correctly displayed
-        onData(allOf(`is`(instanceOf(String::class.java)), `is`(trashCategoryText)))
-            .perform(click())
         onView(withId(R.id.post_trash_category_selector))
-            .check(matches(withSpinnerText(trashCategoryText)))
+            .check(matches(withSpinnerText(trashCategory.title)))
     }
 
     @Test
@@ -223,12 +217,7 @@ class SendPostFragmentTest {
             }
 
             // Pick a trash category at random
-            onView(withId(R.id.post_trash_category_selector)).perform(click())
-            val trashCategoryText = TrashCategory.values()[
-                    Random.nextInt(TrashCategory.values().size)
-            ].title
-            onData(allOf(`is`(instanceOf(String::class.java)), `is`(trashCategoryText)))
-                .perform(click())
+            selectRandomTrashCategory()
 
             onView(withId(R.id.post_description))
                 .perform(typeText("description"), closeSoftKeyboard())
@@ -269,13 +258,8 @@ class SendPostFragmentTest {
             }
 
             // Pick a trash category at random
-            onView(withId(R.id.post_trash_category_selector)).perform(click())
-            val trashCategory = TrashCategory.values()[
-                    Random.nextInt(TrashCategory.values().size)
-            ]
+            selectRandomTrashCategory()
 
-            onData(allOf(`is`(instanceOf(String::class.java)), `is`(trashCategory.title)))
-                .perform(click())
             onView(withId(R.id.post_description))
                 .perform(typeText("description"), closeSoftKeyboard())
             // Click to send the photo
@@ -439,5 +423,19 @@ class SendPostFragmentTest {
             )
         }
     }*/
+
+    /**
+     * Helper function to select a trash category at random. Returns the selected TrashCategory
+     */
+    private fun selectRandomTrashCategory(): TrashCategory {
+
+        val trashCategory = TrashCategory.values()[Random.nextInt(TrashCategory.values().size)]
+
+        onView(withId(R.id.post_trash_category_selector)).perform(click())
+        onData(allOf(`is`(instanceOf(String::class.java)), `is`(trashCategory.title)))
+            .perform(click())
+
+        return trashCategory
+    }
 
 }
