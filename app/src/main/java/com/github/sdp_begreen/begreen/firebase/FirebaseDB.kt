@@ -246,13 +246,10 @@ object FirebaseDB: DB {
      */
     private suspend fun getPicture(storageNode: StorageReference, timeout: Long): Bitmap? {
         return try {
-            withTimeout(timeout) {
                 val compressedImage = storageNode.getBytes(ONE_MEGABYTE).await()
                 BitmapFactory.decodeByteArray(compressedImage, 0, compressedImage.size)
-            }
-        } catch (timeOutEx: TimeoutCancellationException) {
-            Log.d(TAG, "Timeout, cant connect with database")
-            throw DatabaseTimeoutException("Timeout, cant connect with database")
+
+
         } catch (storageEx: StorageException) {
             Log.d(TAG, "Failed with error message: ${storageEx.message}")
             throw storageEx
@@ -316,12 +313,9 @@ object FirebaseDB: DB {
     // Returns the node in the database at the given [path], and timeouts after [timeout] ms
     private suspend fun getNode(path: String, timeout: Long): DataSnapshot{
         return try {
-            withTimeout(timeout){
                 databaseReference.child(path).get().await()
-            }
-        } catch (timeoutEx: TimeoutCancellationException) {
-            Log.d(TAG, "Timeout, can't connect with database")
-            throw DatabaseTimeoutException("Timeout, cant connect with database")
+
+
         } catch (databaseEx: DatabaseException) {
             Log.d(TAG, "Failed with error message: ${databaseEx.message}")
             throw databaseEx
@@ -330,13 +324,10 @@ object FirebaseDB: DB {
 
     override suspend fun addFeedback(feedback: String, userId: String, date: String, timeout: Long) {
         try {
-            withTimeout(timeout) {
                 databaseReference.child(FEEDBACK_PATH).child(userId).child(date).setValue(feedback)
                     .await()
-            }
-        } catch (timeoutEx: TimeoutCancellationException) {
-            Log.d(TAG, "Timeout, can't connect with database")
-            throw DatabaseTimeoutException("Timeout, cant connect with database")
+
+
         } catch (databaseEx: DatabaseException) {
             Log.d(TAG, "Failed with error message: ${databaseEx.message}")
             throw databaseEx

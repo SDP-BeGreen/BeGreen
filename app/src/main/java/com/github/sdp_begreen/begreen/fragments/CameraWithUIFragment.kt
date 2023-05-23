@@ -191,11 +191,13 @@ class CameraWithUIFragment : Fragment() {
         val user = connectedUserViewModel.currentUser.value
         val photos = user?.trashPhotosMetadatasList ?: listOf()
 
+        return ProfileDetailsFragment.newInstance(connectedUserViewModel.currentUser.value?.id)
+
         //_______________________________________________________
-        return (connectedUserViewModel.currentUser.value?.let {
+        /*return (connectedUserViewModel.currentUser.value?.let {
             ProfileDetailsFragment.newInstance(it, photos)
         } ?: auth.getConnectedUserId().let { db.getUser(it!!) }
-            ?.let { ProfileDetailsFragment.newInstance(it, photos) })!!
+            ?.let { ProfileDetailsFragment.newInstance(it, photos) })!!*/
     }
 
     /**

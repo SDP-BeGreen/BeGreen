@@ -51,6 +51,7 @@ import java.util.Date
  */
 class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultRegistry? = null) :
     Fragment() {
+    private var userId:String? = null
     private var user: User? = null
     private var recentPosts: List<TrashPhotoMetadata>? = null
 
@@ -62,14 +63,15 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            userId = it.getString(ARG_USER)
+            /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 user = it.getParcelable(ARG_USER, User::class.java)
                 recentPosts =
                     it.getParcelableArrayList(ARG_RECENT_POSTS, TrashPhotoMetadata::class.java)
             } else {
                 user = it.getParcelable(ARG_USER)
                 recentPosts = it.getParcelableArrayList(ARG_RECENT_POSTS)
-            }
+            }*/
         }
     }
 
@@ -89,32 +91,48 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
             view.findViewById(R.id.fragment_profile_details_cancel_modification)
         val takePictureButton: ImageButton =
             view.findViewById(R.id.fragment_profile_details_take_picture)
-        userProgressBar.progress = user?.progression ?: 0
 
-        activity?.supportFragmentManager?.beginTransaction()
-            ?.replace(
-                R.id.fragment_recent_profile_photo,
-                UserPhotoFragment.newInstance(1, recentPosts, false),
-                ""
-            )
-            ?.commit()
-
-        setUpUserInfo(view)
-        setupUserFieldViewUponCreation(view)
-        setUpUserProfilePicture(view)
-        setupFollowListener(followButton)
-        setupEditButton(editButton)
-        setupSaveButton(saveButton)
-        setupCancelButton(cancelButton)
         setupTakePictureButton(takePictureButton)
-        updateFollowButtonText(followButton)
-        deactivateFollowButtonIfOwnProfile(followButton)
+
+        lifecycleScope.launch {
+            Log.d("TESTESTEST3", userId.toString())
+            userId?.also {
+                user = db.getUser(it)
+                recentPosts =
+                    user?.trashPhotosMetadatasList?.sortedByDescending { post -> post.takenOn }
+                        ?: listOf()
+            }
+            Log.d("TESTESTEST", user?.followers.toString())
+            userProgressBar.progress = user?.progression ?: 0
+
+            activity?.supportFragmentManager?.beginTransaction()
+                ?.replace(
+                    R.id.fragment_recent_profile_photo,
+                    UserPhotoFragment.newInstance(1, recentPosts, false),
+                    ""
+                )
+                ?.commit()
+
+            setUpUserInfo(view)
+            setupUserFieldViewUponCreation(view)
+            setUpUserProfilePicture(view)
+            setupFollowListener(followButton)
+            setupEditButton(editButton)
+            setupSaveButton(saveButton)
+            setupCancelButton(cancelButton)
+            updateFollowButtonText(followButton)
+            deactivateFollowButtonIfOwnProfile(followButton)
+        }
+
+
+
         return view
     }
 
-    fun deactivateFollowButtonIfOwnProfile(followButton: Button) {
-        if (connectedUserViewModel.currentUser.value!!.id == user!!.id) {
-            followButton.visibility = View.GONE
+    private fun deactivateFollowButtonIfOwnProfile(followButton: Button) {
+        connectedUserViewModel.currentUser.value?.also { currentUser ->
+            if (currentUser.id == user?.id)
+                followButton.visibility = View.GONE
         }
     }
 
@@ -494,13 +512,19 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
 
     private fun updateFollowButtonText(followButton: Button) {
 
-        val currentUser = connectedUserViewModel.currentUser.value!!
-        val followed = user!!
+        Log.d("TESTESTEST1", connectedUserViewModel.currentUser.value.toString())
 
-        if (currentUser.isFollowing(followed.id)) {
-            followButton.text = Actions.UNFOLLOW.text
-        } else {
-            followButton.text = Actions.FOLLOW.text
+        Log.d("TESTESTEST", connectedUserViewModel.currentUser.value?.following.toString())
+
+        connectedUserViewModel.currentUser.value?.also {currentUser ->
+            user?.also {
+
+                if (currentUser.isFollowing(it.id)) {
+                    followButton.text = Actions.UNFOLLOW.text
+                } else {
+                    followButton.text = Actions.FOLLOW.text
+                }
+            }
         }
     }
 
@@ -510,27 +534,30 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
 
             lifecycleScope.launch {
 
-                val currentUser = connectedUserViewModel.currentUser.value!!
-                val followed = user!!
+                connectedUserViewModel.currentUser.value?.also { currentUser ->
+                    user?.also {
+                        if (!currentUser.isFollowing(it.id)) {
 
-                if (!currentUser.isFollowing(followed.id)) {
+                            // Update in db
+                            db.follow(currentUser.id, it.id)
 
-                    // Update in db
-                    db.follow(currentUser.id, followed.id)
+                            // Update current user for consistency
+                            currentUser.follow(it.id)
 
-                    // Update current user for consistency
-                    currentUser.follow(followed.id)
+                        } else {
 
-                } else {
+                            // Update in db
+                            db.unfollow(currentUser.id, it.id)
 
-                    // Update in db
-                    db.unfollow(currentUser.id, followed.id)
+                            // Update current user for consistency
+                            currentUser.unfollow(it.id)
+                        }
 
-                    // Update current user for consistency
-                    currentUser.unfollow(followed.id)
+                        updateFollowButtonText(followButton)
+                    }
                 }
 
-                updateFollowButtonText(followButton)
+
             }
         }
     }
@@ -571,11 +598,12 @@ class ProfileDetailsFragment(private val testActivityRegistry: ActivityResultReg
          * @return A new instance of fragment ProfileDetailsFragment.
          */
         @JvmStatic
-        fun newInstance(user: User, photos: List<PhotoMetadata>) =
+        fun newInstance(userId: String?/*user: User, photos: List<PhotoMetadata>*/) =
             ProfileDetailsFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelable(ARG_USER, user)
-                    putParcelableArrayList(ARG_RECENT_POSTS, photos.toCollection(ArrayList()))
+                    putString(ARG_USER, userId)
+                    //putParcelable(ARG_USER, user)
+                    //putParcelableArrayList(ARG_RECENT_POSTS, photos.toCollection(ArrayList()))
                 }
             }
     }

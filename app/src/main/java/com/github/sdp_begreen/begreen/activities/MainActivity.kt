@@ -227,13 +227,13 @@ class MainActivity : AppCompatActivity() {
 
         when (item.itemId) {
             R.id.mainNavDrawProfile -> {
-                connectedUserViewModel.currentUser.value?.also {
+                /*connectedUserViewModel.currentUser.value?.also {
 
                     // User own posts
-                    val photos = it.trashPhotosMetadatasList?.sortedByDescending { post -> post.takenOn } ?: listOf()
+                    val photos = it.trashPhotosMetadatasList?.sortedByDescending { post -> post.takenOn } ?: listOf()*/
 
-                    replaceFragInMainContainer(ProfileDetailsFragment.newInstance(it, photos))
-                }
+                    replaceFragInMainContainer(ProfileDetailsFragment.newInstance(connectedUserViewModel.currentUser.value?.id/*it, photos*/))
+                /*}*/
             }
             R.id.mainNavDrawFollowers -> {
 
