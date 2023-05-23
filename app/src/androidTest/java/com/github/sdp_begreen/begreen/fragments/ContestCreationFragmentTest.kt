@@ -235,6 +235,7 @@ class ContestCreationFragmentTest {
         onView(withId(R.id.radius_contest_creation)).perform(click())
         onView(withId(R.id.radius_contest_creation)).perform(replaceText(number.toString()))
 
+        closeSoftKeyboard()
         onView(withId(R.id.city_contest_creation)).perform(click())
         onView(withId(R.id.city_contest_creation)).perform(replaceText("Lausanne"))
 
@@ -244,6 +245,7 @@ class ContestCreationFragmentTest {
         onView(withId(R.id.contest_creation_location_expand)).perform(click())
         onView(withId(R.id.contest_creation_location_expand)).perform(click())
 
+        closeSoftKeyboard()
         onView(withId(R.id.radius_contest_creation)).check(matches(withText(number.toString())))
 
     }

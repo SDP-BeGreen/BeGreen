@@ -931,11 +931,12 @@ class MainActivityTest {
             .check(matches(isDisplayed()))
         onView(withId(R.id.start_date_contest_text)).check(matches(withText(date)))
 
-
+        Espresso.closeSoftKeyboard()
         onView(withId(R.id.end_date_contest_text)).perform(click())
         onView(withId(R.id.end_date_contest_text)).perform(replaceText(date2))
             .check(matches(isDisplayed()))
 
+        Espresso.closeSoftKeyboard()
         onView(withId(R.id.start_date_contest_text)).perform(click())
 
 
