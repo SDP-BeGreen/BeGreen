@@ -80,7 +80,7 @@ class SendPostFragmentTest {
                 whenever(auth.getConnectedUserId())
                     .thenReturn(user.id)
                 whenever(db.getAllUsers()).thenReturn(users)
-                whenever(db.getFollowedIds(any(), any())).thenReturn(emptyList())
+                whenever(db.getFollowedIds(any())).thenReturn(emptyList())
                 whenever(
                     eventParticipantService.getParticipant(
                         any(),
