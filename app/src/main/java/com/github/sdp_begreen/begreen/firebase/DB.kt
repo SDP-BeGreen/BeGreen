@@ -13,7 +13,7 @@ import com.google.firebase.storage.StorageException
 interface DB {
 
     companion object {
-        private const val TIMEOUT: Long = 10000 // Default waiting time before aborting a <get> on the database
+        private const val TIMEOUT: Long = 1000 // Default waiting time before aborting a <get> on the database
     }
 
     /**
