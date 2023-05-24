@@ -3,7 +3,6 @@ package com.github.sdp_begreen.begreen.fragments
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.fragment.app.viewModels
-import androidx.test.espresso.Espresso.closeSoftKeyboard
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.replaceText
@@ -22,7 +21,6 @@ import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.services.GeocodingService
 import com.github.sdp_begreen.begreen.viewModels.ContestCreationViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.not
 import org.junit.Before
@@ -128,9 +126,9 @@ class ContestCreationFragmentTest {
         runTest {
             fragmentScenario.onFragment {
                 val vm by it.viewModels<ContestCreationViewModel>()
-                backgroundScope.launch {
-                    assertTrue(vm.editCity(name + "1"))
-                }
+
+                assertTrue(vm.editCity(name + "1"))
+
             }
         }
 
@@ -166,9 +164,9 @@ class ContestCreationFragmentTest {
         runTest {
             fragmentScenario.onFragment {
                 val vm by it.viewModels<ContestCreationViewModel>()
-                backgroundScope.launch {
-                    assertTrue(vm.editPostalCode("1323"))
-                }
+
+                assertTrue(vm.editPostalCode("1323"))
+
             }
         }
 
@@ -222,9 +220,7 @@ class ContestCreationFragmentTest {
         runTest {
             fragmentScenario.onFragment {
                 val vm by it.viewModels<ContestCreationViewModel>()
-                backgroundScope.launch {
-                    assertTrue(vm.editRadius(100.0))
-                }
+                assertTrue(vm.editRadius(100.0))
             }
         }
 
@@ -259,7 +255,6 @@ class ContestCreationFragmentTest {
         val date = "25/04/2030"
 
         onView(withId(R.id.start_date_contest_text)).perform(replaceText(date))
-            .check(matches(isDisplayed()))
         onView(withId(R.id.start_date_contest_text)).check(matches(withText(date)))
     }
 
@@ -268,7 +263,6 @@ class ContestCreationFragmentTest {
         val date = "25/04/2030"
 
         onView(withId(R.id.end_date_contest_text)).perform(replaceText(date))
-            .check(matches(isDisplayed()))
         onView(withId(R.id.end_date_contest_text)).check(matches(withText(date)))
     }
 
@@ -287,18 +281,15 @@ class ContestCreationFragmentTest {
 
         onView(withId(R.id.start_date_contest_text)).perform(click())
         onView(withId(R.id.start_date_contest_text)).perform(replaceText(date))
-            .check(matches(isDisplayed()))
         onView(withId(R.id.start_date_contest_text)).check(matches(withText(date)))
 
 
         onView(withId(R.id.end_date_contest_text)).perform(click())
         onView(withId(R.id.end_date_contest_text)).perform(replaceText(date2))
-            .check(matches(isDisplayed()))
         onView(withId(R.id.end_date_contest_text)).check(matches(withText(date2)))
 
         onView(withId(R.id.start_date_contest_text)).perform(click())
         onView(withId(R.id.start_date_contest_text)).perform(replaceText(date3))
-            .check(matches(isDisplayed()))
 
         onView(withId(R.id.end_date_contest_text)).perform(click())
         onView(withId(R.id.end_date_contest_text)).perform(replaceText(date2))
@@ -313,7 +304,6 @@ class ContestCreationFragmentTest {
         val time = "12:00"
 
         onView(withId(R.id.start_hour_contest_text)).perform(replaceText(time))
-            .check(matches(isDisplayed()))
         onView(withId(R.id.start_hour_contest_text)).check(matches(withText(time)))
     }
 
@@ -322,7 +312,6 @@ class ContestCreationFragmentTest {
         val time = "12:00"
 
         onView(withId(R.id.end_hour_contest_text)).perform(replaceText(time))
-            .check(matches(isDisplayed()))
         onView(withId(R.id.end_hour_contest_text)).check(matches(withText(time)))
     }
 

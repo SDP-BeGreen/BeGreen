@@ -2,15 +2,21 @@ package com.github.sdp_begreen.begreen.fragments
 
 import android.location.Address
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.recyclerview.widget.RecyclerView
+import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.activities.MainActivity
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.RootPath
@@ -24,6 +30,7 @@ import com.github.sdp_begreen.begreen.models.event.Contest
 import com.github.sdp_begreen.begreen.models.event.ContestParticipant
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.services.GeocodingService
+import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -167,5 +174,24 @@ class ContestsFragmentTest {
                     )
                 )
         }
+    }
+
+    @Test
+    fun clickOnAddContestCorrectlyDisplayCreateContestFragment() {
+        runTest {
+            whenever(db.getAllUsers()).thenReturn(emptyList())
+        }
+        val mainActivityScenario = launchActivity<MainActivity>()
+        mainActivityScenario.onActivity {
+            val connectedUserViewModel by it.viewModels<ConnectedUserViewModel>()
+            connectedUserViewModel.setCurrentUser(User("123456", 12, "Name"))
+            it.supportFragmentManager.beginTransaction()
+                .replace(R.id.mainFragmentContainer, ContestsFragment())
+                .commit()
+        }
+        onView(withId(R.id.fragment_contests_add_contest))
+            .check(matches(isDisplayed()))
+            .perform(click())
+        onView(withId(R.id.contest_creation_fragment)).check(matches(isDisplayed()))
     }
 }

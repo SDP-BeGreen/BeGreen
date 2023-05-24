@@ -171,7 +171,6 @@ class ContestCreationFragment : Fragment(), ContestMapDialog.ContestMapDialogLis
      */
     private fun setupCity(view: View) {
         val cityText = view.findViewById<TextInputEditText>(R.id.city_contest_creation)
-        val cityContainer = view.findViewById<TextInputLayout>(R.id.city_contest_creation_container)
         cityText.setOnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) {
                 if (contestCreationViewModel.editCity(cityText.text.toString())) {
