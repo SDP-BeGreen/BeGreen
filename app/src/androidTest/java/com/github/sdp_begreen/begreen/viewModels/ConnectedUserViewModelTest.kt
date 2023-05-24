@@ -11,8 +11,8 @@ import com.github.sdp_begreen.begreen.rules.CoroutineTestRule
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.test.*
-import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.contains
 import org.junit.Assert.assertThrows
@@ -33,7 +33,7 @@ import org.mockito.Mockito.*
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 @MediumTest
-class ConnectedUserViewModelTest: KoinTest {
+class ConnectedUserViewModelTest : KoinTest {
 
     /**
      * Initialize some constant to use in every tests
@@ -151,7 +151,8 @@ class ConnectedUserViewModelTest: KoinTest {
         runTest {
             assertThat(
                 vm.currentUserProfilePicture.drop(1).first(),
-                `is`(equalTo(fakePicture1)))
+                `is`(equalTo(fakePicture1))
+            )
         }
     }
 
@@ -241,7 +242,10 @@ class ConnectedUserViewModelTest: KoinTest {
                 val exception = assertThrows(IllegalArgumentException::class.java) {
                     vm.setCurrentUserProfilePicture(fakePicture2, "1111")
                 }
-                assertThat(exception.message, `is`(equalTo("Trying to modify profile picture of another user")))
+                assertThat(
+                    exception.message,
+                    `is`(equalTo("Trying to modify profile picture of another user"))
+                )
             }
         }
     }
@@ -255,7 +259,10 @@ class ConnectedUserViewModelTest: KoinTest {
                 val exception = assertThrows(IllegalArgumentException::class.java) {
                     vm.setCurrentUserProfilePicture(fakePicture2, null)
                 }
-                assertThat(exception.message, `is`(equalTo("Trying to modify profile picture of another user")))
+                assertThat(
+                    exception.message,
+                    `is`(equalTo("Trying to modify profile picture of another user"))
+                )
             }
         }
     }

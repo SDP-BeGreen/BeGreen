@@ -28,10 +28,10 @@ import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantService
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
-import com.github.sdp_begreen.begreen.fragments.ContestCreationFragment
 import com.github.sdp_begreen.begreen.fragments.SendPostFragment
 import com.github.sdp_begreen.begreen.map.Bin
 import com.github.sdp_begreen.begreen.matchers.EqualsToBitmap.Companion.equalsBitmap
+import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
 import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
@@ -54,7 +54,6 @@ import org.junit.runner.RunWith
 import org.koin.dsl.module
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.*
-import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -109,6 +108,8 @@ class MainActivityTest {
             Bin("3", TrashCategory.CLOTHES, 6.0, 9.0)
         )
 
+        private val customLatLng = CustomLatLng(46.519653, 6.632273)
+
         @BeforeClass
         @JvmStatic
         fun setUp() {
@@ -146,6 +147,12 @@ class MainActivityTest {
                 ).thenReturn(flowOf())
                 whenever(db.getFollowers("current user id")).thenReturn(listOf())
                 whenever(db.getFollowedIds("current user id")).thenReturn(listOf())
+
+                whenever(eventService.createEvent<Contest>(any())).thenReturn(null)
+
+                whenever(geocodingService.getLongLat(any())).thenReturn(
+                    customLatLng
+                )
             }
         }
     }
@@ -201,26 +208,26 @@ class MainActivityTest {
             .perform(click())
     }
 
-/*
-    This test passes locally but not on CI for no reason. CI doesn't explicitly say that the problem comes from
-    this test but when its uncommented it works.
-    Surprisingly, removing it doesn't affect the coverage locally at all.
+    /*
+        This test passes locally but not on CI for no reason. CI doesn't explicitly say that the problem comes from
+        this test but when its uncommented it works.
+        Surprisingly, removing it doesn't affect the coverage locally at all.
 
-    @Test
-    fun pressFeedMenuDisplayFeedFragmentWithNonAuthUserDisplaysFeed() {
+        @Test
+        fun pressFeedMenuDisplayFeedFragmentWithNonAuthUserDisplaysFeed() {
 
-        runTest {
+            runTest {
 
-            // non authenticated user
-            whenever(auth.getConnectedUserId()).thenReturn(null)
+                // non authenticated user
+                whenever(auth.getConnectedUserId()).thenReturn(null)
 
-            onView(withId(R.id.bottomMenuFeed))
-                .check(matches(isDisplayed()))
-                .perform(click())
+                onView(withId(R.id.bottomMenuFeed))
+                    .check(matches(isDisplayed()))
+                    .perform(click())
 
-            onView(withId(R.id.feed_list)).check(matches(isDisplayed()))
-        }
-    }*/
+                onView(withId(R.id.feed_list)).check(matches(isDisplayed()))
+            }
+        }*/
 
 
     @Test
@@ -244,7 +251,13 @@ class MainActivityTest {
             whenever(db.getUser(userIdA)).thenReturn(userA)
             whenever(db.getUser(userIdB)).thenReturn(userB)
             whenever(db.getUser(userIdC)).thenReturn(userC)
-            whenever(db.getImage(trashPhotoMetadataB)).thenReturn(Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888))
+            whenever(db.getImage(trashPhotoMetadataB)).thenReturn(
+                Bitmap.createBitmap(
+                    120,
+                    120,
+                    Bitmap.Config.ARGB_8888
+                )
+            )
 
             // sign in userA. userA follows userB that has posts, and userC that doesn't have posts
             authUserFlow.emit(userIdA)
@@ -845,7 +858,8 @@ class MainActivityTest {
     //            .replace(R.id.mainFragmentContainer, ContestCreationFragment())
     //            .commit()
     //    }
-    //    onView(withId(R.id.contest_cancel_button)).perform(click())
+    //    BaseRobot().assertOnView(withId(R.id.contest_cancel_button), matches(isDisplayed()))
+    //    BaseRobot().doOnView(withId(R.id.contest_cancel_button), click())
     //    withId(R.layout.fragment_contests_list).matches(isDisplayed())
     //}
 //
@@ -860,7 +874,53 @@ class MainActivityTest {
     //            .replace(R.id.mainFragmentContainer, ContestCreationFragment())
     //            .commit()
     //    }
-    //    onView(withId(R.id.contest_confirm_button)).perform(click())
+    //    BaseRobot().assertOnView(withId(R.id.contest_confirm_button), matches(isDisplayed()))
+    //    BaseRobot().doOnView(withId(R.id.contest_confirm_button), click())
     //    withId(R.layout.fragment_contest_creation).matches(isDisplayed())
+    //}
+
+    //AGAIN don't pass the CI but pass locally. The CI is a joke
+    //@Test
+    //fun createContestConfirmButtonWorksWhenValid() {
+//
+    //    activityRule.scenario.onActivity {
+    //        val connectedUserViewModel by it.viewModels<ConnectedUserViewModel>()
+    //        connectedUserViewModel.setCurrentUser(user1)
+//
+    //        it.supportFragmentManager.beginTransaction()
+    //            .replace(R.id.mainFragmentContainer, ContestCreationFragment())
+    //            .commit()
+    //        val vm by it.viewModels<ContestCreationViewModel>()
+//
+    //        vm.editCountry("Switzerland")
+    //        vm.editCity("Lausanne")
+    //        vm.editStartHour(10)
+    //        vm.editEndHour(12)
+    //        vm.editStartMinute(15)
+    //        vm.editEndMinute(30)
+//
+    //    }
+//
+    //    val date = "01/01/2040"
+    //    val date2 = "02/01/2040"
+    //    onView(withId(R.id.contest_creation_title)).perform(typeText("Test contest"))
+//
+    //    onView(withId(R.id.start_date_contest_text)).perform(click())
+    //    onView(withId(R.id.start_date_contest_text)).perform(replaceText(date))
+    //        .check(matches(isDisplayed()))
+    //    onView(withId(R.id.start_date_contest_text)).check(matches(withText(date)))
+//
+    //    Espresso.closeSoftKeyboard()
+    //    onView(withId(R.id.end_date_contest_text)).perform(click())
+    //    onView(withId(R.id.end_date_contest_text)).perform(replaceText(date2))
+    //        .check(matches(isDisplayed()))
+//
+    //    Espresso.closeSoftKeyboard()
+    //    onView(withId(R.id.start_date_contest_text)).perform(click())
+//
+//
+    //    Espresso.closeSoftKeyboard()
+    //    onView(withId(R.id.contest_confirm_button)).perform(click())
+//
     //}
 }
