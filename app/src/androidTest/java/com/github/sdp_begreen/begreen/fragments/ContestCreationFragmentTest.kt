@@ -127,7 +127,7 @@ class ContestCreationFragmentTest {
             fragmentScenario.onFragment {
                 val vm by it.viewModels<ContestCreationViewModel>()
 
-                assertTrue(vm.editCity(name + "1"))
+                assertTrue(vm.editCity(name + "q"))
 
             }
         }
