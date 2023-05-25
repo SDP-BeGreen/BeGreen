@@ -31,7 +31,11 @@ import org.koin.dsl.module
  * to firebase
  */
 object FirebaseRef {
-    val database: FirebaseDatabase = Firebase.database
+    var database: FirebaseDatabase = Firebase.database
+    init {
+        // This call must be done before any other usage of [database]. Make sure to not move that line of code!
+        database.setPersistenceEnabled(true)
+    }
     val databaseReference: DatabaseReference = database.reference
     val storageReference: StorageReference = Firebase.storage.reference
 }
