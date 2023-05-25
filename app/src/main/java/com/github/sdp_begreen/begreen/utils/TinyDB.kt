@@ -41,7 +41,7 @@ class TinyDB(appContext: Context) {
     /**
      * Get parsed ArrayList of Objects from SharedPreferences at 'key'
      * @param key SharedPreferences key
-     * @param mClass a nullable class object
+     * @param mClass a class object
      * @return ArrayList of String
      */
     fun <K> getListObject(key: String?, mClass: Class<K>): List<K> {
