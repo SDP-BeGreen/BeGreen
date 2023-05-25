@@ -2,13 +2,14 @@ package com.github.sdp_begreen.begreen.utils
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.preference.PreferenceManager
 import android.text.TextUtils
+import androidx.preference.PreferenceManager
 import com.google.gson.Gson
+import com.google.gson.JsonParser
 import java.util.*
 
 // This class is a utility to simplify the use of SharedPreferences for Android.
-class TinyDB(appContext: Context?) {
+class TinyDB(appContext: Context) {
 
     /// Instance of SharedPreferences
     private val preferences: SharedPreferences
@@ -33,7 +34,8 @@ class TinyDB(appContext: Context?) {
      * @return ArrayList of String
      */
     fun getListString(key: String?): ArrayList<String> {
-        return ArrayList(Arrays.asList(*TextUtils.split(preferences.getString(key, ""), "‚‗‚")))
+        val splitStringArray = TextUtils.split(preferences.getString(key, ""), "‚‗‚")
+        return arrayListOf(*splitStringArray)
     }
 
     /**
@@ -42,13 +44,24 @@ class TinyDB(appContext: Context?) {
      * @param mClass a nullable class object
      * @return ArrayList of String
      */
-    fun getListObject(key: String?, mClass: Class<*>?): ArrayList<Any> {
+    fun <K> getListObject(key: String?, mClass: Class<K>): List<K> {
         val gson = Gson()
         val objStrings = getListString(key)
-        val objects = ArrayList<Any>()
+        val objects = ArrayList<K>()
+
         for (jObjString in objStrings) {
-            val value = gson.fromJson(jObjString, mClass)
-            objects.add(value)
+            val jsonElement = JsonParser.parseString(jObjString)
+
+            if (jsonElement.isJsonObject) {
+                val value = gson.fromJson(jsonElement, mClass)
+                objects.add(value)
+            } else if (jsonElement.isJsonArray) {
+                val jsonArray = jsonElement.asJsonArray
+                for (jsonObject in jsonArray) {
+                    val value = gson.fromJson(jsonObject, mClass)
+                    objects.add(value)
+                }
+            }
         }
         return objects
     }
@@ -58,10 +71,8 @@ class TinyDB(appContext: Context?) {
      * @param key SharedPreferences key
      * @param stringList ArrayList of String to be added
      */
-    fun putListString(key: String?, stringList: ArrayList<String>) {
-        checkForNullKey(key)
-        val myStringList = stringList.toTypedArray()
-        preferences.edit().putString(key, TextUtils.join("‚‗‚", myStringList)).apply()
+    fun putListString(key: String, stringList: ArrayList<String>) {
+        preferences.edit().putString(key, stringList.joinToString { "‚‗‚" }).apply()
     }
 
     /**
@@ -69,21 +80,16 @@ class TinyDB(appContext: Context?) {
      * @param key SharedPreferences key
      * @param objArray ArrayList of Any to be added
      */
-    fun putListObject(key: String?, objArray: ArrayList<Any>) {
-        checkForNullKey(key)
+    fun <K> putListObject(key: String, objArray: List<K>) {
         val gson = Gson()
-        val objStrings = ArrayList<String>()
-        for (obj in objArray) {
-            objStrings.add(gson.toJson(obj))
-        }
-        putListString(key, objStrings)
+        putListString(key, ArrayList(objArray.map { gson.toJson(it) }))
     }
 
     /**
      * Remove SharedPreferences item with 'key'
      * @param key SharedPreferences key
      */
-    fun remove(key: String?) {
+    fun remove(key: String) {
         preferences.edit().remove(key).apply()
     }
 
@@ -93,14 +99,4 @@ class TinyDB(appContext: Context?) {
      */
     val all: Map<String, *>
         get() = preferences.all
-
-    /**
-     * null keys would corrupt the shared pref file and make them unreadable this is a preventive measure
-     * @param key the pref key
-     */
-    fun checkForNullKey(key: String?) {
-        if (key == null) {
-            throw NullPointerException()
-        }
-    }
 }

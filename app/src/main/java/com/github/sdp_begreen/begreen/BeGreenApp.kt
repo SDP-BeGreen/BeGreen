@@ -64,6 +64,8 @@ class BeGreenApp : Application() {
         var applicationScope = MainScope()
     }
 
+    val tinyDB = TinyDB(this@BeGreenApp)
+
     private val db by inject<DB>()
     override fun onCreate() {
         super.onCreate()
@@ -79,7 +81,7 @@ class BeGreenApp : Application() {
         }
 
         // Enable Firebase persistence for offline capabilities
-        Firebase.database.setPersistenceEnabled(true)
+        FirebaseRef.database.setPersistenceEnabled(true)
         FirebaseRef.databaseReference.keepSynced(true)
 
         // Check for connectivity and perform necessary actions
@@ -91,22 +93,31 @@ class BeGreenApp : Application() {
                     Log.d("TAG", "connected")
 
                     // Handle resending of pending posts
-                    val tinyDB = TinyDB(this@BeGreenApp)
                     val metas = tinyDB.getListObject("metas", TrashPhotoMetadata::class.java)
                     val users = tinyDB.getListObject("users", User::class.java)
                     val bitmaps = tinyDB.getListString("bitmaps")
 
                     // If there are bitmaps, decode them and attempt to update the user
                     if (bitmaps.isNotEmpty()) {
-                        val b: ByteArray = Base64.decode(bitmaps[0], Base64.DEFAULT)
-                        val bitmap = BitmapFactory.decodeByteArray(b, 0, b.size)
 
-                        // Launch a coroutine to update user with new metadata
-                        applicationScope.launch { updateUser(metas[0] as TrashPhotoMetadata?
-                            , users[0] as User, bitmap
-                        ) }
+                        for ((index, item) in bitmaps.withIndex()) {
+                            val b: ByteArray = Base64.decode(item, Base64.DEFAULT)
+                            val bitmap = BitmapFactory.decodeByteArray(b, 0, b.size)
 
-                        Toast.makeText(this@BeGreenApp, "Resending Pending Posts No."+metas.size, Toast.LENGTH_LONG).show()
+                            applicationScope.launch {
+                                updateUser(
+                                    metas[index] as TrashPhotoMetadata?, users[index], bitmap, index
+                                )
+                            }
+
+                            Toast.makeText(
+                                this@BeGreenApp,
+                                "Resending Pending Posts No." + metas.size,
+                                Toast.LENGTH_LONG
+                            ).show()
+
+                        }
+
                     }
 
                 } else {
@@ -122,7 +133,7 @@ class BeGreenApp : Application() {
     }
 
     // Function to update user in the database. Takes metadata, user and bitmap as parameters.
-    private suspend fun updateUser(metadata: TrashPhotoMetadata?, user: User, bitmap: Bitmap) {
+    private suspend fun updateUser(metadata: TrashPhotoMetadata?, user: User, bitmap: Bitmap, index: Int) {
 
         // Add new photo to the database
         val storedMetadata = metadata?.let {
@@ -132,8 +143,8 @@ class BeGreenApp : Application() {
         storedMetadata?.let {
 
             // Update user's metadata and score based on the new photo
-            user.addPhotoMetadata(metadata)
-            user.score += metadata.trashCategory?.value ?: 0
+            user.addPhotoMetadata(it)
+            user.score += it.trashCategory?.value ?: 0
 
             // Update the user in the database
             db.addUser(user, user.id)
@@ -143,10 +154,11 @@ class BeGreenApp : Application() {
                 .show()
 
             // Clear stored metadata, bitmaps, and users from TinyDB
-            val tinyDB = TinyDB(this@BeGreenApp)
-            tinyDB.remove("metas")
-            tinyDB.remove("bitmaps")
-            tinyDB.remove("users")
+            if (index==0) {
+                tinyDB.remove("metas")
+                tinyDB.remove("bitmaps")
+                tinyDB.remove("users")
+            }
         }
     }
 }

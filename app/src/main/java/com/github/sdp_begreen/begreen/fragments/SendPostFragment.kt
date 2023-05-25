@@ -26,6 +26,7 @@ import com.github.sdp_begreen.begreen.models.event.Contest
 import com.github.sdp_begreen.begreen.models.event.ContestParticipant
 import com.github.sdp_begreen.begreen.utils.Permissions.hasPermissions
 import com.github.sdp_begreen.begreen.utils.TinyDB
+import com.github.sdp_begreen.begreen.utils.TinyDBKey
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.github.sdp_begreen.begreen.viewModels.EventsFragmentViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -222,17 +223,17 @@ class SendPostFragment : Fragment() {
                             Log.d("TAG", "not connected")
 
                             // Use TinyDB for local data storage.
-                            val tinyDB = TinyDB(this@SendPostFragment.context)
+                            val tinyDB = TinyDB(this@SendPostFragment.requireContext())
 
                             // Retrieve existing metadata and add current one.
-                            val metas = tinyDB.getListObject("metas", TrashPhotoMetadata::class.java)
-                            metas.add(metadata!!)
-                            tinyDB.putListObject("metas", metas)
+                            val metas = tinyDB.getListObject(TinyDBKey.METAS.key, TrashPhotoMetadata::class.java)
+                            val newMetas = metas + metadata!!
+                            tinyDB.putListObject(TinyDBKey.METAS.key, newMetas)
 
                             // Retrieve existing user data and add current user.
-                            val users = tinyDB.getListObject("users", User::class.java)
-                            users.add(user)
-                            tinyDB.putListObject("users", users)
+                            val users = tinyDB.getListObject(TinyDBKey.USERS.key, User::class.java)
+                            val newUsers = users + user
+                            tinyDB.putListObject(TinyDBKey.USERS.key, newUsers)
 
                             view?.findViewById<ImageView>(R.id.preview)?.drawable?.toBitmap()?.also { bitmap ->
 
@@ -243,12 +244,12 @@ class SendPostFragment : Fragment() {
                                 // Convert the bitmap to a byte array and then to a base64 string for easier storage.
                                 val b: ByteArray = baos.toByteArray()
                                 val encoded: String = Base64.encodeToString(b, Base64.DEFAULT)
-                                val bitmaps = tinyDB.getListString("bitmaps")
+                                val bitmaps = tinyDB.getListString(TinyDBKey.BITMAPS.key)
                                 bitmaps.add(encoded)
-                                tinyDB.putListString("bitmaps", bitmaps)
+                                tinyDB.putListString(TinyDBKey.BITMAPS.key, bitmaps)
 
                                 // Inform user about automatic post upload once connectivity is re-established.
-                                Toast.makeText(this@SendPostFragment.context, "Your post will be automatically sent once you are reconnected to the internet.", Toast.LENGTH_LONG).show()
+                                Toast.makeText(this@SendPostFragment.context, "Your post will be automatically sent once online.", Toast.LENGTH_LONG).show()
 
                                 // Return to camera
                                 returnToCamera()
