@@ -2,6 +2,7 @@ package com.github.sdp_begreen.begreen.fragments
 
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
+import androidx.fragment.app.viewModels
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.replaceText
@@ -14,6 +15,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
+import com.github.sdp_begreen.begreen.models.CustomLatLng
 import com.github.sdp_begreen.begreen.models.event.Contest
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.services.GeocodingService
@@ -34,6 +36,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 
+@ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class ContestCreationFragmentTest {
@@ -43,6 +46,8 @@ class ContestCreationFragmentTest {
         private val geoServiceApi: GeocodingService = mock()
         private lateinit var ccvm: ContestCreationViewModel
 
+        private val customLatLng = CustomLatLng(46.519653, 6.632273)
+
         @OptIn(ExperimentalCoroutinesApi::class)
         @JvmStatic
         @BeforeClass
@@ -50,6 +55,9 @@ class ContestCreationFragmentTest {
             runTest {
                 // Initial setup of getAllMeetings
                 whenever(eventServiceApi.createEvent<Contest>(any())).thenReturn(null)
+
+                whenever(geoServiceApi.getLongLat(any())).thenReturn(customLatLng)
+
             }
         }
     }
@@ -110,24 +118,32 @@ class ContestCreationFragmentTest {
         onView(withId(R.id.contest_creation_location_expand)).perform(click())
     }
 
-    //@Test
-    //fun createContestCityIsChanging() {
-    //    onView(withId(R.id.contest_creation_location_expand)).perform(click())
-    //        .check(matches(isDisplayed()))
-    //    assertThat(ccvm.city.value, `is`("Lausanne"))
-    //    val name = "Testcity"
-//
-    //    assertTrue(ccvm.editCity(name))
-    //
-//
-    //    onView(withId(R.id.contest_creation_location_expand)).perform(click())
-    //    onView(withId(R.id.contest_creation_location_expand)).perform(click())
-//
-    //    assertThat(ccvm.city.value, `is`(name))
-    //    onView(withId(R.id.city_contest_creation)).check(matches(withText(name)))
-    //    assertThat(ccvm.city.value, `is`(name))
-//
-    //}
+    @Test
+    fun createContestCityIsChanging() {
+
+        val name = "Testcity"
+
+        runTest {
+            fragmentScenario.onFragment {
+                val vm by it.viewModels<ContestCreationViewModel>()
+
+                assertTrue(vm.editCity(name + "q"))
+
+            }
+        }
+
+        onView(withId(R.id.contest_creation_location_expand)).perform(click())
+            .check(matches(isDisplayed()))
+        onView(withId(R.id.city_contest_creation)).perform(replaceText(name))
+
+        onView(withId(R.id.postal_code_contest_creation)).perform(replaceText(name))
+        onView(withId(R.id.city_contest_creation)).perform(replaceText(name))
+        onView(withId(R.id.contest_creation_location_expand)).perform(click())
+        onView(withId(R.id.contest_creation_location_expand)).perform(click())
+
+        onView(withId(R.id.city_contest_creation)).check(matches(withText(name)))
+
+    }
 
     @Test
     fun createContestPostalCodeIsDisplayed() {
@@ -138,6 +154,38 @@ class ContestCreationFragmentTest {
             .check(matches(isDisplayed()))
 
         onView(withId(R.id.contest_creation_location_expand)).perform(click())
+    }
+
+    @Test
+    fun createContestPostalCodeIsChanging() {
+
+        val number = "1322"
+
+        runTest {
+            fragmentScenario.onFragment {
+                val vm by it.viewModels<ContestCreationViewModel>()
+
+                assertTrue(vm.editPostalCode("1323"))
+
+            }
+        }
+
+        onView(withId(R.id.contest_creation_location_expand)).perform(click())
+            .check(matches(isDisplayed()))
+
+        onView(withId(R.id.postal_code_contest_creation)).perform(click())
+        onView(withId(R.id.postal_code_contest_creation)).perform(replaceText(number))
+
+        onView(withId(R.id.city_contest_creation)).perform(click())
+        onView(withId(R.id.city_contest_creation)).perform(replaceText("Lausanne"))
+
+        onView(withId(R.id.postal_code_contest_creation)).perform(click())
+        onView(withId(R.id.postal_code_contest_creation)).perform(replaceText(number))
+        onView(withId(R.id.contest_creation_location_expand)).perform(click())
+        onView(withId(R.id.contest_creation_location_expand)).perform(click())
+
+        onView(withId(R.id.postal_code_contest_creation)).check(matches(withText(number)))
+
     }
 
     // This test seems to work on local but not on CI, if someone has an idea why, please tell me
@@ -164,6 +212,36 @@ class ContestCreationFragmentTest {
         onView(withId(R.id.radius_contest_creation)).check(matches(withText(radius)))
     }
 
+    @Test
+    fun createContestRadiusIsChanging() {
+
+        val number = 200.0
+
+        runTest {
+            fragmentScenario.onFragment {
+                val vm by it.viewModels<ContestCreationViewModel>()
+                assertTrue(vm.editRadius(100.0))
+            }
+        }
+
+        onView(withId(R.id.contest_creation_location_expand)).perform(click())
+            .check(matches(isDisplayed()))
+
+        //onView(withId(R.id.radius_contest_creation)).perform(click())
+        onView(withId(R.id.radius_contest_creation)).perform(replaceText(number.toString()))
+
+        onView(withId(R.id.city_contest_creation)).perform(click())
+        onView(withId(R.id.city_contest_creation)).perform(replaceText("Lausanne"))
+
+        //onView(withId(R.id.radius_contest_creation)).perform(click())
+        onView(withId(R.id.radius_contest_creation)).perform(replaceText(number.toString()))
+        onView(withId(R.id.contest_creation_location_expand)).perform(click())
+        onView(withId(R.id.contest_creation_location_expand)).perform(click())
+
+        onView(withId(R.id.radius_contest_creation)).check(matches(withText(number.toString())))
+
+    }
+
     // Doesn't check anything, need to search how to check if the spinner is displayed
     //@Test
     //fun createContestTimeZoneIsDisplayed() {
@@ -176,7 +254,7 @@ class ContestCreationFragmentTest {
     fun createContestStartDateIsDisplayed() {
         val date = "25/04/2030"
 
-        onView(withId(R.id.start_date_contest_text)).perform(replaceText(date)).check(matches(isDisplayed()))
+        onView(withId(R.id.start_date_contest_text)).perform(replaceText(date))
         onView(withId(R.id.start_date_contest_text)).check(matches(withText(date)))
     }
 
@@ -184,8 +262,40 @@ class ContestCreationFragmentTest {
     fun createContestEndDateIsDisplayed() {
         val date = "25/04/2030"
 
-        onView(withId(R.id.end_date_contest_text)).perform(replaceText(date)).check(matches(isDisplayed()))
+        onView(withId(R.id.end_date_contest_text)).perform(replaceText(date))
         onView(withId(R.id.end_date_contest_text)).check(matches(withText(date)))
+    }
+
+    @Test
+    fun createContestDateIsChanging() {
+
+        val date = "25/04/2030"
+        val date2 = "26/04/2030"
+        val date3 = "27/04/2030"
+
+        runTest {
+            fragmentScenario.onFragment {
+                val vm by it.viewModels<ContestCreationViewModel>()
+            }
+        }
+
+        onView(withId(R.id.start_date_contest_text)).perform(click())
+        onView(withId(R.id.start_date_contest_text)).perform(replaceText(date))
+        onView(withId(R.id.start_date_contest_text)).check(matches(withText(date)))
+
+
+        onView(withId(R.id.end_date_contest_text)).perform(click())
+        onView(withId(R.id.end_date_contest_text)).perform(replaceText(date2))
+        onView(withId(R.id.end_date_contest_text)).check(matches(withText(date2)))
+
+        onView(withId(R.id.start_date_contest_text)).perform(click())
+        onView(withId(R.id.start_date_contest_text)).perform(replaceText(date3))
+
+        onView(withId(R.id.end_date_contest_text)).perform(click())
+        onView(withId(R.id.end_date_contest_text)).perform(replaceText(date2))
+        onView(withId(R.id.start_date_contest_text)).perform(click())
+        onView(withId(R.id.start_date_contest_text)).check(matches(withText(date2)))
+
     }
 
 
@@ -193,7 +303,7 @@ class ContestCreationFragmentTest {
     fun createContestStartTimeIsDisplayed() {
         val time = "12:00"
 
-        onView(withId(R.id.start_hour_contest_text)).perform(replaceText(time)).check(matches(isDisplayed()))
+        onView(withId(R.id.start_hour_contest_text)).perform(replaceText(time))
         onView(withId(R.id.start_hour_contest_text)).check(matches(withText(time)))
     }
 
@@ -201,8 +311,43 @@ class ContestCreationFragmentTest {
     fun createContestEndTimeIsDisplayed() {
         val time = "12:00"
 
-        onView(withId(R.id.end_hour_contest_text)).perform(replaceText(time)).check(matches(isDisplayed()))
+        onView(withId(R.id.end_hour_contest_text)).perform(replaceText(time))
         onView(withId(R.id.end_hour_contest_text)).check(matches(withText(time)))
+    }
+
+    @Test
+    fun createContestHourIsChanging() {
+
+        val hour1 = "10:0"
+        val hour2 = "15:40"
+        val incorrect1 = "a"
+        val incorrect2 = "27:00"
+
+        runTest {
+            fragmentScenario.onFragment {
+                val vm by it.viewModels<ContestCreationViewModel>()
+            }
+        }
+
+        onView(withId(R.id.start_hour_contest_text)).perform(click())
+        onView(withId(R.id.start_hour_contest_text)).perform(replaceText(hour1))
+
+        onView(withId(R.id.end_hour_contest_text)).perform(click())
+        onView(withId(R.id.end_hour_contest_text)).perform(replaceText(hour2))
+
+        onView(withId(R.id.start_hour_contest_text)).perform(click())
+        onView(withId(R.id.start_hour_contest_text)).perform(replaceText(incorrect1))
+
+        onView(withId(R.id.end_hour_contest_text)).perform(click())
+        onView(withId(R.id.end_hour_contest_text)).perform(replaceText(incorrect2))
+
+        onView(withId(R.id.start_hour_contest_text)).check(matches(withText(hour1)))
+        onView(withId(R.id.start_hour_contest_text)).perform(click())
+        onView(withId(R.id.start_hour_contest_text)).perform(replaceText(hour2))
+
+
+        onView(withId(R.id.start_hour_contest_text)).check(matches(withText(hour2)))
+
     }
 
     @Test
@@ -238,6 +383,4 @@ class ContestCreationFragmentTest {
         onView(withId(R.id.contest_creation_location_map)).check(matches(isDisplayed()))
 
     }
-
-
 }
