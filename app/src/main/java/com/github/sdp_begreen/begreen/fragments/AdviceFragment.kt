@@ -12,9 +12,7 @@ import com.github.sdp_begreen.begreen.models.Group
 import com.github.sdp_begreen.begreen.models.Item
 
 /**
- * A simple [Fragment] subclass.
- * Use the [AdviceFragment.newInstance] factory method to
- * create an instance of this fragment.
+ * A fragment that displays advices to the user, grouped by theme.
  */
 class AdviceFragment : Fragment() {
 
@@ -181,24 +179,5 @@ class AdviceFragment : Fragment() {
             Item("Clean air, clean water, and a healthy environment are fundamental human rights.\" - Leonardo DiCaprio")
         ))
         return listOf(groupFood, groupWater, groupMoney, groupEducation, groupResilience, groupVoice, groupJobs, groupEnergy, groupSocialEquity, groupGenderEquality, groupHealth)
-    }
-
-    companion object {
-
-        private const val QUOTES = "quotes"
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param list of quotes.
-         * @return A new instance of fragment AdviceFragment.
-         */
-        @JvmStatic
-        fun newInstance(list: ArrayList<String>) =
-            AdviceFragment().apply {
-                arguments = Bundle().apply {
-                    putStringArrayList(QUOTES, list)
-                }
-            }
     }
 }

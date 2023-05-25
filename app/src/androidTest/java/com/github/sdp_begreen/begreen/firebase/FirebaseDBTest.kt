@@ -151,14 +151,14 @@ class FirebaseDBTest {
     @Test
     fun getImageWithEmptyPhotoIdReturnNull() {
         runBlocking {
-            assertThat(FirebaseDB.getImage(profilePhotoMetaData, 1), nullValue())
+            assertThat(FirebaseDB.getImage(profilePhotoMetaData), nullValue())
         }
     }
 
     @Test
     fun getProfilePictureEmptyPhotoIdReturnNull() {
         runBlocking {
-            assertThat(FirebaseDB.getImage(profilePhotoMetaData, 1), nullValue())
+            assertThat(FirebaseDB.getImage(profilePhotoMetaData), nullValue())
         }
     }
 

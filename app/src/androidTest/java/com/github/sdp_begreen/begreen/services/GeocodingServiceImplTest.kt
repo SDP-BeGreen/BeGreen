@@ -8,8 +8,7 @@ import androidx.test.filters.MediumTest
 import com.github.sdp_begreen.begreen.models.CustomLatLng
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.*
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -52,4 +51,25 @@ class GeocodingServiceImplTest {
             )
         }
     }
+
+    @Test
+    fun getLongLatReturnsNullWhenGivenInvalidAddress() {
+        runTest {
+            assertThat(
+                geocodingService.getLongLat("Invalid address"),
+                `is`(nullValue())
+            )
+        }
+    }
+
+    @Test
+    fun getLongLatReturnsExpectedLongLatWhenGivenValidAddress() {
+        runTest {
+            assertThat(
+                geocodingService.getLongLat("1600 Pennsylvania Avenue NW, Washington, DC"),
+                `is`(equalTo(CustomLatLng(38.8976633, -77.0365739)))
+            )
+        }
+    }
+
 }

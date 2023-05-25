@@ -475,7 +475,7 @@ class MainActivityTest {
     fun contactUsMessageIsSentToDatabaseWithAddFeedback() {
         runTest {
 
-            whenever(db.addFeedback(any(), any(), any(), any()))
+            whenever(db.addFeedback(any(), any(), any()))
                 .then {}
 
             // sign in user
@@ -504,14 +504,14 @@ class MainActivityTest {
                 .perform(click())
 
             // Check that the database function got called with the right arguments
-            verify(db).addFeedback(eq("Test message 1"), eq(userId1), any(), any())
+            verify(db).addFeedback(eq("Test message 1"), eq(userId1), any())
         }
     }
 
     @Test
     fun contactUsMessageStillVisibleWhenWriteFails() {
         runTest {
-            whenever(db.addFeedback(any(), any(), any(), any()))
+            whenever(db.addFeedback(any(), any(), any()))
                 .thenThrow(DatabaseException("error"))
             // sign in user
             authUserFlow.emit(userId1)
@@ -543,7 +543,7 @@ class MainActivityTest {
             onView(withId(R.id.bottom_sheet_contact_us)).check(matches(isDisplayed()))
 
             // Check that the database function got called with the right arguments
-            verify(db).addFeedback(eq("Test message 2"), eq(userId1), any(), any())
+            verify(db).addFeedback(eq("Test message 2"), eq(userId1), any())
         }
     }
 

@@ -4,6 +4,7 @@ import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import com.github.sdp_begreen.begreen.models.CustomLatLng
+import java.io.IOException
 
 /**
  * Implementation of the GeocodingService, that uses the actual Geocoder from android
@@ -21,7 +22,11 @@ class GeocodingServiceImpl(context: Context) : GeocodingService {
     override suspend fun getAddresses(latLng: CustomLatLng, maxResult: Int): List<Address>? {
         latLng.latitude?.also { lat ->
             latLng.longitude?.also { lon ->
-                return geocoder.getFromLocation(lat, lon, maxResult)
+                return try {
+                    geocoder.getFromLocation(lat, lon, maxResult)
+                } catch (e: IOException){
+                    null
+                }
             }
         }
 
@@ -29,13 +34,16 @@ class GeocodingServiceImpl(context: Context) : GeocodingService {
     }
 
     override suspend fun getLongLat(address: String): CustomLatLng? {
-        val addressList = geocoder.getFromLocationName(address, 1)
 
-        if (addressList?.isEmpty() ?: true) {
+        try {
+            val addressList = geocoder.getFromLocationName(address, 1)
+            if (addressList.isNullOrEmpty()) {
+                return null
+            }
+            val currAddress = addressList[0]
+            return CustomLatLng(currAddress.latitude, currAddress.longitude)
+        } catch (e: IOException) {
             return null
         }
-
-        val currAddress = addressList!!.get(0);
-        return CustomLatLng(currAddress.latitude, currAddress.longitude)
     }
 }
