@@ -1,37 +1,30 @@
 package com.github.sdp_begreen.begreen.fragments
 
 import android.Manifest
-import android.graphics.Bitmap
-import android.widget.ImageView
 import androidx.fragment.app.commit
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
-import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
-import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.activities.MainActivity
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantService
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventService
 import com.github.sdp_begreen.begreen.models.TrashCategory
-import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.models.event.Contest
 import com.github.sdp_begreen.begreen.models.event.ContestParticipant
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.*
 import org.junit.Before
@@ -41,7 +34,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.dsl.module
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
 import org.mockito.kotlin.*
 import java.util.*
 import kotlin.random.Random
@@ -119,10 +111,6 @@ class SendPostFragmentTest {
         })
     )
 
-    //@get:Rule
-    //val activityRule = ActivityScenarioRule(MainActivity::class.java)
-
-
     //Grant permission to use the camera and location
     @get:Rule
     val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
@@ -139,12 +127,6 @@ class SendPostFragmentTest {
     //Setup the scenario
     @Before
     fun setup() {
-        /*activityRule.scenario.onActivity {
-            it.supportFragmentManager.commit {
-                setReorderingAllowed(true)
-                replace(R.id.mainFragmentContainer, SendPostFragment.newInstance(user.id))
-            }
-        }*/
         fragmentScenario = launchFragmentInContainer { CameraContainer.newInstance() }
             .onFragment {
                 it.parentFragmentManager.commit {
@@ -154,7 +136,7 @@ class SendPostFragmentTest {
             }
     }
 
-    @Test //OK
+    @Test
     fun trashCategorySelectorIsDisplayed() {
         // Check if the category input is displayed
         onView(withId(R.id.post_trash_category_selector)).check(
@@ -164,7 +146,7 @@ class SendPostFragmentTest {
         )
     }
 
-    @Test //OK
+    @Test
     fun previewImageIsDisplayed() {
         // Check if the description input is displayed
         onView(withId(R.id.preview)).check(
@@ -174,7 +156,7 @@ class SendPostFragmentTest {
         )
     }
 
-    @Test //OK
+    @Test
     fun descriptionIsDisplayed() {
         // Check if the description input is displayed
         onView(withId(R.id.post_description)).check(
@@ -184,7 +166,7 @@ class SendPostFragmentTest {
         )
     }
 
-    @Test //OK
+    @Test
     fun sendPostBtnIsDisplayed() {
         // Check if the category input is displayed
         onView(withId(R.id.send_post)).check(
@@ -194,7 +176,7 @@ class SendPostFragmentTest {
         )
     }
 
-    @Test //OK
+    @Test
     fun changeTrashCategoryWorks() {
 
         // Pick a trash category at random
@@ -204,14 +186,14 @@ class SendPostFragmentTest {
             .check(matches(withSpinnerText(trashCategory.title)))
     }
 
-    @Test //OK
+    @Test
     fun typeInDescriptionWorks() {
         // Check the description input
         onView(withId(R.id.post_description)).perform(typeText("test"))
         onView(withId(R.id.post_description)).check(matches(withText("test")))
     }
 
-    /* TODO: CORRECT THOSE 2 TESTS
+    /*
     @Test
     fun postPhotoDoesNotUpdateUserWhenDatabaseFailsToStoreImage() {
 
