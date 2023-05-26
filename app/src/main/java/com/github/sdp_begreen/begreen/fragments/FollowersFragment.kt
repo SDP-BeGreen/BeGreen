@@ -1,6 +1,5 @@
 package com.github.sdp_begreen.begreen.fragments
 
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +10,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.sdp_begreen.begreen.R
-import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.firebase.Auth
+import com.github.sdp_begreen.begreen.firebase.DB
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 /**
  * A simple [Fragment] subclass that displays the list of followers
@@ -19,6 +21,9 @@ import com.github.sdp_begreen.begreen.models.User
  * create an instance of this fragment.
  */
 class FollowersFragment : Fragment() {
+
+    private val db by inject<DB>()
+    private val auth by inject<Auth>()
 
     // The number of columns to display in the RecyclerView grid.
     private var columnCount = 1
@@ -47,15 +52,16 @@ class FollowersFragment : Fragment() {
                     else -> GridLayoutManager(context, columnCount)
                 }
 
-                val followers = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    arguments?.getParcelableArrayList(ARG_USER_LIST, User::class.java)
-                }else {
-                    arguments?.getParcelableArrayList(ARG_USER_LIST)
-                }
+                lifecycleScope.launch {
+                    val followers =
+                        auth.getConnectedUserId()?.let { db.getFollowers(it) }
+                            ?: listOf()
 
-                // Set the adapter of the RecyclerView to a new instance of UserViewAdapter,
-                // passing the list of users from the Fragment arguments as a parameter.
-                adapter = UserViewAdapter(followers, parentFragmentManager, lifecycleScope, resources)
+                    // Set the adapter of the RecyclerView to a new instance of UserViewAdapter,
+                    // passing the list of users from the Fragment arguments as a parameter.
+                    adapter =
+                        UserViewAdapter(followers, parentFragmentManager, lifecycleScope, resources)
+                }
             }
         }
 
@@ -66,14 +72,12 @@ class FollowersFragment : Fragment() {
 
         // The names of the parameters in the Fragment arguments.
         const val ARG_COLUMN_COUNT = "column-count"
-        const val ARG_USER_LIST = "user-list"
 
         @JvmStatic
-        fun newInstance(columnCount: Int, followers: List<User>?) =
+        fun newInstance(columnCount: Int) =
             FollowersFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_COLUMN_COUNT, columnCount)
-                    putParcelableArrayList(ARG_USER_LIST, followers?.toCollection(ArrayList()))
                 }
             }
     }

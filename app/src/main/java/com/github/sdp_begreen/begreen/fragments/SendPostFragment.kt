@@ -13,8 +13,8 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.activities.MainActivity
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantService
@@ -29,7 +29,6 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.material.textfield.TextInputEditText
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 //argument constant
@@ -37,19 +36,10 @@ private const val ARG_URI = "uri"
 
 class SendPostFragment : Fragment() {
     private var paramUri: String? = null
-    private val db by inject<DB>()
-    private val eventParticipantService by inject<EventParticipantService>()
+    // Used to make sure that we register only 1 click on the post button
+    private var sendingPost: Boolean = false
 
     private val connectedUserViewModel: ConnectedUserViewModel by viewModels(ownerProducer = { requireActivity() })
-    private val eventsFragmentViewModel by viewModels<EventsFragmentViewModel<Contest, ContestParticipant>> {
-        EventsFragmentViewModel.factory(
-            connectedUserViewModel.currentUser,
-            RootPath.CONTESTS,
-            Contest::class.java,
-            ContestParticipant::class.java
-        )
-    }
-
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var userLocation: Location? = null
 
@@ -143,11 +133,9 @@ class SendPostFragment : Fragment() {
 
     private fun returnToCamera() {
         //return to camera fragment
-        lifecycleScope.launch {
-            parentFragmentManager.commit {
-                setReorderingAllowed(true)
-                replace(R.id.mainCameraFragmentContainer, CameraWithUIFragment.newInstance())
-            }
+        parentFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace(R.id.mainCameraFragmentContainer, CameraWithUIFragment.newInstance())
         }
     }
 
@@ -155,129 +143,42 @@ class SendPostFragment : Fragment() {
         val shareBtn = view?.findViewById<ImageView>(R.id.send_post)
         shareBtn?.setOnClickListener {
 
-            // fetch current user. He is necessarily not null
-            connectedUserViewModel.currentUser.value?.also { user ->
+            if (!sendingPost) {
+                // fetch current user. He is necessarily not null
+                connectedUserViewModel.currentUser.value?.also { user ->
+                    sendingPost = true
+                    //create a metadata file
+                    var metadata: TrashPhotoMetadata?
 
-                //create a metadata file
-                var metadata: TrashPhotoMetadata?
+                    //fetch description on UI
+                    view?.findViewById<TextInputEditText>(R.id.post_description).also {
 
-                //fetch description on UI
-                view?.findViewById<TextInputEditText>(R.id.post_description).also {
+                        val caption = it?.text.toString()
 
-                    val caption = it?.text.toString()
+                        val category: TrashCategory =
+                            TrashCategory.values()[trashCategorySelector.selectedItemPosition]
 
-                    val category: TrashCategory =
-                        TrashCategory.values()[trashCategorySelector.selectedItemPosition]
+                        val location = userLocation?.let { loc -> CustomLatLng.fromLocation(loc) }
 
-                    val location = userLocation?.let { loc -> CustomLatLng.fromLocation(loc) }
+                        metadata =
+                            TrashPhotoMetadata(
+                                null,
+                                ParcelableDate.now,
+                                user.id,
+                                caption,
+                                category,
+                                location
+                            )
+                    }
 
-                    /*
-                    //fetch category on UI
-                    view?.findViewById<TextInputEditText>(R.id.post_category)?.also { cat ->
-                        category = cat.text.toString()
-                    }*/
+                    // Update the user and return
+                    view?.findViewById<ImageView>(R.id.preview)?.drawable?.toBitmap()?.also {
+                        (activity as MainActivity).sendPost(metadata, user, it)
+                    }
 
-                    metadata =
-                        TrashPhotoMetadata(
-                            null,
-                            ParcelableDate.now,
-                            user.id,
-                            caption,
-                            category,
-                            location
-                        )
-
-                }
-
-                // Update the user and return
-                lifecycleScope.launch {
-                    updateUser(metadata, user)
+                    // Changes fragment
                     returnToCamera()
                 }
-            }
-        }
-    }
-
-    /**
-     * Helper function to update the user after posting a photo
-     */
-    private suspend fun updateUser(metadata: TrashPhotoMetadata?, user: User) {
-        view?.findViewById<ImageView>(R.id.preview)?.drawable?.toBitmap()?.also { bitmap ->
-
-            // Get the stored metadata
-            val storedMetadata = metadata?.let {
-                db.addTrashPhoto(bitmap, it)
-            }
-
-            storedMetadata?.let {
-
-                // update the user with the new photo metadata and update its score
-                user.addPhotoMetadata(it)
-                user.score += it.trashCategory?.value ?: 0
-
-                // store the new User in firebase
-                db.addUser(user, user.id)
-
-                // once stored, set again the new user along with his metadata in current
-                // user, for consistency
-                connectedUserViewModel.setCurrentUser(user, true)
-
-                // Display toast
-                Toast.makeText(requireContext(), R.string.photo_shared_success, Toast.LENGTH_SHORT)
-                    .show()
-
-                // update the user's score in the active contests
-                it.trashCategory?.also { category ->
-                    it.location?.also { location ->
-                        contestsUpdateScores(category, location)
-                    }
-                }
-            }
-        }
-    }
-
-    private suspend fun contestsUpdateScores(
-        trashCategory: TrashCategory,
-        location: CustomLatLng
-    ) {
-        val userId = connectedUserViewModel.currentUser.value?.id
-        val participationMap =
-            eventsFragmentViewModel.participationMap.dropWhile { it.isEmpty() }.first()
-        val contests = eventsFragmentViewModel.allEvents.dropWhile { it.isEmpty() }.first()
-
-        userId?.also {
-            contests.forEach { contest ->
-                processContest(contest, it, participationMap, trashCategory, location)
-            }
-        }
-    }
-
-    private suspend fun processContest(
-        contest: Contest,
-        userId: String,
-        participationMap: Map<String, Boolean>,
-        trashCategory: TrashCategory,
-        location: CustomLatLng
-    ) {
-        location.toMapLocation()?.let {
-            if (participationMap[contest.id] == true &&
-                contest.isActive() == true &&
-                contest.isInRange(it) == true
-            ) {
-                val updatedParticipant = eventParticipantService.getParticipant(
-                    RootPath.CONTESTS,
-                    contest.id!!,
-                    userId,
-                    ContestParticipant::class.java
-                )
-                eventParticipantService.addParticipant(
-                    RootPath.CONTESTS,
-                    contest.id!!,
-                    updatedParticipant.copy(
-                        score = updatedParticipant.score?.plus(trashCategory.value)
-                            ?: trashCategory.value
-                    )
-                )
             }
         }
     }

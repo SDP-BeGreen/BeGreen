@@ -98,7 +98,7 @@ class UserViewAdapterTest {
     fun userViewAdapterIsDisplayed() {
         val scenario = activityRule.scenario.onActivity {
             it.supportFragmentManager.commit {
-                replace(R.id.mainFragmentContainer, UserFragment.newInstance(1, userList, true))
+                replace(R.id.mainFragmentContainer, UserFragment.newInstance(1,  true))
             }
         }
 

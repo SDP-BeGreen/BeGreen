@@ -7,9 +7,11 @@ import android.view.View
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.app.ActivityOptionsCompat
+import androidx.fragment.app.commit
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.fragment.app.viewModels
+import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -18,12 +20,11 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import com.github.sdp_begreen.begreen.*
+import com.github.sdp_begreen.begreen.activities.MainActivity
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.Actions
-import com.github.sdp_begreen.begreen.models.ParcelableDate
 import com.github.sdp_begreen.begreen.models.ProfilePhotoMetadata
-import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
@@ -52,18 +53,6 @@ class ProfileDetailsFragmentTest {
 
         private const val userId1 = "1234"
 
-        val photos = arrayListOf(
-            TrashPhotoMetadata(
-                "erfs",
-                ParcelableDate.now,
-                userId1
-            ),
-            TrashPhotoMetadata(
-                "erfs",
-                ParcelableDate.now,
-                userId1
-            )
-        )
         private val userProfilePicturePhotoMetadata = ProfilePhotoMetadata("user1_profile_picture")
         val userId2 = "1243"
 
@@ -111,6 +100,7 @@ class ProfileDetailsFragmentTest {
                     .thenReturn(fakePicture1)
                 whenever(auth.getFlowUserIds())
                     .thenReturn(MutableStateFlow(userId1))
+                whenever(db.getAllUsers()).thenReturn(emptyList())
             }
         }
     }
@@ -155,8 +145,10 @@ class ProfileDetailsFragmentTest {
         runTest {
 
             // user1 doesn't follow this user. Therefore
-            val notFollowedUser = User("B", 0)
 
+            val notFollowedUser = User("B", 0)
+            whenever(db.getUser(notFollowedUser.id))
+                .thenReturn(notFollowedUser)
             fragmentScenario = launchFragmentInContainer(
                 Bundle().apply {
                     putString(ARG_USER_ID, notFollowedUser.id)
@@ -170,23 +162,22 @@ class ProfileDetailsFragmentTest {
         }
     }
 
-    /*@Test
+    @Test
     fun testFollowButtonCorrectlyInitializedWhenAlreadyFollowingUser() {
 
         runTest {
 
-
             // user1 is following user2
-
-            fragmentScenario = launchFragmentInContainer(
-                Bundle().apply {
-                    putString(ARG_USER, user2.id)
+            val activity = launchActivity<MainActivity>().onActivity {
+                it.supportFragmentManager.commit {
+                    setReorderingAllowed(true)
+                    replace(R.id.mainFragmentContainer, ProfileDetailsFragment.newInstance(userId2))
                 }
-            )
+            }
 
             onView(withId(R.id.fragment_profile_details_follow_button)).check(matches(withText(Actions.UNFOLLOW.text)))
 
-            fragmentScenario.close()
+            activity.close()
         }
     }
 
@@ -195,14 +186,16 @@ class ProfileDetailsFragmentTest {
 
         runTest {
 
-
             val notFollowedUser = User("B", 0)
+            whenever(db.getUser(notFollowedUser.id))
+                .thenReturn(notFollowedUser)
 
-            fragmentScenario = launchFragmentInContainer(
-                Bundle().apply {
-                    putString(ARG_USER, notFollowedUser.id)
+            val activity = launchActivity<MainActivity>().onActivity {
+                it.supportFragmentManager.commit {
+                    setReorderingAllowed(true)
+                    replace(R.id.mainFragmentContainer, ProfileDetailsFragment.newInstance(notFollowedUser.id))
                 }
-            )
+            }
 
             onView(withId(R.id.fragment_profile_details_follow_button)).check(matches(withText(Actions.FOLLOW.text)))
             onView(withId(R.id.fragment_profile_details_follow_button)).perform(click())
@@ -210,9 +203,9 @@ class ProfileDetailsFragmentTest {
             onView(withId(R.id.fragment_profile_details_follow_button)).perform(click())
             onView(withId(R.id.fragment_profile_details_follow_button)).check(matches(withText(Actions.FOLLOW.text)))
 
-            fragmentScenario.close()
+            activity.close()
         }
-    }*/
+    }
 
     @Test
     fun testProfileDetailsWithCompleteUserFragmentIsCorrectlyDisplayed() {

@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">BeGreen</string>
-    <string name="feed_fragment_text">Place where we can display a feed for this user%1$s%2$s</string>
     <string name="settings_fragment_text">Fragment where we can display settings for the user%1$s%2$s</string>
     <string name="followers_fragment_text">Fragment where we can display the user\'s followers%1$s%2$s</string>
     <string name="user_details_level_text">%1$s\'s level</string>
@@ -8,30 +7,21 @@
     <string name="settings">Settings</string>
     <string name="profile">Profile</string>
     <string name="followers">Followers</string>
-    <string name="store">store</string>
-    <string name="load">load</string>
-    <string name="picture">Picture</string>
     <string name="users">Users</string>
     <string name="follow">Follow</string>
     <string name="name">PlaceholderName</string>
     <string name="user_level">PlaceholderUserLevel</string>
     <string name="profile_description">User has not a description yet…</string>
     <string name="profile_user_image">This is an image for the profile of the user</string>
-    <string name="add_new_post">Add new post</string>
-    <string name="share_post">Share post</string>
-    <string name="write_title_for_post_placeholder">Write a title for your post</string>
-    <string name="post_image_description">The post image that will be shared</string>
     <string name="welcome_to_begreen">Welcome to BeGreen</string>
     <string name="desc_logo_of_the_app">Logo of the app</string>
     <string name="desc_of_google_logo">The logo of Google</string>
     <string name="sign_in_with_google">sign in with google</string>
     <string name="nav_drawer_username">Username</string>
     <string name="nav_drawer_user_description">More Info on user</string>
-    <string name="send_message">Send</string>
     <string name="fragment_profile_details_profile_name_descriptions_edit">Button to switch to edit profile</string>
     <string name="fragment_profile_details_profile_name_descriptions_save">Button to save profile modification</string>
     <string name="fragment_profile_details_profile_name_descriptions_cancel">Button to cancel the modification without saving</string>
-    <string name="fragment_profile_details_ratingBar">Bar where the user rating are displayed</string>
     <string name="fragment_profile_details_take_picture">Button to take a profile picture</string>
     <string name="logout">Logout</string>
     <string name="desc_publication">This is the publication of the user</string>
@@ -60,7 +50,6 @@
     <string name="cancel">Cancel</string>
     <string name="send">Send</string>
     <string name="change_bin_type">Change bin type</string>
-    <string name="post_cannot_be_shared_error">An error occurred. Please try again</string>
     <string name="paper">Paper</string>
     <string name="plastic">Plastic</string>
     <string name="organic">Organic</string>
@@ -73,7 +62,6 @@
     <string name="meetings">Meetings</string>
     <string name="event_list_join_button_join">Join</string>
     <string name="event_list_join_button_withdraw">Withdraw</string>
-    <string name="category">Category</string>
     <string name="enter_description_here">Enter description here</string>
     <string name="profile_button">profile button</string>
     <string name="search_a_user_button">search a user button</string>
@@ -82,7 +70,6 @@
     <string name="button_to_send_the_post_online">button to send the post online</string>
     <string name="cross_button_to_come_back_to_camera">cross button to come back to camera</string>
     <string name="photo_shared_success">Photo shared successfully</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="fragment_contests_add_contest_button_description">Button to create a new contest</string>
     <string name="contests">Contests</string>
     <string name="cant_update_contests_score">Location unavailable. Cannot update contest(s) score(s)</string>
@@ -115,6 +102,5 @@
     <string name="contest_map_ready">Contest Map Ready</string>
     <string name="change_trash_category">change trash category</string>
     <string name="trash_category">Trash Category:</string>
-    <string name="select_trash_category">Select trash category</string>
 
 </resources>

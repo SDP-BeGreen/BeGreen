@@ -1,6 +1,7 @@
 package com.github.sdp_begreen.begreen.activities
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.MenuItem
@@ -10,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
@@ -19,13 +21,22 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
+import com.github.sdp_begreen.begreen.firebase.RootPath
+import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantService
 import com.github.sdp_begreen.begreen.fragments.*
+import com.github.sdp_begreen.begreen.models.CustomLatLng
+import com.github.sdp_begreen.begreen.models.TrashCategory
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.models.event.Contest
+import com.github.sdp_begreen.begreen.models.event.ContestParticipant
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
+import com.github.sdp_begreen.begreen.viewModels.EventsFragmentViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.flow.dropWhile
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import java.text.SimpleDateFormat
@@ -34,9 +45,109 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private val connectedUserViewModel by viewModels<ConnectedUserViewModel>()
+    private val eventParticipantService by inject<EventParticipantService>()
+    private val eventsFragmentViewModel by viewModels<EventsFragmentViewModel<Contest, ContestParticipant>> {
+        EventsFragmentViewModel.factory(
+            connectedUserViewModel.currentUser,
+            RootPath.CONTESTS,
+            Contest::class.java,
+            ContestParticipant::class.java
+        )
+    }
     private val auth by inject<Auth>()
-    //TODO remove after demo
     private val db by inject<DB>()
+
+    private var nextFragment: Fragment? = null
+
+    /**
+     * Post the given photo, by the given user
+     * @param metadata the metadata of the photo to post
+     * @param user the user that makes a new post
+     * @param bitmap the photo to be posted
+     */
+    fun sendPost(metadata: TrashPhotoMetadata?, user: User, bitmap: Bitmap) {
+        lifecycleScope.launch {
+            // Get the stored metadata
+            val storedMetadata = metadata?.let {
+                db.addTrashPhoto(bitmap, it)
+            }
+
+            storedMetadata?.let {
+
+                // update the user with the new photo metadata and update its score
+                user.addPhotoMetadata(it)
+                user.score += it.trashCategory?.value ?: 0
+
+                // store the new User in firebase
+                db.addUser(user, user.id)
+
+                // once stored, set again the new user along with his metadata in current
+                // user, for consistency
+                connectedUserViewModel.setCurrentUser(user, true)
+
+                // Display toast
+                Toast.makeText(this@MainActivity, R.string.photo_shared_success, Toast.LENGTH_SHORT)
+                    .show()
+
+                // update the user's score in the active contests
+                it.trashCategory?.also { category ->
+                    it.location?.also { location ->
+                        contestsUpdateScores(category, location)
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Updates the user's contests scores
+     */
+    private suspend fun contestsUpdateScores(
+        trashCategory: TrashCategory,
+        location: CustomLatLng
+    ) {
+        val userId = connectedUserViewModel.currentUser.value?.id
+        val participationMap =
+            eventsFragmentViewModel.participationMap.dropWhile { it.isEmpty() }.first()
+        val contests = eventsFragmentViewModel.allEvents.dropWhile { it.isEmpty() }.first()
+
+        userId?.also {
+            contests.forEach { contest ->
+                processContest(contest, it, participationMap, trashCategory, location)
+            }
+        }
+    }
+
+    private suspend fun processContest(
+        contest: Contest,
+        userId: String,
+        participationMap: Map<String, Boolean>,
+        trashCategory: TrashCategory,
+        location: CustomLatLng
+    ) {
+        location.toMapLocation()?.let {
+            if (participationMap[contest.id] == true &&
+                contest.isActive() == true &&
+                contest.isInRange(it) == true
+            ) {
+                val updatedParticipant = eventParticipantService.getParticipant(
+                    RootPath.CONTESTS,
+                    contest.id!!,
+                    userId,
+                    ContestParticipant::class.java
+                )
+                eventParticipantService.addParticipant(
+                    RootPath.CONTESTS,
+                    contest.id!!,
+                    updatedParticipant.copy(
+                        score = updatedParticipant.score?.plus(trashCategory.value)
+                            ?: trashCategory.value
+                    )
+                )
+            }
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,7 +187,31 @@ class MainActivity : AppCompatActivity() {
             handleDrawerMenuItemClick(item)
             true
         }
+
+        setUpDrawerListeners(drawerLayout)
     }
+
+    private fun setUpDrawerListeners(drawerLayout: DrawerLayout) =
+        drawerLayout.addDrawerListener(object: DrawerListener {
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                // Not needed
+            }
+
+            override fun onDrawerOpened(drawerView: View) {
+                // Not needed
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+                nextFragment?.also {
+                    replaceFragInMainContainer(it)
+                    nextFragment = null
+                }
+            }
+
+            override fun onDrawerStateChanged(newState: Int) {
+                // Not needed
+            }
+        })
 
     /**
      * Helper function to setup the user info, description and profile picture in the drawer menu
@@ -227,36 +362,24 @@ class MainActivity : AppCompatActivity() {
 
         when (item.itemId) {
             R.id.mainNavDrawProfile -> {
-                replaceFragInMainContainer(ProfileDetailsFragment.newInstance(connectedUserViewModel.currentUser.value?.id))
+                nextFragment = ProfileDetailsFragment.newInstance(connectedUserViewModel.currentUser.value?.id)
             }
             R.id.mainNavDrawFollowers -> {
-
-                lifecycleScope.launch {
-                    val followers = auth.getConnectedUserId()?.let { db.getFollowers(it) } ?: listOf()
-                    replaceFragInMainContainer(FollowersFragment.newInstance(1, ArrayList(followers)))
-                }
+                nextFragment = FollowersFragment.newInstance(1)
             }
-            //------------------------FOR DEMO PURPOSES ONLY------------------------
-            //TODO Remove this when demo will be over
             R.id.mainNavDrawUserList -> {
-
-                lifecycleScope.launch {
-                    val userList = db.getAllUsers()
-                    replaceFragInMainContainer(UserFragment.newInstance(1, userList.toCollection(ArrayList()), true))
-                }
+                nextFragment = UserFragment.newInstance(1,true)
             }
             R.id.mainNavDrawMeetings -> {
-                replaceFragInMainContainer(MeetingsFragment())
+                nextFragment = MeetingsFragment()
             }
             R.id.mainNavDrawContests -> {
-                replaceFragInMainContainer(ContestsFragment())
+                nextFragment = ContestsFragment()
             }
-            //----------------------------------------------------------------------
             R.id.mainNavDrawSettings -> {
-                replaceFragInMainContainer(SettingsFragment())
+                nextFragment = SettingsFragment()
             }
             R.id.mainNavDrawContact -> {
-
                 showContactUsBottomSheet()
             }
             // handle the "Logout" button in the navigation drawer of the app responsible for

@@ -40,6 +40,7 @@
             android:layout_marginTop="@dimen/text_margin"
             android:layout_marginEnd="@dimen/text_margin"
             android:layout_marginBottom="@dimen/text_margin"
+            android:maxWidth="200sp"
             android:textAppearance="?attr/textAppearanceHeadline6"
             tools:text="Lausanne" />
 
