@@ -51,7 +51,7 @@ class ExpandableListAdapter(
 
     // Returns the randomly chosen child (item) object in the specified group.
     override fun getChild(groupPosition: Int, childPosition: Int): Any {
-        if (groupPosition < 0 || groupPosition >= tipsGroups.size || childPosition < 0 || childPosition >= tipsGroups[groupPosition].tips.size) {
+        if (groupPosition < 0 || groupPosition >= tipsGroups.size) {
             throw IllegalArgumentException()
         }
 

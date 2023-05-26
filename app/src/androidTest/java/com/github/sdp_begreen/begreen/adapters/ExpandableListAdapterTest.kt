@@ -100,6 +100,28 @@ class ExpandableListAdapterTest {
     }
 
     @Test
+    fun testGetGroupIdReturnsChildForTrivialGroupIndex() {
+
+        assertThat(adapter.getGroupId(0), `is`(0))
+    }
+
+    @Test
+    fun testGetGroupIdThrowsIllegalArgumentExceptionForNegativeGroupIndex() {
+
+        assertThrows(IllegalArgumentException::class.java) {
+            adapter.getGroupId(-1)
+        }
+    }
+
+    @Test
+    fun testGetGroupIdThrowsIllegalArgumentExceptionForNonExistingGroupIndex() {
+
+        assertThrows(IllegalArgumentException::class.java) {
+            adapter.getGroupId(NB_OF_GROUPS + 1)
+        }
+    }
+
+    @Test
     fun testGetChildIdReturnsChildForTrivialGroupIndex() {
 
         assertThat(adapter.getChildId(0, 3), `is`(3))
