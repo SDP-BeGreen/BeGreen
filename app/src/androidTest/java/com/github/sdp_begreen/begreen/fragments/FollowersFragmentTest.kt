@@ -1,6 +1,5 @@
 package com.github.sdp_begreen.begreen.fragments
 
-import android.os.Bundle
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.recyclerview.widget.RecyclerView
@@ -9,7 +8,6 @@ import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.firebase.Auth
 import com.github.sdp_begreen.begreen.firebase.DB
-import com.github.sdp_begreen.begreen.fragments.FollowersFragment.Companion.ARG_COLUMN_COUNT
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -70,20 +68,12 @@ class FollowersFragmentTest {
 
     @Test
     fun onCreateViewWithValidViewReturnsView() {
-        // Set up fragment arguments
-        val args = Bundle().apply {
-            putInt(ARG_COLUMN_COUNT, 1)
-        }
-
-        // Launch fragment with arguments
-        val scenario = FragmentScenario.launchInContainer(UserFragment::class.java, args)
         // Wait for the fragment to be created
-        scenario.onFragment { fragment ->
+        fragmentScenario.onFragment { fragment ->
             val recyclerView = fragment.view
             assertThat(recyclerView, notNullValue())
             assertThat(recyclerView, instanceOf(RecyclerView::class.java))
         }
-        scenario.close()
     }
 
     @Test

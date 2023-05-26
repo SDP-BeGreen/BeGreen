@@ -10,47 +10,64 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.sdp_begreen.begreen.R
 import com.github.sdp_begreen.begreen.activities.MainActivity
+import com.github.sdp_begreen.begreen.firebase.Auth
+import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.User
 import com.github.sdp_begreen.begreen.rules.KoinTestRule
 import junit.framework.TestCase.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.dsl.module
+import org.mockito.Mockito
+import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class UserFragmentTest {
-    @get:Rule
-    val activityRule = ActivityScenarioRule(MainActivity::class.java)
-
-    @get:Rule
-    val koinTestRule = KoinTestRule()
-
-    private lateinit var userList: List<User>
 
     val ARG_COLUMN_COUNT = "column-count"
     val ARG_IS_LIST_SORTED_BY_SCORE = "is-list-sorted-by-score"
-    val ARG_USER_LIST = "user-list"
 
-    @Before
-    fun setup() {
+    companion object {
+
+        private val db: DB = Mockito.mock(DB::class.java)
         // Initialize test data
-        userList = listOf(
+        private val userList = listOf(
             User("0", 10, "Alice"),
             User("1", 20, "Bob"),
             User("2", 15, "Charlie")
         )
+
+        @BeforeClass
+        @JvmStatic
+        fun setUp() {
+            runTest {
+                // setup basic get user and getProfilePicture use in multiple tests
+                whenever(db.getAllUsers()).thenReturn(userList)
+            }
+        }
     }
+
+    @get:Rule
+    val koinTestRule = KoinTestRule(
+        modules = listOf(module {
+            single { db }
+        })
+    )
 
     @Test
     fun onCreateViewWithValidViewReturnsView() {
         val args = Bundle().apply {
             putInt(ARG_COLUMN_COUNT, 1)
-            putParcelableArrayList(ARG_USER_LIST, userList.toCollection(ArrayList()))
         }
 
         // Launch fragment with arguments
@@ -69,7 +86,6 @@ class UserFragmentTest {
         // Set up the inflater and container to create a valid view.
         val args = Bundle().apply {
             putInt(ARG_COLUMN_COUNT, 1)
-            putParcelableArrayList(ARG_USER_LIST, userList.toCollection(ArrayList()))
         }
 
         // Launch fragment with arguments
@@ -89,7 +105,6 @@ class UserFragmentTest {
         // Set up the inflater and container to create a valid view.
         val args = Bundle().apply {
             putInt(ARG_COLUMN_COUNT, 1)
-            putParcelableArrayList(ARG_USER_LIST, userList.toCollection(ArrayList()))
             putBoolean(ARG_IS_LIST_SORTED_BY_SCORE, true)
         }
 
@@ -110,7 +125,6 @@ class UserFragmentTest {
         // Set up fragment arguments
         val args = Bundle().apply {
             putInt(ARG_COLUMN_COUNT, 1)
-            putParcelableArrayList(ARG_USER_LIST, userList.toCollection(ArrayList()))
         }
 
         // Launch fragment with arguments
@@ -137,7 +151,6 @@ class UserFragmentTest {
         // Set up fragment arguments
         val args = Bundle().apply {
             putInt(ARG_COLUMN_COUNT, 2)
-            putParcelableArrayList(ARG_USER_LIST, userList.toCollection(ArrayList()))
         }
 
         // Launch fragment with arguments
@@ -162,7 +175,6 @@ class UserFragmentTest {
         val args = Bundle().apply {
             putInt(ARG_COLUMN_COUNT, 1)
             putBoolean(ARG_IS_LIST_SORTED_BY_SCORE, true)
-            putParcelableArrayList(ARG_USER_LIST, userList.toCollection(ArrayList()))
         }
 
         // Launch fragment with arguments

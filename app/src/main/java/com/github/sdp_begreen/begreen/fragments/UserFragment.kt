@@ -1,6 +1,5 @@
 package com.github.sdp_begreen.begreen.fragments
 
-import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -11,7 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.models.User
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 
 /**
@@ -21,6 +23,8 @@ class UserFragment : Fragment() {
 
     // The number of columns to display in the RecyclerView grid.
     private var columnCount = 1
+
+    private val db by inject<DB>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,18 +49,17 @@ class UserFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                var userList: List<User>?
-                userList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    arguments?.getParcelableArrayList(ARG_USER_LIST, User::class.java)
-                }else {
-                    arguments?.getParcelableArrayList(ARG_USER_LIST)
+                lifecycleScope.launch {
+                    var userList: List<User> = db.getAllUsers()
+
+                    if (arguments?.getBoolean(ARG_IS_LIST_SORTED_BY_SCORE) == true) {
+                        userList = userList.sortedByDescending { it.score }
+                    }
+                    // Set the adapter of the RecyclerView to a new instance of UserViewAdapter,
+                    // passing the list of users from the Fragment arguments as a parameter.
+                    adapter =
+                        UserViewAdapter(userList, parentFragmentManager, lifecycleScope, resources)
                 }
-                if(arguments?.getBoolean(ARG_IS_LIST_SORTED_BY_SCORE) == true){
-                    userList = userList?.sortedByDescending { it.score }
-                }
-                // Set the adapter of the RecyclerView to a new instance of UserViewAdapter,
-                // passing the list of users from the Fragment arguments as a parameter.
-                    adapter = UserViewAdapter(userList, parentFragmentManager, lifecycleScope, resources)
             }
         }
         return view
@@ -66,16 +69,14 @@ class UserFragment : Fragment() {
 
         // The names of the parameters in the Fragment arguments.
         private const val ARG_COLUMN_COUNT = "column-count"
-        private const val ARG_USER_LIST = "user-list"
         private const val ARG_IS_LIST_SORTED_BY_SCORE = "is-list-sorted-by-score"
 
         // Create a new instance of the Fragment with the given parameters.
         @JvmStatic
-        fun newInstance(columnCount: Int, userList: List<User>?, isSortedByScore: Boolean) =
+        fun newInstance(columnCount: Int, isSortedByScore: Boolean) =
             UserFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_COLUMN_COUNT, columnCount)
-                    putParcelableArrayList(ARG_USER_LIST, userList?.toCollection(ArrayList()))
                     putBoolean(ARG_IS_LIST_SORTED_BY_SCORE, isSortedByScore)
                 }
             }

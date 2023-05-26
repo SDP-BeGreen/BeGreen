@@ -368,12 +368,7 @@ class MainActivity : AppCompatActivity() {
                 nextFragment = FollowersFragment.newInstance(1)
             }
             R.id.mainNavDrawUserList -> {
-
-                // TODO: fetch users in the fragment instead of here
-                lifecycleScope.launch {
-                    val userList = db.getAllUsers()
-                    replaceFragInMainContainer(UserFragment.newInstance(1, userList.toCollection(ArrayList()), true))
-                }
+                nextFragment = UserFragment.newInstance(1,true)
             }
             R.id.mainNavDrawMeetings -> {
                 nextFragment = MeetingsFragment()
