@@ -24,8 +24,8 @@ class TinyDB(appContext: Context) {
      * @param key SharedPreferences key
      * @return String value at 'key' or "" (empty String) if key not found
      */
-    fun getString(key: String?): String? {
-        return preferences.getString(key, "")
+    fun getString(key: TinyDBKey): String? {
+        return preferences.getString(key.key, "")
     }
 
     /**
@@ -33,9 +33,8 @@ class TinyDB(appContext: Context) {
      * @param key SharedPreferences key
      * @return ArrayList of String
      */
-    fun getListString(key: String?): ArrayList<String> {
-        val splitStringArray = TextUtils.split(preferences.getString(key, ""), "‚‗‚")
-        return arrayListOf(*splitStringArray)
+    fun getListString(key: TinyDBKey): List<String> {
+        return listOf(*TextUtils.split(preferences.getString(key.key, ""), "‚‗‚"))
     }
 
     /**
@@ -44,22 +43,19 @@ class TinyDB(appContext: Context) {
      * @param mClass a class object
      * @return ArrayList of String
      */
-    fun <K> getListObject(key: String?, mClass: Class<K>): List<K> {
+    fun <K> getListObject(key: TinyDBKey, mClass: Class<K>): List<K> {
         val gson = Gson()
         val objStrings = getListString(key)
         val objects = ArrayList<K>()
 
         for (jObjString in objStrings) {
             val jsonElement = JsonParser.parseString(jObjString)
-
             if (jsonElement.isJsonObject) {
-                val value = gson.fromJson(jsonElement, mClass)
-                objects.add(value)
+                objects.add(gson.fromJson(jsonElement, mClass))
             } else if (jsonElement.isJsonArray) {
                 val jsonArray = jsonElement.asJsonArray
                 for (jsonObject in jsonArray) {
-                    val value = gson.fromJson(jsonObject, mClass)
-                    objects.add(value)
+                    objects.add(gson.fromJson(jsonObject, mClass))
                 }
             }
         }
@@ -71,8 +67,8 @@ class TinyDB(appContext: Context) {
      * @param key SharedPreferences key
      * @param stringList ArrayList of String to be added
      */
-    fun putListString(key: String, stringList: ArrayList<String>) {
-        preferences.edit().putString(key, stringList.joinToString { "‚‗‚" }).apply()
+    fun putListString(key: TinyDBKey, stringList: List<String>) {
+        preferences.edit().putString(key.key, stringList.joinToString { "‚‗‚" }).apply()
     }
 
     /**
@@ -80,17 +76,17 @@ class TinyDB(appContext: Context) {
      * @param key SharedPreferences key
      * @param objArray ArrayList of Any to be added
      */
-    fun <K> putListObject(key: String, objArray: List<K>) {
+    fun <K> putListObject(key: TinyDBKey, objArray: List<K>) {
         val gson = Gson()
-        putListString(key, ArrayList(objArray.map { gson.toJson(it) }))
+        putListString(key, objArray.map { gson.toJson(it) })
     }
 
     /**
      * Remove SharedPreferences item with 'key'
      * @param key SharedPreferences key
      */
-    fun remove(key: String) {
-        preferences.edit().remove(key).apply()
+    fun remove(key: TinyDBKey) {
+        preferences.edit().remove(key.key).apply()
     }
 
     /**

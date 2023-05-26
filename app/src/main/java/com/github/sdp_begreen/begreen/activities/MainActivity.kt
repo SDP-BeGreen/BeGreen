@@ -22,6 +22,7 @@ import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.fragments.*
 import com.github.sdp_begreen.begreen.models.TrashPhotoMetadata
 import com.github.sdp_begreen.begreen.models.User
+import com.github.sdp_begreen.begreen.services.SendPostOfflineService
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -34,6 +35,7 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private val connectedUserViewModel by viewModels<ConnectedUserViewModel>()
+    private val sendPostOfflineService by inject<SendPostOfflineService>()
     private val auth by inject<Auth>()
     //TODO remove after demo
     private val db by inject<DB>()
@@ -76,6 +78,8 @@ class MainActivity : AppCompatActivity() {
             handleDrawerMenuItemClick(item)
             true
         }
+
+        sendPostOfflineService.initSendPostOfflineSupport(lifecycleScope, lifecycle, applicationContext)
     }
 
     /**

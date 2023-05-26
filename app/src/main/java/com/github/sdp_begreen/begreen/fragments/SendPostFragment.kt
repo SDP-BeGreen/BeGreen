@@ -2,11 +2,8 @@ package com.github.sdp_begreen.begreen.fragments
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
 import android.location.Location
 import android.os.Bundle
-import android.util.Base64
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,30 +15,24 @@ import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.github.sdp_begreen.begreen.R
+import com.github.sdp_begreen.begreen.firebase.ConnectionService
 import com.github.sdp_begreen.begreen.firebase.DB
 import com.github.sdp_begreen.begreen.firebase.RootPath
 import com.github.sdp_begreen.begreen.firebase.eventServices.EventParticipantService
 import com.github.sdp_begreen.begreen.models.*
 import com.github.sdp_begreen.begreen.models.event.Contest
 import com.github.sdp_begreen.begreen.models.event.ContestParticipant
+import com.github.sdp_begreen.begreen.services.SendPostOfflineService
 import com.github.sdp_begreen.begreen.utils.Permissions.hasPermissions
-import com.github.sdp_begreen.begreen.utils.TinyDB
-import com.github.sdp_begreen.begreen.utils.TinyDBKey
 import com.github.sdp_begreen.begreen.viewModels.ConnectedUserViewModel
 import com.github.sdp_begreen.begreen.viewModels.EventsFragmentViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.textfield.TextInputEditText
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
-import java.io.ByteArrayOutputStream
 
 //argument constant
 private const val ARG_URI = "uri"
@@ -49,7 +40,9 @@ private const val ARG_URI = "uri"
 class SendPostFragment : Fragment() {
     private var paramUri: String? = null
     private val db by inject<DB>()
+    private val connectionService by inject<ConnectionService>()
     private val eventParticipantService by inject<EventParticipantService>()
+    private val sendPostOfflineService by inject<SendPostOfflineService>()
 
     private val connectedUserViewModel: ConnectedUserViewModel by viewModels(ownerProducer = { requireActivity() })
     private val eventsFragmentViewModel by viewModels<EventsFragmentViewModel<Contest, ContestParticipant>> {
@@ -200,69 +193,16 @@ class SendPostFragment : Fragment() {
 
                 }
 
-                // Obtain reference to Firebase's '.info/connected' node to monitor connection state.
-                val connectedRef = Firebase.database.getReference(".info/connected")
-
-                // Attach a listener for a single event to check if client is currently connected to Firebase.
-                connectedRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        // Retrieve connectivity state from snapshot. If data is null, assume not connected.
-                        val connected = snapshot.getValue(Boolean::class.java) ?: false
-
-                        // If connected, proceed with user update and photo sharing operations.
-                        if (connected) {
-                            Log.d("TAG", "connected")
-                            // Launch coroutine to perform potentially long-running operations off the main UI thread.
-                            lifecycleScope.launch {
-                                // Update the user with the new photo and return to the camera.
-                                updateUser(metadata, user)
-                                returnToCamera()
-                            }
-                        // If not connected, store metadata and user information for later use when connectivity is re-established.
-                        } else {
-                            Log.d("TAG", "not connected")
-
-                            // Use TinyDB for local data storage.
-                            val tinyDB = TinyDB(this@SendPostFragment.requireContext())
-
-                            // Retrieve existing metadata and add current one.
-                            val metas = tinyDB.getListObject(TinyDBKey.METAS.key, TrashPhotoMetadata::class.java)
-                            val newMetas = metas + metadata!!
-                            tinyDB.putListObject(TinyDBKey.METAS.key, newMetas)
-
-                            // Retrieve existing user data and add current user.
-                            val users = tinyDB.getListObject(TinyDBKey.USERS.key, User::class.java)
-                            val newUsers = users + user
-                            tinyDB.putListObject(TinyDBKey.USERS.key, newUsers)
-
-                            view?.findViewById<ImageView>(R.id.preview)?.drawable?.toBitmap()?.also { bitmap ->
-
-                                // Get the stored metadata
-                                val baos = ByteArrayOutputStream()
-                                bitmap.compress(Bitmap.CompressFormat.PNG,100,baos)
-
-                                // Convert the bitmap to a byte array and then to a base64 string for easier storage.
-                                val b: ByteArray = baos.toByteArray()
-                                val encoded: String = Base64.encodeToString(b, Base64.DEFAULT)
-                                val bitmaps = tinyDB.getListString(TinyDBKey.BITMAPS.key)
-                                bitmaps.add(encoded)
-                                tinyDB.putListString(TinyDBKey.BITMAPS.key, bitmaps)
-
-                                // Inform user about automatic post upload once connectivity is re-established.
-                                Toast.makeText(this@SendPostFragment.context, "Your post will be automatically sent once online.", Toast.LENGTH_LONG).show()
-
-                                // Return to camera
-                                returnToCamera()
-                            }
-
+                lifecycleScope.launch {
+                    if (connectionService.getConnectionStatus()) {
+                        updateUser(metadata, user)
+                        returnToCamera()
+                    } else {
+                        paramUri?.also {
+                            sendPostOfflineService.savePost(metadata!!, user, it, requireContext(), ::returnToCamera)
                         }
                     }
-
-                    override fun onCancelled(error: DatabaseError) {
-                        Log.w("TAG", "Listener was cancelled")
-                    }
-                })
-
+                }
             }
         }
     }
