@@ -55,7 +55,6 @@ class MainActivity : AppCompatActivity() {
         )
     }
     private val auth by inject<Auth>()
-    //TODO remove after demo
     private val db by inject<DB>()
 
     private var nextFragment: Fragment? = null
@@ -363,15 +362,10 @@ class MainActivity : AppCompatActivity() {
 
         when (item.itemId) {
             R.id.mainNavDrawProfile -> {
-                nextFragment =ProfileDetailsFragment.newInstance(connectedUserViewModel.currentUser.value?.id)
+                nextFragment = ProfileDetailsFragment.newInstance(connectedUserViewModel.currentUser.value?.id)
             }
             R.id.mainNavDrawFollowers -> {
-
-                // TODO: fetch followers in the fragment instead of here
-                lifecycleScope.launch {
-                    val followers = auth.getConnectedUserId()?.let { db.getFollowers(it) } ?: listOf()
-                    replaceFragInMainContainer(FollowersFragment.newInstance(1, ArrayList(followers)))
-                }
+                nextFragment = FollowersFragment.newInstance(1)
             }
             R.id.mainNavDrawUserList -> {
 
